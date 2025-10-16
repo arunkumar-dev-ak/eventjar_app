@@ -24,11 +24,12 @@ class SignUpController extends GetxController {
   TextEditingController get mobileNumberController =>
       _mobileNumberController.value;
 
-  void onUpint() {
+  @override
+  void onInit() {
     super.onInit();
   }
 
   void navigateToLogin() {
-    Get.toNamed('/signInPage');
+    Get.until((route) => route.settings.name == '/signInPage');
   }
 }

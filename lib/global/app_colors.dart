@@ -7,10 +7,6 @@ class AppColors {
   static const Color gradientLightStart = Color(0xFF789ADE); // Blue
   static const Color gradientLightEnd = Color(0xFF49C987); // Green
 
-  // Text Colors
-  // static const Color textBlue = Color(0xFF789ADE);
-  // static const Color textGreen = Color(0xFF49C987);
-
   // Gradient definition
   static const LinearGradient appBarGradient = LinearGradient(
     colors: [gradientLightStart, gradientLightEnd],
@@ -25,4 +21,5 @@ class AppColors {
   );
 
   static const placeHolderColor = Color(0xFFA2A2A2);
+  static const splashScreenBackground = Color(0xFFCCE4FF);
 }

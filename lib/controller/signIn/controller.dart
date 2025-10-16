@@ -53,7 +53,12 @@ class SignInController extends GetxController {
     state.isPasswordHidden.value = !state.isPasswordHidden.value;
   }
 
+  /*----- navigation ----*/
   void navigateToSignUp() {
     Get.toNamed('/signUpPage');
+  }
+
+  void navigateToForgotPassword() {
+    Get.toNamed('/forgotPasswordPage');
   }
 }

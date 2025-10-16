@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class SignInHeader extends StatelessWidget {
-  SignInHeader({super.key});
+  const SignInHeader({super.key});
 
   @override
   Widget build(BuildContext context) {

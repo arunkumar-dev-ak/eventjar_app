@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: _buildLightTheme(context),
       darkTheme: _buildDarkTheme(),
       themeMode: ThemeMode.system,
-      initialRoute: RouteName.signUpPage,
+      initialRoute: RouteName.splashScreen,
       getPages: RoutePage().getPage,
     );
   }
@@ -73,8 +73,6 @@ class MyApp extends StatelessWidget {
         onTertiary: Colors.white,
         surface: const Color(0xFF1E1E1E),
         onSurface: Colors.white,
-        background: const Color(0xFF121212),
-        onBackground: Colors.white,
         error: Colors.red.shade400,
         onError: Colors.black,
       ),

@@ -166,7 +166,7 @@ class SignInForm extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async {
-                    // controller.navigateToForgotPassword();
+                    controller.navigateToForgotPassword();
                   },
                   child: const Text(
                     "Forgot Password?",
