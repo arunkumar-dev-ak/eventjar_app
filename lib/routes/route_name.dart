@@ -6,5 +6,5 @@ class RouteName {
   static const splashScreen = '/splashScreen';
 
   //home page
-  static const homePage = '/homePage';
+  static const dashboardpage = '/dasoardPae';
 }

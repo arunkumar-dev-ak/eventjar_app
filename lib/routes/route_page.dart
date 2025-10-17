@@ -1,8 +1,10 @@
+import 'package:eventjar_app/controller/dashboard/binding.dart';
 import 'package:eventjar_app/controller/forgotPassword/binding.dart';
 import 'package:eventjar_app/controller/home/binding.dart';
 import 'package:eventjar_app/controller/signIn/binding.dart';
 import 'package:eventjar_app/controller/signUp/binding.dart';
 import 'package:eventjar_app/controller/splashScreen/binding.dart';
+import 'package:eventjar_app/page/dashboard/dashboard_page.dart';
 import 'package:eventjar_app/page/forgot_password/forgot_password.dart';
 import 'package:eventjar_app/page/home/home.dart';
 import 'package:eventjar_app/page/sign_in/sign_in_page.dart';
@@ -39,11 +41,11 @@ class RoutePage {
       binding: ForgotPasswordBinding(),
     ),
 
-    /*----- Home page -----*/
+    /*----- Dashoard page -----*/
     GetPage(
-      name: RouteName.homePage,
-      page: () => HomePage(),
-      binding: HomeBinding(),
+      name: RouteName.dashboardpage,
+      page: () => DashboardPage(),
+      binding: DashboardBinding(),
     ),
   ];
 }

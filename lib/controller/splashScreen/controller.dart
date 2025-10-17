@@ -33,7 +33,7 @@ class SplashScreenController extends GetxController
 
   void _navigateToHome() {
     Future.delayed(const Duration(milliseconds: 2000), () {
-      Get.offNamed(RouteName.homePage);
+      Get.offNamed(RouteName.dashboardpage);
     });
   }
 }

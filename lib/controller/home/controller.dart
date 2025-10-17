@@ -1,4 +1,5 @@
 import 'package:eventjar_app/controller/home/state.dart';
+import 'package:eventjar_app/global/palette_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,6 +24,22 @@ class HomeController extends GetxController {
       state.isSearchEmpty.value = true;
     } else {
       state.isSearchEmpty.value = false;
+    }
+  }
+
+  Future<void> extractColors(String url) async {
+    state.dominantColors.clear();
+    try {
+      final PaletteGenerator paletteGenerator =
+          await PaletteGenerator.fromImageProvider(
+            NetworkImage(url),
+            maximumColorCount: 5,
+          );
+      state.dominantColors.add(
+        paletteGenerator.dominantColor?.color ?? Colors.grey[300]!,
+      );
+    } catch (e) {
+      state.dominantColors.add(Colors.grey[300]!);
     }
   }
 }
