@@ -16,17 +16,67 @@ class HomePage extends GetView<HomeController> {
       width: 100.wp,
       decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
       child: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            HomeAppBar(),
-            HomeSearchBar(),
-            SizedBox(height: 1.hp),
-            HomeContent(),
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              expandedHeight: 8.hp,
+              pinned: false,
+              floating: false,
+              flexibleSpace: FlexibleSpaceBar(background: HomeAppBar()),
+            ),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _SliverSearchBarDelegate(
+                minHeight: 70,
+                maxHeight: 70,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: AppColors.appBarGradient,
+                  ),
+                  child: HomeSearchBar(),
+                ),
+              ),
+            ),
+            SliverFillRemaining(child: HomeContent()),
           ],
         ),
       ),
     );
+  }
+}
+
+class _SliverSearchBarDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+  final double minHeight;
+  final double maxHeight;
+
+  _SliverSearchBarDelegate({
+    required this.child,
+    this.minHeight = 80, // minimum height
+    this.maxHeight = 80, // maximum expanded height
+  });
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Container(height: maxHeight, color: Colors.white, child: child);
+  }
+
+  @override
+  double get maxExtent => maxHeight;
+
+  @override
+  double get minExtent => minHeight;
+
+  @override
+  bool shouldRebuild(covariant _SliverSearchBarDelegate oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        child != oldDelegate.child;
   }
 }

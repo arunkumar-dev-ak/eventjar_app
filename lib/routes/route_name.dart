@@ -6,5 +6,8 @@ class RouteName {
   static const splashScreen = '/splashScreen';
 
   //home page
-  static const dashboardpage = '/dasoardPae';
+  static const dashboardpage = '/dashboardPage';
+
+  //event info
+  static const eventInfoPage = '/eventInfoPage';
 }

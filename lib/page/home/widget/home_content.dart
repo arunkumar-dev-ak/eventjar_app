@@ -11,21 +11,24 @@ class HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        width: 100.wp,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
+    return Container(
+      width: 100.wp,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
         ),
-        padding: EdgeInsets.all(5.wp),
-        child: Column(
-          children: [
-            //1st card
-            Container(
+      ),
+      padding: EdgeInsets.all(5.wp),
+      child: Column(
+        children: [
+          //1st card
+          GestureDetector(
+            onTap: () {
+              controller.navigateToEventInfoPage();
+            },
+            child: Container(
               padding: EdgeInsets.only(bottom: 10, left: 5, right: 5),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -197,10 +200,10 @@ class HomeContent extends StatelessWidget {
                 ],
               ),
             ),
+          ),
 
-            SizedBox(height: 3.hp),
-          ],
-        ),
+          SizedBox(height: 3.hp),
+        ],
       ),
     );
   }

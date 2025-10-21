@@ -1,5 +1,7 @@
 import 'package:eventjar_app/controller/home/state.dart';
 import 'package:eventjar_app/global/palette_generator.dart';
+import 'package:eventjar_app/logger_service.dart';
+import 'package:eventjar_app/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -41,5 +43,11 @@ class HomeController extends GetxController {
     } catch (e) {
       state.dominantColors.add(Colors.grey[300]!);
     }
+  }
+
+  void navigateToEventInfoPage() {
+    LoggerService.loggerInstance.dynamic_d("before navigateToEventInfoPage");
+    Get.toNamed(RouteName.eventInfoPage);
+    LoggerService.loggerInstance.dynamic_d("after navigateToEventInfoPage");
   }
 }
