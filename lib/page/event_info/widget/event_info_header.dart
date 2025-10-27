@@ -22,7 +22,7 @@ class EventInfoHeader extends StatelessWidget {
                       "Organized By",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 11.sp,
+                        fontSize: 10.sp,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.bold,
                       ),
@@ -41,7 +41,7 @@ class EventInfoHeader extends StatelessWidget {
                         "Richard Chinnapan",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 11.sp,
+                          fontSize: 10.sp,
                           fontWeight: FontWeight.w600,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -72,7 +72,7 @@ class EventInfoHeader extends StatelessWidget {
                   "Codissia Ground,Tamilnadu Coimbatore",
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white, fontSize: 10.sp),
                 ),
               ),
             ],
@@ -83,7 +83,7 @@ class EventInfoHeader extends StatelessWidget {
               Icon(
                 FontAwesomeIcons.clock,
                 color: const Color.fromARGB(255, 7, 102, 180),
-                size: 20,
+                size: 18,
               ),
               SizedBox(width: 3.wp),
               Expanded(
@@ -91,7 +91,7 @@ class EventInfoHeader extends StatelessWidget {
                   "Oct 07, 2025 • 07:00 PM",
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white, fontSize: 10.sp),
                 ),
               ),
             ],

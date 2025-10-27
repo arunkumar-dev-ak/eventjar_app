@@ -16,31 +16,46 @@ class HomePage extends GetView<HomeController> {
       width: 100.wp,
       decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
       child: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              expandedHeight: 8.hp,
-              pinned: false,
-              floating: false,
-              flexibleSpace: FlexibleSpaceBar(background: HomeAppBar()),
-            ),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _SliverSearchBarDelegate(
-                minHeight: 70,
-                maxHeight: 70,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: AppColors.appBarGradient,
+        child: RefreshIndicator(
+          onRefresh: () {
+            return controller.fetchEvents();
+          },
+          child: CustomScrollView(
+            controller: controller.scrollController,
+            slivers: [
+              SliverAppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                expandedHeight: 8.hp,
+                pinned: false,
+                floating: false,
+                flexibleSpace: FlexibleSpaceBar(background: HomeAppBar()),
+              ),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _SliverSearchBarDelegate(
+                  minHeight: 70,
+                  maxHeight: 70,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      gradient: AppColors.appBarGradient,
+                    ),
+                    child: HomeSearchBar(),
                   ),
-                  child: HomeSearchBar(),
                 ),
               ),
-            ),
-            SliverFillRemaining(child: HomeContent()),
-          ],
+              DecoratedSliver(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                sliver: HomeContent(),
+              ),
+            ],
+          ),
         ),
       ),
     );

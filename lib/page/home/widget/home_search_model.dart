@@ -44,7 +44,7 @@ void openSearchModel(BuildContext context) {
                   children: [
                     TextButton(
                       onPressed: () => Get.back(),
-                      child: Text("Cancel", style: TextStyle(fontSize: 11.sp)),
+                      child: Text("Cancel", style: TextStyle(fontSize: 10.sp)),
                     ),
                     Text(
                       "Search Event",
@@ -56,7 +56,7 @@ void openSearchModel(BuildContext context) {
                     ),
                     TextButton(
                       onPressed: () {},
-                      child: Text("Search", style: TextStyle(fontSize: 11.sp)),
+                      child: Text("Search", style: TextStyle(fontSize: 10.sp)),
                     ),
                   ],
                 ),

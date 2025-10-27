@@ -1,10 +1,13 @@
+import 'package:eventjar_app/global/global_values.dart';
 import 'package:eventjar_app/routes/route_name.dart';
 import 'package:eventjar_app/routes/route_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Global.init();
   runApp(const MyApp());
 }
 
