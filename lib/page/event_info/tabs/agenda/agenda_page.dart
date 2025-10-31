@@ -1,5 +1,6 @@
 import 'package:eventjar_app/controller/event_info/controller.dart';
 import 'package:eventjar_app/global/responsive/responsive.dart';
+import 'package:eventjar_app/page/event_info/tabs/agenda/agenda_empty.dart';
 import 'package:eventjar_app/page/event_info/tabs/agenda/agenda_header.dart';
 import 'package:eventjar_app/page/event_info/tabs/agenda/agenda_item.dart';
 import 'package:flutter/material.dart';
@@ -17,22 +18,14 @@ class AgendaPage extends StatelessWidget {
       final eventInfo = controller.state.eventInfo.value;
 
       if (eventInfo == null) {
-        return const Center(child: Text("No event info available"));
+        return noAgendaFoundWidget();
       }
 
       // Get agenda items from the event
       final agendaItems = eventInfo.agendaItems;
 
       if (agendaItems.isEmpty) {
-        return Center(
-          child: Padding(
-            padding: EdgeInsets.all(5.wp),
-            child: Text(
-              "No agenda items available for this event.",
-              style: TextStyle(fontSize: 12.sp, color: Colors.grey),
-            ),
-          ),
-        );
+        return noAgendaFoundWidget();
       }
       String startTime = "N/A";
       String endTime = "N/A";

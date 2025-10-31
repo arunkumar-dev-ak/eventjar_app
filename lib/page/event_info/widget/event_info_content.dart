@@ -3,7 +3,11 @@ import 'package:eventjar_app/global/app_colors.dart';
 import 'package:eventjar_app/global/responsive/responsive.dart';
 import 'package:eventjar_app/global/widget/gradient_text.dart';
 import 'package:eventjar_app/page/event_info/tabs/agenda/agenda_page.dart';
+import 'package:eventjar_app/page/event_info/tabs/images/image_page.dart';
+import 'package:eventjar_app/page/event_info/tabs/location/location_page.dart';
+import 'package:eventjar_app/page/event_info/tabs/organizer/organizer_page.dart';
 import 'package:eventjar_app/page/event_info/tabs/overview/overview_page.dart';
+import 'package:eventjar_app/page/event_info/tabs/reviews/review_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -73,10 +77,10 @@ class EventInfoContent extends StatelessWidget {
                 children: <Widget>[
                   OverViewPage(),
                   AgendaPage(),
-                  Center(child: Text("It's sunny here")),
-                  Center(child: Text("It's cloudy here")),
-                  Center(child: Text("It's rainy here")),
-                  Center(child: Text("It's sunny here")),
+                  LocationPage(),
+                  OrganizerPage(),
+                  ReviewsPage(),
+                  ImagesPage(),
                 ],
               ),
             ),

@@ -31,7 +31,13 @@ class EventInfoHeader extends StatelessWidget {
       // Format date and time display (customize formatting as needed)
       final dateStr =
           "${eventInfo.startDate.day.toString().padLeft(2, '0')}-${eventInfo.startDate.month.toString().padLeft(2, '0')}-${eventInfo.startDate.year}";
-      final timeStr = eventInfo.startTime;
+      final timeStr =
+          eventInfo.startTime != null && eventInfo.startTime!.isNotEmpty
+          ? controller.generateDateTimeAndFormatTime(
+              eventInfo.startTime!,
+              context,
+            )
+          : 'N/A';
 
       // Attendee info
       final attendedCount = eventInfo.count.registrations;
