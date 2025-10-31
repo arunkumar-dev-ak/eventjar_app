@@ -20,42 +20,47 @@ class HomePage extends GetView<HomeController> {
           onRefresh: () {
             return controller.fetchEvents();
           },
-          child: CustomScrollView(
-            controller: controller.scrollController,
-            slivers: [
-              SliverAppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                expandedHeight: 8.hp,
-                pinned: false,
-                floating: false,
-                flexibleSpace: FlexibleSpaceBar(background: HomeAppBar()),
-              ),
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _SliverSearchBarDelegate(
-                  minHeight: 70,
-                  maxHeight: 70,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      gradient: AppColors.appBarGradient,
+          child: Obx(() {
+            return CustomScrollView(
+              controller: controller.scrollController,
+              physics: controller.state.events.isEmpty
+                  ? const NeverScrollableScrollPhysics()
+                  : const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverAppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  expandedHeight: 8.hp,
+                  pinned: false,
+                  floating: false,
+                  flexibleSpace: FlexibleSpaceBar(background: HomeAppBar()),
+                ),
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _SliverSearchBarDelegate(
+                    minHeight: 70,
+                    maxHeight: 70,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: AppColors.appBarGradient,
+                      ),
+                      child: HomeSearchBar(),
                     ),
-                    child: HomeSearchBar(),
                   ),
                 ),
-              ),
-              DecoratedSliver(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+                DecoratedSliver(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
                   ),
+                  sliver: HomeContent(),
                 ),
-                sliver: HomeContent(),
-              ),
-            ],
-          ),
+              ],
+            );
+          }),
         ),
       ),
     );

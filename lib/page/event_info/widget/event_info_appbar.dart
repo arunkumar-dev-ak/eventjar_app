@@ -1,8 +1,8 @@
 import 'package:eventjar_app/controller/event_info/controller.dart';
-import 'package:eventjar_app/logger_service.dart';
 import 'package:eventjar_app/page/event_info/widget/event_info_back_button.dart';
 import 'package:eventjar_app/global/utils/helpers.dart'; // for withValues extension
 import 'package:eventjar_app/page/event_info/widget/event_info_page.utils.dart';
+import 'package:eventjar_app/page/event_info/widget/event_info_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,9 +14,12 @@ class EventInfoAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      if (controller.state.isLoading.value) {
+        return EventInfoAppBarShimmer();
+      }
+
       // Use reactive event info's featuredImageUrl if loaded, else fallback URL
       final imageUrl = controller.state.eventInfo.value?.featuredImageUrl;
-      LoggerService.loggerInstance.dynamic_d(imageUrl);
       return Container(
         height: 250,
         width: double.infinity,

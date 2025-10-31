@@ -3,6 +3,12 @@ import 'package:flutter/material.dart';
 class AppColors {
   static const Color gradientDarkStart = Color(0xFF1C56BF); // Blue
   static const Color gradientDarkEnd = Color(0xFF167B4D); // Green
+  static const Color eventInfoHeaderTextColor = Color.fromARGB(
+    255,
+    239,
+    239,
+    239,
+  );
 
   static const Color gradientLightStart = Color(0xFF789ADE); // Blue
   static const Color gradientLightEnd = Color(0xFF49C987); // Green

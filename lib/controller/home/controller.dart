@@ -77,9 +77,7 @@ class HomeController extends GetxController {
   }
 
   void navigateToEventInfoPage(Event event) {
-    LoggerService.loggerInstance.dynamic_d("before navigateToEventInfoPage");
     Get.toNamed(RouteName.eventInfoPage, parameters: {'eventId': event.id});
-    LoggerService.loggerInstance.dynamic_d("after navigateToEventInfoPage");
   }
 
   String getEndpoint() {
@@ -117,7 +115,6 @@ class HomeController extends GetxController {
   Future<void> fetchEventsOnScroll() async {
     try {
       state.isFetching.value = true;
-      LoggerService.loggerInstance.dynamic_d(getEndpoint());
       EventResponse response = await HomeApi.getEventList(getEndpoint());
       state.events.addAll(response.data);
       state.meta.value = response.meta;

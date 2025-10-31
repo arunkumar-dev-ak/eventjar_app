@@ -11,62 +11,62 @@ class OverViewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Padding(
-              padding: EdgeInsets.only(top: 5.wp),
+    return Obx(() {
+      final eventInfo = controller.state.eventInfo.value;
+      if (eventInfo == null) {
+        return const SizedBox();
+      }
+
+      final List<String> tags = [];
+      if (eventInfo.category != null && eventInfo.category!.name != null) {
+        tags.add(eventInfo.category!.name!);
+      }
+      // Add event tags
+      tags.addAll(eventInfo.tags);
+
+      return SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 1.5.hp),
+            // Tags Horizontal Scroll
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
               child: Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 5.wp),
-                    child: _buildTags(label: "free"),
-                  ),
-                  SizedBox(width: 2.wp),
-                  _buildTags(label: "Business"),
-                  SizedBox(width: 2.wp),
-                  _buildTags(label: "Concert"),
-                  SizedBox(width: 2.wp),
-                  _buildTags(label: "Partnership"),
-                  SizedBox(width: 2.wp),
-                  _buildTags(label: "Drinks"),
-                  SizedBox(width: 2.wp),
-                  _buildTags(label: "free"),
-                  SizedBox(width: 2.wp),
-                  _buildTags(label: "Business"),
-                  SizedBox(width: 2.wp),
-                  _buildTags(label: "Concert"),
-                  SizedBox(width: 2.wp),
-                  _buildTags(label: "Partnership"),
-                  SizedBox(width: 2.wp),
-                  _buildTags(label: "Drinks"),
-                  _buildTags(label: "free"),
-                  SizedBox(width: 2.wp),
-                  _buildTags(label: "Business"),
-                  SizedBox(width: 2.wp),
-                  _buildTags(label: "Concert"),
-                  SizedBox(width: 2.wp),
-                  _buildTags(label: "Partnership"),
-                  SizedBox(width: 2.wp),
-                  _buildTags(label: "Drinks"),
-                ],
+                children: List.generate(tags.length, (index) {
+                  return Padding(
+                    padding: EdgeInsets.only(left: index == 0 ? 5.wp : 2.wp),
+                    child: _buildTags(label: tags[index]),
+                  );
+                }),
               ),
             ),
-          ),
-          SizedBox(height: 1.hp),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5.wp),
-            child: Text(
-              "Data structures and algorithms (DSA) go hand in hand. A data structure is not worth much if you cannot search through it or manipulate it efficiently using algorithms, and the algorithms in this tutorial are not worth much without a data structure to work on.DSA is about finding efficient ways to store and retrieve data, to perform operations on data, and to solve specific problems.By understanding DSA, you can:Decide which data structure or algorithm is best for a given situation.Make programs that run faster or use less memory.Understand how to approach complex problems and solve them in a systematic way.Where is Data Structures and Algorithms Needed. Data Structures and Algorithms (DSA) are used in virtually every software system, from operating systems to web applications:",
-              style: TextStyle(fontSize: 10.sp),
+            SizedBox(height: 1.hp),
+            Padding(
+              padding: EdgeInsets.only(left: 5.wp, right: 5.wp),
+              child: Text(
+                eventInfo.title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11.sp,
+                  color: Colors.black,
+                ),
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+            SizedBox(height: 1.hp),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.wp),
+              child: Text(
+                eventInfo.description ??
+                    "No description available for this event.",
+                style: TextStyle(fontSize: 10.sp),
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 
