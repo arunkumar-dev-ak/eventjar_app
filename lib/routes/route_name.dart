@@ -10,4 +10,10 @@ class RouteName {
 
   //event info
   static const eventInfoPage = '/eventInfoPage';
+
+  //checkout page
+  static const checkoutPage = '/checkoutPage';
+
+  //my ticket page
+  static const myTicketPage = '/myTicketPage';
 }

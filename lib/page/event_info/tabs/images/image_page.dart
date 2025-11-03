@@ -78,7 +78,7 @@ class ImagesPage extends StatelessWidget {
                 aspectRatio: 16 / 9,
                 child: Image.network(
                   getFileUrl(imageUrl),
-                  fit: BoxFit.cover,
+                  fit: BoxFit.fill,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
                     return Container(

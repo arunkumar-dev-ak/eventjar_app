@@ -84,7 +84,12 @@ class EventInfoContent extends StatelessWidget {
                 ],
               ),
             ),
-            eventInfoBookButton(isFree: true),
+            eventInfoBookButton(
+              isFree: true,
+              onTap: () {
+                controller.navigateToCheckOut();
+              },
+            ),
           ],
         ),
       ),
@@ -92,32 +97,44 @@ class EventInfoContent extends StatelessWidget {
   }
 }
 
-Widget eventInfoBookButton({required bool isFree}) {
+Widget eventInfoBookButton({
+  required bool isFree,
+  required VoidCallback onTap,
+}) {
   return Padding(
     padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 1.hp),
-    child: Container(
-      padding: EdgeInsets.all(3.wp),
-      width: 100.wp,
-      decoration: BoxDecoration(
-        gradient: AppColors.buttonGradient,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Center(
-              child: Text(
-                "Book now",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
+    child: Material(
+      borderRadius: BorderRadius.circular(10),
+      color: Colors.transparent,
+      child: Ink(
+        decoration: BoxDecoration(
+          gradient: AppColors.buttonGradient,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.all(3.wp),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      "Book now",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                if (isFree) ...[freeButtonLabel()],
+              ],
             ),
           ),
-          if (isFree) ...[freeButtonLabel()],
-        ],
+        ),
       ),
     ),
   );

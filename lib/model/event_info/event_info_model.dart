@@ -1,5 +1,3 @@
-import 'package:eventjar_app/model/meta/meta_model.dart'; // Update import if needed
-
 class EventInfo {
   final String id;
   final String organizerId;

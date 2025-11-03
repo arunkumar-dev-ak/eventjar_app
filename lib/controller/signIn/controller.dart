@@ -1,4 +1,10 @@
+import 'package:dio/dio.dart';
+import 'package:eventjar_app/api/signin_api/signin_api.dart';
 import 'package:eventjar_app/controller/signIn/state.dart';
+import 'package:eventjar_app/global/app_snackbar.dart';
+import 'package:eventjar_app/global/store/user_store.dart';
+import 'package:eventjar_app/helper/apierror_handler.dart';
+import 'package:eventjar_app/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -53,6 +59,33 @@ class SignInController extends GetxController {
     state.isPasswordHidden.value = !state.isPasswordHidden.value;
   }
 
+  void handleSubmit() async {
+    state.isLoading.value = true;
+    try {
+      var response = await SignInApi.signIn(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      await UserStore.to.handleSetLocalData(response);
+      AppSnackbar.success(
+        title: "Login Successful",
+        message: "User Logged in successfully",
+      );
+      state.isLoading.value = false;
+      navigateToHomePage();
+    } catch (err) {
+      state.isLoading.value = false;
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Login Error");
+      } else {
+        AppSnackbar.error(
+          title: "Login Error",
+          message: "Something went wrong",
+        );
+      }
+    }
+  }
+
   /*----- navigation ----*/
   void navigateToSignUp() {
     Get.toNamed('/signUpPage');
@@ -60,5 +93,9 @@ class SignInController extends GetxController {
 
   void navigateToForgotPassword() {
     Get.toNamed('/forgotPasswordPage');
+  }
+
+  void navigateToHomePage() {
+    Get.offAllNamed(RouteName.dashboardpage);
   }
 }

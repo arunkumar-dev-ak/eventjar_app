@@ -36,7 +36,7 @@ class SignInSubmitButton extends StatelessWidget {
               onTap: () {
                 if (isButtonLoading) return;
                 if (controller.formKey.currentState?.validate() ?? false) {
-                  // controller.onSumbit();
+                  controller.handleSubmit();
                   Get.focusScope?.unfocus();
                 }
               },
@@ -45,7 +45,14 @@ class SignInSubmitButton extends StatelessWidget {
                 height: 60,
                 child: Center(
                   child: isButtonLoading
-                      ? CircularProgressIndicator(color: Colors.white)
+                      ? SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 4,
+                          ),
+                        )
                       : Text(
                           "Submit",
                           style: TextStyle(

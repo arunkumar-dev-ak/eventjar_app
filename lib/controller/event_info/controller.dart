@@ -2,6 +2,7 @@ import 'package:eventjar_app/api/event_info_api/event_info_api.dart';
 import 'package:eventjar_app/controller/event_info/state.dart';
 import 'package:eventjar_app/global/app_snackbar.dart';
 import 'package:eventjar_app/logger_service.dart';
+import 'package:eventjar_app/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -62,6 +63,10 @@ class EventInfoController extends GetxController
         : timeFormat12.format(time);
 
     return formattedTime;
+  }
+
+  void navigateToCheckOut() {
+    Get.toNamed(RouteName.checkoutPage, arguments: state.eventInfo);
   }
 
   @override

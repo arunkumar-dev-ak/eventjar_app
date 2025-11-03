@@ -1,7 +1,10 @@
+import 'package:eventjar_app/global/store/user_store.dart';
+import 'package:eventjar_app/storage/storage_service.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 class Global {
-  static Future init() async {
+  static Future onInit() async {
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -9,20 +12,15 @@ class Global {
     // SystemChrome.setSystemUIOverlayStyle(
     //   SystemUiOverlayStyle(statusBarColor: Config.appBarColor),
     // );
-    // await Get.putAsync<StorageService>(() => StorageService().init());
-    // Get.put<UserStore>(UserStore());
+    await Get.putAsync<StorageService>(() => StorageService().init());
+    Get.put<UserStore>(UserStore());
   }
 }
 
-const String storageUserTokenkey = "user_token"; //key to store in localStorage
-const String storageUserProfilekey =
-    "user_profile"; //key to store in localStorage
-const String storageUserCompanyNamekey =
-    "client_company"; //key to store in localStorage
-const String storageUserSalutationKey =
-    "user_salutation"; //key to store in localStorage
-const String storageUserPreviousDomainKey = "previous_domain_key";
-const domainValidateUrl = "https://wheeldemo.humbletree.net/api/v1";
+const String storageAccessToken = "myEventJar_accessToken";
+const String storageRefreshToken = "myEventJar_refreshToken";
+const String storageProfile = "myEventJar_profile";
+const String storageFcmToken = "myEventJar_fcmToken";
 String url() {
   return "https://myeventjar.com/api";
 } //Base url for Api request
