@@ -1,4 +1,6 @@
 import 'package:eventjar_app/controller/dashboard/controller.dart';
+import 'package:eventjar_app/controller/my_ticket/controller.dart';
+import 'package:eventjar_app/controller/user_profile/controller.dart';
 import 'package:eventjar_app/global/app_colors.dart';
 import 'package:eventjar_app/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +59,21 @@ class CustomBottomNavigationBar extends StatelessWidget {
           ),
         ],
         currentIndex: selectedIndex,
-        onTap: (index) => controller.state.selectedIndex.value = index,
+        onTap: (index) {
+          controller.state.selectedIndex.value = index;
+
+          if (index == 3) {
+            if (!Get.isRegistered<MyTicketController>()) {
+              Get.put(MyTicketController()).onTabOpen();
+            }
+            Get.find<MyTicketController>().onTabOpen();
+          } else if (index == 2) {
+            if (!Get.isRegistered<UserProfileController>()) {
+              Get.put(UserProfileController()).onTabOpen();
+            }
+            Get.find<UserProfileController>().onTabOpen();
+          }
+        },
       );
     });
   }
