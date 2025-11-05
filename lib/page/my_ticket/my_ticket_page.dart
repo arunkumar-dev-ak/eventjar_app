@@ -25,8 +25,7 @@ class MyTicketPage extends GetView<MyTicketController> {
       ),
       body: Obx(() {
         // Loading state
-        if (controller.state.isLoading.value &&
-            controller.state.tickets.isEmpty) {
+        if (controller.state.isLoading.value) {
           return Center(child: CircularProgressIndicator());
         }
 

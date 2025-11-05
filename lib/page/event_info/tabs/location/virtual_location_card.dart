@@ -109,7 +109,6 @@ Widget buildVirtualEventCard({required String platform, String? meetingLink}) {
 Future<void> _launchURL(String url) async {
   try {
     final Uri uri = Uri.parse(url);
-    LoggerService.loggerInstance.dynamic_d("Trying to open: $url");
 
     if (await canLaunchUrl(uri)) {
       final bool launched = await launchUrl(
@@ -130,7 +129,6 @@ Future<void> _launchURL(String url) async {
       );
     }
   } catch (e) {
-    LoggerService.loggerInstance.dynamic_d("Launch error: $e");
     AppSnackbar.error(
       title: "Error",
       message: "An unexpected error occurred while opening the link.",

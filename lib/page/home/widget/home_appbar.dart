@@ -2,6 +2,7 @@ import 'package:eventjar_app/controller/home/controller.dart';
 import 'package:eventjar_app/global/app_colors.dart';
 import 'package:eventjar_app/global/responsive/responsive.dart';
 import 'package:eventjar_app/global/widget/gradient_text.dart';
+import 'package:eventjar_app/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -33,25 +34,42 @@ class HomeAppBar extends StatelessWidget {
             gradientEnd: AppColors.gradientDarkEnd,
             fontWeight: FontWeight.bold,
           ),
-          //Profile
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.splashScreenBackground,
-              borderRadius: BorderRadius.circular(50),
-            ),
-            width: 40,
-            height: 40,
-            child: Center(
-              child: GradientText(
-                textSize: 15.sp,
-                content: "A",
-                gradientStart: AppColors.gradientDarkStart,
-                gradientEnd: AppColors.gradientDarkEnd,
-                fontWeight: FontWeight.normal,
-              ),
-            ),
+          //Budget Tracker Icon
+          GestureDetector(
+            onTap: () {
+              // Navigate to budget/wallet page
+              // Get.toNamed(RouteName.budgetPage);
+            },
+            child: _buildBudgetIcon(),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBudgetIcon() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(50),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      width: 40,
+      height: 40,
+      child: Center(
+        child: Icon(
+          Icons.currency_exchange_rounded,
+          size: 22,
+          color: Color(
+            0xFFD4AF37,
+          ), // Classic gold - BEST for blue-green gradient
+        ),
       ),
     );
   }

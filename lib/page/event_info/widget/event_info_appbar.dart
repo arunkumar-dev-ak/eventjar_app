@@ -21,7 +21,6 @@ class EventInfoAppBar extends StatelessWidget {
 
       // Use reactive event info's featuredImageUrl if loaded, else fallback URL
       final imageUrl = controller.state.eventInfo.value?.featuredImageUrl;
-      LoggerService.loggerInstance.dynamic_d(imageUrl);
       return Container(
         height: 250,
         width: double.infinity,

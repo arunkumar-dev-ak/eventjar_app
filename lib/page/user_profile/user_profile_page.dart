@@ -31,8 +31,7 @@ class UserProfilePage extends GetView<UserProfileController> {
       ),
       body: Obx(() {
         // Loading state
-        if (controller.state.isLoading.value &&
-            controller.state.userProfile.value == null) {
+        if (controller.state.isLoading.value) {
           return Center(child: CircularProgressIndicator());
         }
 
@@ -71,11 +70,11 @@ class UserProfilePage extends GetView<UserProfileController> {
                 title: "Social & Contact Links",
                 child: userProfileBuildSocialLinks(),
               ),
-              SizedBox(height: 2.hp),
-              _buildSection(
-                title: "Security & Sessions",
-                child: userProfileBuildSecurity(),
-              ),
+              // SizedBox(height: 2.hp),
+              // _buildSection(
+              //   title: "Security & Sessions",
+              //   child: userProfileBuildSecurity(),
+              // ),
               SizedBox(height: 4.hp),
             ],
           ),

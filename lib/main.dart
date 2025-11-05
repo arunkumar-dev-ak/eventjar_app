@@ -21,7 +21,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'EventJar',
       theme: _buildLightTheme(context),
-      darkTheme: _buildDarkTheme(),
       themeMode: ThemeMode.system,
       initialRoute: RouteName.splashScreen,
       getPages: RoutePage().getPage,

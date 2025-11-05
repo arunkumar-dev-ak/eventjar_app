@@ -40,7 +40,7 @@ class EventInfoHeader extends StatelessWidget {
           : 'N/A';
 
       // Attendee info
-      final attendedCount = eventInfo.count.registrations;
+      final attendedCount = eventInfo.currentAttendees;
       final maxAttendees = eventInfo.maxAttendees;
       final spotsLeft = maxAttendees - attendedCount;
       return Padding(

@@ -3,7 +3,6 @@ import 'package:eventjar_app/api/user_profile_api/user_profile_api.dart';
 import 'package:eventjar_app/controller/user_profile/state.dart';
 import 'package:eventjar_app/global/app_snackbar.dart';
 import 'package:eventjar_app/helper/apierror_handler.dart';
-import 'package:eventjar_app/logger_service.dart';
 import 'package:get/get.dart';
 
 class UserProfileController extends GetxController {
@@ -23,14 +22,8 @@ class UserProfileController extends GetxController {
       state.isLoading.value = true;
 
       final response = await UserProfileApi.getUserProfile();
-
       state.userProfile.value = response.data;
-
-      LoggerService.loggerInstance.i("User profile loaded successfully");
     } catch (err) {
-      LoggerService.loggerInstance.e(err.runtimeType);
-      LoggerService.loggerInstance.dynamic_d(err);
-
       if (err is DioException) {
         ApiErrorHandler.handleError(err, "Failed to load User Profile");
       } else if (err is Exception) {

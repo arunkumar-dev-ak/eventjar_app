@@ -1,6 +1,7 @@
 import 'package:eventjar_app/api/home_api/home_api.dart';
 import 'package:eventjar_app/controller/home/state.dart';
 import 'package:eventjar_app/global/palette_generator.dart';
+import 'package:eventjar_app/global/store/user_store.dart';
 import 'package:eventjar_app/logger_service.dart';
 import 'package:eventjar_app/model/home/home_model.dart';
 import 'package:eventjar_app/routes/route_name.dart';
@@ -24,14 +25,15 @@ class HomeController extends GetxController {
 
   @override
   void onInit() async {
-    state.isLoading.value = true;
+    onTabOpen();
     super.onInit();
 
-    await fetchEvents();
     scrollController.addListener(_onScroll);
-    state.isLoading.value = false;
+  }
 
-    super.onInit();
+  void onTabOpen() {
+    state.isLoading.value = true;
+    fetchEvents();
   }
 
   void _onScroll() {
@@ -122,6 +124,45 @@ class HomeController extends GetxController {
       LoggerService.loggerInstance.e('Failed to load events: $e');
     } finally {
       state.isFetching.value = false;
+    }
+  }
+
+  /*----- utis -----*/
+  String? getUserImageUrl() {
+    try {
+      final profile = UserStore.to.profile;
+
+      // Check for common image field names
+      if (profile.containsKey('avatarUrl') && profile['avatarUrl'] != null) {
+        return profile['avatarUrl'].toString();
+      }
+
+      return null;
+    } catch (e) {
+      LoggerService.loggerInstance.e('Error getting user image: $e');
+      return null;
+    }
+  }
+
+  // Returns user initials
+  String getUserInitials() {
+    try {
+      final profile = UserStore.to.profile;
+
+      if (profile.containsKey('name') && profile['name'] != null) {
+        List<String> nameParts = profile['name'].split(' ');
+        if (nameParts.length > 1) {
+          return '${nameParts[0][0].toUpperCase()}${nameParts[1][0].toUpperCase()}';
+        }
+        return profile['name'].length > 1
+            ? profile['name'].substring(0, 2).toUpperCase()
+            : profile['name'][0].toUpperCase();
+      }
+
+      return 'EJ'; // EventJar
+    } catch (e) {
+      LoggerService.loggerInstance.e('Error getting user initials: $e');
+      return 'EJ';
     }
   }
 }

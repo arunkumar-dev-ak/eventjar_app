@@ -18,9 +18,7 @@ class MyTicketController extends GetxController {
   }
 
   void onTabOpen() {
-    if (state.tickets.isEmpty) {
-      fetchMyTickets();
-    }
+    fetchMyTickets();
   }
 
   Future<void> fetchMyTickets() async {
@@ -36,7 +34,6 @@ class MyTicketController extends GetxController {
       state.pagination.value = response.data.pagination;
     } catch (err) {
       LoggerService.loggerInstance.e(err.runtimeType);
-      LoggerService.loggerInstance.dynamic_d(err);
       if (err is DioException) {
         ApiErrorHandler.handleError(err, "Failed to load tickets");
       } else if (err is Exception) {
