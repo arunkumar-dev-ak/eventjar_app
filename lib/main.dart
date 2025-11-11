@@ -1,6 +1,7 @@
-import 'package:eventjar_app/global/global_values.dart';
-import 'package:eventjar_app/routes/route_name.dart';
-import 'package:eventjar_app/routes/route_page.dart';
+import 'package:country_code_picker/country_code_picker.dart';
+import 'package:eventjar/global/global_values.dart';
+import 'package:eventjar/routes/route_name.dart';
+import 'package:eventjar/routes/route_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,6 +19,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      supportedLocales: [const Locale('en'), const Locale('lt')],
+      localizationsDelegates: [CountryLocalizations.delegate],
       debugShowCheckedModeBanner: false,
       title: 'EventJar',
       theme: _buildLightTheme(context),

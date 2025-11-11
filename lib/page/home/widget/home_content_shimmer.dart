@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
 
 class EventCardShimmer extends StatelessWidget {
   const EventCardShimmer({super.key});

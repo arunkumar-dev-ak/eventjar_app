@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:eventjar_app/global/app_snackbar.dart';
-import 'package:eventjar_app/logger_service.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/logger_service.dart';
 
 class ApiErrorHandler {
   static void handleError(DioException err, String title) {

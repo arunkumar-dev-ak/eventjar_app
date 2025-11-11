@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:eventjar_app/api/dio_client.dart';
-import 'package:eventjar_app/global/store/user_store.dart';
-import 'package:eventjar_app/model/checkout/eligibility_model.dart';
-import 'package:eventjar_app/routes/route_name.dart';
+import 'package:eventjar/api/dio_client.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/model/checkout/eligibility_model.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:get/get.dart';
 
 class CheckoutApi {

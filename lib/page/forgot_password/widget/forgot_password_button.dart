@@ -1,6 +1,6 @@
-import 'package:eventjar_app/controller/forgotPassword/controller.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
+import 'package:eventjar/controller/forgotPassword/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -34,12 +34,17 @@ class ForgotPasswordSubmitButton extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(16.0),
-              onTap: () {
+              onTap: () async {
                 if (isButtonLoading) return;
                 if (controller.formKey.currentState?.validate() ?? false) {
-                  // controller.onSumbit();
-                  Get.focusScope?.unfocus();
-                  openModel(context, onTap: controller.openEmailApp);
+                  final currentContext = context;
+                  final isSuccess = await controller.handleForgotPasswordSubmit(
+                    currentContext,
+                  );
+
+                  if (isSuccess && currentContext.mounted) {
+                    openModel(currentContext, onTap: controller.openEmailApp);
+                  }
                 }
               },
               child: SizedBox(
@@ -51,7 +56,7 @@ class ForgotPasswordSubmitButton extends StatelessWidget {
                       : Text(
                           "Continue",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: const Color.fromARGB(255, 255, 255, 255),
                             fontSize: 11.sp,
                             fontWeight: FontWeight.bold,
                           ),

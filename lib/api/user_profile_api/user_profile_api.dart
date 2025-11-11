@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:eventjar_app/api/dio_client.dart';
-import 'package:eventjar_app/model/user_profile/user_profile.dart';
+import 'package:eventjar/api/dio_client.dart';
+import 'package:eventjar/model/user_profile/user_profile.dart';
 
 class UserProfileApi {
   static final Dio _dio = DioClient().dio;

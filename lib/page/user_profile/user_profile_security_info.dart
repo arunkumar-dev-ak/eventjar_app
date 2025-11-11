@@ -1,13 +1,17 @@
-import 'package:eventjar_app/global/responsive/responsive.dart';
+import 'package:eventjar/controller/user_profile/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget userProfileBuildSecurity() {
+  final controller = Get.find<UserProfileController>();
+
   return Column(
     children: [
       // Change Password
       InkWell(
         onTap: () {
-          // Navigate to change password
+          controller.navigateToResetPassword();
         },
         child: Container(
           padding: EdgeInsets.all(3.wp),
@@ -64,32 +68,34 @@ Widget userProfileBuildSecurity() {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Icon(Icons.devices, color: Colors.orange.shade700),
-                SizedBox(width: 3.wp),
-                Text(
-                  "Active Sessions",
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.orange.shade700,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 1.hp),
+            // Row(
+            //   children: [
+            //     Icon(Icons.devices, color: Colors.orange.shade700),
+            //     SizedBox(width: 3.wp),
+            //     Text(
+            //       "Active Sessions",
+            //       style: TextStyle(
+            //         fontSize: 10.sp,
+            //         fontWeight: FontWeight.w600,
+            //         color: Colors.orange.shade700,
+            //       ),
+            //     ),
+            //   ],
+            // ),
+            // SizedBox(height: 1.hp),
             Text(
-              "Manage your active sessions",
+              "Manage your active session",
               style: TextStyle(fontSize: 9.sp, color: Colors.grey.shade700),
             ),
             SizedBox(height: 2.hp),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  controller.handleLogout();
+                },
                 icon: Icon(Icons.logout, size: 16),
-                label: Text("Sign Out All Sessions"),
+                label: Text("Sign Out"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,

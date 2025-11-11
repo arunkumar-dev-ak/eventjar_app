@@ -1,4 +1,4 @@
-import 'package:eventjar_app/model/user_profile/user_profile.dart';
+import 'package:eventjar/model/user_profile/user_profile.dart';
 import 'package:get/get.dart';
 
 class UserProfileState {

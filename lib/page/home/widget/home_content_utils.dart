@@ -1,6 +1,6 @@
 // Tag widgets (unchanged, reused)
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shimmer/shimmer.dart';

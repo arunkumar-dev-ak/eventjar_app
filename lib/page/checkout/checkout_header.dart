@@ -1,8 +1,12 @@
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/model/event_info/event_info_model.dart';
+import 'package:eventjar/controller/checkout/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-Widget buildCheckoutEventInfo(EventInfo eventInfo) {
+Widget buildCheckoutEventInfo(EventInfo eventInfo, BuildContext context) {
+  final CheckoutController controller = Get.find();
+
   return Container(
     margin: EdgeInsets.only(top: 4.wp, left: 4.wp, right: 4.wp),
     decoration: BoxDecoration(
@@ -72,7 +76,7 @@ Widget buildCheckoutEventInfo(EventInfo eventInfo) {
           _buildInfoRow(
             Icons.calendar_today,
             eventInfo.startTime != null && eventInfo.endTime != null
-                ? "${eventInfo.startDate.day}-${eventInfo.startDate.month}-${eventInfo.startDate.year} • ${eventInfo.startTime} - ${eventInfo.endTime}"
+                ? controller.formatEventDateTimeForHome(eventInfo, context)
                 : "Date and time to be announced",
             Colors.blue.shade400,
           ),

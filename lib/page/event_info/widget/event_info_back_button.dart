@@ -1,4 +1,4 @@
-import 'package:eventjar_app/global/app_colors.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

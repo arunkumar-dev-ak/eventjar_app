@@ -1,4 +1,4 @@
-import 'package:eventjar_app/controller/event_info/controller.dart';
+import 'package:eventjar/controller/event_info/controller.dart';
 import 'package:get/get.dart';
 
 class EventInfoBinding extends Bindings {

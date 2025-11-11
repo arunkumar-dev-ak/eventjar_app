@@ -1,16 +1,24 @@
 import 'package:dio/dio.dart';
-import 'package:eventjar_app/api/checkout_api/booking_api.dart';
-import 'package:eventjar_app/api/checkout_api/eligibility_api.dart';
-import 'package:eventjar_app/controller/checkout/state.dart';
-import 'package:eventjar_app/global/app_snackbar.dart';
-import 'package:eventjar_app/helper/apierror_handler.dart';
-import 'package:eventjar_app/model/event_info/event_info_model.dart';
-import 'package:eventjar_app/routes/route_name.dart';
+import 'package:eventjar/api/checkout_api/booking_api.dart';
+import 'package:eventjar/api/checkout_api/eligibility_api.dart';
+import 'package:eventjar/controller/checkout/state.dart';
+import 'package:eventjar/controller/my_ticket/controller.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/helper/date_handler.dart';
+import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/event_info/event_info_model.dart';
+import 'package:eventjar/routes/route_name.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class CheckoutController extends GetxController {
   var appBarTitle = "EventJar";
   final state = CheckoutState();
+
+  final MyTicketController ticketController = Get.find();
 
   @override
   void onInit() {
@@ -74,6 +82,13 @@ class CheckoutController extends GetxController {
       navigateToMyTicketPage();
     } catch (err) {
       if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return; // Stop further error handling
+        }
         ApiErrorHandler.handleError(err, "Registration Failed");
       } else {
         AppSnackbar.error(
@@ -108,6 +123,13 @@ class CheckoutController extends GetxController {
     } catch (err) {
       state.isCheckingEligibility.value = false;
       if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return; // Stop further error handling
+        }
         ApiErrorHandler.handleError(err, "Ticket Eligibity Failed");
       } else {
         AppSnackbar.error(
@@ -120,7 +142,36 @@ class CheckoutController extends GetxController {
     }
   }
 
+  void navigateToSignInPage() {
+    Get.toNamed(RouteName.signInPage);
+  }
+
   void navigateToMyTicketPage() {
     Get.offAndToNamed(RouteName.myTicketPage);
+    ticketController.onTabOpen();
+  }
+
+  String formatEventDateTimeForHome(dynamic event, BuildContext context) {
+    try {
+      DateTime dateTime;
+
+      if (event.startTime.contains('T') || event.startTime.contains('Z')) {
+        dateTime = DateTime.parse(event.startTime).toLocal();
+      } else {
+        final formattedDate = DateFormat('yyyy-MM-dd').format(event.startDate);
+        dateTime = DateTime.parse(
+          "$formattedDate ${event.startTime}:00",
+        ).toLocal();
+      }
+
+      final formattedDate =
+          '${event.startDate.day.toString().padLeft(2, '0')}-${event.startDate.month.toString().padLeft(2, '0')}-${event.startDate.year}';
+      final formattedTime = formatTimeFromDateTime(dateTime, context);
+
+      return "$formattedDate • $formattedTime";
+    } catch (e) {
+      LoggerService.loggerInstance.e('Date parse error: $e');
+      return "Invalid date";
+    }
   }
 }

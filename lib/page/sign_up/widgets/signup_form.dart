@@ -1,8 +1,10 @@
-import 'package:eventjar_app/controller/signUp/controller.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/page/sign_up/widgets/signup_signin.dart';
-import 'package:eventjar_app/page/sign_up/widgets/signup_submit_button.dart';
+import 'package:country_code_picker/country_code_picker.dart';
+import 'package:eventjar/controller/signUp/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/sign_up/widgets/signup_signin.dart';
+import 'package:eventjar/page/sign_up/widgets/signup_submit_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class SignUpTextFormField extends StatelessWidget {
@@ -15,6 +17,9 @@ class SignUpTextFormField extends StatelessWidget {
   final RxBool isFieldValid;
   final RxBool isFieldFocused;
   final Function(String) onChanged;
+  final bool hasOuterBorder;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   const SignUpTextFormField({
     required this.controller,
@@ -26,6 +31,9 @@ class SignUpTextFormField extends StatelessWidget {
     required this.isFieldValid,
     required this.isFieldFocused,
     required this.onChanged,
+    this.hasOuterBorder = true,
+    this.keyboardType,
+    this.inputFormatters,
     super.key,
   });
 
@@ -42,6 +50,8 @@ class SignUpTextFormField extends StatelessWidget {
           validator: validator,
           onChanged: onChanged,
           obscureText: isPassword && isPasswordHidden,
+          keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           decoration: InputDecoration(
             label: RichText(
               text: TextSpan(
@@ -62,22 +72,30 @@ class SignUpTextFormField extends StatelessWidget {
                 ],
               ),
             ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade400),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black, width: 2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.red),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.red),
-              borderRadius: BorderRadius.circular(10),
-            ),
+            enabledBorder: hasOuterBorder
+                ? OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade400),
+                    borderRadius: BorderRadius.circular(10),
+                  )
+                : InputBorder.none,
+            focusedBorder: hasOuterBorder
+                ? OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black, width: 2),
+                    borderRadius: BorderRadius.circular(10),
+                  )
+                : InputBorder.none,
+            errorBorder: hasOuterBorder
+                ? OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red),
+                    borderRadius: BorderRadius.circular(10),
+                  )
+                : InputBorder.none,
+            focusedErrorBorder: hasOuterBorder
+                ? OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.red),
+                    borderRadius: BorderRadius.circular(10),
+                  )
+                : InputBorder.none,
             suffixIcon: isPassword
                 ? IconButton(
                     onPressed: togglePasswordVisibility,
@@ -89,7 +107,9 @@ class SignUpTextFormField extends StatelessWidget {
                     ),
                   )
                 : null,
-            prefixIcon: Icon(_getFieldIcon(label), color: Colors.grey.shade400),
+            prefixIcon: hasOuterBorder
+                ? Icon(_getFieldIcon(label), color: Colors.grey.shade400)
+                : null,
           ),
         ),
       ),
@@ -143,16 +163,50 @@ class SignUpForm extends StatelessWidget {
             SizedBox(height: 2.hp),
 
             // Mobile Number
-            SignUpTextFormField(
-              controller: controller.mobileNumberController,
-              label: "Mobile Number",
-              validator: (val) =>
-                  val!.isEmpty ? "Mobile Number is required" : null,
-              isFieldValid: controller.state.isMobileNumberValid,
-              isFieldFocused: controller.state.focusMobileNumber,
-              togglePasswordVisibility: () {},
-              onChanged: (_) {},
+            Obx(
+              () => Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade400),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  children: [
+                    CountryCodePicker(
+                      onChanged: (country) {
+                        controller.state.selectedCountryCode.value =
+                            country.dialCode ?? '+91';
+                      },
+                      initialSelection: 'IN',
+                      favorite: ['+91', 'IN'],
+                      showCountryOnly: false,
+                      showOnlyCountryWhenClosed: false,
+                    ),
+                    Expanded(
+                      child: SignUpTextFormField(
+                        controller: controller.mobileNumberController,
+                        label: "Mobile Number",
+                        validator: (val) =>
+                            val!.isEmpty ? "Mobile Number is required" : null,
+                        isFieldValid: controller.state.isMobileNumberValid,
+                        isFieldFocused: controller.state.focusMobileNumber,
+                        togglePasswordVisibility: () {},
+                        onChanged: (_) {},
+                        hasOuterBorder:
+                            false, // new flag to remove internal border
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'[0-9+]'),
+                          ), // only digits and plus sign allowed
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
+
             SizedBox(height: 2.hp),
 
             // Password
@@ -185,13 +239,20 @@ class SignUpForm extends StatelessWidget {
                 togglePasswordVisibility: () =>
                     controller.state.isConfirmPasswordHidden.value =
                         !controller.state.isConfirmPasswordHidden.value,
-                validator: (val) =>
-                    val!.isEmpty ? "Confirm Password is required" : null,
+                validator: (val) {
+                  if (val == null || val.isEmpty) {
+                    return "Confirm Password is required";
+                  } else if (val != controller.passwordController.text) {
+                    return "Passwords do not match";
+                  }
+                  return null;
+                },
                 isFieldValid: controller.state.isConfirmPasswordValid,
                 isFieldFocused: controller.state.focusConfirmPassword,
                 onChanged: (_) {},
               ),
             ),
+
             SizedBox(height: 3.hp),
 
             //submit button
@@ -223,7 +284,7 @@ class SignUpForm extends StatelessWidget {
             SizedBox(height: 2.hp),
             AuthSignIn(
               onPressed: () {
-                controller.navigateToLogin();
+                Navigator.pop(context);
               },
             ),
             SizedBox(height: 0.5.hp),

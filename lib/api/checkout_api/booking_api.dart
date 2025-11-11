@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:eventjar_app/api/dio_client.dart';
-import 'package:eventjar_app/global/app_snackbar.dart';
+import 'package:eventjar/api/dio_client.dart';
+import 'package:eventjar/global/app_snackbar.dart';
 
 class TicketBookingApi {
   static final Dio _dio = DioClient().dio;

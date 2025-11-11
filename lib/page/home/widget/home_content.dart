@@ -1,9 +1,10 @@
-import 'package:eventjar_app/controller/home/controller.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/global/utils/helpers.dart';
-import 'package:eventjar_app/page/home/widget/home_content_shimmer.dart';
-import 'package:eventjar_app/page/home/widget/home_content_utils.dart';
+import 'package:eventjar/controller/home/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/utils/helpers.dart';
+import 'package:eventjar/helper/date_handler.dart';
+import 'package:eventjar/page/home/widget/home_content_shimmer.dart';
+import 'package:eventjar/page/home/widget/home_content_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -130,7 +131,10 @@ class HomeContent extends StatelessWidget {
                           SizedBox(width: 1.wp),
                           Expanded(
                             child: Text(
-                              '${event.startDate.day.toString().padLeft(2, '0')}-${event.startDate.month.toString().padLeft(2, '0')}-${event.startDate.year} • ${event.startTime}',
+                              controller.formatEventDateTimeForHome(
+                                event,
+                                context,
+                              ),
                               style: TextStyle(
                                 color: Colors.black.withValues(alpha: 0.85),
                                 fontSize: 10.sp,

@@ -1,5 +1,9 @@
-import 'package:eventjar_app/controller/forgotPassword/state.dart';
-import 'package:eventjar_app/logger_service.dart';
+import 'package:dio/dio.dart';
+import 'package:eventjar/api/forgot_password_api/forgot_password_api.dart';
+import 'package:eventjar/controller/forgotPassword/state.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -23,6 +27,36 @@ class ForgotPasswordController extends GetxController {
       emailFocusNode.requestFocus();
     });
     super.onInit();
+  }
+
+  Map<String, dynamic> getForgotPasswordData() {
+    return {"email": emailController.text.trim()};
+  }
+
+  Future<bool> handleForgotPasswordSubmit(BuildContext context) async {
+    try {
+      state.isLoading.value = true;
+      final message = await ForgotPasswordApi.forgotPassword(
+        getForgotPasswordData(),
+      );
+
+      AppSnackbar.success(title: "Email Sent", message: message);
+
+      return true;
+    } catch (err) {
+      state.isLoading.value = false;
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Email Send Failed");
+      } else {
+        AppSnackbar.error(
+          title: "Email Send Failed",
+          message: "Something went wrong. Please try again.",
+        );
+      }
+      return false;
+    } finally {
+      state.isLoading.value = false;
+    }
   }
 
   //validate email

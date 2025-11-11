@@ -1,4 +1,4 @@
-import 'package:eventjar_app/controller/splashScreen/controller.dart';
+import 'package:eventjar/controller/splashScreen/controller.dart';
 import 'package:get/get.dart';
 
 class SplashScreenBinding extends Bindings {

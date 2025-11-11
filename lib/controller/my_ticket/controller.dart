@@ -1,19 +1,27 @@
 import 'package:dio/dio.dart';
-import 'package:eventjar_app/api/my_ticket_api/my_ticket_api.dart';
-import 'package:eventjar_app/controller/my_ticket/state.dart';
-import 'package:eventjar_app/global/app_snackbar.dart';
-import 'package:eventjar_app/helper/apierror_handler.dart';
-import 'package:eventjar_app/logger_service.dart';
+import 'package:eventjar/api/my_ticket_api/my_ticket_api.dart';
+import 'package:eventjar/controller/dashboard/controller.dart';
+import 'package:eventjar/controller/my_ticket/state.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:get/get.dart';
 
 class MyTicketController extends GetxController {
   var appBarTitle = "EventJar";
   final state = MyTicketsState();
+  final DashboardController dashboardController = Get.find();
 
   final int itemsPerPage = 10;
 
   @override
   void onInit() {
+    LoggerService.loggerInstance.dynamic_d(Get.previousRoute);
+    if (Get.previousRoute == RouteName.eventInfoPage) {
+      LoggerService.loggerInstance.dynamic_d("In event info page");
+    }
     super.onInit();
   }
 
@@ -35,6 +43,14 @@ class MyTicketController extends GetxController {
     } catch (err) {
       LoggerService.loggerInstance.e(err.runtimeType);
       if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return; // Stop further error handling
+        }
+
         ApiErrorHandler.handleError(err, "Failed to load tickets");
       } else if (err is Exception) {
         AppSnackbar.error(title: "Exception", message: err.toString());
@@ -71,6 +87,14 @@ class MyTicketController extends GetxController {
       state.currentPage.value--;
 
       if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return;
+        }
+
         ApiErrorHandler.handleError(err, "Failed to load more tickets");
       } else {
         AppSnackbar.error(
@@ -86,6 +110,16 @@ class MyTicketController extends GetxController {
   Future<void> refreshTickets() async {
     state.currentPage.value = 1;
     await fetchMyTickets();
+  }
+
+  void navigateToSignInPage() {
+    Get.toNamed(RouteName.signInPage)?.then((result) {
+      if (result == "logged_in") {
+        onTabOpen();
+      } else {
+        dashboardController.state.selectedIndex.value = 0;
+      }
+    });
   }
 
   void toggleQRCode(int ticketId) {

@@ -1,5 +1,5 @@
-import 'package:eventjar_app/model/home/home_model.dart';
-import 'package:eventjar_app/model/meta/meta_model.dart';
+import 'package:eventjar/model/home/home_model.dart';
+import 'package:eventjar/model/meta/meta_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

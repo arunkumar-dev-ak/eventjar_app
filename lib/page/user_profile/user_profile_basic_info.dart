@@ -1,6 +1,6 @@
-import 'package:eventjar_app/controller/user_profile/controller.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/page/user_profile/user_profile_utils.dart';
+import 'package:eventjar/controller/user_profile/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/user_profile/user_profile_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

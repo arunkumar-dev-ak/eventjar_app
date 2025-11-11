@@ -1,7 +1,7 @@
-import 'package:eventjar_app/controller/dashboard/controller.dart';
-import 'package:eventjar_app/controller/home/binding.dart';
-import 'package:eventjar_app/controller/my_ticket/controller.dart';
-import 'package:eventjar_app/controller/user_profile/controller.dart';
+import 'package:eventjar/controller/dashboard/controller.dart';
+import 'package:eventjar/controller/home/binding.dart';
+import 'package:eventjar/controller/my_ticket/controller.dart';
+import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:get/get.dart';
 
 class DashboardBinding extends Bindings {

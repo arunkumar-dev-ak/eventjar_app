@@ -1,7 +1,7 @@
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/helper/date_handler.dart';
-import 'package:eventjar_app/model/my_ticket/my_ticket_model.dart';
-import 'package:eventjar_app/page/my_ticket/my_ticket_card_page_utils.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/helper/date_handler.dart';
+import 'package:eventjar/model/my_ticket/my_ticket_model.dart';
+import 'package:eventjar/page/my_ticket/my_ticket_card_page_utils.dart';
 import 'package:flutter/material.dart';
 
 Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
@@ -124,7 +124,8 @@ Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
               myTicketBuildInfoRow(
                 Icons.access_time,
                 'Time',
-                '${formatTimeFromDateTime(ticket.event.startDate, context)} - ${formatTimeFromDateTime(ticket.event.endDate, context)}',
+                // '${formatTimeFromDateTime(ticket.event.startDate, context)} - ${formatTimeFromDateTime(ticket.event.endDate, context)}',
+                '${formatTimeFromDateTime(ticket.event.startDate, context)}',
                 Colors.orange.shade400,
               ),
 

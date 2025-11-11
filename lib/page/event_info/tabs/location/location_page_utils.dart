@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
 
 Widget buildIconHeaderContainer({
   required IconData icon,

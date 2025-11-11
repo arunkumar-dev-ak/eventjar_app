@@ -1,8 +1,8 @@
-import 'package:eventjar_app/page/event_info/widget/event_info_back_button.dart';
+import 'package:eventjar/page/event_info/widget/event_info_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
 
 /*----- appbar shimmer ----*/
 class EventInfoAppBarShimmer extends StatelessWidget {

@@ -1,20 +1,21 @@
-import 'package:eventjar_app/controller/user_profile/controller.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/page/user_profile/user_profile_utils.dart';
+import 'package:eventjar/controller/user_profile/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/user_profile/user_profile_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 Widget userProfileBuildBusinessInfo() {
   final controller = Get.find<UserProfileController>();
 
-  final extended = controller.state.userProfile.value?.extendedProfile;
+  final user = controller.state.userProfile.value;
+  final extended = user?.extendedProfile;
 
   return Column(
     children: [
       userProfilebuildInfoRow(
         icon: Icons.business,
         label: "Business Name",
-        value: extended?.businessName ?? "Not provided",
+        value: user?.company ?? "Not provided",
         iconColor: Colors.purple,
       ),
       SizedBox(height: 2.hp),
@@ -28,11 +29,9 @@ Widget userProfileBuildBusinessInfo() {
       userProfilebuildInfoRow(
         icon: Icons.language,
         label: "Business Website",
-        value: extended?.businessWebsite ?? "Not provided",
+        value: user?.website ?? "Not provided",
         iconColor: Colors.blue,
-        isLink:
-            extended?.businessWebsite != null &&
-            extended!.businessWebsite!.isNotEmpty,
+        isLink: user?.website != null && user!.website!.isNotEmpty,
       ),
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
@@ -52,7 +51,7 @@ Widget userProfileBuildBusinessInfo() {
       userProfilebuildInfoRow(
         icon: Icons.location_city,
         label: "Business Address",
-        value: extended?.businessAddress ?? "Not provided",
+        value: user?.location ?? "Not provided",
         iconColor: Colors.orange,
       ),
       SizedBox(height: 2.hp),

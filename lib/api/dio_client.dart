@@ -1,9 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:eventjar_app/global/global_values.dart';
-import 'package:eventjar_app/global/store/user_store.dart';
-import 'package:eventjar_app/routes/route_name.dart';
-import 'package:get/get.dart';
-import 'package:get/utils.dart';
+import 'package:eventjar/global/global_values.dart';
+import 'package:eventjar/global/store/user_store.dart';
 
 class DioClient {
   static final DioClient _instance = DioClient._internal();
@@ -16,8 +13,8 @@ class DioClient {
     dio = Dio(
       BaseOptions(
         baseUrl: url(),
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
         headers: {'Content-Type': 'application/json'},
       ),
     );
@@ -33,13 +30,13 @@ class DioClient {
 
           return handler.next(options);
         },
-        onError: (DioException e, handler) {
-          if (e.response?.statusCode == 401) {
-            UserStore.to.clearStore();
-            Get.toNamed(RouteName.signInPage);
-          }
-          return handler.next(e);
-        },
+        // onError: (DioException e, handler) {
+        // if (e.response?.statusCode == 401) {
+        //   UserStore.to.clearStore();
+        //   Get.toNamed(RouteName.signInPage);
+        // }
+        //   return handler.next(e);
+        // },
       ),
     );
   }

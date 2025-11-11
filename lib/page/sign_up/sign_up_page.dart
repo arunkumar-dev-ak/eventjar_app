@@ -1,9 +1,9 @@
-import 'package:eventjar_app/controller/signUp/controller.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/page/sign_up/widgets/signup_back_button.dart';
-import 'package:eventjar_app/page/sign_up/widgets/signup_form.dart';
-import 'package:eventjar_app/page/sign_up/widgets/signup_header.dart';
+import 'package:eventjar/controller/signUp/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/sign_up/widgets/signup_back_button.dart';
+import 'package:eventjar/page/sign_up/widgets/signup_form.dart';
+import 'package:eventjar/page/sign_up/widgets/signup_header.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

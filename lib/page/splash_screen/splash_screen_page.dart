@@ -1,7 +1,7 @@
-import 'package:eventjar_app/controller/splashScreen/controller.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/global/widget/gradient_text.dart';
+import 'package:eventjar/controller/splashScreen/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/widget/gradient_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';

@@ -1,5 +1,5 @@
-import 'package:eventjar_app/controller/checkout/controller.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
+import 'package:eventjar/controller/checkout/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

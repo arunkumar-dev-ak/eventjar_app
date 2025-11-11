@@ -1,9 +1,9 @@
-import 'package:eventjar_app/controller/home/controller.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/page/home/widget/home_appbar.dart';
-import 'package:eventjar_app/page/home/widget/home_content.dart';
-import 'package:eventjar_app/page/home/widget/home_searchbar.dart';
+import 'package:eventjar/controller/home/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/home/widget/home_appbar.dart';
+import 'package:eventjar/page/home/widget/home_content.dart';
+import 'package:eventjar/page/home/widget/home_searchbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -27,14 +27,27 @@ class HomePage extends GetView<HomeController> {
                   ? const NeverScrollableScrollPhysics()
                   : const AlwaysScrollableScrollPhysics(),
               slivers: [
-                SliverAppBar(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  expandedHeight: 8.hp,
-                  pinned: false,
-                  floating: false,
-                  flexibleSpace: FlexibleSpaceBar(background: HomeAppBar()),
-                ),
+                // SliverAppBar(
+                //   backgroundColor: Colors.transparent,
+                //   elevation: 0,
+                //   expandedHeight: 8.hp,
+                //   pinned: false,
+                //   floating: false,
+                //   flexibleSpace: FlexibleSpaceBar(background: HomeAppBar()),
+                // ),
+                // SliverPersistentHeader(
+                //   pinned: true,
+                //   delegate: _SliverSearchBarDelegate(
+                //     minHeight: 70,
+                //     maxHeight: 70,
+                //     child: Container(
+                //       decoration: const BoxDecoration(
+                //         gradient: AppColors.appBarGradient,
+                //       ),
+                //       child: HomeSearchBar(),
+                //     ),
+                //   ),
+                // ),
                 SliverPersistentHeader(
                   pinned: true,
                   delegate: _SliverSearchBarDelegate(
@@ -44,7 +57,7 @@ class HomePage extends GetView<HomeController> {
                       decoration: const BoxDecoration(
                         gradient: AppColors.appBarGradient,
                       ),
-                      child: HomeSearchBar(),
+                      child: HomeAppBar(),
                     ),
                   ),
                 ),

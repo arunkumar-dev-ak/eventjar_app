@@ -1,4 +1,4 @@
-import 'package:eventjar_app/model/meta/meta_model.dart';
+import 'package:eventjar/model/meta/meta_model.dart';
 
 class EventResponse {
   final List<Event> data;

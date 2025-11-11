@@ -1,4 +1,4 @@
-import 'package:eventjar_app/controller/forgotPassword/controller.dart';
+import 'package:eventjar/controller/forgotPassword/controller.dart';
 import 'package:get/get.dart';
 
 class ForgotPasswordBinding extends Bindings {

@@ -1,8 +1,8 @@
-import 'package:eventjar_app/controller/event_info/controller.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/page/event_info/tabs/agenda/agenda_empty.dart';
-import 'package:eventjar_app/page/event_info/tabs/agenda/agenda_header.dart';
-import 'package:eventjar_app/page/event_info/tabs/agenda/agenda_item.dart';
+import 'package:eventjar/controller/event_info/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/event_info/tabs/agenda/agenda_empty.dart';
+import 'package:eventjar/page/event_info/tabs/agenda/agenda_header.dart';
+import 'package:eventjar/page/event_info/tabs/agenda/agenda_item.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';

@@ -1,9 +1,9 @@
-import 'package:eventjar_app/controller/signIn/controller.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/global/widget/alignment_widget.dart';
-import 'package:eventjar_app/page/sign_in/widgets/signin_signup.dart';
-import 'package:eventjar_app/page/sign_in/widgets/signin_submit_button.dart';
+import 'package:eventjar/controller/signIn/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/widget/alignment_widget.dart';
+import 'package:eventjar/page/sign_in/widgets/signin_signup.dart';
+import 'package:eventjar/page/sign_in/widgets/signin_submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

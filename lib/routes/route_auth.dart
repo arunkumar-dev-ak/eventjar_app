@@ -1,5 +1,5 @@
-import 'package:eventjar_app/global/store/user_store.dart';
-import 'package:eventjar_app/routes/route_name.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

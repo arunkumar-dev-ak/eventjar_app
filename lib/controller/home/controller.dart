@@ -1,12 +1,14 @@
-import 'package:eventjar_app/api/home_api/home_api.dart';
-import 'package:eventjar_app/controller/home/state.dart';
-import 'package:eventjar_app/global/palette_generator.dart';
-import 'package:eventjar_app/global/store/user_store.dart';
-import 'package:eventjar_app/logger_service.dart';
-import 'package:eventjar_app/model/home/home_model.dart';
-import 'package:eventjar_app/routes/route_name.dart';
+import 'package:eventjar/api/home_api/home_api.dart';
+import 'package:eventjar/controller/home/state.dart';
+import 'package:eventjar/global/palette_generator.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/helper/date_handler.dart';
+import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/home/home_model.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class HomeController extends GetxController {
   var appBarTitle = "EventJar";
@@ -163,6 +165,30 @@ class HomeController extends GetxController {
     } catch (e) {
       LoggerService.loggerInstance.e('Error getting user initials: $e');
       return 'EJ';
+    }
+  }
+
+  String formatEventDateTimeForHome(dynamic event, BuildContext context) {
+    try {
+      DateTime dateTime;
+
+      if (event.startTime.contains('T') || event.startTime.contains('Z')) {
+        dateTime = DateTime.parse(event.startTime).toLocal();
+      } else {
+        final formattedDate = DateFormat('yyyy-MM-dd').format(event.startDate);
+        dateTime = DateTime.parse(
+          "$formattedDate ${event.startTime}:00",
+        ).toLocal();
+      }
+
+      final formattedDate =
+          '${event.startDate.day.toString().padLeft(2, '0')}-${event.startDate.month.toString().padLeft(2, '0')}-${event.startDate.year}';
+      final formattedTime = formatTimeFromDateTime(dateTime, context);
+
+      return "$formattedDate • $formattedTime";
+    } catch (e) {
+      LoggerService.loggerInstance.e('Date parse error: $e');
+      return "Invalid date";
     }
   }
 }

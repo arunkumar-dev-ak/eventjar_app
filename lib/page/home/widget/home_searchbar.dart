@@ -1,6 +1,6 @@
-import 'package:eventjar_app/controller/home/controller.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/page/home/widget/home_search_model.dart';
+import 'package:eventjar/controller/home/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/home/widget/home_search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

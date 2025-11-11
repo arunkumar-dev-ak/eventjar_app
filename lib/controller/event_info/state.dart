@@ -1,4 +1,4 @@
-import 'package:eventjar_app/model/event_info/event_info_model.dart';
+import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:get/get.dart';
 
 class EventInfoState {

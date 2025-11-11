@@ -1,5 +1,6 @@
-import 'package:eventjar_app/controller/user_profile/controller.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
+import 'package:eventjar/controller/user_profile/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -66,7 +67,9 @@ class UserProfileHeader extends StatelessWidget {
               controller.avatarUrl != null && controller.avatarUrl!.isNotEmpty
               ? CircleAvatar(
                   radius: 50,
-                  backgroundImage: NetworkImage(controller.avatarUrl!),
+                  backgroundImage: NetworkImage(
+                    getFileUrl(controller.avatarUrl!),
+                  ),
                 )
               : CircleAvatar(
                   radius: 50,

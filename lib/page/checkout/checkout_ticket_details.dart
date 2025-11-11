@@ -1,6 +1,6 @@
-import 'package:eventjar_app/controller/checkout/controller.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/model/event_info/event_info_model.dart';
+import 'package:eventjar/controller/checkout/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -231,35 +231,79 @@ Widget buildCheckoutPageTicketDetailsCard(EventInfo eventInfo) {
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Row(
-                    children: [
-                      _buildQuantityButton(
-                        Icons.remove,
-                        () => controller.decrementQuantity(),
-                        Colors.green.shade400,
-                      ),
-                      Obx(
-                        () => Container(
-                          padding: EdgeInsets.symmetric(horizontal: 4.wp),
-                          child: Text(
-                            "${controller.state.quantity.value}",
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green.shade900,
+                  // child: Row(
+                  //   children: [
+                  //     _buildQuantityButton(
+                  //       Icons.remove,
+                  //       () => controller.decrementQuantity(),
+                  //       Colors.green.shade400,
+                  //     ),
+                  //     Obx(
+                  //       () => Container(
+                  //         padding: EdgeInsets.symmetric(horizontal: 4.wp),
+                  //         child: Text(
+                  //           "${controller.state.quantity.value}",
+                  //           style: TextStyle(
+                  //             fontSize: 10.sp,
+                  //             fontWeight: FontWeight.bold,
+                  //             color: Colors.green.shade900,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     _buildQuantityButton(
+                  //       Icons.add,
+                  //       () => controller.incrementQuantity(),
+                  //       Colors.green.shade400,
+                  //     ),
+                  //   ],
+                  // ),
+                  child: AbsorbPointer(
+                    absorbing: true, // disables taps
+                    child: Opacity(
+                      opacity: 0.4, // semi-transparent to look disabled
+                      child: Row(
+                        children: [
+                          _buildQuantityButton(
+                            Icons.remove,
+                            () {}, // empty callback since disabled
+                            Colors.grey.shade400,
+                          ),
+                          Obx(
+                            () => Container(
+                              padding: EdgeInsets.symmetric(horizontal: 4.wp),
+                              child: Text(
+                                "${controller.state.quantity.value}",
+                                style: TextStyle(
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey.shade700,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          _buildQuantityButton(
+                            Icons.add,
+                            () {}, // empty callback since disabled
+                            Colors.grey.shade400,
+                          ),
+                        ],
                       ),
-                      _buildQuantityButton(
-                        Icons.add,
-                        () => controller.incrementQuantity(),
-                        Colors.green.shade400,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],
+            ),
+
+            SizedBox(height: 1.5.hp), // some spacing
+            Text(
+              "You are allowed to select only one ticket for this event",
+              style: TextStyle(
+                fontSize: 8.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.orange.shade800,
+                height: 1.4,
+              ),
             ),
           ],
         ),

@@ -23,4 +23,6 @@ class SignUpState {
   RxBool isFullNamelValid = true.obs;
   RxBool isMobileNumberValid = true.obs;
   RxBool isConfirmPasswordValid = true.obs;
+
+  RxString selectedCountryCode = '+91'.obs;
 }

@@ -1,11 +1,11 @@
-import 'package:eventjar_app/controller/checkout/controller.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/page/checkout/checkout_header.dart';
-import 'package:eventjar_app/page/checkout/checkout_price_summary.dart';
-import 'package:eventjar_app/page/checkout/checkout_submit_button.dart';
-import 'package:eventjar_app/page/checkout/checkout_terms_text.dart';
-import 'package:eventjar_app/page/checkout/checkout_ticket_details.dart';
+import 'package:eventjar/controller/checkout/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/checkout/checkout_header.dart';
+import 'package:eventjar/page/checkout/checkout_price_summary.dart';
+import 'package:eventjar/page/checkout/checkout_submit_button.dart';
+import 'package:eventjar/page/checkout/checkout_terms_text.dart';
+import 'package:eventjar/page/checkout/checkout_ticket_details.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -37,7 +37,7 @@ class CheckoutPage extends GetView<CheckoutController> {
           child: Column(
             children: [
               // Event Information Card
-              buildCheckoutEventInfo(eventInfo),
+              buildCheckoutEventInfo(eventInfo, context),
               SizedBox(height: 2.hp),
 
               // Ticket Details Card (with warning inside if applicable)

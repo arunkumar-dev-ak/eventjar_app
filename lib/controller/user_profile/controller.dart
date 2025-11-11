@@ -1,13 +1,19 @@
 import 'package:dio/dio.dart';
-import 'package:eventjar_app/api/user_profile_api/user_profile_api.dart';
-import 'package:eventjar_app/controller/user_profile/state.dart';
-import 'package:eventjar_app/global/app_snackbar.dart';
-import 'package:eventjar_app/helper/apierror_handler.dart';
+import 'package:eventjar/api/user_profile_api/user_profile_api.dart';
+import 'package:eventjar/controller/dashboard/controller.dart';
+import 'package:eventjar/controller/user_profile/state.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:get/get.dart';
 
 class UserProfileController extends GetxController {
   var appBarTitle = "EventJar";
   final state = UserProfileState();
+
+  final DashboardController dashboardController = Get.find();
 
   void onInint() {
     super.onInit();
@@ -25,6 +31,14 @@ class UserProfileController extends GetxController {
       state.userProfile.value = response.data;
     } catch (err) {
       if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return; // Stop further error handling
+        }
+
         ApiErrorHandler.handleError(err, "Failed to load User Profile");
       } else if (err is Exception) {
         AppSnackbar.error(title: "Exception", message: err.toString());
@@ -37,6 +51,16 @@ class UserProfileController extends GetxController {
     } finally {
       state.isLoading.value = false;
     }
+  }
+
+  void navigateToSignInPage() {
+    Get.toNamed(RouteName.signInPage)?.then((result) {
+      if (result == "logged_in") {
+        onTabOpen();
+      } else {
+        dashboardController.state.selectedIndex.value = 0;
+      }
+    });
   }
 
   //helper func
@@ -113,9 +137,30 @@ class UserProfileController extends GetxController {
       return {
         'linkedin': state.userProfile.value?.linkedin ?? '',
         'website': state.userProfile.value?.website ?? '',
-        'twitter': '',
-        'facebook': '',
-        'instagram': '',
+        'twitter':
+            state
+                .userProfile
+                .value
+                ?.extendedProfile
+                ?.socialMediaLinks
+                .twitter ??
+            "",
+        'facebook':
+            state
+                .userProfile
+                .value
+                ?.extendedProfile
+                ?.socialMediaLinks
+                .facebook ??
+            "",
+        'instagram':
+            state
+                .userProfile
+                .value
+                ?.extendedProfile
+                ?.socialMediaLinks
+                .instagram ??
+            "",
       };
     }
 
@@ -130,5 +175,18 @@ class UserProfileController extends GetxController {
       'facebook': extended.socialMediaLinks.facebook,
       'instagram': extended.socialMediaLinks.instagram,
     };
+  }
+
+  void handleLogout() {
+    UserStore.to.clearStore();
+    dashboardController.state.selectedIndex.value = 0;
+    AppSnackbar.success(
+      title: "Logged Out Successfully",
+      message: "You have been logged out.",
+    );
+  }
+
+  void navigateToResetPassword() {
+    Get.toNamed(RouteName.forgotPasswordPage);
   }
 }

@@ -1,4 +1,4 @@
-import 'package:eventjar_app/controller/dashboard/state.dart';
+import 'package:eventjar/controller/dashboard/state.dart';
 import 'package:get/get.dart';
 
 class DashboardController extends GetxController {

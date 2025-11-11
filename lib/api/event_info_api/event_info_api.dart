@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:eventjar_app/api/dio_client.dart';
-import 'package:eventjar_app/model/event_info/event_info_model.dart';
+import 'package:eventjar/api/dio_client.dart';
+import 'package:eventjar/model/event_info/event_info_model.dart';
 
 class EventInfoApi {
   static final Dio _dio = DioClient().dio;

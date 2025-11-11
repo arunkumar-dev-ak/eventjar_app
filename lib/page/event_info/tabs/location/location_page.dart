@@ -1,11 +1,11 @@
-import 'package:eventjar_app/controller/event_info/controller.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/model/event_info/event_info_model.dart';
-import 'package:eventjar_app/page/event_info/tabs/location/location_page_contact_card.dart';
-import 'package:eventjar_app/page/event_info/tabs/location/location_page_utils.dart';
-import 'package:eventjar_app/page/event_info/tabs/location/physical_location_card.dart';
-import 'package:eventjar_app/page/event_info/tabs/location/virtual_location_card.dart';
+import 'package:eventjar/controller/event_info/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/model/event_info/event_info_model.dart';
+import 'package:eventjar/page/event_info/tabs/location/location_page_contact_card.dart';
+import 'package:eventjar/page/event_info/tabs/location/location_page_utils.dart';
+import 'package:eventjar/page/event_info/tabs/location/physical_location_card.dart';
+import 'package:eventjar/page/event_info/tabs/location/virtual_location_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

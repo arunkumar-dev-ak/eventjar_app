@@ -1,4 +1,4 @@
-import 'package:eventjar_app/model/my_ticket/my_ticket_model.dart';
+import 'package:eventjar/model/my_ticket/my_ticket_model.dart';
 import 'package:get/get.dart';
 
 class MyTicketsState {

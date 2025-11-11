@@ -1,5 +1,5 @@
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/page/my_ticket/my_ticket_shaper_painter.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/my_ticket/my_ticket_shaper_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:qr_flutter/qr_flutter.dart';

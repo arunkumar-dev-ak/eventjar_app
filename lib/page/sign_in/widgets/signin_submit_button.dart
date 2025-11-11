@@ -1,6 +1,6 @@
-import 'package:eventjar_app/controller/signIn/controller.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
+import 'package:eventjar/controller/signIn/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -36,7 +36,7 @@ class SignInSubmitButton extends StatelessWidget {
               onTap: () {
                 if (isButtonLoading) return;
                 if (controller.formKey.currentState?.validate() ?? false) {
-                  controller.handleSubmit();
+                  controller.handleSubmit(context);
                   Get.focusScope?.unfocus();
                 }
               },

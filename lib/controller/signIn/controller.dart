@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
-import 'package:eventjar_app/api/signin_api/signin_api.dart';
-import 'package:eventjar_app/controller/signIn/state.dart';
-import 'package:eventjar_app/global/app_snackbar.dart';
-import 'package:eventjar_app/global/store/user_store.dart';
-import 'package:eventjar_app/helper/apierror_handler.dart';
-import 'package:eventjar_app/routes/route_name.dart';
+import 'package:eventjar/api/signin_api/signin_api.dart';
+import 'package:eventjar/controller/signIn/state.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -59,7 +60,7 @@ class SignInController extends GetxController {
     state.isPasswordHidden.value = !state.isPasswordHidden.value;
   }
 
-  void handleSubmit() async {
+  void handleSubmit(BuildContext context) async {
     state.isLoading.value = true;
     try {
       var response = await SignInApi.signIn(
@@ -72,7 +73,7 @@ class SignInController extends GetxController {
         message: "User Logged in successfully",
       );
       state.isLoading.value = false;
-      navigateToHomePage();
+      navigateToBackPage(context);
     } catch (err) {
       state.isLoading.value = false;
       if (err is DioException) {
@@ -95,7 +96,7 @@ class SignInController extends GetxController {
     Get.toNamed('/forgotPasswordPage');
   }
 
-  void navigateToHomePage() {
-    Get.offAllNamed(RouteName.dashboardpage);
+  void navigateToBackPage(BuildContext context) {
+    Navigator.pop(context, "logged_in");
   }
 }

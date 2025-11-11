@@ -1,5 +1,5 @@
-import 'package:eventjar_app/global/store/user_store.dart';
-import 'package:eventjar_app/storage/storage_service.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/storage/storage_service.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 

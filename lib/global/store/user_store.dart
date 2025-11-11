@@ -1,10 +1,9 @@
 import 'dart:convert';
 
-import 'package:eventjar_app/global/global_values.dart';
-import 'package:eventjar_app/logger_service.dart';
-import 'package:eventjar_app/model/auth/login_model.dart';
-import 'package:eventjar_app/routes/route_name.dart';
-import 'package:eventjar_app/storage/storage_service.dart';
+import 'package:eventjar/global/global_values.dart';
+import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/auth/login_model.dart';
+import 'package:eventjar/storage/storage_service.dart';
 import 'package:get/get.dart';
 
 class UserStore extends GetxController {
@@ -94,5 +93,9 @@ class UserStore extends GetxController {
     await StorageService.to.deleteString(storageAccessToken);
     await StorageService.to.deleteString(storageRefreshToken);
     await StorageService.to.deleteString(storageProfile);
+
+    _isLogin.value = false;
+    _accessToken.value = '';
+    _refreshToken.value = '';
   }
 }

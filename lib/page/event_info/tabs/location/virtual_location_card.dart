@@ -1,8 +1,8 @@
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/app_snackbar.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/logger_service.dart';
-import 'package:eventjar_app/page/event_info/tabs/location/location_page_utils.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/page/event_info/tabs/location/location_page_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 

@@ -1,9 +1,9 @@
-import 'package:eventjar_app/controller/event_info/controller.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/global/utils/helpers.dart';
-import 'package:eventjar_app/model/event_info/event_info_model.dart';
-import 'package:eventjar_app/page/event_info/widget/event_info_shimmer.dart';
+import 'package:eventjar/controller/event_info/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/utils/helpers.dart';
+import 'package:eventjar/model/event_info/event_info_model.dart';
+import 'package:eventjar/page/event_info/widget/event_info_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -39,10 +39,6 @@ class EventInfoHeader extends StatelessWidget {
             )
           : 'N/A';
 
-      // Attendee info
-      final attendedCount = eventInfo.currentAttendees;
-      final maxAttendees = eventInfo.maxAttendees;
-      final spotsLeft = maxAttendees - attendedCount;
       return Padding(
         padding: EdgeInsets.symmetric(vertical: 3.wp, horizontal: 3.wp),
         child: Column(
@@ -92,7 +88,13 @@ class EventInfoHeader extends StatelessWidget {
                   ),
                 ),
 
-                Icon(Icons.info_outline, color: AppColors.gradientDarkStart),
+                SizedBox(width: 1.wp),
+                eventModeBadge(
+                  mode: eventInfo.isHybrid
+                      ? "Hybrid"
+                      : (eventInfo.isVirtual ? "Virtual" : "In-Person"),
+                ),
+
                 SizedBox(width: 3.wp),
               ],
             ),
@@ -153,98 +155,98 @@ class EventInfoHeader extends StatelessWidget {
               ],
             ),
 
-            SizedBox(height: 2.hp),
+            // SizedBox(height: 2.hp),
 
-            Container(
-              width: 100.wp,
-              height: 1,
-              color: Colors.white.withAlpha(125),
-            ),
+            // Container(
+            //   width: 100.wp,
+            //   height: 1,
+            //   color: Colors.white.withAlpha(125),
+            // ),
 
-            SizedBox(height: 2.hp),
+            // SizedBox(height: 2.hp),
 
-            // Attendee avatars and stats
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Attended avatars and going count
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 70,
-                          height: 35,
-                          child: Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              Positioned(
-                                left: 40,
-                                child: CircleAvatar(
-                                  radius: 17,
-                                  backgroundColor: Colors.white,
-                                  backgroundImage: const AssetImage(
-                                    'assets/event_info/event_info_attendes_profile.jpg',
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 20,
-                                child: CircleAvatar(
-                                  radius: 17,
-                                  backgroundColor: Colors.white,
-                                  backgroundImage: const AssetImage(
-                                    'assets/event_info/event_info_attendes_profile.jpg',
-                                  ),
-                                ),
-                              ),
-                              CircleAvatar(
-                                radius: 17,
-                                backgroundColor: Colors.white,
-                                backgroundImage: const AssetImage(
-                                  'assets/event_info/event_info_attendes_profile.jpg',
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 2),
-                    generateBadge(label: "$attendedCount going"),
-                  ],
-                ),
+            // // Attendee avatars and stats
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   crossAxisAlignment: CrossAxisAlignment.center,
+            //   children: [
+            //     // Attended avatars and going count
+            //     Column(
+            //       crossAxisAlignment: CrossAxisAlignment.center,
+            //       mainAxisAlignment: MainAxisAlignment.start,
+            //       children: [
+            //         Row(
+            //           children: [
+            //             SizedBox(
+            //               width: 70,
+            //               height: 35,
+            //               child: Stack(
+            //                 clipBehavior: Clip.none,
+            //                 children: [
+            //                   Positioned(
+            //                     left: 40,
+            //                     child: CircleAvatar(
+            //                       radius: 17,
+            //                       backgroundColor: Colors.white,
+            //                       backgroundImage: const AssetImage(
+            //                         'assets/event_info/event_info_attendes_profile.jpg',
+            //                       ),
+            //                     ),
+            //                   ),
+            //                   Positioned(
+            //                     left: 20,
+            //                     child: CircleAvatar(
+            //                       radius: 17,
+            //                       backgroundColor: Colors.white,
+            //                       backgroundImage: const AssetImage(
+            //                         'assets/event_info/event_info_attendes_profile.jpg',
+            //                       ),
+            //                     ),
+            //                   ),
+            //                   CircleAvatar(
+            //                     radius: 17,
+            //                     backgroundColor: Colors.white,
+            //                     backgroundImage: const AssetImage(
+            //                       'assets/event_info/event_info_attendes_profile.jpg',
+            //                     ),
+            //                   ),
+            //                 ],
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //         SizedBox(height: 2),
+            //         generateBadge(label: "$attendedCount going"),
+            //       ],
+            //     ),
 
-                // Attendance count and spots left
-                Column(
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.person, color: AppColors.gradientDarkStart),
-                        SizedBox(width: 1.wp),
-                        Text(
-                          "$attendedCount/$maxAttendees",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 1.hp),
-                    generateBadge(label: "$spotsLeft Spots left"),
-                  ],
-                ),
+            //     // Attendance count and spots left
+            //     Column(
+            //       children: [
+            //         Row(
+            //           children: [
+            //             Icon(Icons.person, color: AppColors.gradientDarkStart),
+            //             SizedBox(width: 1.wp),
+            //             Text(
+            //               "$attendedCount/$maxAttendees",
+            //               style: TextStyle(
+            //                 color: Colors.white,
+            //                 fontWeight: FontWeight.bold,
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //         SizedBox(height: 1.hp),
+            //         generateBadge(label: "$spotsLeft Spots left"),
+            //       ],
+            //     ),
 
-                // Event mode badge
-                eventModeBadge(
-                  mode: eventInfo.isVirtual ? "Virtual" : "In-Person",
-                ),
-              ],
-            ),
+            //     // Event mode badge
+            //     eventModeBadge(
+            //       mode: eventInfo.isVirtual ? "Virtual" : "In-Person",
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       );

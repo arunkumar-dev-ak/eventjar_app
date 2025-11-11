@@ -1,3 +1,4 @@
+import 'package:eventjar/logger_service.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -13,7 +14,9 @@ String formatTimeFromHHMM(String timeString, BuildContext context) {
 }
 
 String formatTimeFromDateTime(DateTime dateTime, BuildContext context) {
-  final localTime = formatTimeToLocale(dateTime, context);
+  final localDateTime = dateTime.toLocal();
+
+  final localTime = formatTimeToLocale(localDateTime, context);
 
   return localTime;
 }

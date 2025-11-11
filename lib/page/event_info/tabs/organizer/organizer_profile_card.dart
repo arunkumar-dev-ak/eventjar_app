@@ -1,7 +1,7 @@
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/global/utils/helpers.dart';
-import 'package:eventjar_app/model/event_info/event_info_model.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/utils/helpers.dart';
+import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:flutter/material.dart';
 
 Widget buildOrganizerProfile(Organizer organizer) {

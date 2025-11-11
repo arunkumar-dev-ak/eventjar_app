@@ -1,7 +1,9 @@
-import 'package:eventjar_app/controller/user_profile/controller.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
+import 'package:eventjar/controller/user_profile/controller.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 Widget userProfileBuildSocialLinks() {
   final controller = Get.find<UserProfileController>();
@@ -113,10 +115,26 @@ Widget _buildSocialLinkRow({
           ],
         ),
       ),
-      Icon(
-        isConnected ? Icons.open_in_new : Icons.link_off,
-        size: 16,
-        color: isConnected ? color : Colors.grey.shade400,
+      GestureDetector(
+        onTap: isConnected
+            ? () async {
+                final Uri uri = Uri.parse(url);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+                } else {
+                  AppSnackbar.warning(
+                    title: "Unable to Open Link",
+                    message: "Could not launch $url",
+                  );
+                }
+              }
+            : null,
+
+        child: Icon(
+          isConnected ? Icons.open_in_new : Icons.link_off,
+          size: 16,
+          color: isConnected ? color : Colors.grey.shade400,
+        ),
       ),
     ],
   );

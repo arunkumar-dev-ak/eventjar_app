@@ -1,14 +1,14 @@
-import 'package:eventjar_app/controller/user_profile/controller.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/page/user_profile/user_profile_basic_info.dart';
-import 'package:eventjar_app/page/user_profile/user_profile_business_info.dart';
-import 'package:eventjar_app/page/user_profile/user_profile_header.dart';
-import 'package:eventjar_app/page/user_profile/user_profile_location.dart';
-import 'package:eventjar_app/page/user_profile/user_profile_network_info.dart';
-import 'package:eventjar_app/page/user_profile/user_profile_security_info.dart';
-import 'package:eventjar_app/page/user_profile/user_profile_social_links.dart';
-import 'package:eventjar_app/page/user_profile/user_profile_summary.dart';
+import 'package:eventjar/controller/user_profile/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/user_profile/user_profile_basic_info.dart';
+import 'package:eventjar/page/user_profile/user_profile_business_info.dart';
+import 'package:eventjar/page/user_profile/user_profile_header.dart';
+import 'package:eventjar/page/user_profile/user_profile_location.dart';
+import 'package:eventjar/page/user_profile/user_profile_network_info.dart';
+import 'package:eventjar/page/user_profile/user_profile_security_info.dart';
+import 'package:eventjar/page/user_profile/user_profile_social_links.dart';
+import 'package:eventjar/page/user_profile/user_profile_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -70,11 +70,11 @@ class UserProfilePage extends GetView<UserProfileController> {
                 title: "Social & Contact Links",
                 child: userProfileBuildSocialLinks(),
               ),
-              // SizedBox(height: 2.hp),
-              // _buildSection(
-              //   title: "Security & Sessions",
-              //   child: userProfileBuildSecurity(),
-              // ),
+              SizedBox(height: 2.hp),
+              _buildSection(
+                title: "Security & Sessions",
+                child: userProfileBuildSecurity(),
+              ),
               SizedBox(height: 4.hp),
             ],
           ),

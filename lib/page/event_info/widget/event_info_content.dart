@@ -1,13 +1,13 @@
-import 'package:eventjar_app/controller/event_info/controller.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/global/widget/gradient_text.dart';
-import 'package:eventjar_app/page/event_info/tabs/agenda/agenda_page.dart';
-import 'package:eventjar_app/page/event_info/tabs/images/image_page.dart';
-import 'package:eventjar_app/page/event_info/tabs/location/location_page.dart';
-import 'package:eventjar_app/page/event_info/tabs/organizer/organizer_page.dart';
-import 'package:eventjar_app/page/event_info/tabs/overview/overview_page.dart';
-import 'package:eventjar_app/page/event_info/tabs/reviews/review_page.dart';
+import 'package:eventjar/controller/event_info/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/widget/gradient_text.dart';
+import 'package:eventjar/page/event_info/tabs/agenda/agenda_page.dart';
+import 'package:eventjar/page/event_info/tabs/images/image_page.dart';
+import 'package:eventjar/page/event_info/tabs/location/location_page.dart';
+import 'package:eventjar/page/event_info/tabs/organizer/organizer_page.dart';
+import 'package:eventjar/page/event_info/tabs/overview/overview_page.dart';
+import 'package:eventjar/page/event_info/tabs/reviews/review_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -84,12 +84,14 @@ class EventInfoContent extends StatelessWidget {
                 ],
               ),
             ),
-            eventInfoBookButton(
-              isFree: true,
-              onTap: () {
-                controller.navigateToCheckOut();
-              },
-            ),
+            Obx(() {
+              return eventInfoBookButton(
+                isFree: !(controller.state.eventInfo.value?.isPaid ?? false),
+                onTap: () {
+                  controller.navigateToCheckOut();
+                },
+              );
+            }),
           ],
         ),
       ),
@@ -102,7 +104,7 @@ Widget eventInfoBookButton({
   required VoidCallback onTap,
 }) {
   return Padding(
-    padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 1.hp),
+    padding: EdgeInsets.only(left: 5.wp, right: 5.wp, bottom: 2.hp),
     child: Material(
       borderRadius: BorderRadius.circular(10),
       color: Colors.transparent,

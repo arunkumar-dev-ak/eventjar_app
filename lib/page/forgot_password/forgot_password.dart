@@ -1,9 +1,9 @@
-import 'package:eventjar_app/controller/forgotPassword/controller.dart';
-import 'package:eventjar_app/global/app_colors.dart';
-import 'package:eventjar_app/global/responsive/responsive.dart';
-import 'package:eventjar_app/page/forgot_password/widget/forgot_password_back_button.dart';
-import 'package:eventjar_app/page/forgot_password/widget/forgot_password_header.dart';
-import 'package:eventjar_app/page/forgot_password/widget/forgot_pssword_form.dart';
+import 'package:eventjar/controller/forgotPassword/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/forgot_password/widget/forgot_password_back_button.dart';
+import 'package:eventjar/page/forgot_password/widget/forgot_password_header.dart';
+import 'package:eventjar/page/forgot_password/widget/forgot_pssword_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';

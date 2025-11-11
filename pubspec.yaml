@@ -1,5 +1,5 @@
-name: eventjar_app
-description: "A new Flutter project."
+name: eventjar
+description: "myeventjar.com"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
@@ -44,6 +44,7 @@ dependencies:
   intl: ^0.20.2
   shared_preferences: ^2.5.3
   qr_flutter: ^4.1.0
+  country_code_picker: ^3.4.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -59,7 +60,10 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/app_icon/event_app_icon.png"
+  image_path: "assets/app_icon/event_app_icon_2.png"
+  adaptive_icon_background: "#CCE4FF"
+  adaptive_icon_foreground: "assets/app_icon/event_app_icon_2.png"
+  remove_alpha_ios: true
 
 flutter_native_splash:
   android: true
