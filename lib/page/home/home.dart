@@ -3,7 +3,6 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/home/widget/home_appbar.dart';
 import 'package:eventjar/page/home/widget/home_content.dart';
-import 'package:eventjar/page/home/widget/home_searchbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
