@@ -1,205 +1,16 @@
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:flutter/material.dart';
 
-class ContactCard extends StatelessWidget {
-  final String name;
-  final String email;
-  final String phone;
-  final String createdDate;
-  final String imageUrl;
-  final bool isOverdue;
-  final bool isInvited;
-  final List<ContactStage> stages;
-
-  const ContactCard({
-    super.key,
-    required this.name,
-    required this.email,
-    required this.phone,
-    required this.createdDate,
-    required this.imageUrl,
-    required this.isOverdue,
-    required this.isInvited,
-    required this.stages,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-      margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
-      child: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Column(
-          children: [
-            // Header Row: Avatar + Info + Badges
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Avatar
-                CircleAvatar(
-                  radius: 32,
-                  backgroundImage: NetworkImage(imageUrl),
-                ),
-                SizedBox(width: 16),
-                // Info and badges
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          if (isInvited)
-                            Container(
-                              margin: EdgeInsets.only(right: 8),
-                              decoration: BoxDecoration(
-                                color: Colors.blue[800],
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              child: Text(
-                                'Invite to Event jar',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          if (isOverdue)
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.red[400],
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              child: Text(
-                                'Overdue',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        email,
-                        style: TextStyle(color: Colors.grey[700], fontSize: 13),
-                      ),
-                      SizedBox(height: 1),
-                      Row(
-                        children: [
-                          Icon(Icons.phone, size: 14, color: Colors.grey[600]),
-                          SizedBox(width: 3),
-                          Text(
-                            phone,
-                            style: TextStyle(
-                              color: Colors.grey[700],
-                              fontSize: 13,
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Icon(
-                            Icons.calendar_today,
-                            size: 14,
-                            color: Colors.grey[600],
-                          ),
-                          SizedBox(width: 3),
-                          Text(
-                            'Created: $createdDate',
-                            style: TextStyle(
-                              color: Colors.grey[700],
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 15),
-            // Icon bar
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.grey.shade200),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _ActionMiniIcon(
-                    icon: Icons.account_box_rounded,
-                    color: Colors.grey[700],
-                  ),
-                  _ActionMiniIcon(
-                    icon: Icons.remove_red_eye,
-                    color: Colors.grey[700],
-                  ),
-                  _ActionMiniIcon(icon: Icons.edit, color: Colors.grey[700]),
-                  _ActionMiniIcon(
-                    icon: Icons.schedule,
-                    color: Colors.grey[700],
-                  ),
-                  _ActionMiniIcon(
-                    icon: Icons.timeline,
-                    color: Colors.grey[700],
-                  ),
-                  _ActionMiniIcon(
-                    icon: Icons.calendar_month,
-                    color: Colors.grey[700],
-                  ),
-                  _ActionMiniIcon(
-                    icon: Icons.delete,
-                    color: Colors.red[400],
-                    highlight: true,
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-            // Timeline
-            ContactTimeline(stages: stages),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ContactStage {
+class ContactStageModel {
   final String label;
+  final ContactStage key;
   final String desc;
   final Color color;
   final bool reached;
 
-  const ContactStage({
+  const ContactStageModel({
+    required this.key,
     required this.label,
     required this.desc,
     required this.color,
@@ -207,87 +18,306 @@ class ContactStage {
   });
 }
 
-// Timeline widget for vertical progress
-class ContactTimeline extends StatelessWidget {
-  final List<ContactStage> stages;
-  const ContactTimeline({required this.stages, super.key});
+class ContactCardProfileTags extends StatelessWidget {
+  final Contact contact;
+  const ContactCardProfileTags({super.key, required this.contact});
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(stages.length, (i) {
-        final s = stages[i];
-        final isLast = i == stages.length - 1;
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Timeline
-            Column(
-              children: [
-                CircleAvatar(
-                  backgroundColor: s.reached ? Colors.green : Colors.grey[300],
-                  radius: 16,
-                  child: Icon(Icons.check, color: Colors.white, size: 20),
+    return Row(
+      children: [
+        contact.isEventJarUser == true
+            ? _buildBadge(
+                bgColor: Colors.green[600]!,
+                margin: const EdgeInsets.only(right: 8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.check_circle, color: Colors.white, size: 16),
+                    SizedBox(width: 4),
+                    Text(
+                      'On Event Jar',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
-                if (!isLast)
-                  Container(width: 3, height: 40, color: Colors.red[200]),
-              ],
+              )
+            : _buildBadge(
+                bgColor: Colors.blue[800]!,
+                margin: const EdgeInsets.only(right: 8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.info, color: Colors.white, size: 16),
+                    SizedBox(width: 4),
+                    Text(
+                      'Not in Event Jar',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+        if (contact.isOverdue)
+          Expanded(
+            child: _buildBadge(
+              bgColor: Colors.red[400]!,
+              margin: EdgeInsets.zero,
+              child: const Text(
+                'Overdue',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-            SizedBox(width: 16),
-            // Stage Labels
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  s.label,
-                  style: TextStyle(
-                    color: s.color,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-                Container(
-                  width: 170,
-                  child: Text(
-                    s.desc,
-                    style: TextStyle(color: Colors.grey[700], fontSize: 13),
-                  ),
-                ),
-                if (!isLast) SizedBox(height: 22),
-              ],
-            ),
-          ],
-        );
-      }),
+          ),
+      ],
     );
   }
 }
 
-class _ActionMiniIcon extends StatelessWidget {
-  final IconData icon;
-  final Color? color;
-  final bool highlight;
-  const _ActionMiniIcon({
-    required this.icon,
-    this.color,
-    this.highlight = false,
-    super.key,
-  });
+Widget _buildBadge({
+  required Color bgColor,
+  required Widget child,
+  EdgeInsetsGeometry? margin,
+}) {
+  return Container(
+    margin: margin ?? const EdgeInsets.symmetric(horizontal: 4),
+    decoration: BoxDecoration(
+      color: bgColor,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    child: child,
+  );
+}
+
+class ContactTimeline extends StatelessWidget {
+  final ContactStage currentStage;
+  final String? notes; // optional notes field
+
+  const ContactTimeline({required this.currentStage, this.notes, super.key});
+
+  List<ContactStageModel> generateStagesForCurrent(ContactStage current) {
+    final allStages = [
+      ContactStageModel(
+        label: "New Contact",
+        key: ContactStage.newContact,
+        desc: "Schedule Initial Meeting",
+        color: Colors.blue,
+        reached: false,
+      ),
+      ContactStageModel(
+        key: ContactStage.followup24h,
+        label: "24H FollowUp",
+        desc: "Initial Followup within 24 Hrs",
+        color: Colors.cyan,
+        reached: false,
+      ),
+      ContactStageModel(
+        key: ContactStage.followup7d,
+        label: "7D FollowUp",
+        desc: "Weekly check-in and nurturing",
+        color: Colors.indigo,
+        reached: false,
+      ),
+      ContactStageModel(
+        key: ContactStage.followup30d,
+        label: "30D FollowUp",
+        desc: "Monthly relationship building",
+        color: Colors.blueAccent,
+        reached: false,
+      ),
+      ContactStageModel(
+        key: ContactStage.qualified,
+        label: "Qualified Lead",
+        desc: "Qualified lead confirmed",
+        color: Colors.green,
+        reached: false,
+      ),
+    ];
+
+    final currentIndex = allStages.indexWhere((stage) => stage.key == current);
+
+    for (int i = 0; i <= currentIndex; i++) {
+      allStages[i] = ContactStageModel(
+        label: allStages[i].label,
+        key: allStages[i].key,
+        desc: allStages[i].desc,
+        color: allStages[i].color,
+        reached: true,
+      );
+    }
+    return allStages;
+  }
+
+  // Dart version of getNextActionForStage
+  String getNextActionForStage(ContactStage stage) {
+    switch (stage) {
+      case ContactStage.newContact:
+        return 'Schedule initial meeting with contact';
+      case ContactStage.followup24h:
+        return 'Send initial follow-up email within 24 hours';
+      case ContactStage.followup7d:
+        return 'Schedule weekly check-in call';
+      case ContactStage.followup30d:
+        return 'Send monthly relationship building message';
+      case ContactStage.qualified:
+        return 'Prepare conversion proposal';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 7.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: highlight ? Colors.red[50] : Colors.grey[50],
-          shape: BoxShape.circle,
-          border: highlight
-              ? Border.all(color: Colors.redAccent, width: 1)
-              : Border.all(color: Colors.grey.shade200, width: 1),
+    final stages = generateStagesForCurrent(currentStage);
+    final nextActionText = getNextActionForStage(currentStage);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Timeline stages
+        Column(
+          children: List.generate(stages.length, (i) {
+            final s = stages[i];
+            final isLast = i == stages.length - 1;
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Timeline indicator
+                Column(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: s.reached
+                          ? Colors.green
+                          : Colors.grey[300],
+                      radius: 16,
+                      child: Icon(Icons.check, color: Colors.white, size: 20),
+                    ),
+                    if (!isLast)
+                      Container(width: 3, height: 40, color: Colors.red[200]),
+                  ],
+                ),
+                SizedBox(width: 16),
+                // Label and description
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      s.label,
+                      style: TextStyle(
+                        color: s.color,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 9.sp,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 170,
+                      child: Text(
+                        s.desc,
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                          fontSize: 8.sp,
+                        ),
+                      ),
+                    ),
+                    if (!isLast) SizedBox(height: 22),
+                  ],
+                ),
+              ],
+            );
+          }),
         ),
-        padding: EdgeInsets.all(8),
-        child: Icon(icon, color: color, size: 20),
-      ),
+        SizedBox(height: 20),
+        // Next Action section
+        Text(
+          'Next Action:',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10.sp),
+        ),
+        SizedBox(height: 4),
+        Text(
+          nextActionText,
+          style: TextStyle(fontSize: 9.sp, color: Colors.black87),
+        ),
+        SizedBox(height: 16),
+        // Notes section (optional)
+        if (notes != null && notes!.isNotEmpty)
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withValues(alpha: 0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Theme(
+              data: Theme.of(context).copyWith(
+                dividerColor: Colors.transparent,
+                unselectedWidgetColor: Colors.grey[700],
+                iconTheme: const IconThemeData(
+                  color: Colors.blueAccent,
+                  size: 28,
+                ),
+              ),
+              child: ExpansionTile(
+                tilePadding: EdgeInsets.symmetric(horizontal: 3.wp),
+                childrenPadding: EdgeInsets.symmetric(horizontal: 3.wp),
+                title: Row(
+                  children: [
+                    const Icon(
+                      Icons.note_alt_outlined,
+                      color: Colors.blueAccent,
+                      size: 24,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Notes',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 11.sp,
+                        color: Colors.blueAccent.shade700,
+                      ),
+                    ),
+                  ],
+                ),
+                children: [
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: EdgeInsets.all(12),
+                    child: Text(
+                      notes!,
+                      style: TextStyle(
+                        fontSize: 9.5.sp,
+                        color: Colors.grey[800],
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

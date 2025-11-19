@@ -17,6 +17,7 @@ class RouteName {
   //my ticket page
   static const myTicketPage = '/myTicketPage';
 
-  //my ticket page
+  //contact page
+  static const addContactPage = '/addContact';
   static const contactPage = '/contactPage';
 }

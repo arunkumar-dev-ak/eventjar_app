@@ -1,3 +1,4 @@
+import 'package:eventjar/controller/add_contact/binding.dart';
 import 'package:eventjar/controller/checkout/binding.dart';
 import 'package:eventjar/controller/contact/binding.dart';
 import 'package:eventjar/controller/dashboard/binding.dart';
@@ -7,6 +8,7 @@ import 'package:eventjar/controller/my_ticket/binding.dart';
 import 'package:eventjar/controller/signIn/binding.dart';
 import 'package:eventjar/controller/signUp/binding.dart';
 import 'package:eventjar/controller/splashScreen/binding.dart';
+import 'package:eventjar/page/add_contact/add_contact.dart';
 import 'package:eventjar/page/checkout/checkout_page.dart';
 import 'package:eventjar/page/contact/contact_page.dart';
 import 'package:eventjar/page/dashboard/dashboard_page.dart';
@@ -83,7 +85,14 @@ class RoutePage {
       name: RouteName.contactPage,
       page: () => ContactPage(),
       binding: ContactBinding(),
-      // middlewares: [LoginMiddleware()],
+      middlewares: [LoginMiddleware()],
+    ),
+    //add
+    GetPage(
+      name: RouteName.addContactPage,
+      page: () => AddContactPage(),
+      binding: AddContactBinding(),
+      middlewares: [LoginMiddleware()],
     ),
   ];
 }
