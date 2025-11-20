@@ -4,6 +4,7 @@ import 'package:eventjar/controller/add_contact/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -17,10 +18,12 @@ enum AddContactContactStage {
 }
 
 class AddContactController extends GetxController {
-  var appBarTitle = "Contact Page";
+  var appBarTitle = "Add Contact";
   final state = AddContactState();
 
   final formKey = GlobalKey<FormState>();
+
+  String? contactId;
 
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -30,26 +33,73 @@ class AddContactController extends GetxController {
 
   final selectedStage = AddContactContactStage.newContact.obs;
 
-  // Dummy tags list and selected tags set
-  final tags = <String>[
-    'Important',
-    'Low',
-    'Mutual Sync',
-    'Shared Contact',
-    'Migrated',
-  ];
+  @override
+  void onInit() {
+    final args = Get.arguments;
+    Contact? contact;
+
+    // Adjust based on how you pass the argument
+    if (args is Set<Contact> && args.isNotEmpty) {
+      appBarTitle = "Update Contact";
+      contact = args.first;
+    } else if (args is Map && args.containsKey('contact')) {
+      contact = args['contact'];
+    }
+
+    handleArgs(contact);
+
+    super.onInit();
+  }
+
+  void handleArgs(Contact? contact) {
+    if (contact == null) {
+      contactId = null;
+      return;
+    }
+
+    contactId = contact.id;
+
+    nameController.text = contact.name;
+    emailController.text = contact.email;
+    // phoneController.text =
+    //     contact.phone?.replaceFirst(contact. ?? '', '') ?? '';
+    notesController.text = contact.notes ?? '';
+
+    // state.selectedCountryCode.value = contact.phoneCountryCode ?? '+91';
+
+    final contactStageKey = contactStageToKey(contact.stage);
+    final matchedStage = state.stages.firstWhere(
+      (stage) => stage['key'] == contactStageKey,
+      orElse: () => {'key': 'new', 'value': 'New Contact'},
+    );
+    state.selectedStage.value = matchedStage;
+
+    // Set tags or clear if none
+    if (contact.tags.isNotEmpty) {
+      state.selectedTags.value = List<String>.from(contact.tags);
+    } else {
+      state.selectedTags.clear();
+    }
+  }
 
   void clearForm() {
-    nameController.clear();
-    emailController.clear();
-    phoneController.clear();
-    notesController.clear();
-    state.selectedCountryCode.value = '+91';
-    state.selectedStage.value = {
-      'key': AddContactContactStage.newContact.toString(),
-      'value': 'New Contact', // set to proper display string
-    };
-    state.selectedTags.clear();
+    final args = Get.arguments;
+    Contact? contact;
+
+    if (args is Set<Contact> && args.isNotEmpty) {
+      handleArgs(contact);
+    } else {
+      nameController.clear();
+      emailController.clear();
+      phoneController.clear();
+      notesController.clear();
+      state.selectedCountryCode.value = '+91';
+      state.selectedStage.value = {
+        'key': AddContactContactStage.newContact.toString(),
+        'value': 'New Contact', // set to proper display string
+      };
+      state.selectedTags.clear();
+    }
 
     formKey.currentState?.reset();
   }
@@ -72,24 +122,29 @@ class AddContactController extends GetxController {
     if (!formKey.currentState!.validate()) return;
     try {
       state.isLoading.value = true;
+      final data = _gatherFormData();
 
-      await AddContactApi.registerTicket(data: _gatherFormData());
+      if (checkIsForUpdate()) {
+        if (contactId == null) {
+          throw Exception("Contact ID is required for update");
+        }
+        await AddContactApi.updateContact(data: data, id: contactId!);
+      } else {
+        await AddContactApi.registerTicket(data: data);
+      }
 
       clearForm();
-
+      contactId = null;
       Navigator.pop(context, "refresh");
     } catch (err) {
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
-
         if (statusCode == 401) {
-          // Auth error handling example
           UserStore.to.clearStore();
           navigateToSignInPage();
           return;
         }
-
-        ApiErrorHandler.handleError(err, "Failed to add contact");
+        ApiErrorHandler.handleError(err, "Failed to add/update contact");
       } else {
         AppSnackbar.error(
           title: "Failed",
@@ -99,6 +154,10 @@ class AddContactController extends GetxController {
     } finally {
       state.isLoading.value = false;
     }
+  }
+
+  bool checkIsForUpdate() {
+    return contactId != null && contactId!.isNotEmpty;
   }
 
   void selectStage(Map<String, String> stage) {
@@ -125,6 +184,21 @@ class AddContactController extends GetxController {
       state.selectedTags.remove(tag);
     } else {
       state.selectedTags.add(tag);
+    }
+  }
+
+  String contactStageToKey(ContactStage stage) {
+    switch (stage) {
+      case ContactStage.newContact:
+        return 'new';
+      case ContactStage.followup24h:
+        return 'followup_24h';
+      case ContactStage.followup7d:
+        return 'followup_7d';
+      case ContactStage.followup30d:
+        return 'followup_30d';
+      case ContactStage.qualified:
+        return 'qualified';
     }
   }
 }

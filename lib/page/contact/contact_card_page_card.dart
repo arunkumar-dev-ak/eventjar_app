@@ -1,8 +1,20 @@
+import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/page/contact/contact_card_page_utils.dart';
+import 'package:eventjar/page/contact/contact_card_popup.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+
+final List<Color> _lightColors = [
+  Colors.lightBlue.shade200,
+  Colors.lightGreen.shade200,
+  Colors.amber.shade500,
+  Colors.pink.shade200,
+  Colors.orange.shade400,
+  Colors.purple.shade200,
+];
 
 class ContactCard extends StatelessWidget {
   final Contact contact;
@@ -81,22 +93,15 @@ class ContactCard extends StatelessWidget {
 }
 
 class ContactCardProfileRow extends StatelessWidget {
+  final ContactController controller = Get.find();
+
   final int index;
   final Contact contact;
-  const ContactCardProfileRow({
+  ContactCardProfileRow({
     super.key,
     required this.index,
     required this.contact,
   });
-
-  static final List<Color> _lightColors = [
-    Colors.lightBlue.shade200,
-    Colors.lightGreen.shade200,
-    Colors.amber.shade500,
-    Colors.pink.shade200,
-    Colors.orange.shade400,
-    Colors.purple.shade200,
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -147,11 +152,27 @@ class ContactCardProfileRow extends StatelessWidget {
                         icon: Icons.edit,
                         color: Colors.blue,
                         highlight: false,
+                        onTap: () {
+                          controller.navigateToUpdateContact(contact);
+                        },
                       ),
                       _ActionMiniIcon(
                         icon: Icons.delete,
                         color: Colors.red,
                         highlight: true,
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => ContactCardDeletePopup(
+                              contactName: contact.name,
+                              onDelete: () async {
+                                // Your delete logic, for example:
+                                await controller.deleteContactCard(contact.id);
+                              },
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -198,27 +219,42 @@ class _ActionMiniIcon extends StatelessWidget {
   final IconData icon;
   final Color? color;
   final bool highlight;
+  final VoidCallback? onTap;
   const _ActionMiniIcon({
     required this.icon,
     required this.color,
     required this.highlight,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final bgColor = highlight ? Colors.red[50] : Colors.grey[50];
+    final borderColor = highlight ? Colors.redAccent : Colors.grey.shade200;
+    final iconColor =
+        color ?? (highlight ? Colors.redAccent : Colors.grey.shade600);
+
+    Widget iconWidget = Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        shape: BoxShape.circle,
+        border: Border.all(color: borderColor, width: 1),
+      ),
+      padding: const EdgeInsets.all(8),
+      child: Icon(icon, color: iconColor, size: 20),
+    );
+
+    if (onTap != null) {
+      iconWidget = InkWell(
+        borderRadius: BorderRadius.circular(100),
+        onTap: onTap,
+        child: iconWidget,
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 7.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: highlight ? Colors.red[50] : Colors.grey[50],
-          shape: BoxShape.circle,
-          border: highlight
-              ? Border.all(color: Colors.redAccent, width: 1)
-              : Border.all(color: Colors.grey.shade200, width: 1),
-        ),
-        padding: EdgeInsets.all(8),
-        child: Icon(icon, color: color, size: 20),
-      ),
+      child: iconWidget,
     );
   }
 }

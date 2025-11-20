@@ -1,6 +1,7 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:eventjar/controller/add_contact/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/add_contact/add_contact_form_element.dart';
 import 'package:eventjar/page/add_contact/add_contact_stage_dropdown.dart';
 import 'package:eventjar/page/add_contact/add_contact_tag_dropdown.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +17,15 @@ class AddContactPage extends GetView<AddContactController> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Contact', style: TextStyle(color: Colors.black)),
+        title: Text(
+          controller.appBarTitle,
+          style: TextStyle(color: Colors.black),
+        ),
         centerTitle: false,
         iconTheme: IconThemeData(color: Colors.black),
         elevation: 4,
         backgroundColor: Colors.white,
-        shadowColor: Colors.black.withOpacity(0.5),
+        shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
       body: GestureDetector(
         onTap: () {
@@ -35,91 +39,20 @@ class AddContactPage extends GetView<AddContactController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Name
-                TextFormField(
+                ContactFormElement(
                   controller: controller.nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    labelStyle: TextStyle(fontSize: defaultFontSize),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade400,
-                        width: 1.5,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: BorderSide(
-                        color: Colors.blue.shade700,
-                        width: 2.0,
-                      ),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: const BorderSide(
-                        color: Colors.red,
-                        width: 2.0,
-                      ),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: const BorderSide(
-                        color: Colors.redAccent,
-                        width: 2.0,
-                      ),
-                    ),
-                  ),
-                  style: TextStyle(fontSize: defaultFontSize),
+                  label: 'Name',
                   validator: (val) => val == null || val.trim().isEmpty
                       ? 'Name is required'
                       : null,
                 ),
-
                 SizedBox(height: 2.hp),
 
                 // Email
-                TextFormField(
+                ContactFormElement(
                   controller: controller.emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: TextStyle(fontSize: defaultFontSize),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade400,
-                        width: 1.5,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: BorderSide(
-                        color: Colors.blue.shade700,
-                        width: 2.0,
-                      ),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: const BorderSide(
-                        color: Colors.red,
-                        width: 2.0,
-                      ),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: const BorderSide(
-                        color: Colors.redAccent,
-                        width: 2.0,
-                      ),
-                    ),
-                  ),
+                  label: 'Email',
                   keyboardType: TextInputType.emailAddress,
-                  style: TextStyle(fontSize: defaultFontSize),
                   validator: (val) {
                     if (val == null || val.trim().isEmpty) {
                       return 'Email is required';
@@ -131,19 +64,20 @@ class AddContactPage extends GetView<AddContactController> {
                     return null;
                   },
                 ),
-
                 SizedBox(height: 2.hp),
 
-                // Phone with country code picker
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade400),
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Row(
-                    children: [
-                      CountryCodePicker(
+                // Phone
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // First container for CountryCodePicker
+                    Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade400),
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      child: CountryCodePicker(
                         onChanged: (country) {
                           controller.state.selectedCountryCode.value =
                               country.dialCode ?? '+91';
@@ -152,37 +86,32 @@ class AddContactPage extends GetView<AddContactController> {
                         favorite: ['+91', 'IN'],
                         showCountryOnly: false,
                         showOnlyCountryWhenClosed: false,
-                        padding: EdgeInsets.zero,
                         dialogBackgroundColor: Colors.white,
                         textStyle: TextStyle(
                           color: Colors.grey[800],
                           fontSize: defaultFontSize,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: TextFormField(
-                          controller: controller.phoneController,
-                          decoration: InputDecoration(
-                            labelText: 'Phone Number',
-                            labelStyle: TextStyle(fontSize: defaultFontSize),
-                            border: InputBorder.none,
-                            errorStyle: TextStyle(height: 0),
-                          ),
-                          keyboardType: TextInputType.phone,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                          style: TextStyle(fontSize: defaultFontSize),
-                          validator: (val) => val == null || val.trim().isEmpty
-                              ? 'Phone number is required'
-                              : null,
-                        ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Second container for Phone Number TextField
+                    Expanded(
+                      child: ContactFormElement(
+                        controller: controller.phoneController,
+                        label: 'Phone Number',
+                        keyboardType: TextInputType.phone,
+                        maxLength: 10,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(15),
+                        ],
+                        validator: (val) => val == null || val.trim().isEmpty
+                            ? 'Phone number is required'
+                            : null,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-
                 SizedBox(height: 2.hp),
 
                 // Stage dropdown widget
@@ -196,48 +125,11 @@ class AddContactPage extends GetView<AddContactController> {
                 SizedBox(height: 2.hp),
 
                 // Notes (multiline)
-                TextFormField(
+                ContactFormElement(
                   controller: controller.notesController,
-                  decoration: InputDecoration(
-                    labelText: 'Notes',
-                    labelStyle: TextStyle(fontSize: defaultFontSize),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade400,
-                        width: 1.5,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: BorderSide(
-                        color: Colors.blue.shade700,
-                        width: 2.0,
-                      ),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: const BorderSide(
-                        color: Colors.red,
-                        width: 2.0,
-                      ),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide: const BorderSide(
-                        color: Colors.redAccent,
-                        width: 2.0,
-                      ),
-                    ),
-                    alignLabelWithHint: true,
-                  ),
-                  style: TextStyle(fontSize: defaultFontSize),
+                  label: 'Notes',
                   maxLines: 4,
                   minLines: 2,
-                  keyboardType: TextInputType.multiline,
                 ),
 
                 SizedBox(height: 3.hp),
@@ -252,19 +144,33 @@ class AddContactPage extends GetView<AddContactController> {
                         style: OutlinedButton.styleFrom(
                           padding: EdgeInsets.symmetric(
                             horizontal: 6.wp,
-                            vertical: 1.5.hp,
+                            vertical: 1.8.hp,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(
+                              12,
+                            ), // smoother corners
                           ),
+                          side: BorderSide(
+                            color: Colors.blue.shade700,
+                            width: 2,
+                          ),
+                          backgroundColor: Colors.white,
+                          foregroundColor:
+                              Colors.blue.shade700, // text and icon color
+                          elevation: 0,
                         ),
                         child: Text(
                           'Clear',
-                          style: TextStyle(fontSize: defaultFontSize),
+                          style: TextStyle(
+                            fontSize: defaultFontSize,
+                            fontWeight: FontWeight.w600, // bolder text
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                     ),
-                    SizedBox(width: 2.wp),
+                    SizedBox(width: 3.wp),
                     Expanded(
                       child: Obx(() {
                         final isLoading = controller.state.isLoading.value;
@@ -275,16 +181,21 @@ class AddContactPage extends GetView<AddContactController> {
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.symmetric(
                               horizontal: 6.wp,
-                              vertical: 1.9.hp,
+                              vertical: 1.8.hp,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(12),
                             ),
+                            elevation: 5,
+                            shadowColor: Colors.blue.shade700.withValues(
+                              alpha: 0.5,
+                            ),
+                            backgroundColor: Colors.blue.shade700,
+                            foregroundColor: Colors.white,
                           ),
                           child: isLoading
                               ? SizedBox(
-                                  height:
-                                      defaultFontSize, // adjust size as needed
+                                  height: defaultFontSize,
                                   width: defaultFontSize,
                                   child: CircularProgressIndicator(
                                     color: Colors.white,
@@ -292,8 +203,12 @@ class AddContactPage extends GetView<AddContactController> {
                                   ),
                                 )
                               : Text(
-                                  'Add Contact',
-                                  style: TextStyle(fontSize: defaultFontSize),
+                                  controller.appBarTitle,
+                                  style: TextStyle(
+                                    fontSize: defaultFontSize,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.5,
+                                  ),
                                 ),
                         );
                       }),

@@ -213,6 +213,12 @@ final List<NetworkStatusCardData> _statusCards = const [
     icon: Icons.group,
   ),
   NetworkStatusCardData(
+    label: 'New',
+    key: 'new',
+    color: Colors.cyan,
+    icon: Icons.fiber_new,
+  ),
+  NetworkStatusCardData(
     label: '24H Followup',
     key: 'followup_24h',
     color: Colors.orange,

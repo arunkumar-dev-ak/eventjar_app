@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/network/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/network/coming_soon_page.dart';
 import 'package:eventjar/page/network/tabs/contact_page/contact_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -92,13 +93,13 @@ class NetworkPage extends GetView<NetworkScreenController> {
                     case 0:
                       return ContactNetworkStatusCards();
                     case 1:
-                      return Center(child: Text('Scheduler Tab'));
+                      return Center(child: ComingSoonWidget());
                     case 2:
-                      return Center(child: Text('Reminders Tab'));
+                      return Center(child: ComingSoonWidget());
                     case 3:
-                      return Center(child: Text('Budget Track Tab'));
+                      return Center(child: ComingSoonWidget());
                     default:
-                      return Center(child: Text(''));
+                      return Center(child: ComingSoonWidget());
                   }
                 },
               ),

@@ -1,7 +1,6 @@
 import 'package:eventjar/controller/dashboard/controller.dart';
 import 'package:eventjar/controller/home/controller.dart';
 import 'package:eventjar/controller/my_ticket/controller.dart';
-import 'package:eventjar/controller/network/controller.dart';
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';

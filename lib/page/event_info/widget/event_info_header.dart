@@ -42,6 +42,7 @@ class EventInfoHeader extends StatelessWidget {
       return Padding(
         padding: EdgeInsets.symmetric(vertical: 3.wp, horizontal: 3.wp),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Event Title added at the top
             Text(

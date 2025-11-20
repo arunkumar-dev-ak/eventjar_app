@@ -111,6 +111,37 @@ class ContactController extends GetxController {
     }
   }
 
+  Future<void> deleteContactCard(String id) async {
+    try {
+      state.isLoading.value = true;
+
+      await ContactApi.deleteContact(id);
+
+      await fetchContacts();
+    } catch (err) {
+      LoggerService.loggerInstance.dynamic_d(err);
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          // Auth error handling example
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return;
+        }
+
+        ApiErrorHandler.handleError(err, "Failed to add contact");
+      } else {
+        AppSnackbar.error(
+          title: "Failed",
+          message: "Something went wrong. Please try again.",
+        );
+      }
+    } finally {
+      state.isLoading.value = false;
+    }
+  }
+
   void navigateToSignInPage() {
     Get.toNamed(RouteName.signInPage)?.then((result) async {
       if (result == "logged_in") {
@@ -123,6 +154,14 @@ class ContactController extends GetxController {
 
   void navigateToAddContact() {
     Get.toNamed(RouteName.addContactPage)?.then(
+      (result) async => {
+        if (result == 'refresh') {await fetchContacts()},
+      },
+    );
+  }
+
+  void navigateToUpdateContact(Contact contact) {
+    Get.toNamed(RouteName.addContactPage, arguments: {contact})?.then(
       (result) async => {
         if (result == 'refresh') {await fetchContacts()},
       },

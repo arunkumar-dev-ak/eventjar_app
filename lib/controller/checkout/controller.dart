@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/api/checkout_api/booking_api.dart';
 import 'package:eventjar/api/checkout_api/eligibility_api.dart';
 import 'package:eventjar/controller/checkout/state.dart';
+import 'package:eventjar/controller/dashboard/controller.dart';
 import 'package:eventjar/controller/my_ticket/controller.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
@@ -19,6 +20,7 @@ class CheckoutController extends GetxController {
   final state = CheckoutState();
 
   final MyTicketController ticketController = Get.find();
+  final DashboardController dashboardController = Get.find();
 
   @override
   void onInit() {
@@ -147,7 +149,8 @@ class CheckoutController extends GetxController {
   }
 
   void navigateToMyTicketPage() {
-    Get.offAndToNamed(RouteName.myTicketPage);
+    Get.until((route) => route.settings.name == RouteName.dashboardpage);
+    dashboardController.state.selectedIndex.value = 3;
     ticketController.onTabOpen();
   }
 

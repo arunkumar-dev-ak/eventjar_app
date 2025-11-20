@@ -120,7 +120,7 @@ class ContactStageDropdown extends StatelessWidget {
                 : null,
             onTap: () {
               controller.selectStage(stage);
-              Navigator.pop(context); // close dialog after selection
+              Navigator.pop(context);
             },
           );
         },

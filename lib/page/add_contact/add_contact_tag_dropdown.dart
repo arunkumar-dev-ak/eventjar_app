@@ -50,15 +50,20 @@ class MultiSelectTagsInput extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      tag,
-                      style: TextStyle(
-                        color: Colors.blue.shade900,
-                        fontSize: 10.sp,
+                    Flexible(
+                      child: Text(
+                        tag,
+                        style: TextStyle(
+                          color: Colors.blue.shade900,
+                          fontSize: 10.sp,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        softWrap: false,
                       ),
                     ),
                     const SizedBox(width: 6),
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         controller.state.selectedTags.remove(tag);
                       },

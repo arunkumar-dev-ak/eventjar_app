@@ -1,3 +1,4 @@
+import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:get/get.dart';
 
 class AddContactState {
@@ -18,5 +19,6 @@ class AddContactState {
     'value': 'New Contact',
   });
 
+  Rxn<Contact> contacts = Rxn();
   RxList<String> selectedTags = <String>[].obs;
 }
