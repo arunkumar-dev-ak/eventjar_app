@@ -226,32 +226,6 @@ class SignUpForm extends StatelessWidget {
                 onChanged: (_) {},
               ),
             ),
-            SizedBox(height: 2.hp),
-
-            // Confirm Password
-            Obx(
-              () => SignUpTextFormField(
-                controller: controller.confirmPasswordController,
-                label: "Confirm Password",
-                isPassword: true,
-                isPasswordHidden:
-                    controller.state.isConfirmPasswordHidden.value,
-                togglePasswordVisibility: () =>
-                    controller.state.isConfirmPasswordHidden.value =
-                        !controller.state.isConfirmPasswordHidden.value,
-                validator: (val) {
-                  if (val == null || val.isEmpty) {
-                    return "Confirm Password is required";
-                  } else if (val != controller.passwordController.text) {
-                    return "Passwords do not match";
-                  }
-                  return null;
-                },
-                isFieldValid: controller.state.isConfirmPasswordValid,
-                isFieldFocused: controller.state.focusConfirmPassword,
-                onChanged: (_) {},
-              ),
-            ),
 
             SizedBox(height: 3.hp),
 

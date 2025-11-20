@@ -7,7 +7,6 @@ class SignUpState {
   RxBool gmail = false.obs;
   RxBool mobileNumber = false.obs;
   RxBool password = false.obs;
-  RxBool confirmPassword = false.obs;
 
   RxBool isPasswordHidden = true.obs;
   RxBool isConfirmPasswordHidden = true.obs;
@@ -16,7 +15,6 @@ class SignUpState {
   RxBool focusFullName = false.obs;
   RxBool focusMobileNumber = false.obs;
   RxBool focusPassword = false.obs;
-  RxBool focusConfirmPassword = false.obs;
 
   RxBool isEmailValid = true.obs;
   RxBool isPasswordValid = true.obs;

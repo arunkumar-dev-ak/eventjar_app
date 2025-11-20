@@ -25,6 +25,7 @@ class ContactCardProfileTags extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         contact.isEventJarUser == true
             ? _buildBadge(
@@ -67,19 +68,13 @@ class ContactCardProfileTags extends StatelessWidget {
               ),
 
         if (contact.isOverdue)
-          Expanded(
-            child: _buildBadge(
-              bgColor: Colors.red[400]!,
-              margin: EdgeInsets.zero,
-              child: const Text(
-                'Overdue',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
+          Container(
+            margin: EdgeInsets.zero,
+            width: 12, // diameter of the dot
+            height: 12,
+            decoration: BoxDecoration(
+              color: Colors.red[400],
+              shape: BoxShape.circle,
             ),
           ),
       ],

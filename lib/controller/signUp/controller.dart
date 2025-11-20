@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/sign_up_api/sign_up_api.dart';
-import 'package:eventjar/api/signin_api/signin_api.dart';
 import 'package:eventjar/controller/signUp/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
@@ -15,7 +14,6 @@ class SignUpController extends GetxController {
   final _emailController = TextEditingController().obs;
   final _passwordController = TextEditingController().obs;
   final _fullNameController = TextEditingController().obs;
-  final _confirmPasswordController = TextEditingController().obs;
   final _mobileNumberController = TextEditingController().obs;
 
   final isPasswordHidden = true.obs;
@@ -24,8 +22,6 @@ class SignUpController extends GetxController {
   TextEditingController get emailController => _emailController.value;
   TextEditingController get passwordController => _passwordController.value;
   TextEditingController get fullNameController => _fullNameController.value;
-  TextEditingController get confirmPasswordController =>
-      _confirmPasswordController.value;
   TextEditingController get mobileNumberController =>
       _mobileNumberController.value;
 

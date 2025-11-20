@@ -4,6 +4,7 @@ import 'package:eventjar/controller/add_contact/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/widgets.dart';
@@ -61,8 +62,9 @@ class AddContactController extends GetxController {
 
     nameController.text = contact.name;
     emailController.text = contact.email;
-    // phoneController.text =
-    //     contact.phone?.replaceFirst(contact. ?? '', '') ?? '';
+    //phoneController
+    final localNumber = getLocalNumberSimple(contact.phone);
+    phoneController.text = localNumber;
     notesController.text = contact.notes ?? '';
 
     // state.selectedCountryCode.value = contact.phoneCountryCode ?? '+91';
@@ -80,6 +82,16 @@ class AddContactController extends GetxController {
     } else {
       state.selectedTags.clear();
     }
+  }
+
+  String getLocalNumberSimple(String? phone) {
+    if (phone == null || phone.isEmpty) return '';
+
+    if (phone.startsWith('+') && phone.length > 3) {
+      return phone.substring(3);
+    }
+
+    return phone;
   }
 
   void clearForm() {
