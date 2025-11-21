@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
   final isActive = ticket.status.toLowerCase() == "active" ? true : false;
-  final isFree = ticket.ticketTier.price.toString() == '0' ? true : false;
+  final isFree = ticket.ticketTier?.price.toString() == '0' ? true : false;
 
   return Container(
     margin: EdgeInsets.only(bottom: 3.hp),
@@ -64,11 +64,13 @@ Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
                 runSpacing: 1.hp,
                 children: [
                   // Ticket Tier Badge
-                  myTicketBuildBadge(
-                    ticket.ticketTier.name,
-                    isFree ? Colors.green.shade600 : Colors.blue.shade600,
-                    isFree ? Colors.green.shade50 : Colors.blue.shade50,
-                  ),
+                  if (ticket.ticketTier != null) ...[
+                    myTicketBuildBadge(
+                      ticket.ticketTier!.name,
+                      isFree ? Colors.green.shade600 : Colors.blue.shade600,
+                      isFree ? Colors.green.shade50 : Colors.blue.shade50,
+                    ),
+                  ],
 
                   // Quantity Badge
                   myTicketBuildBadge(
@@ -78,11 +80,13 @@ Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
                   ),
 
                   // Total/Free Badge
-                  myTicketBuildBadge(
-                    isFree ? 'FREE' : 'Total: ₹${ticket.ticketTier.price}',
-                    isFree ? Colors.green.shade700 : Colors.purple.shade700,
-                    isFree ? Colors.green.shade100 : Colors.purple.shade100,
-                  ),
+                  if (ticket.ticketTier != null) ...[
+                    myTicketBuildBadge(
+                      isFree ? 'FREE' : 'Total: ₹${ticket.ticketTier!.price}',
+                      isFree ? Colors.green.shade700 : Colors.purple.shade700,
+                      isFree ? Colors.green.shade100 : Colors.purple.shade100,
+                    ),
+                  ],
 
                   // Status Badge
                   // _buildBadge(

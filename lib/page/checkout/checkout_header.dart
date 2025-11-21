@@ -64,12 +64,15 @@ Widget buildCheckoutEventInfo(EventInfo eventInfo, BuildContext context) {
 
           // Location
           _buildInfoRow(
-            Icons.location_on,
-            eventInfo.venue != null && eventInfo.venue!.isNotEmpty
+            eventInfo.isVirtual ? Icons.computer : Icons.location_on,
+            eventInfo.isVirtual
+                ? "Online"
+                : eventInfo.venue != null && eventInfo.venue!.isNotEmpty
                 ? "${eventInfo.venue}${eventInfo.city != null && eventInfo.city!.isNotEmpty ? ', ${eventInfo.city}' : ''}"
                 : "Location not specified",
-            Colors.red.shade400,
+            eventInfo.isVirtual ? Colors.blue.shade400 : Colors.red.shade400,
           ),
+
           SizedBox(height: 1.hp),
 
           // Date & Time

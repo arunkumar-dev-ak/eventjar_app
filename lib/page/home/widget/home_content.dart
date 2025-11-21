@@ -103,26 +103,50 @@ class HomeContent extends StatelessWidget {
                       SizedBox(height: 1.hp),
 
                       // Location (City)
-                      Row(
-                        children: [
-                          Icon(Icons.location_on, color: Colors.red[300]),
-                          SizedBox(width: 1.wp),
-                          Expanded(
-                            child: Text(
-                              (event.city != null && event.city!.isNotEmpty)
-                                  ? event.city!
-                                  : "No city info",
-                              style: TextStyle(
-                                color: Colors.black.withValues(alpha: 0.85),
-                                fontSize: 10.sp,
+                      if (!event.isVirtual) ...[
+                        Row(
+                          children: [
+                            Icon(Icons.location_on, color: Colors.red[300]),
+                            SizedBox(width: 1.wp),
+                            Expanded(
+                              child: Text(
+                                (event.city != null && event.city!.isNotEmpty)
+                                    ? event.city!
+                                    : "No city info",
+                                style: TextStyle(
+                                  color: Colors.black.withValues(alpha: 0.85),
+                                  fontSize: 10.sp,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 1.hp),
+                          ],
+                        ),
+                        SizedBox(height: 1.hp),
+                      ] else ...[
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.computer,
+                              color: Colors.blue[300],
+                            ), // online icon
+                            SizedBox(width: 1.wp),
+                            Expanded(
+                              child: Text(
+                                "Online",
+                                style: TextStyle(
+                                  color: Colors.black.withValues(alpha: 0.85),
+                                  fontSize: 10.sp,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 1.hp),
+                      ],
 
                       // Date & Time
                       Row(

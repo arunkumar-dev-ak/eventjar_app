@@ -1,3 +1,5 @@
+import 'package:eventjar/logger_service.dart';
+
 class MyRegistrationsResponse {
   final bool success;
   final MyRegistrationsData data;
@@ -33,6 +35,7 @@ class MyRegistrationsData {
         pagination: TicketPagination.fromJson(json['pagination']),
       );
     } catch (e) {
+      LoggerService.loggerInstance.e(e);
       throw Exception('Error in MyRegistrationsData: $e');
     }
   }
@@ -47,7 +50,7 @@ class MyTicket {
   final String id;
   final String eventId;
   final String attendeeId;
-  final String ticketTierId;
+  final String? ticketTierId;
   final int quantity;
   final String qrCode;
   final String confirmationCode;
@@ -67,14 +70,14 @@ class MyTicket {
   final int checkInCount;
   final int maxCheckIns;
   final DateTime? lastCheckInAt;
-  final TicketTierDetail ticketTier;
+  final TicketTierDetail? ticketTier;
   final TicketEventDetail event;
 
   MyTicket({
     required this.id,
     required this.eventId,
     required this.attendeeId,
-    required this.ticketTierId,
+    this.ticketTierId,
     required this.quantity,
     required this.qrCode,
     required this.confirmationCode,
@@ -94,11 +97,12 @@ class MyTicket {
     required this.checkInCount,
     required this.maxCheckIns,
     this.lastCheckInAt,
-    required this.ticketTier,
+    this.ticketTier,
     required this.event,
   });
 
   factory MyTicket.fromJson(Map<String, dynamic> json) {
+    LoggerService.loggerInstance.dynamic_d(json);
     try {
       return MyTicket(
         id: json['id'],
@@ -128,7 +132,9 @@ class MyTicket {
         lastCheckInAt: json['lastCheckInAt'] != null
             ? DateTime.parse(json['lastCheckInAt'])
             : null,
-        ticketTier: TicketTierDetail.fromJson(json['ticketTier']),
+        ticketTier: json['ticketTier'] == null
+            ? null
+            : TicketTierDetail.fromJson(json['ticketTier']),
         event: TicketEventDetail.fromJson(json['event']),
       );
     } catch (e) {
@@ -160,7 +166,7 @@ class MyTicket {
     'checkInCount': checkInCount,
     'maxCheckIns': maxCheckIns,
     'lastCheckInAt': lastCheckInAt?.toIso8601String(),
-    'ticketTier': ticketTier.toJson(),
+    'ticketTier': ticketTier?.toJson(),
     'event': event.toJson(),
   };
 }

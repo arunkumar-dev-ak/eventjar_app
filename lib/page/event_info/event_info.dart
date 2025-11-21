@@ -34,6 +34,19 @@ class EventInfoPage extends GetView<EventInfoController> {
             ],
           ),
         ),
+        bottomNavigationBar: Obx(() {
+          return SafeArea(
+            child: SizedBox(
+              height: 6.hp,
+              child: eventInfoBookButton(
+                isFree: !(controller.state.eventInfo.value?.isPaid ?? false),
+                onTap: () {
+                  controller.navigateToCheckOut();
+                },
+              ),
+            ),
+          );
+        }),
       ),
     );
   }

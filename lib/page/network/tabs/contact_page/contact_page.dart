@@ -2,6 +2,7 @@ import 'package:eventjar/controller/network/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/page/network/tabs/contact_page/contact_page_shimmer.dart';
+import 'package:eventjar/page/network/tabs/contact_page/contact_page_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -29,6 +30,9 @@ class ContactNetworkStatusCards extends StatelessWidget {
         return SingleChildScrollView(
           child: Column(
             children: [
+              ContactAnalyticsAddContactCard(),
+
+              SizedBox(height: 2.hp),
               // Grid for all cards except "Overdue"
               GridView.builder(
                 shrinkWrap: true,
@@ -104,97 +108,16 @@ class ContactNetworkStatusCards extends StatelessWidget {
               if (isLoading) ...[
                 OverdueCardShimmer(),
               ] else ...[
-                Builder(
-                  builder: (context) {
-                    final overdueCard = _statusCards.last;
-                    final overdueCount = _getCountByKey(
-                      analytics,
-                      overdueCard.key,
-                    );
-
-                    return InkWell(
-                      onTap: () =>
-                          controller.navigateToContactPage(overdueCard),
-                      borderRadius: BorderRadius.circular(24),
-                      child: Container(
-                        height: 110, // adjust height as needed
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24),
-                          gradient: LinearGradient(
-                            colors: [
-                              overdueCard.color.withValues(alpha: 0.7),
-                              overdueCard.color.withValues(alpha: 0.4),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: overdueCard.color.withValues(alpha: 0.4),
-                              blurRadius: 15,
-                              offset: const Offset(4, 6),
-                            ),
-                          ],
-                        ),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              top: -40,
-                              right: -40,
-                              child: Container(
-                                width: 120,
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  color: overdueCard.color.withValues(
-                                    alpha: 0.3,
-                                  ),
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                            ),
-                            Positioned.fill(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 24,
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      overdueCard.icon,
-                                      size: 30,
-                                      color: Colors.white,
-                                    ),
-                                    const SizedBox(width: 20),
-                                    Expanded(
-                                      child: Text(
-                                        overdueCard.label,
-                                        style: TextStyle(
-                                          color: Colors.white70,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 11.sp,
-                                        ),
-                                      ),
-                                    ),
-                                    Text(
-                                      _formatCount(overdueCount),
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14.sp,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+                ContactAnalyticsOverdueCard(
+                  label: _statusCards.last.label,
+                  icon: _statusCards.last.icon,
+                  color: _statusCards.last.color,
+                  overdueCount: _getCountByKey(
+                    analytics,
+                    _statusCards.last.key,
+                  ),
+                  onTap: () =>
+                      controller.navigateToContactPage(_statusCards.last),
                 ),
               ],
             ],

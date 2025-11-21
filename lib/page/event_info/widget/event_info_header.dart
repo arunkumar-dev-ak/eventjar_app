@@ -106,19 +106,25 @@ class EventInfoHeader extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  Icons.location_on_outlined,
-                  color: const Color.fromARGB(
-                    255,
-                    255,
-                    109,
-                    99,
-                  ).withValues(alpha: 0.8),
+                  eventInfo.isVirtual
+                      ? Icons.computer
+                      : Icons.location_on_outlined,
+                  color: eventInfo.isVirtual
+                      ? const Color.fromARGB(255, 35, 79, 116).withValues(
+                          alpha: 0.8,
+                        ) // blue shade for virtual
+                      : const Color.fromARGB(255, 255, 109, 99).withValues(
+                          alpha: 0.8,
+                        ), // red shade for physical location
                 ),
+
                 SizedBox(width: 2.wp),
                 Expanded(
                   child: Text(
-                    eventInfo.city != null && eventInfo.city!.isNotEmpty
-                        ? "${eventInfo.venue ?? ''}${eventInfo.city!.isNotEmpty ? ', ' : ''}${eventInfo.city ?? ''}"
+                    eventInfo.isVirtual
+                        ? "Online"
+                        : (eventInfo.city != null && eventInfo.city!.isNotEmpty)
+                        ? "${eventInfo.venue ?? ''}${(eventInfo.venue != null && eventInfo.venue!.isNotEmpty) && eventInfo.city!.isNotEmpty ? ', ' : ''}${eventInfo.city ?? ''}"
                         : "Location not specified",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

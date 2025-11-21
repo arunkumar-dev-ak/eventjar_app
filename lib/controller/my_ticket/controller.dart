@@ -41,7 +41,7 @@ class MyTicketController extends GetxController {
       state.tickets.value = response.data.registrations;
       state.pagination.value = response.data.pagination;
     } catch (err) {
-      LoggerService.loggerInstance.e(err.runtimeType);
+      state.tickets.value = [];
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
 

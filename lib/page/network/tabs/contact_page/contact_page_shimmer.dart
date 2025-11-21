@@ -54,7 +54,7 @@ class OverdueCardShimmer extends StatelessWidget {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade400.withOpacity(0.5),
+                  color: Colors.grey.shade400.withValues(alpha: 0.5),
                   shape: BoxShape.circle,
                 ),
               ),

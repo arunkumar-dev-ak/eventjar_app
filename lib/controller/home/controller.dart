@@ -191,4 +191,8 @@ class HomeController extends GetxController {
       return "Invalid date";
     }
   }
+
+  void navigateToAddContact() {
+    Get.toNamed(RouteName.addContactPage);
+  }
 }

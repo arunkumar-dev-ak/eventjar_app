@@ -23,10 +23,10 @@ class EventInfoContent extends StatelessWidget {
         width: 100.wp,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
+          // borderRadius: BorderRadius.only(
+          //   topLeft: Radius.circular(20),
+          //   topRight: Radius.circular(20),
+          // ),
         ),
         child: Column(
           children: [
@@ -84,14 +84,14 @@ class EventInfoContent extends StatelessWidget {
                 ],
               ),
             ),
-            Obx(() {
-              return eventInfoBookButton(
-                isFree: !(controller.state.eventInfo.value?.isPaid ?? false),
-                onTap: () {
-                  controller.navigateToCheckOut();
-                },
-              );
-            }),
+            // Obx(() {
+            //   return eventInfoBookButton(
+            //     isFree: !(controller.state.eventInfo.value?.isPaid ?? false),
+            //     onTap: () {
+            //       controller.navigateToCheckOut();
+            //     },
+            //   );
+            // }),
           ],
         ),
       ),
@@ -104,7 +104,7 @@ Widget eventInfoBookButton({
   required VoidCallback onTap,
 }) {
   return Padding(
-    padding: EdgeInsets.only(left: 5.wp, right: 5.wp, bottom: 2.hp),
+    padding: EdgeInsets.only(left: 5.wp, right: 5.wp),
     child: Material(
       borderRadius: BorderRadius.circular(10),
       color: Colors.transparent,

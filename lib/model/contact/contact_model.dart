@@ -25,7 +25,7 @@ class ContactResponse {
 
 class Contact {
   final String id;
-  final String organizerId;
+  final String? organizerId;
   final String name;
   final String? username;
   final String email;
@@ -39,8 +39,8 @@ class Contact {
   // final Map<String, String> customAttributes;
   final String? notes;
   final DateTime createdAt;
-  final String
-  updatedAt; // string per your example, could make DateTime if preferred
+  // final String
+  // updatedAt; // string per your example, could make DateTime if preferred
   final DateTime? lastMeetingDate;
   final DateTime? nextFollowUpDate;
   final DateTime? stageEnteredAt;
@@ -62,7 +62,7 @@ class Contact {
 
   Contact({
     required this.id,
-    required this.organizerId,
+    this.organizerId,
     required this.name,
     this.username,
     required this.email,
@@ -76,7 +76,7 @@ class Contact {
     // required this.customAttributes,
     this.notes,
     required this.createdAt,
-    required this.updatedAt,
+    // required this.updatedAt,
     this.lastMeetingDate,
     this.nextFollowUpDate,
     this.stageEnteredAt,
@@ -117,7 +117,7 @@ class Contact {
         // ),
         notes: json['notes'],
         createdAt: DateTime.parse(json['createdAt']),
-        updatedAt: json['updatedAt'],
+        // updatedAt: json['updatedAt'],
         lastMeetingDate: json['lastMeetingDate'] == null
             ? null
             : DateTime.parse(json['lastMeetingDate']),
@@ -173,7 +173,7 @@ class Contact {
     // 'customAttributes': customAttributes,
     'notes': notes,
     'createdAt': createdAt.toIso8601String(),
-    'updatedAt': updatedAt,
+    // 'updatedAt': updatedAt,
     'lastMeetingDate': lastMeetingDate?.toIso8601String(),
     'nextFollowUpDate': nextFollowUpDate?.toIso8601String(),
     'stageEnteredAt': stageEnteredAt?.toIso8601String(),

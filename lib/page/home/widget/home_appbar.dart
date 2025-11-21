@@ -2,7 +2,6 @@ import 'package:eventjar/controller/home/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/widget/gradient_text.dart';
-import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -34,6 +33,7 @@ class HomeAppBar extends StatelessWidget {
             gradientEnd: AppColors.gradientDarkEnd,
             fontWeight: FontWeight.bold,
           ),
+
           //Budget Tracker Icon
           // GestureDetector(
           //   onTap: () {
@@ -42,7 +42,13 @@ class HomeAppBar extends StatelessWidget {
           //   },
           //   child: _buildBudgetIcon(),
           // ),
-          SizedBox.shrink(),
+          IconButton(
+            icon: Icon(Icons.person_add, color: Colors.blue[700], size: 25),
+            tooltip: 'Add Contact',
+            onPressed: () {
+              controller.navigateToAddContact();
+            },
+          ),
         ],
       ),
     );
