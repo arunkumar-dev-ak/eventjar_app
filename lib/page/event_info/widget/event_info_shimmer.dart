@@ -93,7 +93,7 @@ class EventCardShimmer extends StatelessWidget {
             children: [
               // Title placeholder
               Container(
-                height: 16.sp,
+                height: 10.sp,
                 width: 0.6 * 100.wp, // 60% of width
                 color: Colors.grey[300],
               ),
@@ -142,67 +142,53 @@ class EventCardShimmer extends StatelessWidget {
               ),
               SizedBox(height: 1.hp),
 
-              // Description placeholder (two lines)
-              Container(
-                height: 12.sp,
-                width: double.infinity,
-                color: Colors.grey[300],
-              ),
-              SizedBox(height: 4),
-              Container(
-                height: 12.sp,
-                width: 0.8 * 100.wp,
-                color: Colors.grey[300],
-              ),
-              SizedBox(height: 1.hp),
-
               // Tags placeholder (small rectangles)
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: List.generate(3, (index) {
-                    return Container(
-                      margin: EdgeInsets.only(right: 2.wp),
-                      height: 20,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    );
-                  }),
-                ),
-              ),
-              SizedBox(height: 1.hp),
+              // SingleChildScrollView(
+              //   scrollDirection: Axis.horizontal,
+              //   child: Row(
+              //     children: List.generate(3, (index) {
+              //       return Container(
+              //         margin: EdgeInsets.only(right: 2.wp),
+              //         height: 20,
+              //         width: 50,
+              //         decoration: BoxDecoration(
+              //           color: Colors.grey[300],
+              //           borderRadius: BorderRadius.circular(10),
+              //         ),
+              //       );
+              //     }),
+              //   ),
+              // ),
+              // SizedBox(height: 1.hp),
 
-              // Organizer and button placeholder
-              Row(
-                children: [
-                  Container(
-                    height: 24,
-                    width: 24,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  SizedBox(width: 1.wp),
-                  Container(
-                    height: 14.sp,
-                    width: 0.2 * 100.wp,
-                    color: Colors.grey[300],
-                  ),
-                  Spacer(),
-                  Container(
-                    height: 24,
-                    width: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                  ),
-                ],
-              ),
+              // // Organizer and button placeholder
+              // Row(
+              //   children: [
+              //     Container(
+              //       height: 24,
+              //       width: 24,
+              //       decoration: BoxDecoration(
+              //         color: Colors.grey[300],
+              //         shape: BoxShape.circle,
+              //       ),
+              //     ),
+              //     SizedBox(width: 1.wp),
+              //     Container(
+              //       height: 14.sp,
+              //       width: 0.2 * 100.wp,
+              //       color: Colors.grey[300],
+              //     ),
+              //     Spacer(),
+              //     Container(
+              //       height: 24,
+              //       width: 60,
+              //       decoration: BoxDecoration(
+              //         color: Colors.grey[300],
+              //         borderRadius: BorderRadius.circular(18),
+              //       ),
+              //     ),
+              //   ],
+              // ),
             ],
           ),
         ),

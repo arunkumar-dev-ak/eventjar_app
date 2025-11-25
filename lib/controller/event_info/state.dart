@@ -5,4 +5,7 @@ class EventInfoState {
   RxBool isLoading = false.obs;
 
   Rxn<EventInfo> eventInfo = Rxn<EventInfo>();
+
+  RxInt selectedAttendeeTab = 0.obs;
+  RxString searchText = ''.obs;
 }

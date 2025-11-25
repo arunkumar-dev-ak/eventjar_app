@@ -3,6 +3,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/widget/gradient_text.dart';
 import 'package:eventjar/page/event_info/tabs/agenda/agenda_page.dart';
+import 'package:eventjar/page/event_info/tabs/connection/connection_page.dart';
 import 'package:eventjar/page/event_info/tabs/images/image_page.dart';
 import 'package:eventjar/page/event_info/tabs/location/location_page.dart';
 import 'package:eventjar/page/event_info/tabs/organizer/organizer_page.dart';
@@ -42,7 +43,7 @@ class EventInfoContent extends StatelessWidget {
                       "Location",
                       "Organizer",
                       "Reviews",
-                      "Images",
+                      "Attendees",
                     ];
 
                     final isSelected = controller.tabController.index == i;
@@ -80,7 +81,7 @@ class EventInfoContent extends StatelessWidget {
                   LocationPage(),
                   OrganizerPage(),
                   ReviewsPage(),
-                  ImagesPage(),
+                  EventInfoConnectionTab(),
                 ],
               ),
             ),

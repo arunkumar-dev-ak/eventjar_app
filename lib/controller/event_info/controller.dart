@@ -14,6 +14,8 @@ class EventInfoController extends GetxController
   late final TabController tabController;
   late final String eventId;
 
+  final TextEditingController searchController = TextEditingController();
+
   final imageUrl =
       "https://thumbs.dreamstime.com/b/abstract-illuminated-light-stage-colourful-background-bokeh-143498898.jpg";
 
@@ -67,6 +69,10 @@ class EventInfoController extends GetxController
 
   void navigateToCheckOut() {
     Get.toNamed(RouteName.checkoutPage, arguments: state.eventInfo);
+  }
+
+  void selectRequestTab(int index) {
+    state.selectedAttendeeTab.value = index;
   }
 
   @override

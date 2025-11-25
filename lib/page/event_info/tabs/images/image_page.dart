@@ -48,7 +48,7 @@ class ImagesPage extends StatelessWidget {
     });
   }
 
-  /// Image card with gradient border
+  // Image card with gradient border
   Widget _buildImageCard(String imageUrl, int index) {
     return Container(
       decoration: BoxDecoration(
@@ -56,7 +56,7 @@ class ImagesPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.gradientDarkStart.withOpacity(0.2),
+            color: AppColors.gradientDarkStart.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
