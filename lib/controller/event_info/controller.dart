@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_controller.dart';
 import 'package:eventjar/api/event_info_api/event_info_api.dart';
 import 'package:eventjar/controller/event_info/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
@@ -15,6 +16,8 @@ class EventInfoController extends GetxController
   late final String eventId;
 
   final TextEditingController searchController = TextEditingController();
+  final CarouselSliderController carouselSliderController =
+      CarouselSliderController();
 
   final imageUrl =
       "https://thumbs.dreamstime.com/b/abstract-illuminated-light-stage-colourful-background-bokeh-143498898.jpg";

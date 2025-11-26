@@ -21,6 +21,6 @@ const String storageAccessToken = "myEventJar_accessToken";
 const String storageRefreshToken = "myEventJar_refreshToken";
 const String storageProfile = "myEventJar_profile";
 const String storageFcmToken = "myEventJar_fcmToken";
-String url() {
+String backendBaseUrl() {
   return "https://myeventjar.com/api";
 } //Base url for Api request
