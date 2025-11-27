@@ -61,6 +61,8 @@ class EventInfoController extends GetxController
       state.isLoading.value = true;
       final response = await EventInfoApi.getEventInfo(eventId);
       state.eventInfo.value = response;
+
+      LoggerService.loggerInstance.dynamic_d(response.bookingLastDate);
     } catch (e) {
       LoggerService.loggerInstance.e('Failed to load event info: $e');
       AppSnackbar.error(title: "error", message: e.toString());

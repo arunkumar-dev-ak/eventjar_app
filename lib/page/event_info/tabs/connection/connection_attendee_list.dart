@@ -1,8 +1,6 @@
 import 'package:eventjar/controller/event_info/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/global/utils/helpers.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/event_info/event_attendee_model.dart';
 import 'package:eventjar/page/event_info/tabs/connection/connection_attendee_list_meeting_req_button.dart';
 import 'package:eventjar/page/event_info/tabs/connection/connection_attendee_shimmer.dart';
@@ -19,6 +17,7 @@ class ConnectionAttendeeList extends StatelessWidget {
     return Obx(() {
       final attendeeState = controller.state.attendeeList.value;
       final isLoading = controller.state.attendeeListLoading.value;
+      final searchText = controller.state.searchText.value.toLowerCase().trim();
 
       if (isLoading) {
         return Center(child: buildAttendeeListShimmer());
@@ -32,9 +31,26 @@ class ConnectionAttendeeList extends StatelessWidget {
         );
       }
 
+      final filteredAttendees = searchText.isEmpty
+          ? attendeeState.attendees
+          : attendeeState.attendees.where((attendee) {
+              final name = attendee.name.toLowerCase();
+              final company = (attendee.company ?? '').toLowerCase();
+              return name.contains(searchText) || company.contains(searchText);
+            }).toList();
+
+      if (filteredAttendees.isEmpty) {
+        return Center(
+          child: Text(
+            "No attendees match your search.",
+            style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+          ),
+        );
+      }
+
       return Column(
         children: [
-          for (final attendee in attendeeState.attendees)
+          for (final attendee in filteredAttendees)
             Padding(
               padding: EdgeInsets.only(bottom: 1.hp),
               child: buildAttendeeInfoCardFromModel(attendee),

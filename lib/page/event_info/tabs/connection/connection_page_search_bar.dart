@@ -27,7 +27,7 @@ class EventInfoConnectionSearchBar extends StatelessWidget {
       child: TextField(
         controller: controller.searchController,
         decoration: InputDecoration(
-          hintText: "Search",
+          hintText: "Search by Name or Company",
           border: InputBorder.none,
           prefixIcon: Icon(Icons.search, color: Colors.grey),
           suffixIcon: Obx(
