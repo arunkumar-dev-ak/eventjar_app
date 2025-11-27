@@ -84,14 +84,6 @@ class EventInfoContent extends StatelessWidget {
                 ],
               ),
             ),
-            // Obx(() {
-            //   return eventInfoBookButton(
-            //     isFree: !(controller.state.eventInfo.value?.isPaid ?? false),
-            //     onTap: () {
-            //       controller.navigateToCheckOut();
-            //     },
-            //   );
-            // }),
           ],
         ),
       ),

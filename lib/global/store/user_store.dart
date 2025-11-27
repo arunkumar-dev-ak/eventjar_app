@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:eventjar/global/device_helper.dart';
 import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/auth/login_model.dart';
@@ -12,11 +13,13 @@ class UserStore extends GetxController {
   final _isLogin = false.obs;
   final _accessToken = "".obs;
   final _refreshToken = "".obs;
+  RxString _deviceId = ''.obs;
   final _profile = RxMap<String, dynamic>(); // Declare as RxMap
 
   bool get isLogin => _isLogin.value;
   String get accessToken => _accessToken.value;
   String get refreshToken => _refreshToken.value;
+  String get deviceId => _deviceId.value;
   Map<String, dynamic> get profile => _profile;
 
   // String get name {
@@ -49,6 +52,9 @@ class UserStore extends GetxController {
           decodedProfile; // Use _profile.value to set data in RxMap
       _isLogin.value = true; // Mark as logged in
     }
+
+    _deviceId.value = await DeviceIdHelper.getDeviceId();
+    await DeviceIdHelper.getDeviceId();
 
     super.onInit();
   }
@@ -94,7 +100,7 @@ class UserStore extends GetxController {
     await StorageService.to.deleteString(storageRefreshToken);
     await StorageService.to.deleteString(storageProfile);
 
-    _isLogin.value = false;
+    _isLogin.value = true;
     _accessToken.value = '';
     _refreshToken.value = '';
   }

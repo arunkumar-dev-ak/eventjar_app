@@ -36,7 +36,8 @@ class EventInfoPage extends GetView<EventInfoController> {
         ),
         bottomNavigationBar: Obx(() {
           return SafeArea(
-            child: SizedBox(
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 0.5.hp),
               height: 6.hp,
               child: eventInfoBookButton(
                 isFree: !(controller.state.eventInfo.value?.isPaid ?? false),

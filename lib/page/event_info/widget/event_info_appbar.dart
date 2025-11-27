@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:eventjar/controller/event_info/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:eventjar/page/event_info/widget/event_info_back_button.dart';
 import 'package:eventjar/page/event_info/widget/event_info_page.utils.dart';

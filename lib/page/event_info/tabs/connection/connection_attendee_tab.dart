@@ -10,8 +10,12 @@ class ConnectionAttendeesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Row(
+    return Obx(() {
+      final sentCount =
+          controller.state.attendeeRequests.value?.sent.length ?? 0;
+      final receivedCount =
+          controller.state.attendeeRequests.value?.received.length ?? 0;
+      return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
@@ -23,46 +27,48 @@ class ConnectionAttendeesTab extends StatelessWidget {
               color: Colors.grey.shade200,
               borderRadius: BorderRadius.circular(24),
             ),
-            child: Row(
-              children: [
-                _buildJoinedTabButton(
-                  label: "Sent",
-                  selected: controller.state.selectedAttendeeTab.value == 0,
-                  onTap: () => controller.selectRequestTab(0),
-                  leftSide: true,
-                  selectedBgColor: Colors.blue,
-                  unselectedBgColor: Colors.white,
-                  selectedTextColor: Colors.white,
-                  unselectedTextColor: Colors.blue,
-                  selectedBorderColor: Colors.blue,
-                  unselectedBorderColor: Colors.grey.shade300,
-                  count: 10,
-                  countGradient: LinearGradient(
-                    colors: [Colors.blue, Colors.lightBlueAccent],
+            child: Obx(() {
+              return Row(
+                children: [
+                  _buildJoinedTabButton(
+                    label: "Sent",
+                    selected: controller.state.selectedAttendeeTab.value == 0,
+                    onTap: () => controller.selectRequestTab(0),
+                    leftSide: true,
+                    selectedBgColor: Colors.blue,
+                    unselectedBgColor: Colors.white,
+                    selectedTextColor: Colors.white,
+                    unselectedTextColor: Colors.blue,
+                    selectedBorderColor: Colors.blue,
+                    unselectedBorderColor: Colors.grey.shade300,
+                    count: sentCount,
+                    countGradient: LinearGradient(
+                      colors: [Colors.blue, Colors.lightBlueAccent],
+                    ),
                   ),
-                ),
-                _buildJoinedTabButton(
-                  label: "Received",
-                  selected: controller.state.selectedAttendeeTab.value == 1,
-                  onTap: () => controller.selectRequestTab(1),
-                  leftSide: false,
-                  selectedBgColor: Colors.green,
-                  unselectedBgColor: Colors.white,
-                  selectedTextColor: Colors.white,
-                  unselectedTextColor: Colors.green,
-                  selectedBorderColor: Colors.green,
-                  unselectedBorderColor: Colors.grey.shade300,
-                  count: 20,
-                  countGradient: LinearGradient(
-                    colors: [Colors.green, Colors.lightGreenAccent],
+                  _buildJoinedTabButton(
+                    label: "Received",
+                    selected: controller.state.selectedAttendeeTab.value == 1,
+                    onTap: () => controller.selectRequestTab(1),
+                    leftSide: false,
+                    selectedBgColor: Colors.green,
+                    unselectedBgColor: Colors.white,
+                    selectedTextColor: Colors.white,
+                    unselectedTextColor: Colors.green,
+                    selectedBorderColor: Colors.green,
+                    unselectedBorderColor: Colors.grey.shade300,
+                    count: receivedCount,
+                    countGradient: LinearGradient(
+                      colors: [Colors.green, Colors.lightGreenAccent],
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              );
+            }),
           ),
         ],
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildJoinedTabButton({

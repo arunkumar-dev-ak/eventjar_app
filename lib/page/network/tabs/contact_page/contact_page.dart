@@ -6,7 +6,7 @@ import 'package:eventjar/page/network/tabs/contact_page/contact_page_utils.dart'
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-String _formatCount(int count) {
+String formatCount(int count) {
   if (count >= 100000) {
     return '${(count / 100000).toStringAsFixed(1)}L+';
   } else if (count >= 1000) {
@@ -89,7 +89,7 @@ class ContactNetworkStatusCards extends StatelessWidget {
                           ),
                           const Spacer(),
                           Text(
-                            _formatCount(count),
+                            formatCount(count),
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
