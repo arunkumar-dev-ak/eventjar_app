@@ -19,35 +19,43 @@ class EventInfoPage extends GetView<EventInfoController> {
         statusBarIconBrightness: Brightness.light, // White icons (Android)
         statusBarBrightness: Brightness.dark, // White icons (iOS)
       ),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Container(
-          width: 100.wp,
-          decoration: BoxDecoration(gradient: AppColors.appBarGradient),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              EventInfoAppBar(),
-              EventInfoHeader(),
-              EventInfoContent(),
-            ],
-          ),
-        ),
-        bottomNavigationBar: Obx(() {
-          return SafeArea(
-            child: Container(
-              margin: EdgeInsets.symmetric(vertical: 0.5.hp),
-              height: 6.hp,
-              child: eventInfoBookButton(
-                isFree: !(controller.state.eventInfo.value?.isPaid ?? false),
-                onTap: () {
-                  controller.navigateToCheckOut();
-                },
+      child: Container(
+        width: 100.wp,
+        height: double.infinity,
+        color: Colors.black,
+        child: SafeArea(
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            body: Container(
+              width: 100.wp,
+              decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  EventInfoAppBar(),
+                  EventInfoHeader(),
+                  EventInfoContent(),
+                ],
               ),
             ),
-          );
-        }),
+            bottomNavigationBar: Obx(() {
+              return SafeArea(
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 0.5.hp),
+                  height: 6.hp,
+                  child: eventInfoBookButton(
+                    isFree:
+                        !(controller.state.eventInfo.value?.isPaid ?? false),
+                    onTap: () {
+                      controller.navigateToCheckOut();
+                    },
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
       ),
     );
   }
