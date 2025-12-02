@@ -65,22 +65,25 @@ class CustomBottomNavigationBar extends StatelessWidget {
             controller.state.selectedIndex.value = index;
             if (!Get.isRegistered<HomeController>()) {
               Get.put(HomeController()).onTabOpen();
+            } else {
+              Get.find<HomeController>().onTabOpen();
             }
-            Get.find<HomeController>().onTabOpen();
           } else if (index == 1) {
             controller.handleNetworkTabSwitch();
           } else if (index == 2) {
             controller.state.selectedIndex.value = index;
             if (!Get.isRegistered<UserProfileController>()) {
               Get.put(UserProfileController()).onTabOpen();
+            } else {
+              Get.find<UserProfileController>().onTabOpen();
             }
-            Get.find<UserProfileController>().onTabOpen();
           } else if (index == 3) {
             controller.state.selectedIndex.value = index;
             if (!Get.isRegistered<MyTicketController>()) {
               Get.put(MyTicketController()).onTabOpen();
+            } else {
+              Get.find<MyTicketController>().onTabOpen();
             }
-            Get.find<MyTicketController>().onTabOpen();
           }
         },
       );

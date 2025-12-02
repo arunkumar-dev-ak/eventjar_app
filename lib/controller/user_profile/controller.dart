@@ -5,7 +5,6 @@ import 'package:eventjar/controller/user_profile/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:get/get.dart';
 
@@ -61,6 +60,44 @@ class UserProfileController extends GetxController {
         dashboardController.state.selectedIndex.value = 0;
       }
     });
+  }
+
+  Future<void> handleDeleteAccount() async {
+    try {
+      state.isDeleteLoading.value = true;
+
+      await UserProfileApi.deleteUserProfile();
+
+      UserStore.to.clearStore();
+      AppSnackbar.success(
+        title: "Account Deleted",
+        message: "Your account has been successfully deleted.",
+      );
+
+      // Navigate to sign in page and reset dashboard
+      dashboardController.state.selectedIndex.value = 0;
+    } catch (err) {
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return;
+        }
+
+        ApiErrorHandler.handleError(err, "Failed to delete account");
+      } else if (err is Exception) {
+        AppSnackbar.error(title: "Exception", message: err.toString());
+      } else {
+        AppSnackbar.error(
+          title: "Error",
+          message: "Something went wrong (${err.toString()})",
+        );
+      }
+    } finally {
+      state.isDeleteLoading.value = false;
+    }
   }
 
   //helper func

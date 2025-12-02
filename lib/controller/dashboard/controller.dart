@@ -20,16 +20,18 @@ class DashboardController extends GetxController {
           state.selectedIndex.value = 1;
           if (!Get.isRegistered<NetworkScreenController>()) {
             Get.put(NetworkScreenController()).onTabOpen();
+          } else {
+            Get.find<NetworkScreenController>().onTabOpen();
           }
-          Get.find<NetworkScreenController>().onTabOpen();
         }
       });
     } else {
       state.selectedIndex.value = 1;
       if (!Get.isRegistered<NetworkScreenController>()) {
         Get.put(NetworkScreenController()).onTabOpen();
+      } else {
+        Get.find<NetworkScreenController>().onTabOpen();
       }
-      Get.find<NetworkScreenController>().onTabOpen();
     }
   }
 }

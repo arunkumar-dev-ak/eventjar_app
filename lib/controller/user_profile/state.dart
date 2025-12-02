@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 class UserProfileState {
   final RxBool isLoading = false.obs;
+  final RxBool isDeleteLoading = false.obs;
 
   final Rx<UserProfile?> userProfile = Rx<UserProfile?>(null);
 }

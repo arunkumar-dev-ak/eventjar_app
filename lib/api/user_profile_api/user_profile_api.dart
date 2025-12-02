@@ -22,4 +22,22 @@ class UserProfileApi {
       rethrow;
     }
   }
+
+  static Future<void> deleteUserProfile() async {
+    try {
+      final response = await _dio.delete('/user/profiles/me');
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return; // Success - no data returned
+      }
+
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        error: "Failed to delete user profile",
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

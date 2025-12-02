@@ -5,6 +5,7 @@ import 'package:eventjar/controller/dashboard/binding.dart';
 import 'package:eventjar/controller/event_info/binding.dart';
 import 'package:eventjar/controller/forgotPassword/binding.dart';
 import 'package:eventjar/controller/my_ticket/binding.dart';
+import 'package:eventjar/controller/qr_code/binding.dart';
 import 'package:eventjar/controller/signIn/binding.dart';
 import 'package:eventjar/controller/signUp/binding.dart';
 import 'package:eventjar/controller/splashScreen/binding.dart';
@@ -15,6 +16,7 @@ import 'package:eventjar/page/dashboard/dashboard_page.dart';
 import 'package:eventjar/page/event_info/event_info.dart';
 import 'package:eventjar/page/forgot_password/forgot_password.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_page.dart';
+import 'package:eventjar/page/qr_code/qr_code.dart';
 import 'package:eventjar/page/sign_in/sign_in_page.dart';
 import 'package:eventjar/page/sign_up/sign_up_page.dart';
 import 'package:eventjar/page/splash_screen/splash_screen_page.dart';
@@ -93,6 +95,14 @@ class RoutePage {
       page: () => AddContactPage(),
       binding: AddContactBinding(),
       middlewares: [LoginMiddleware()],
+    ),
+
+    /*----- QR code page -----*/
+    GetPage(
+      name: RouteName.qrCodePage,
+      page: () => QrCodePage(),
+      binding: QrCodeBinding(),
+      // middlewares: [LoginMiddleware()],
     ),
   ];
 }
