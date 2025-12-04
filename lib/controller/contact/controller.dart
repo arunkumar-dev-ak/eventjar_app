@@ -8,11 +8,32 @@ import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ContactController extends GetxController {
   var appBarTitle = "Contact Page";
   final state = ContactState();
+
+  // Form keys
+  final thankYouFormKey = GlobalKey<FormState>();
+  final meetingFormKey = GlobalKey<FormState>();
+  final qualifyFormKey = GlobalKey<FormState>();
+
+  //tq form
+  final contactNameController = TextEditingController();
+  final contactEmailController = TextEditingController();
+  final messageController = TextEditingController();
+
+  //meeting form
+  final meetingDateController = TextEditingController();
+  final meetingTimeController = TextEditingController();
+
+  //lead form
+  final leadScoreController = TextEditingController();
+  final interestNeedsController = TextEditingController();
+  final decisionTimelineController = TextEditingController();
+  final qualificationNotesController = TextEditingController();
 
   @override
   void onInit() async {
@@ -168,7 +189,61 @@ class ContactController extends GetxController {
     );
   }
 
+  bool get isLeadScoreValid {
+    if (leadScoreController.text.isEmpty) return false;
+    final score = int.tryParse(leadScoreController.text);
+    return score != null && score >= 0 && score <= 10;
+  }
+
+  void initThankYouData(String name, String email) {
+    contactNameController.text = name;
+    contactEmailController.text = email;
+    messageController.text =
+        'Hi $name,\n\nThank you for connecting with us! We\'re excited to work together and will be in touch soon to discuss next steps.\n\nBest regards,\nYour Team';
+  }
+
+  void updateMeetingDateTime(DateTime dateTime) {
+    meetingDateController.text = '${dateTime.toLocal()}'.split(' ')[0];
+    meetingTimeController.text = TimeOfDay.fromDateTime(
+      dateTime,
+    ).format(Get.context!);
+  }
+
   void toggleFilterRow() {
     state.showFilterRow.value = !state.showFilterRow.value;
+  }
+
+  void navigateToThankyouMessage(Contact contact) {
+    Get.toNamed(
+      RouteName.thankYouMessagePage,
+      arguments: contact,
+    )?.then((result) async {});
+  }
+
+  void navigateToScheduleMeeting(Contact contact) {
+    Get.toNamed(
+      RouteName.scheduleMeetingPage,
+      arguments: contact,
+    )?.then((result) async {});
+  }
+
+  void navigateToQualifyLead(Contact contact) {
+    Get.toNamed(
+      RouteName.qualifyLeadPage,
+      arguments: contact,
+    )?.then((result) async {});
+  }
+
+  @override
+  void onClose() {
+    // Dispose all controllers
+    contactNameController.dispose();
+    contactEmailController.dispose();
+    messageController.dispose();
+    leadScoreController.dispose();
+    interestNeedsController.dispose();
+    decisionTimelineController.dispose();
+    qualificationNotesController.dispose();
+    super.onClose();
   }
 }

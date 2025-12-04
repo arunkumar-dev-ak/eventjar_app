@@ -6,9 +6,12 @@ import 'package:eventjar/controller/event_info/binding.dart';
 import 'package:eventjar/controller/forgotPassword/binding.dart';
 import 'package:eventjar/controller/my_ticket/binding.dart';
 import 'package:eventjar/controller/qr_code/binding.dart';
+import 'package:eventjar/controller/qualify_lead/binding.dart';
+import 'package:eventjar/controller/schedule_meeting/binding.dart';
 import 'package:eventjar/controller/signIn/binding.dart';
 import 'package:eventjar/controller/signUp/binding.dart';
 import 'package:eventjar/controller/splashScreen/binding.dart';
+import 'package:eventjar/controller/thank_you_message/binding.dart';
 import 'package:eventjar/page/add_contact/add_contact.dart';
 import 'package:eventjar/page/checkout/checkout_page.dart';
 import 'package:eventjar/page/contact/contact_page.dart';
@@ -17,9 +20,12 @@ import 'package:eventjar/page/event_info/event_info.dart';
 import 'package:eventjar/page/forgot_password/forgot_password.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_page.dart';
 import 'package:eventjar/page/qr_code/qr_code.dart';
+import 'package:eventjar/page/qualify_lead/qualify_lead.dart';
+import 'package:eventjar/page/schedule_meeting/schedule_meeting.dart';
 import 'package:eventjar/page/sign_in/sign_in_page.dart';
 import 'package:eventjar/page/sign_up/sign_up_page.dart';
 import 'package:eventjar/page/splash_screen/splash_screen_page.dart';
+import 'package:eventjar/page/thank_you_message/thank_you_message.dart';
 import 'package:eventjar/routes/route_auth.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:get/get.dart';
@@ -102,6 +108,26 @@ class RoutePage {
       name: RouteName.qrCodePage,
       page: () => QrCodePage(),
       binding: QrCodeBinding(),
+      // middlewares: [LoginMiddleware()],
+    ),
+
+    /*----- Stage form page -----*/
+    GetPage(
+      name: RouteName.thankYouMessagePage,
+      page: () => ThankYouMessagePage(),
+      binding: ThankYouMessageBinding(),
+      // middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.scheduleMeetingPage,
+      page: () => ScheduleMeetingPage(),
+      binding: ScheduleMeetingBinding(),
+      // middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.qualifyLeadPage,
+      page: () => QualifyLeadPage(),
+      binding: QualifyLeadBinding(),
       // middlewares: [LoginMiddleware()],
     ),
   ];

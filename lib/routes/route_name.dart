@@ -23,4 +23,9 @@ class RouteName {
 
   //qrCode page
   static const qrCodePage = '/qrCode';
+
+  //stage form
+  static const thankYouMessagePage = '/thankYouMessage';
+  static const qualifyLeadPage = '/qualifyLead';
+  static const scheduleMeetingPage = '/scheduleMeeting';
 }

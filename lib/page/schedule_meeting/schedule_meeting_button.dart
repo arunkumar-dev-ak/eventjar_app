@@ -1,0 +1,71 @@
+import 'package:eventjar/controller/schedule_meeting/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class ScheduleMeetingActionButtons extends StatelessWidget {
+  final ScheduleMeetingController controller;
+
+  const ScheduleMeetingActionButtons({super.key, required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Row(
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey.shade400,
+                foregroundColor: Colors.black87,
+                padding: EdgeInsets.symmetric(vertical: 2.hp),
+                textStyle: TextStyle(fontSize: 9.sp),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              onPressed: controller.state.isLoading.value
+                  ? null
+                  : () => Get.back(),
+              child: Text('Cancel'),
+            ),
+          ),
+          SizedBox(width: 2.wp),
+          Expanded(
+            child: Obx(
+              () => ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 2.hp),
+                  textStyle: TextStyle(fontSize: 9.sp),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 2,
+                ),
+                onPressed: controller.state.isLoading.value
+                    ? null
+                    : controller.scheduleMeeting,
+                child: controller.state.isLoading.value
+                    ? SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                      )
+                    : Text('Schedule Meeting'),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

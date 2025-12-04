@@ -84,7 +84,7 @@ class ContactCard extends StatelessWidget {
             // ),
             SizedBox(height: 1.hp),
             // Timeline
-            ContactTimeline(currentStage: contact.stage, notes: contact.notes),
+            ContactTimeline(contact: contact),
           ],
         ),
       ),

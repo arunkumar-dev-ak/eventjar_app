@@ -10,14 +10,8 @@ class DashboardBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<DashboardController>(() => DashboardController());
     HomeBinding().dependencies();
-    Get.lazyPut<MyTicketController>(() => MyTicketController(), fenix: true);
-    Get.lazyPut<UserProfileController>(
-      () => UserProfileController(),
-      fenix: true,
-    );
-    Get.lazyPut<NetworkScreenController>(
-      () => NetworkScreenController(),
-      fenix: true,
-    );
+    Get.lazyPut<MyTicketController>(() => MyTicketController());
+    Get.lazyPut<UserProfileController>(() => UserProfileController());
+    Get.lazyPut<NetworkScreenController>(() => NetworkScreenController());
   }
 }

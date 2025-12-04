@@ -1,5 +1,6 @@
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
+import 'package:eventjar/page/contact/contact_card_page_stage_button.dart';
 import 'package:flutter/material.dart';
 
 class ContactStageModel {
@@ -99,10 +100,9 @@ Widget _buildBadge({
 }
 
 class ContactTimeline extends StatelessWidget {
-  final ContactStage currentStage;
-  final String? notes; // optional notes field
+  final Contact contact;
 
-  const ContactTimeline({required this.currentStage, this.notes, super.key});
+  const ContactTimeline({required this.contact, super.key});
 
   List<ContactStageModel> generateStagesForCurrent(ContactStage current) {
     final allStages = [
@@ -175,6 +175,8 @@ class ContactTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ContactStage currentStage = contact.stage;
+    final String? notes = contact.notes;
     final stages = generateStagesForCurrent(currentStage);
     final nextActionText = getNextActionForStage(currentStage);
 
@@ -189,7 +191,7 @@ class ContactTimeline extends StatelessWidget {
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Timeline indicator
+                // Timeline indicator (unchanged)
                 Column(
                   children: [
                     CircleAvatar(
@@ -200,34 +202,54 @@ class ContactTimeline extends StatelessWidget {
                       child: Icon(Icons.check, color: Colors.white, size: 20),
                     ),
                     if (!isLast)
-                      Container(width: 3, height: 40, color: Colors.red[200]),
+                      Row(
+                        children: [
+                          Container(
+                            width: 3,
+                            height: 40,
+                            color: Colors.red[200],
+                          ),
+                        ],
+                      ),
                   ],
                 ),
                 SizedBox(width: 16),
-                // Label and description
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      s.label,
-                      style: TextStyle(
-                        color: s.color,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 9.sp,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 170,
-                      child: Text(
-                        s.desc,
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: 8.sp,
+                // Label and description + Action Button
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              s.label,
+                              style: TextStyle(
+                                color: s.color,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 9.sp,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 170,
+                              child: Text(
+                                s.desc,
+                                style: TextStyle(
+                                  color: Colors.grey[700],
+                                  fontSize: 8.sp,
+                                ),
+                              ),
+                            ),
+                            if (!isLast) SizedBox(height: 22),
+                          ],
                         ),
                       ),
-                    ),
-                    if (!isLast) SizedBox(height: 22),
-                  ],
+                      SizedBox(width: 2.wp),
+                      if (!isLast)
+                        _buildConnectorWithAction(i, stages, contact),
+                    ],
+                  ),
                 ),
               ],
             );
@@ -246,7 +268,7 @@ class ContactTimeline extends StatelessWidget {
         ),
         SizedBox(height: 16),
         // Notes section (optional)
-        if (notes != null && notes!.isNotEmpty)
+        if (notes != null && notes.isNotEmpty)
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8),
             decoration: BoxDecoration(
@@ -300,7 +322,7 @@ class ContactTimeline extends StatelessWidget {
                     ),
                     padding: EdgeInsets.all(12),
                     child: Text(
-                      notes!,
+                      notes,
                       style: TextStyle(
                         fontSize: 9.5.sp,
                         color: Colors.grey[800],
@@ -315,4 +337,24 @@ class ContactTimeline extends StatelessWidget {
       ],
     );
   }
+}
+
+Widget _buildConnectorWithAction(
+  int index,
+  List<ContactStageModel> stages,
+  Contact contact,
+) {
+  final currentStage = stages[index].key;
+  final isCurrentStageReached = stages[index].reached;
+
+  // Show action button only if current stage reached but next isn't
+  if (isCurrentStageReached && !stages[index + 1].reached) {
+    return ContactCardPageStageActionButton(
+      currentStage: currentStage,
+      contact: contact,
+    );
+  }
+
+  // Default connector line
+  return SizedBox(height: 22);
 }
