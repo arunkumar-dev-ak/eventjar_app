@@ -10,14 +10,4 @@ class ContactState {
   Rx<ContactAnalytics?> analytics = Rx<ContactAnalytics?>(null);
 
   RxList<Contact> contacts = <Contact>[].obs;
-
-  // For Thank You message popup
-  var emailChecked = true.obs;
-  var whatsappChecked = false.obs;
-
-  // For Meeting popup
-  var meetingDate = DateTime.now().obs;
-  var meetingTime = DateTime.now().obs;
-  var meetingEmailChecked = true.obs;
-  var meetingWhatsappChecked = false.obs;
 }

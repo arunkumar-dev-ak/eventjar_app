@@ -1,4 +1,5 @@
 import 'package:eventjar/model/contact/contact_model.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ScheduleMeetingState {
@@ -7,7 +8,7 @@ class ScheduleMeetingState {
   Rx<Contact?> contact = Rx<Contact?>(null);
 
   var meetingDate = DateTime.now().obs;
-  var meetingTime = DateTime.now().obs;
+  var meetingTime = TimeOfDay.now().obs;
   var meetingEmailChecked = true.obs;
   var meetingWhatsappChecked = false.obs;
 }

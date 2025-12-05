@@ -49,6 +49,8 @@ class ThankYouMessageController extends GetxController {
     state.emailChecked.value = true;
     state.whatsappChecked.value = false;
     messageController.clear();
+
+    formKey.currentState?.reset();
   }
 
   @override

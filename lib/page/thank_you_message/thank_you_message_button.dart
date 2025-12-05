@@ -29,8 +29,8 @@ class ThankYouMessageActionButtons extends StatelessWidget {
               ),
               onPressed: controller.state.isLoading.value
                   ? null
-                  : () => Get.back(),
-              child: Text('Cancel'),
+                  : () => controller.resetForm(),
+              child: Text('Reset', style: TextStyle(fontSize: 10.sp)),
             ),
           ),
           SizedBox(width: 2.wp),
@@ -48,9 +48,14 @@ class ThankYouMessageActionButtons extends StatelessWidget {
                   ),
                   elevation: 2,
                 ),
-                onPressed: controller.state.isLoading.value
-                    ? null
-                    : controller.sendThankYouMessage,
+                onPressed: () {
+                  if (controller.state.isLoading.value) {
+                    return;
+                  }
+                  if (controller.formKey.currentState?.validate() ?? false) {
+                    controller.sendThankYouMessage();
+                  }
+                },
                 child: controller.state.isLoading.value
                     ? SizedBox(
                         height: 16,
@@ -62,7 +67,7 @@ class ThankYouMessageActionButtons extends StatelessWidget {
                           ),
                         ),
                       )
-                    : Text('Send Message'),
+                    : Text('Send Message', style: TextStyle(fontSize: 10.sp)),
               ),
             ),
           ),

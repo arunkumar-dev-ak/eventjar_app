@@ -1,12 +1,12 @@
-import 'package:eventjar/controller/schedule_meeting/controller.dart';
+import 'package:eventjar/controller/qualify_lead/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ScheduleMeetingActionButtons extends StatelessWidget {
-  final ScheduleMeetingController controller;
+class QualifyLeadActionButtons extends StatelessWidget {
+  final QualifyLeadController controller;
 
-  const ScheduleMeetingActionButtons({super.key, required this.controller});
+  const QualifyLeadActionButtons({super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +37,7 @@ class ScheduleMeetingActionButtons extends StatelessWidget {
             child: Obx(
               () => ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Colors.green,
                   foregroundColor: Colors.white,
                   padding: EdgeInsets.symmetric(vertical: 2.hp),
                   textStyle: TextStyle(fontSize: 9.sp),
@@ -51,7 +51,7 @@ class ScheduleMeetingActionButtons extends StatelessWidget {
                     return;
                   }
                   if (controller.formKey.currentState?.validate() ?? false) {
-                    controller.scheduleMeeting();
+                    controller.qualifyLead();
                   }
                 },
                 child: controller.state.isLoading.value
@@ -65,10 +65,7 @@ class ScheduleMeetingActionButtons extends StatelessWidget {
                           ),
                         ),
                       )
-                    : Text(
-                        'Schedule Meeting',
-                        style: TextStyle(fontSize: 9.sp),
-                      ),
+                    : Text('Qualify Lead', style: TextStyle(fontSize: 9.sp)),
               ),
             ),
           ),

@@ -8,27 +8,29 @@ class ScheduleMeetingController extends GetxController {
 
   final formKey = GlobalKey<FormState>();
   //meeting form
-  final meetingDateController = TextEditingController();
-  final meetingTimeController = TextEditingController();
+  TextEditingController meetingDateController = TextEditingController();
+  TextEditingController meetingTimeController = TextEditingController();
 
   @override
   void onInit() {
     final args = Get.arguments;
     state.contact.value = args;
     super.onInit();
+    updateMeetingDate(DateTime.now());
+    updateMeetingTime(TimeOfDay.now());
   }
 
   // Update date/time display
-  void updateMeetingDateTime(DateTime dateTime) {
+  void updateMeetingDate(DateTime dateTime) {
     state.meetingDate.value = dateTime;
-    _updateDateTimeDisplay(dateTime);
+    meetingDateController.text =
+        '${dateTime.day.toString().padLeft(2, '0')}-'
+        '${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}';
   }
 
-  void _updateDateTimeDisplay(DateTime dateTime) {
-    meetingDateController.text = '${dateTime.toLocal()}'.split(' ')[0];
-    meetingTimeController.text = TimeOfDay.fromDateTime(
-      dateTime,
-    ).format(Get.context!);
+  void updateMeetingTime(TimeOfDay time) {
+    state.meetingTime.value = time;
+    meetingTimeController.text = time.format(Get.context!);
   }
 
   // Pick date
@@ -40,7 +42,7 @@ class ScheduleMeetingController extends GetxController {
       lastDate: DateTime(2100),
     );
     if (picked != null) {
-      updateMeetingDateTime(picked);
+      updateMeetingDate(picked);
     }
   }
 
@@ -48,13 +50,10 @@ class ScheduleMeetingController extends GetxController {
   Future<void> pickMeetingTime() async {
     final picked = await showTimePicker(
       context: Get.context!,
-      initialTime: TimeOfDay.fromDateTime(state.meetingTime.value),
+      initialTime: state.meetingTime.value,
     );
     if (picked != null) {
-      final date = state.meetingDate.value;
-      updateMeetingDateTime(
-        DateTime(date.year, date.month, date.day, picked.hour, picked.minute),
-      );
+      updateMeetingTime(picked);
     }
   }
 
@@ -81,8 +80,10 @@ class ScheduleMeetingController extends GetxController {
   void resetForm() {
     state.meetingEmailChecked.value = true;
     state.meetingWhatsappChecked.value = false;
-    state.meetingDate.value = DateTime.now();
-    state.meetingTime.value = DateTime.now();
+    updateMeetingDate(DateTime.now());
+    updateMeetingTime(TimeOfDay.now());
+
+    formKey.currentState?.reset();
   }
 
   @override

@@ -1,8 +1,6 @@
 import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
-import 'package:eventjar/page/contact/stage_form/qualify_lead_form.dart';
-import 'package:eventjar/page/contact/stage_form/schedule_meeting_form.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -72,7 +70,7 @@ class ContactCardPageStageActionButton extends StatelessWidget {
         controller.navigateToScheduleMeeting(contact);
         break;
       case ContactStage.followup30d:
-        Get.dialog(QualifyLeadPopup());
+        controller.navigateToQualifyLead(contact);
         break;
       default:
         break;
