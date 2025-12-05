@@ -28,4 +28,5 @@ class AppColors {
 
   static const placeHolderColor = Color(0xFFA2A2A2);
   static const splashScreenBackground = Color(0xFFCCE4FF);
+  static const liteBlue = Color(0xFFE8F2FF);
 }
