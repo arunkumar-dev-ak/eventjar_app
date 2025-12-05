@@ -1,3 +1,4 @@
+import 'package:confetti/confetti.dart';
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/contact_api/contact_api.dart';
 import 'package:eventjar/controller/contact/state.dart';
@@ -13,6 +14,7 @@ import 'package:get/get.dart';
 class ContactController extends GetxController {
   var appBarTitle = "Contact Page";
   final state = ContactState();
+  late ConfettiController confettiController;
 
   @override
   void onInit() async {
@@ -28,6 +30,9 @@ class ContactController extends GetxController {
         state.analytics.value = analytics;
       }
     }
+
+    confettiController = ConfettiController(duration: Duration(seconds: 3));
+    // triggerConfetti();
 
     await fetchContacts();
 
@@ -144,6 +149,15 @@ class ContactController extends GetxController {
 
   void toggleFilterRow() {
     state.showFilterRow.value = !state.showFilterRow.value;
+  }
+
+  void triggerConfetti() {
+    // showConfetti.value = true;
+    confettiController.play();
+
+    Future.delayed(Duration(seconds: 3), () {
+      // showConfetti.value = false;
+    });
   }
 
   /*----- Navigation -----*/
