@@ -51,7 +51,8 @@ class QualifyLeadActionButtons extends StatelessWidget {
                     return;
                   }
                   if (controller.formKey.currentState?.validate() ?? false) {
-                    controller.qualifyLead();
+                    Get.focusScope?.unfocus();
+                    controller.qualifyLead(context);
                   }
                 },
                 child: controller.state.isLoading.value

@@ -5,7 +5,8 @@ import 'package:eventjar/controller/dashboard/binding.dart';
 import 'package:eventjar/controller/event_info/binding.dart';
 import 'package:eventjar/controller/forgotPassword/binding.dart';
 import 'package:eventjar/controller/my_ticket/binding.dart';
-import 'package:eventjar/controller/qr_code/binding.dart';
+import 'package:eventjar/controller/my_qr/binding.dart';
+import 'package:eventjar/controller/qr_dashboard/binding.dart';
 import 'package:eventjar/controller/qualify_lead/binding.dart';
 import 'package:eventjar/controller/schedule_meeting/binding.dart';
 import 'package:eventjar/controller/signIn/binding.dart';
@@ -19,7 +20,7 @@ import 'package:eventjar/page/dashboard/dashboard_page.dart';
 import 'package:eventjar/page/event_info/event_info.dart';
 import 'package:eventjar/page/forgot_password/forgot_password.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_page.dart';
-import 'package:eventjar/page/qr_code/qr_code.dart';
+import 'package:eventjar/page/qr_dashboard/qr_dashboard.dart';
 import 'package:eventjar/page/qualify_lead/qualify_lead.dart';
 import 'package:eventjar/page/schedule_meeting/schedule_meeting.dart';
 import 'package:eventjar/page/sign_in/sign_in_page.dart';
@@ -105,9 +106,9 @@ class RoutePage {
 
     /*----- QR code page -----*/
     GetPage(
-      name: RouteName.qrCodePage,
+      name: RouteName.qrDashboardPage,
       page: () => QrCodePage(),
-      binding: QrCodeBinding(),
+      binding: QrDashboardBinding(),
       // middlewares: [LoginMiddleware()],
     ),
 

@@ -48,12 +48,13 @@ class ThankYouMessageActionButtons extends StatelessWidget {
                   ),
                   elevation: 2,
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if (controller.state.isLoading.value) {
                     return;
                   }
                   if (controller.formKey.currentState?.validate() ?? false) {
-                    controller.sendThankYouMessage();
+                    Get.focusScope?.unfocus();
+                    await controller.sendThankYouMessage(context);
                   }
                 },
                 child: controller.state.isLoading.value

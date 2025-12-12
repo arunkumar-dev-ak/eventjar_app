@@ -188,23 +188,32 @@ class ContactController extends GetxController {
   }
 
   void navigateToThankyouMessage(Contact contact) {
-    Get.toNamed(
-      RouteName.thankYouMessagePage,
-      arguments: contact,
-    )?.then((result) async {});
+    Get.toNamed(RouteName.thankYouMessagePage, arguments: contact)?.then((
+      result,
+    ) async {
+      if (result == true) {
+        await fetchContacts();
+      }
+    });
   }
 
   void navigateToScheduleMeeting(Contact contact) {
-    Get.toNamed(
-      RouteName.scheduleMeetingPage,
-      arguments: contact,
-    )?.then((result) async {});
+    Get.toNamed(RouteName.scheduleMeetingPage, arguments: contact)?.then((
+      result,
+    ) async {
+      if (result == true) {
+        await fetchContacts();
+      }
+    });
   }
 
   void navigateToQualifyLead(Contact contact) {
-    Get.toNamed(
-      RouteName.qualifyLeadPage,
-      arguments: contact,
-    )?.then((result) async {});
+    Get.toNamed(RouteName.qualifyLeadPage, arguments: contact)?.then((
+      result,
+    ) async {
+      if (result == true) {
+        await fetchContacts();
+      }
+    });
   }
 }

@@ -1,11 +1,11 @@
-import 'package:eventjar/controller/qr_code/state.dart';
+import 'package:eventjar/controller/my_qr/state.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-class QrCodeScreenController extends GetxController
+class MyQrScreenController extends GetxController
     with GetTickerProviderStateMixin {
   var appBarTitle = "Network";
-  final state = QrCodeScreenState();
+  final state = MyQrScreenState();
 
   @override
   void onInit() {

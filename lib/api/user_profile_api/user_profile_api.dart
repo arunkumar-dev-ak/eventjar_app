@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/dio_client.dart';
+import 'package:eventjar/model/auth/delete_request_model.dart';
 import 'package:eventjar/model/user_profile/user_profile.dart';
 
 class UserProfileApi {
@@ -23,18 +24,62 @@ class UserProfileApi {
     }
   }
 
-  static Future<void> deleteUserProfile() async {
+  static Future<bool> deleteUserProfile({required String password}) async {
     try {
-      final response = await _dio.delete('/user/profiles/me');
+      final response = await _dio.post(
+        '/user/account-management/delete-request',
+        data: {'password': password},
+      );
 
-      if (response.statusCode == 200 || response.statusCode == 204) {
-        return; // Success - no data returned
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
       }
 
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Failed to delete user profile",
+        error: "Failed to process delete request",
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<bool> cancelDeletionRequest({required String password}) async {
+    try {
+      final response = await _dio.delete(
+        '/user/account-management/cancel-deletion',
+        data: {'password': password},
+      );
+
+      if (response.statusCode == 200) {
+        return true;
+      }
+
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        error: "Failed to cancel deletion request",
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<DeleteRequestResponse> fetchDeletionAccountRequest() async {
+    try {
+      final response = await _dio.get(
+        '/user/account-management/deletion-status',
+      ); // Adjust endpoint as needed
+
+      if (response.statusCode == 200) {
+        return DeleteRequestResponse.fromJson(response.data);
+      }
+
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        error: "Failed to fetch deletion request status",
       );
     } catch (e) {
       rethrow;

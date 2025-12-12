@@ -36,7 +36,7 @@ class Contact {
   final ContactStage stage;
   final String? nextAction;
   final List<String> tags;
-  // final Map<String, String> customAttributes;
+  final Map<String, dynamic>? customAttributes;
   final String? notes;
   final DateTime createdAt;
   // final String
@@ -73,7 +73,7 @@ class Contact {
     required this.stage,
     this.nextAction,
     required this.tags,
-    // required this.customAttributes,
+    this.customAttributes,
     this.notes,
     required this.createdAt,
     // required this.updatedAt,
@@ -112,9 +112,9 @@ class Contact {
         stage: contactStageFromString(json['stage']),
         nextAction: json['nextAction'],
         tags: List<String>.from(json['tags']),
-        // customAttributes: Map<String, String>.from(
-        //   json['customAttributes'] ?? {},
-        // ),
+        customAttributes: json['customAttributes'] != null
+            ? Map<String, dynamic>.from(json['customAttributes'])
+            : null,
         notes: json['notes'],
         createdAt: DateTime.parse(json['createdAt']),
         // updatedAt: json['updatedAt'],
@@ -170,7 +170,7 @@ class Contact {
     'stage': stage.toShortString(),
     'nextAction': nextAction,
     'tags': tags,
-    // 'customAttributes': customAttributes,
+    'customAttributes': customAttributes,
     'notes': notes,
     'createdAt': createdAt.toIso8601String(),
     // 'updatedAt': updatedAt,

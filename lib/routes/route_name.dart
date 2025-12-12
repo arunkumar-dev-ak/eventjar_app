@@ -22,7 +22,7 @@ class RouteName {
   static const contactPage = '/contactPage';
 
   //qrCode page
-  static const qrCodePage = '/qrCode';
+  static const qrDashboardPage = '/qrDashboard';
 
   //stage form
   static const thankYouMessagePage = '/thankYouMessage';

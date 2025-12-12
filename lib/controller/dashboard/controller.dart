@@ -30,8 +30,10 @@ class DashboardController extends GetxController {
     } else {
       state.selectedIndex.value = 1;
       if (!Get.isRegistered<NetworkScreenController>()) {
+        LoggerService.loggerInstance.dynamic_d("in Get.isRegistered");
         Get.put(NetworkScreenController()).onTabOpen();
       } else {
+        LoggerService.loggerInstance.dynamic_d("in else");
         Get.find<NetworkScreenController>().onTabOpen();
       }
     }

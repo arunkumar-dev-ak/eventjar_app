@@ -193,6 +193,10 @@ class HomeController extends GetxController {
   }
 
   void navigateToAddContact() {
-    // Get.toNamed(RouteName.addContactPage);
+    Get.toNamed(RouteName.addContactPage);
+  }
+
+  void navigateToQrPage() {
+    Get.toNamed(RouteName.qrDashboardPage);
   }
 }

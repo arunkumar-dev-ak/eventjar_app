@@ -5,6 +5,7 @@ import 'package:eventjar/controller/network/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class NetworkScreenController extends GetxController
   }
 
   void onTabOpen() {
+    LoggerService.loggerInstance.dynamic_d("in on tab open");
     fetchContactAnalytics();
   }
 

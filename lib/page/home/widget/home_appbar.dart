@@ -51,7 +51,7 @@ class HomeAppBar extends StatelessWidget {
           //   ),
           //   tooltip: 'Add Contact',
           //   onPressed: () {
-          //     controller.navigateToAddContact();
+          //     controller.navigateToQrPage();
           //   },
           // ),
         ],

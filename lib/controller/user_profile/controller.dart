@@ -5,12 +5,17 @@ import 'package:eventjar/controller/user_profile/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/page/user_profile/user_profile_security/user_profile_security_info.dart';
 import 'package:eventjar/routes/route_name.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class UserProfileController extends GetxController {
   var appBarTitle = "EventJar";
   final state = UserProfileState();
+  final formKey = GlobalKey<FormState>();
+
+  final passwordController = TextEditingController();
 
   final DashboardController dashboardController = Get.find();
 
@@ -18,14 +23,52 @@ class UserProfileController extends GetxController {
     super.onInit();
   }
 
-  void onTabOpen() {
-    fetchUserProfile();
+  void onTabOpen() async {
+    state.isLoading.value = true;
+    await fetchUserProfile();
+    await checkDeletionStatus();
+    state.isDeleteLoading.value = false;
+  }
+
+  Future<void> checkDeletionStatus() async {
+    try {
+      final response = await UserProfileApi.fetchDeletionAccountRequest();
+      state.deleteAccountResponse.value = response;
+    } catch (err) {
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return; // Stop further error handling
+        }
+
+        ApiErrorHandler.handleError(err, "Failed to fetch user status");
+      } else if (err is Exception) {
+        AppSnackbar.error(title: "Exception", message: err.toString());
+      } else {
+        AppSnackbar.error(
+          title: "Error",
+          message: "Something went wrong (${err.toString()})",
+        );
+      }
+    }
+  }
+
+  void checkPopupView() {
+    final deleteResponse = state.deleteAccountResponse.value;
+
+    if (deleteResponse != null &&
+        deleteResponse.data.hasPendingDeletion == true) {
+      userProfileShowDeleteAccountDialog(this, isReactivate: true);
+    } else {
+      userProfileShowDeleteAccountDialog(this);
+    }
   }
 
   Future<void> fetchUserProfile() async {
     try {
-      state.isLoading.value = true;
-
       final response = await UserProfileApi.getUserProfile();
       state.userProfile.value = response.data;
     } catch (err) {
@@ -62,20 +105,44 @@ class UserProfileController extends GetxController {
     });
   }
 
-  Future<void> handleDeleteAccount() async {
+  Future<void> handleDeleteAccount({
+    required bool isReactivate,
+    required String password,
+  }) async {
+    if (state.isDeleteLoading.value) return;
     try {
       state.isDeleteLoading.value = true;
 
-      await UserProfileApi.deleteUserProfile();
+      final response = isReactivate
+          ? await UserProfileApi.cancelDeletionRequest(password: password)
+          : await UserProfileApi.deleteUserProfile(password: password);
 
-      UserStore.to.clearStore();
-      AppSnackbar.success(
-        title: "Account Deleted",
-        message: "Your account has been successfully deleted.",
-      );
+      if (response == true) {
+        passwordController.clear();
+        // Use API message if present, otherwise fallback
+        final message = isReactivate
+            ? 'Your account deletion request has been cancelled. Your account is active again.'
+            : 'Your account has been deactivated and scheduled for permanent deletion in 30 days. You can reactivate anytime within this period.';
 
-      // Navigate to sign in page and reset dashboard
-      dashboardController.state.selectedIndex.value = 0;
+        final title = isReactivate
+            ? 'Account Reactivated'
+            : 'Account Deactivated';
+        Get.back();
+
+        AppSnackbar.success(title: title, message: message);
+
+        // Navigation / state changes
+        if (isReactivate) {
+          // Just refresh / reopen tab
+          onTabOpen();
+        } else {
+          // Deactivated: logout and go to dashboard index 0
+          UserStore.to.clearStore();
+          dashboardController.state.selectedIndex.value = 0;
+        }
+
+        Get.back();
+      }
     } catch (err) {
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
@@ -86,7 +153,10 @@ class UserProfileController extends GetxController {
           return;
         }
 
-        ApiErrorHandler.handleError(err, "Failed to delete account");
+        ApiErrorHandler.handleError(
+          err,
+          "Failed to ${isReactivate ? "reactivte" : "deactivate"} account",
+        );
       } else if (err is Exception) {
         AppSnackbar.error(title: "Exception", message: err.toString());
       } else {
@@ -225,5 +295,11 @@ class UserProfileController extends GetxController {
 
   void navigateToResetPassword() {
     Get.toNamed(RouteName.forgotPasswordPage);
+  }
+
+  @override
+  void onClose() {
+    passwordController.dispose();
+    super.onClose();
   }
 }

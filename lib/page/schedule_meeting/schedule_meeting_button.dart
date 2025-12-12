@@ -51,7 +51,7 @@ class ScheduleMeetingActionButtons extends StatelessWidget {
                     return;
                   }
                   if (controller.formKey.currentState?.validate() ?? false) {
-                    controller.scheduleMeeting();
+                    controller.scheduleMeeting(context);
                   }
                 },
                 child: controller.state.isLoading.value

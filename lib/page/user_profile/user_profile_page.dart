@@ -6,7 +6,7 @@ import 'package:eventjar/page/user_profile/user_profile_business_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_header.dart';
 import 'package:eventjar/page/user_profile/user_profile_location.dart';
 import 'package:eventjar/page/user_profile/user_profile_network_info.dart';
-import 'package:eventjar/page/user_profile/user_profile_security_info.dart';
+import 'package:eventjar/page/user_profile/user_profile_security/user_profile_security_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_social_links.dart';
 import 'package:eventjar/page/user_profile/user_profile_summary.dart';
 import 'package:flutter/material.dart';

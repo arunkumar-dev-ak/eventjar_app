@@ -13,6 +13,7 @@ import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EventInfoController extends GetxController
     with GetTickerProviderStateMixin {
@@ -283,6 +284,19 @@ class EventInfoController extends GetxController
       //   'pending',
       //   "attendee_request_$attendeeId",
       // );
+    }
+  }
+
+  Future<void> openYoutube(String url) async {
+    final uri = Uri.parse(url);
+    try {
+      final launched = await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
+
+      if (!launched) {
+        Get.snackbar('Error', 'Could not open the video.');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Could not open the video.');
     }
   }
 

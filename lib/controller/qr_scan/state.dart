@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
 
-class QrCodeScreenState {
+class QrScanScreenState {
   RxBool isLoading = false.obs;
 }

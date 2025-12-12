@@ -177,7 +177,10 @@ class AddContactPage extends GetView<AddContactController> {
                         return ElevatedButton(
                           onPressed: isLoading
                               ? null
-                              : () => controller.submitForm(context),
+                              : () {
+                                  Get.focusScope?.unfocus();
+                                  controller.submitForm(context);
+                                },
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.symmetric(
                               horizontal: 6.wp,

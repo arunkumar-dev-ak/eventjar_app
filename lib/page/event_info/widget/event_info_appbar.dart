@@ -56,16 +56,24 @@ class EventInfoAppBar extends StatelessWidget {
                 return Builder(
                   builder: (BuildContext context) {
                     if (m.isYouTube) {
-                      return Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Image.network(m.youtubeThumbnail, fit: BoxFit.cover),
-                          Icon(
-                            Icons.play_circle_fill,
-                            size: 60,
-                            color: Colors.red,
-                          ),
-                        ],
+                      return InkWell(
+                        onTap: () => controller.openYoutube(
+                          m.resolvedUrl,
+                        ), // ensure you have this field
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.network(
+                              m.youtubeThumbnail,
+                              fit: BoxFit.cover,
+                            ),
+                            const Icon(
+                              Icons.play_circle_fill,
+                              size: 60,
+                              color: Colors.red,
+                            ),
+                          ],
+                        ),
                       );
                     } else {
                       return CachedNetworkImage(
