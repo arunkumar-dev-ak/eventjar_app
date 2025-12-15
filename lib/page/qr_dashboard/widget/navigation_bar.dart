@@ -1,4 +1,6 @@
+import 'package:eventjar/controller/my_qr/controller.dart';
 import 'package:eventjar/controller/qr_dashboard/controller.dart';
+import 'package:eventjar/controller/qr_scan/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +51,7 @@ class QrDashboardBottomNavigation extends StatelessWidget {
             _createBottomNavigationItem(
               filledIcon: Icons.qr_code,
               outlinedIcon: Icons.qr_code_outlined,
-              label: "Generate",
+              label: "My QR",
               isSelected: selectedIndex == 0,
             ),
             _createBottomNavigationItem(
@@ -68,6 +70,27 @@ class QrDashboardBottomNavigation extends StatelessWidget {
           currentIndex: selectedIndex,
           onTap: (index) {
             controller.state.selectedIndex.value = index;
+
+            if (index == 0) {
+              if (!Get.isRegistered<MyQrScreenController>()) {
+                Get.put(MyQrScreenController()).onTabOpen();
+              } else {
+                Get.find<MyQrScreenController>().onTabOpen();
+              }
+            } else if (index == 1) {
+              if (!Get.isRegistered<QrScanScreenController>()) {
+                Get.put(QrScanScreenController()).onTabOpen();
+              } else {
+                Get.find<QrScanScreenController>().onTabOpen();
+              }
+            } else if (index == 2) {
+              // controller.state.selectedIndex.value = index;
+              // if (!Get.isRegistered<UserProfileController>()) {
+              //   Get.put(UserProfileController()).onTabOpen();
+              // } else {
+              //   Get.find<UserProfileController>().onTabOpen();
+              // }
+            }
           },
         ),
       );

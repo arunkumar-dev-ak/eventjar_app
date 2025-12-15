@@ -36,24 +36,24 @@ class HomeAppBar extends StatelessWidget {
           ),
 
           //Budget Tracker Icon
-          IconButton(
-            icon: Icon(Icons.person_add, color: Colors.blue[700], size: 25),
-            tooltip: 'Add Contact',
-            onPressed: () {
-              controller.navigateToAddContact();
-            },
-          ),
           // IconButton(
-          //   icon: Icon(
-          //     Icons.qr_code_scanner,
-          //     color: Colors.blue[700],
-          //     size: 25,
-          //   ),
+          //   icon: Icon(Icons.person_add, color: Colors.blue[700], size: 25),
           //   tooltip: 'Add Contact',
           //   onPressed: () {
-          //     controller.navigateToQrPage();
+          //     controller.navigateToAddContact();
           //   },
           // ),
+          IconButton(
+            icon: Icon(
+              Icons.qr_code_scanner,
+              color: Colors.blue[700],
+              size: 25,
+            ),
+            tooltip: 'Add Contact',
+            onPressed: () {
+              controller.navigateToQrPage();
+            },
+          ),
         ],
       ),
     );
