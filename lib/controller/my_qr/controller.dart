@@ -1,6 +1,6 @@
 import 'package:eventjar/controller/my_qr/state.dart';
 import 'package:get/get.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
+// import 'package:mobile_scanner/mobile_scanner.dart';
 
 class MyQrScreenController extends GetxController
     with GetTickerProviderStateMixin {
@@ -18,18 +18,18 @@ class MyQrScreenController extends GetxController
     selectedTab.value = index;
   }
 
-  final MobileScannerController cameraController = MobileScannerController(
-    detectionSpeed: DetectionSpeed.noDuplicates,
-  );
+  // final MobileScannerController cameraController = MobileScannerController(
+  //   detectionSpeed: DetectionSpeed.noDuplicates,
+  // );
 
   // switch front/back camera
   void toggleCamera() {
-    cameraController.switchCamera();
+    // cameraController.switchCamera();
   }
 
   // optional: toggle torch if you want
   void toggleTorch() {
-    cameraController.toggleTorch();
+    // cameraController.toggleTorch();
   }
 
   // TODO: implement gallery scanning
@@ -41,7 +41,7 @@ class MyQrScreenController extends GetxController
 
   @override
   void onClose() {
-    cameraController.dispose();
+    // cameraController.dispose();
     super.onClose();
   }
 }
