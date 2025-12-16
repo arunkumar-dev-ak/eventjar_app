@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/qr_dashboard/controller.dart';
 import 'package:eventjar/page/my_qr/my_qr_page.dart';
+import 'package:eventjar/page/qr_add_contact/qr_add_contact_page.dart';
 import 'package:eventjar/page/qr_dashboard/widget/navigation_bar.dart';
 import 'package:eventjar/page/scan_qr/scan_qr_page.dart';
 import 'package:flutter/material.dart';
@@ -22,10 +23,19 @@ class QrCodePage extends GetView<QrDashboardController> {
         width: double.infinity,
         height: double.infinity,
         child: SafeArea(
-          child: IndexedStack(
-            index: controller.state.selectedIndex.value,
-            children: const [MyQrCodePage(), ScanQrPage(), Text("Add contact")],
-          ),
+          child: Obx(() {
+            final index = controller.state.selectedIndex.value;
+            return SafeArea(
+              child: IndexedStack(
+                index: index,
+                children: [
+                  const MyQrCodePage(),
+                  if (index == 1) const ScanQrPage() else const SizedBox(),
+                  QrAddContactPage(),
+                ],
+              ),
+            );
+          }),
         ),
       ),
       bottomNavigationBar: QrDashboardBottomNavigation(),

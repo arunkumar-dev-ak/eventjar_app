@@ -109,7 +109,7 @@ class RoutePage {
       name: RouteName.qrDashboardPage,
       page: () => QrCodePage(),
       binding: QrDashboardBinding(),
-      // middlewares: [LoginMiddleware()],
+      middlewares: [LoginMiddleware()],
     ),
 
     /*----- Stage form page -----*/

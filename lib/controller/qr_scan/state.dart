@@ -5,4 +5,8 @@ class QrScanScreenState {
 
   final RxBool isScanning = true.obs;
   final RxBool hasNavigated = false.obs;
+
+  final RxBool isCameraAccessGranted = false.obs;
+  final RxBool isRequesting = false.obs;
+  RxDouble enableButtonScale = 1.0.obs;
 }
