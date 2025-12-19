@@ -13,4 +13,5 @@ class CheckoutState {
   final RxBool isCheckingEligibility = false.obs;
 
   final RxBool isRegistering = false.obs;
+  final RxBool isPaymentLoading = false.obs;
 }

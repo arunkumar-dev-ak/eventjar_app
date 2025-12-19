@@ -14,16 +14,22 @@ import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+// import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class CheckoutController extends GetxController {
   var appBarTitle = "EventJar";
   final state = CheckoutState();
+  // late Razorpay _razorpay;
 
   final MyTicketController ticketController = Get.find();
   final DashboardController dashboardController = Get.find();
 
   @override
   void onInit() {
+    // LoggerService.loggerInstance.dynamic_d("In oninit");
+    // _razorpay = Razorpay();
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onSuccess);
+    // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _onError);
     super.onInit();
     _fetchEventInfo();
   }
@@ -107,6 +113,56 @@ class CheckoutController extends GetxController {
     state.selectedTicketTier.value = ticket;
     // Check eligibility when ticket is selected
     checkEligibility(ticket);
+  }
+
+  /*----- Payment -----*/
+  void startPayment() async {
+    state.isPaymentLoading.value = true;
+
+    // final order = await PaymentService.createOrder(amount);
+
+    final options = {
+      'key': 'rzp_test_LucdmToQ2jiHOp', // rzp_test_xxx
+      'order_id': 'order_RsHxLfhO0rvPZl', // order_xxx
+      'amount': 5000, // in paise
+      'currency': 'INR',
+      'name': 'EventJar',
+      'description': 'Premium Access',
+      'prefill': {'contact': '9999999999', 'email': 'test@eventjar.com'},
+    };
+
+    // _razorpay.open(options);
+  }
+
+  // void _onSuccess(PaymentSuccessResponse response) async {
+  //   LoggerService.loggerInstance.dynamic_d("success");
+  //   LoggerService.loggerInstance.dynamic_d(response);
+  //   // final verified = await PaymentService.verifyPayment(
+  //   //   orderId: response.orderId!,
+  //   //   paymentId: response.paymentId!,
+  //   //   signature: response.signature!,
+  //   // );
+
+  //   // if (verified) {
+  //   //   Get.snackbar("Success", "Payment Verified");
+  //   // } else {
+  //   //   Get.snackbar("Error", "Payment Verification Failed");
+  //   // }
+
+  //   // isLoading.value = false;
+  // }
+
+  // void _onError(PaymentFailureResponse response) {
+  //   LoggerService.loggerInstance.dynamic_d("failure");
+  //   LoggerService.loggerInstance.dynamic_d(response);
+  // isLoading.value = false;
+  // Get.snackbar("Payment Failed", response.message ?? "Error");
+  // }
+
+  @override
+  void onClose() {
+    // _razorpay.clear();
+    super.onClose();
   }
 
   Future<void> checkEligibility(TicketTier ticket) async {
