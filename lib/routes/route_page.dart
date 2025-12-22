@@ -6,6 +6,9 @@ import 'package:eventjar/controller/event_info/binding.dart';
 import 'package:eventjar/controller/forgotPassword/binding.dart';
 import 'package:eventjar/controller/my_ticket/binding.dart';
 import 'package:eventjar/controller/my_qr/binding.dart';
+import 'package:eventjar/controller/nfc/binding.dart';
+import 'package:eventjar/controller/nfc_read/binding.dart';
+import 'package:eventjar/controller/nfc_write/binding.dart';
 import 'package:eventjar/controller/qr_dashboard/binding.dart';
 import 'package:eventjar/controller/qualify_lead/binding.dart';
 import 'package:eventjar/controller/schedule_meeting/binding.dart';
@@ -20,6 +23,9 @@ import 'package:eventjar/page/dashboard/dashboard_page.dart';
 import 'package:eventjar/page/event_info/event_info.dart';
 import 'package:eventjar/page/forgot_password/forgot_password.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_page.dart';
+import 'package:eventjar/page/nfc/nfc_page.dart';
+import 'package:eventjar/page/nfc_read/nfc_read.dart';
+import 'package:eventjar/page/nfc_write/nfc_write.dart';
 import 'package:eventjar/page/qr_dashboard/qr_dashboard.dart';
 import 'package:eventjar/page/qualify_lead/qualify_lead.dart';
 import 'package:eventjar/page/schedule_meeting/schedule_meeting.dart';
@@ -110,6 +116,26 @@ class RoutePage {
       page: () => QrCodePage(),
       binding: QrDashboardBinding(),
       middlewares: [LoginMiddleware()],
+    ),
+
+    /*----- Nfc page -----*/
+    GetPage(
+      name: RouteName.nfcPage,
+      page: () => NfcPage(),
+      binding: NfcBinding(),
+      // middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.nfcReadPage,
+      page: () => NfcReadPage(),
+      binding: NfcReadBinding(),
+      // middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.nfcWritePage,
+      page: () => NfcWritePage(),
+      binding: NfcWriteBinding(),
+      // middlewares: [LoginMiddleware()],
     ),
 
     /*----- Stage form page -----*/

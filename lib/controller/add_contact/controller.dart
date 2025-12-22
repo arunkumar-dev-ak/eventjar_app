@@ -6,6 +6,7 @@ import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
+import 'package:eventjar/model/contact/nfc_contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -39,8 +40,13 @@ class AddContactController extends GetxController {
     final args = Get.arguments;
     Contact? contact;
 
+    // Handle NfcContactModel from NFC read
+    if (args is NfcContactModel) {
+      appBarTitle = "Add NFC Contact";
+      handleNfcContact(args);
+    }
     // Adjust based on how you pass the argument
-    if (args is Set<Contact> && args.isNotEmpty) {
+    else if (args is Set<Contact> && args.isNotEmpty) {
       appBarTitle = "Update Contact";
       contact = args.first;
     } else if (args is Map && args.containsKey('contact')) {
@@ -50,6 +56,24 @@ class AddContactController extends GetxController {
     handleArgs(contact);
 
     super.onInit();
+  }
+
+  void handleNfcContact(NfcContactModel nfcContact) {
+    contactId = null; // Always new contact from NFC
+
+    nameController.text = nfcContact.name;
+    phoneController.text = nfcContact.phone;
+    emailController.text = nfcContact.email;
+    notesController.text = nfcContact.note;
+
+    // Set default stage for NFC contacts
+    state.selectedStage.value = {
+      'key': AddContactContactStage.newContact.toString(),
+      'value': 'New Contact',
+    };
+
+    state.selectedTags.clear();
+    formKey.currentState?.reset();
   }
 
   void handleArgs(Contact? contact) {
@@ -98,7 +122,12 @@ class AddContactController extends GetxController {
     final args = Get.arguments;
     Contact? contact;
 
-    if (args is Set<Contact> && args.isNotEmpty) {
+    // If NFC contact, reset to NFC data
+    if (args is NfcContactModel) {
+      handleNfcContact(args);
+    }
+    // Existing update logic
+    else if (args is Set<Contact> && args.isNotEmpty) {
       handleArgs(contact);
     } else {
       nameController.clear();

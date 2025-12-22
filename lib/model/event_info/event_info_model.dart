@@ -152,117 +152,127 @@ class EventInfo {
   });
 
   factory EventInfo.fromJson(Map<String, dynamic> json) {
-    double? parseDoubleSafe(dynamic value) {
-      if (value == null) return null;
-      if (value is num) return value.toDouble();
-      if (value is String) return double.tryParse(value);
-      return null;
-    }
+    try {
+      double? parseDoubleSafe(dynamic value) {
+        if (value == null) return null;
+        if (value is num) return value.toDouble();
+        if (value is String) return double.tryParse(value);
+        return null;
+      }
 
-    return EventInfo(
-      id: json['id'],
-      organizerId: json['organizerId'],
-      title: json['title'] ?? '',
-      description: json['description'],
-      venue: json['venue'],
-      address: json['address'],
-      location: json['location'],
-      city: json['city'],
-      state: json['state'],
-      country: json['country'],
-      postalCode: json['postalCode'],
-      latitude: parseDoubleSafe(json['latitude']),
-      longitude: parseDoubleSafe(json['longitude']),
-      placeId: json['placeId'],
-      startDate: DateTime.parse(json['startDate']),
-      endDate: DateTime.parse(json['endDate']),
-      date: json['date'],
-      startTime: json['startTime'],
-      endTime: json['endTime'],
-      publishDate: json['publishDate'] != null
-          ? DateTime.parse(json['publishDate'])
-          : null,
-      isVirtual: json['isVirtual'] ?? false,
-      isHybrid: json['isHybrid'] ?? false,
-      virtualLink: json['virtualLink'],
-      virtualPlatform: json['virtualPlatform'],
-      maxAttendees: json['maxAttendees'] ?? 0,
-      currentAttendees: json['currentAttendees'] ?? 0,
-      eventCapacityType: json['eventCapacityType'],
-      isPaid: json['isPaid'] ?? false,
-      ticketPrice: parseDoubleSafe(json['ticketPrice']),
-      earlyBirdPrice: parseDoubleSafe(json['earlyBirdPrice']),
-      earlyBirdEndDate: json['earlyBirdEndDate'] != null
-          ? DateTime.parse(json['earlyBirdEndDate'])
-          : null,
-      bookingLastDate: json['bookingLastDate'] != null
-          ? DateTime.parse(json['bookingLastDate'])
-          : null,
-      platformFeeEnabled: json['platformFeeEnabled'] ?? false,
-      platformFeePercent: parseDoubleSafe(json['platformFeePercent']),
-      status: json['status'],
-      requiresApproval: json['requiresApproval'] ?? false,
-      isOneMeetingEnabled: json['isOneMeetingEnabled'] ?? false,
-      badgeRequirementEnabled: json['badgeRequirementEnabled'] ?? false,
-      requiredBadgeId:
-          (json['requiredBadgeId'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          [],
-      agenda: json['agenda'] as List<dynamic>? ?? [],
-      media:
-          (json['media'] as List<dynamic>?)
-              ?.map((e) => Media.fromJson(e))
-              .toList() ??
-          [],
-      featuredImageUrl: json['featuredImageUrl'],
-      galleryImages:
-          (json['galleryImages'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          [],
-      tags:
-          (json['tags'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
-          [],
-      amenities: json['amenities'] as List<dynamic>? ?? [],
-      eventWebsite: json['eventWebsite'],
-      socialLinks: json['socialLinks'],
-      registrationInstructions: json['registrationInstructions'],
-      cancellationPolicy: json['cancellationPolicy'],
-      refundPolicy: json['refundPolicy'] ?? '',
-      contactInfo: json['contactInfo'],
-      ageRestriction: json['ageRestriction'],
-      dressCode: json['dressCode'],
-      language: json['language'],
-      parkingInfo: json['parkingInfo'] ?? '',
-      accessibilityInfo: json['accessibilityInfo'] ?? '',
-      specialInstructions: json['specialInstructions'] ?? '',
-      termsAndConditions: json['termsAndConditions'] ?? '',
-      organizerContactName: json['organizerContactName'] ?? '',
-      organizerContactEmail: json['organizerContactEmail'] ?? '',
-      organizerContactPhone: json['organizerContactPhone'] ?? '',
-      organizerWebsite: json['organizerWebsite'] ?? '',
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-      categoryId: json['categoryId'],
-      organizer: Organizer.fromJson(json['organizer']),
-      ticketTiers:
-          (json['ticketTiers'] as List<dynamic>?)
-              ?.map((e) => TicketTier.fromJson(e))
-              .toList() ??
-          [],
-      agendaItems: json['agendaItems'] as List<dynamic>? ?? [],
-      category: json['category'] != null
-          ? Category.fromJson(json['category'])
-          : null,
-      tagAssignments: json['tagAssignments'] as List<dynamic>? ?? [],
-      reviews: json['reviews'] as List<dynamic>? ?? [],
-      count: EventCount.fromJson(json['_count']),
-      averageRating: json['averageRating'],
-      registrationStats: json['registrationStats'] != null
-          ? RegistrationStats.fromJson(json['registrationStats'])
-          : null,
-    );
+      return EventInfo(
+        id: json['id']?.toString() ?? '',
+        organizerId: json['organizerId']?.toString() ?? '',
+        title: json['title']?.toString() ?? '',
+        description: json['description']?.toString(),
+        venue: json['venue']?.toString(),
+        address: json['address']?.toString(),
+        location: json['location']?.toString(),
+        city: json['city']?.toString(),
+        state: json['state']?.toString(),
+        country: json['country']?.toString(),
+        postalCode: json['postalCode']?.toString(),
+        latitude: parseDoubleSafe(json['latitude']),
+        longitude: parseDoubleSafe(json['longitude']),
+        placeId: json['placeId']?.toString(),
+        startDate: DateTime.parse(json['startDate'].toString()),
+        endDate: DateTime.parse(json['endDate'].toString()),
+        date: json['date']?.toString(),
+        startTime: json['startTime']?.toString(),
+        endTime: json['endTime']?.toString(),
+        publishDate: json['publishDate'] != null
+            ? DateTime.parse(json['publishDate'].toString())
+            : null,
+        isVirtual: json['isVirtual'] ?? false,
+        isHybrid: json['isHybrid'] ?? false,
+        virtualLink: json['virtualLink']?.toString(),
+        virtualPlatform: json['virtualPlatform']?.toString(),
+        maxAttendees: (json['maxAttendees'] ?? 0).toInt(),
+        currentAttendees: (json['currentAttendees'] ?? 0).toInt(),
+        eventCapacityType: json['eventCapacityType']?.toString(),
+        isPaid: json['isPaid'] ?? false,
+        ticketPrice: parseDoubleSafe(json['ticketPrice']),
+        earlyBirdPrice: parseDoubleSafe(json['earlyBirdPrice']),
+        earlyBirdEndDate: json['earlyBirdEndDate'] != null
+            ? DateTime.parse(json['earlyBirdEndDate'].toString())
+            : null,
+        bookingLastDate: json['bookingLastDate'] != null
+            ? DateTime.parse(json['bookingLastDate'].toString())
+            : null,
+        platformFeeEnabled: json['platformFeeEnabled'] ?? false,
+        platformFeePercent: parseDoubleSafe(json['platformFeePercent']),
+        status: json['status']?.toString(),
+        requiresApproval: json['requiresApproval'] ?? false,
+        isOneMeetingEnabled: json['isOneMeetingEnabled'] ?? false,
+        badgeRequirementEnabled: json['badgeRequirementEnabled'] ?? false,
+        requiredBadgeId:
+            (json['requiredBadgeId'] as List<dynamic>?)
+                ?.map((e) => e?.toString() ?? '')
+                .toList() ??
+            [],
+        agenda: json['agenda'] as List<dynamic>? ?? [],
+        media:
+            (json['media'] as List<dynamic>?)
+                ?.map((e) => Media.fromJson(e as Map<String, dynamic>))
+                .toList() ??
+            [],
+        featuredImageUrl: json['featuredImageUrl']?.toString(),
+        galleryImages:
+            (json['galleryImages'] as List<dynamic>?)
+                ?.map((e) => e?.toString() ?? '')
+                .toList() ??
+            [],
+        tags:
+            (json['tags'] as List<dynamic>?)
+                ?.map((e) => e?.toString() ?? '')
+                .toList() ??
+            [],
+        amenities: json['amenities'] as List<dynamic>? ?? [],
+        eventWebsite: json['eventWebsite']?.toString(),
+        socialLinks: json['socialLinks'],
+        registrationInstructions: json['registrationInstructions']?.toString(),
+        cancellationPolicy: json['cancellationPolicy']?.toString(),
+        refundPolicy: json['refundPolicy']?.toString() ?? '',
+        contactInfo: json['contactInfo'],
+        ageRestriction: json['ageRestriction']?.toString(),
+        dressCode: json['dressCode']?.toString(),
+        language: json['language']?.toString(),
+        parkingInfo: json['parkingInfo']?.toString() ?? '',
+        accessibilityInfo: json['accessibilityInfo']?.toString() ?? '',
+        specialInstructions: json['specialInstructions']?.toString() ?? '',
+        termsAndConditions: json['termsAndConditions']?.toString() ?? '',
+        organizerContactName: json['organizerContactName']?.toString() ?? '',
+        organizerContactEmail: json['organizerContactEmail']?.toString() ?? '',
+        organizerContactPhone: json['organizerContactPhone']?.toString() ?? '',
+        organizerWebsite: json['organizerWebsite']?.toString() ?? '',
+        createdAt: DateTime.parse(json['createdAt'].toString()),
+        updatedAt: DateTime.parse(json['updatedAt'].toString()),
+        categoryId: json['categoryId']?.toString(),
+        organizer: Organizer.fromJson(
+          json['organizer'] as Map<String, dynamic>,
+        ),
+        ticketTiers:
+            (json['ticketTiers'] as List<dynamic>?)
+                ?.map((e) => TicketTier.fromJson(e as Map<String, dynamic>))
+                .toList() ??
+            [],
+        agendaItems: json['agendaItems'] as List<dynamic>? ?? [],
+        category: json['category'] != null
+            ? Category.fromJson(json['category'] as Map<String, dynamic>)
+            : null,
+        tagAssignments: json['tagAssignments'] as List<dynamic>? ?? [],
+        reviews: json['reviews'] as List<dynamic>? ?? [],
+        count: EventCount.fromJson(json['_count'] as Map<String, dynamic>),
+        averageRating: json['averageRating'],
+        registrationStats: json['registrationStats'] != null
+            ? RegistrationStats.fromJson(
+                json['registrationStats'] as Map<String, dynamic>,
+              )
+            : null,
+      );
+    } catch (e) {
+      throw Exception('Error parsing EventInfo: $e');
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -369,17 +379,21 @@ class Organizer {
   });
 
   factory Organizer.fromJson(Map<String, dynamic> json) {
-    return Organizer(
-      id: json['id'],
-      name: json['name'] ?? '',
-      email: json['email'],
-      role: json['role'],
-      avatarUrl: json['avatarUrl'],
-      bio: json['bio'],
-      company: json['company'],
-      website: json['website'],
-      linkedin: json['linkedin'],
-    );
+    try {
+      return Organizer(
+        id: json['id']?.toString() ?? '',
+        name: json['name']?.toString() ?? '',
+        email: json['email']?.toString(),
+        role: json['role']?.toString(),
+        avatarUrl: json['avatarUrl']?.toString(),
+        bio: json['bio']?.toString(),
+        company: json['company']?.toString(),
+        website: json['website']?.toString(),
+        linkedin: json['linkedin']?.toString(),
+      );
+    } catch (e) {
+      throw Exception('Error parsing Organizer: $e');
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -417,15 +431,19 @@ class Media {
   });
 
   factory Media.fromJson(Map<String, dynamic> json) {
-    return Media(
-      id: json['id'],
-      url: json['url'],
-      name: json['name'],
-      type: json['type'],
-      description: json['description'],
-      isFeatured: json['is_featured'],
-      orderIndex: json['order_index'],
-    );
+    try {
+      return Media(
+        id: json['id']?.toString() ?? '',
+        url: json['url']?.toString() ?? '',
+        name: json['name']?.toString() ?? '',
+        type: json['type']?.toString(),
+        description: json['description']?.toString(),
+        isFeatured: json['is_featured'] ?? false,
+        orderIndex: (json['order_index'] ?? 0).toInt(),
+      );
+    } catch (e) {
+      throw Exception('Error parsing Media: $e');
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -477,33 +495,41 @@ class TicketTier {
   });
 
   factory TicketTier.fromJson(Map<String, dynamic> json) {
-    return TicketTier(
-      id: json['id'],
-      eventId: json['eventId'],
-      name: json['name'],
-      description: json['description'],
-      price: json['price'],
-      earlyBirdPrice: json['earlyBirdPrice'] != null
-          ? (json['earlyBirdPrice'] as num).toDouble()
-          : null,
-      quantity: json['quantity'],
-      sold: json['sold'],
-      type: json['type'],
-      isEarlyBird: json['isEarlyBird'] ?? false,
-      earlyBirdEndDate: json['earlyBirdEndDate'] != null
-          ? DateTime.parse(json['earlyBirdEndDate'])
-          : null,
-      saleStartDate: json['saleStartDate'] != null
-          ? DateTime.parse(json['saleStartDate'])
-          : null,
-      saleEndDate: json['saleEndDate'] != null
-          ? DateTime.parse(json['saleEndDate'])
-          : null,
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-    );
-  }
+    try {
+      double? parseDoubleSafe(dynamic value) {
+        if (value == null) return null;
+        if (value is num) return value.toDouble();
+        if (value is String) return double.tryParse(value);
+        return null;
+      }
 
+      return TicketTier(
+        id: json['id']?.toString() ?? '',
+        eventId: json['eventId']?.toString() ?? '',
+        name: json['name']?.toString() ?? '',
+        description: json['description']?.toString(),
+        price: json['price']?.toString() ?? '0',
+        earlyBirdPrice: parseDoubleSafe(json['earlyBirdPrice']),
+        quantity: (json['quantity'] ?? 0).toInt(),
+        sold: (json['sold'] ?? 0).toInt(),
+        type: json['type']?.toString(),
+        isEarlyBird: json['isEarlyBird'] ?? false,
+        earlyBirdEndDate: json['earlyBirdEndDate'] != null
+            ? DateTime.parse(json['earlyBirdEndDate'].toString())
+            : null,
+        saleStartDate: json['saleStartDate'] != null
+            ? DateTime.parse(json['saleStartDate'].toString())
+            : null,
+        saleEndDate: json['saleEndDate'] != null
+            ? DateTime.parse(json['saleEndDate'].toString())
+            : null,
+        createdAt: DateTime.parse(json['createdAt'].toString()),
+        updatedAt: DateTime.parse(json['updatedAt'].toString()),
+      );
+    } catch (e) {
+      throw Exception('Error parsing TicketTier: $e');
+    }
+  }
   Map<String, dynamic> toJson() {
     return {
       'id': id,

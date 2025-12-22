@@ -63,5 +63,11 @@
 	<array>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NFCReaderUsageDescription</key>
+	<string>This app uses NFC to share and receive contact information.</string>
+	<key>com.apple.developer.nfc.readersession.iso7816.select-identifiers</key>
+	<array>
+		<string>D2760000850101</string>
+	</array>
 </dict>
 </plist>

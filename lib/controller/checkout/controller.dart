@@ -9,17 +9,18 @@ import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/helper/date_handler.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/checkout/tikcet_payment_model.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-// import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class CheckoutController extends GetxController {
   var appBarTitle = "EventJar";
   final state = CheckoutState();
-  // late Razorpay _razorpay;
+  late Razorpay _razorpay;
 
   final MyTicketController ticketController = Get.find();
   final DashboardController dashboardController = Get.find();
@@ -27,9 +28,9 @@ class CheckoutController extends GetxController {
   @override
   void onInit() {
     // LoggerService.loggerInstance.dynamic_d("In oninit");
-    // _razorpay = Razorpay();
-    // _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onSuccess);
-    // _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _onError);
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _onError);
     super.onInit();
     _fetchEventInfo();
   }
@@ -58,54 +59,110 @@ class CheckoutController extends GetxController {
     }
   }
 
+  // Future<void> proceedToCheckout() async {
+  //   if (state.selectedTicketTier.value == null) {
+  //     AppSnackbar.error(title: "Error", message: "Please select a ticket tier");
+  //     return;
+  //   }
+
+  //   // Check if user is eligible
+  //   if (state.eligibilityResponse.value?.eligible == false) {
+  //     AppSnackbar.error(
+  //       title: "Not Eligible",
+  //       message:
+  //           state.eligibilityResponse.value?.reason ??
+  //           "You already have a ticket for this tier",
+  //     );
+  //     return;
+  //   }
+
+  //   final eventInfo = state.eventInfo.value;
+  //   if (eventInfo == null) return;
+
+  //   try {
+  //     state.isRegistering.value = true;
+
+  //     await TicketBookingApi.registerTicket(
+  //       eventId: eventInfo.id,
+  //       ticketTierId: state.selectedTicketTier.value!.id,
+  //       // quantity: state.quantity.value,
+  //     );
+
+  //     navigateToMyTicketPage();
+  //   } catch (err) {
+  //     if (err is DioException) {
+  //       final statusCode = err.response?.statusCode;
+
+  //       if (statusCode == 401) {
+  //         UserStore.to.clearStore();
+  //         navigateToSignInPage();
+  //         return; // Stop further error handling
+  //       }
+  //       ApiErrorHandler.handleError(err, "Registration Failed");
+  //     } else {
+  //       AppSnackbar.error(
+  //         title: "Registration Failed",
+  //         message: "Something went wrong. Please try again.",
+  //       );
+  //     }
+  //   } finally {
+  //     state.isRegistering.value = false;
+  //   }
+  // }
+
   Future<void> proceedToCheckout() async {
     if (state.selectedTicketTier.value == null) {
       AppSnackbar.error(title: "Error", message: "Please select a ticket tier");
       return;
     }
 
-    // Check if user is eligible
     if (state.eligibilityResponse.value?.eligible == false) {
       AppSnackbar.error(
         title: "Not Eligible",
         message:
             state.eligibilityResponse.value?.reason ??
-            "You already have a ticket for this tier",
+            "You already have a ticket",
       );
       return;
     }
 
+    final totalAmount = calculateTotalAmount();
+
+    if (totalAmount == 0) {
+      await _handleFreeTicket();
+    } else {
+      startPayment();
+    }
+  }
+
+  Future<void> _handleFreeTicket() async {
     final eventInfo = state.eventInfo.value;
     if (eventInfo == null) return;
 
     try {
       state.isRegistering.value = true;
-
       await TicketBookingApi.registerTicket(
         eventId: eventInfo.id,
         ticketTierId: state.selectedTicketTier.value!.id,
-        // quantity: state.quantity.value,
       );
-
       navigateToMyTicketPage();
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
-          UserStore.to.clearStore();
-          navigateToSignInPage();
-          return; // Stop further error handling
-        }
-        ApiErrorHandler.handleError(err, "Registration Failed");
-      } else {
-        AppSnackbar.error(
-          title: "Registration Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+      _handleError(err);
     } finally {
       state.isRegistering.value = false;
+    }
+  }
+
+  void _handleError(dynamic err) {
+    if (err is DioException) {
+      if (err.response?.statusCode == 401) {
+        UserStore.to.clearStore();
+        navigateToSignInPage();
+        return;
+      }
+      ApiErrorHandler.handleError(err, "Registration Failed");
+    } else {
+      AppSnackbar.error(title: "Error", message: "Something went wrong");
     }
   }
 
@@ -116,52 +173,102 @@ class CheckoutController extends GetxController {
   }
 
   /*----- Payment -----*/
-  void startPayment() async {
-    state.isPaymentLoading.value = true;
+  Future<void> startPayment() async {
+    state.isRegistering.value = true;
 
-    // final order = await PaymentService.createOrder(amount);
+    try {
+      final eventInfo = state.eventInfo.value;
+      if (eventInfo == null) {
+        AppSnackbar.error(title: "Error", message: "Event not found");
+        return;
+      }
 
-    final options = {
-      'key': 'rzp_test_LucdmToQ2jiHOp', // rzp_test_xxx
-      'order_id': 'order_RsHxLfhO0rvPZl', // order_xxx
-      'amount': 5000, // in paise
-      'currency': 'INR',
-      'name': 'EventJar',
-      'description': 'Premium Access',
-      'prefill': {'contact': '9999999999', 'email': 'test@eventjar.com'},
-    };
+      final totalAmount = calculateTotalAmount(); // Implement this method
 
-    // _razorpay.open(options);
+      TicketPaymentModel paymentResponse =
+          await TicketBookingApi.createTicketPayment({
+            "amount": totalAmount,
+            "currency": "INR",
+            "paymentType": "event-ticket",
+            "gateway": "razorpay",
+            "description": "Tickets for ${eventInfo.title}",
+            "customerEmail": UserStore.to.profile['email'],
+            "organizerId": eventInfo.organizerId,
+            "eventId": eventInfo.id,
+          });
+
+      LoggerService.loggerInstance.dynamic_d(
+        "paymentResponse, $paymentResponse",
+      );
+
+      // ✅ Open Razorpay with server response
+      final razorpayOptions = {
+        'key': paymentResponse.razorpayKeyId,
+        'order_id': paymentResponse.paymentId,
+        'name': 'EventJar',
+        'description': 'Tickets for ${eventInfo.title}',
+        'prefill': {
+          'contact': UserStore.to.profile['phone'] ?? '',
+          'email': UserStore.to.profile['email'] ?? '',
+        },
+        // 'currency': 'INR',
+        // 'amount': totalAmount * 100,
+      };
+
+      _razorpay.open(razorpayOptions);
+    } catch (e) {
+      LoggerService.loggerInstance.e(e);
+      // LoggerService.loggerInstance.e('Payment init failed: $e');
+      AppSnackbar.error(
+        title: "Payment Error",
+        message: "Failed to start payment",
+      );
+    } finally {
+      state.isRegistering.value = false;
+    }
   }
 
-  // void _onSuccess(PaymentSuccessResponse response) async {
-  //   LoggerService.loggerInstance.dynamic_d("success");
-  //   LoggerService.loggerInstance.dynamic_d(response);
-  //   // final verified = await PaymentService.verifyPayment(
-  //   //   orderId: response.orderId!,
-  //   //   paymentId: response.paymentId!,
-  //   //   signature: response.signature!,
-  //   // );
+  double calculateTotalAmount() {
+    final ticket = state.selectedTicketTier.value;
+    if (ticket == null) return 0;
 
-  //   // if (verified) {
-  //   //   Get.snackbar("Success", "Payment Verified");
-  //   // } else {
-  //   //   Get.snackbar("Error", "Payment Verification Failed");
-  //   // }
+    double price = ticket.isEarlyBird && ticket.earlyBirdPrice != null
+        ? ticket.earlyBirdPrice!
+        : double.tryParse(ticket.price) ?? 0.0;
 
-  //   // isLoading.value = false;
-  // }
+    return price * state.quantity.value;
+  }
 
-  // void _onError(PaymentFailureResponse response) {
-  //   LoggerService.loggerInstance.dynamic_d("failure");
-  //   LoggerService.loggerInstance.dynamic_d(response);
-  // isLoading.value = false;
-  // Get.snackbar("Payment Failed", response.message ?? "Error");
-  // }
+  void _onSuccess(PaymentSuccessResponse response) async {
+    // LoggerService.loggerInstance.d("✅ Payment Success: ${response.paymentId}");
+
+    // ✅ Validate payment & navigate
+    // try {
+    //   await validatePayment(response.paymentId);
+    navigateToMyTicketPage();
+    // } catch (e) {
+    //   AppSnackbar.error(
+    //     title: "Validation Failed",
+    //     message: "Payment validation failed",
+    //   );
+    // }
+    state.isRegistering.value = false;
+  }
+
+  void _onError(PaymentFailureResponse response) {
+    // LoggerService.loggerInstance.dynamic_d("failure");
+    LoggerService.loggerInstance.dynamic_d(response);
+    // Get.snackbar("Payment Failed", response.message ?? "Error");
+    AppSnackbar.error(
+      title: "Payment Failed",
+      message: "Payment Failed Please try again",
+    );
+    state.isRegistering.value = false;
+  }
 
   @override
   void onClose() {
-    // _razorpay.clear();
+    _razorpay.clear();
     super.onClose();
   }
 

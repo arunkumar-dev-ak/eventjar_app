@@ -28,4 +28,9 @@ class RouteName {
   static const thankYouMessagePage = '/thankYouMessage';
   static const qualifyLeadPage = '/qualifyLead';
   static const scheduleMeetingPage = '/scheduleMeeting';
+
+  //nfc form
+  static const nfcPage = '/nfcPage';
+  static const nfcReadPage = '/nfcReadPage';
+  static const nfcWritePage = '/nfcWritePage';
 }
