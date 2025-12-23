@@ -2,9 +2,10 @@ import 'package:eventjar/controller/home/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/widget/gradient_text.dart';
-import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+enum ContactAction { addContact, nfc }
 
 class HomeAppBar extends StatelessWidget {
   final HomeController controller = Get.find();
@@ -20,51 +21,107 @@ class HomeAppBar extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           //logo
-          Image.asset(
-            controller.logoPath,
-            width: 30,
-            height: 30,
-            fit: BoxFit.cover,
-          ),
-          //header
-          GradientText(
-            textSize: 13.sp,
-            content: controller.appBarTitle,
-            gradientStart: AppColors.gradientDarkStart,
-            gradientEnd: AppColors.gradientDarkEnd,
-            fontWeight: FontWeight.bold,
+          Row(
+            children: [
+              Image.asset(
+                controller.logoPath,
+                width: 25,
+                height: 25,
+                fit: BoxFit.cover,
+              ),
+              SizedBox(width: 2.wp),
+              //header
+              GradientText(
+                textSize: 13.sp,
+                content: controller.appBarTitle,
+                gradientStart: AppColors.gradientDarkStart,
+                gradientEnd: AppColors.gradientDarkEnd,
+                fontWeight: FontWeight.bold,
+              ),
+            ],
           ),
 
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                icon: Icon(
-                  Icons.add_circle_outline,
-                  color: Colors.blue[700],
-                  size: 25,
+              // Add / NFC menu
+              SizedBox(
+                height: 40,
+                width: 40,
+                child: PopupMenuButton<ContactAction>(
+                  padding: EdgeInsets.zero,
+                  iconSize: 25,
+                  // icon: Icon(Icons.add_circle_outline, color: Colors.blue[700]),
+                  icon: Container(
+                    width: 26,
+                    height: 26,
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(
+                        6,
+                      ), // square with slight round
+                      border: Border.all(color: Colors.blue[700]!, width: 1.5),
+                    ),
+                    child: Icon(Icons.add, color: Colors.blue[700], size: 22),
+                  ),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: ContactAction.addContact,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.person_add_alt_1,
+                            color: Colors.blue,
+                            size: 18,
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'Add Contact',
+                            style: TextStyle(color: Colors.grey.shade800),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: ContactAction.nfc,
+                      child: Row(
+                        children: [
+                          Icon(Icons.nfc, color: Colors.green, size: 18),
+                          SizedBox(width: 8),
+                          Text(
+                            'NFC',
+                            style: TextStyle(color: Colors.grey.shade800),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  onSelected: (action) {
+                    switch (action) {
+                      case ContactAction.addContact:
+                        controller.navigateToAddContact();
+                        break;
+                      case ContactAction.nfc:
+                        controller.navigateToNfc();
+                        break;
+                    }
+                  },
                 ),
-                tooltip: 'Add Contact',
-                onPressed: () {
-                  controller.navigateToAddContact();
-                },
               ),
-              IconButton(
-                icon: Icon(
-                  Icons.qr_code_scanner,
-                  color: Colors.blue[700],
-                  size: 25,
+
+              SizedBox(width: 1.wp),
+
+              // QR button
+              SizedBox(
+                height: 40,
+                width: 40,
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  iconSize: 25,
+                  icon: Icon(Icons.qr_code_scanner, color: Colors.blue[700]),
+                  tooltip: 'QR Scanner',
+                  onPressed: controller.navigateToQrPage,
                 ),
-                tooltip: 'QR Scanner',
-                onPressed: () {
-                  controller.navigateToQrPage();
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.nfc, color: Colors.blue[700], size: 25),
-                tooltip: 'NFC',
-                onPressed: () {
-                  controller.navigateToNfc();
-                },
               ),
             ],
           ),

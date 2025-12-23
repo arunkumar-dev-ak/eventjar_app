@@ -6,7 +6,16 @@ class SignUpApi {
 
   static Future<String> signUp(dynamic value) async {
     try {
-      final response = await _dio.post('/auth/register', data: value);
+      final response = await _dio.post(
+        '/auth/register',
+        options: Options(
+          headers: {
+            'X-Client-Type': 'mobile',
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: value,
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return "Please use your credentials to sign in.";

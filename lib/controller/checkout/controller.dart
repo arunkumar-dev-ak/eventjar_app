@@ -59,57 +59,6 @@ class CheckoutController extends GetxController {
     }
   }
 
-  // Future<void> proceedToCheckout() async {
-  //   if (state.selectedTicketTier.value == null) {
-  //     AppSnackbar.error(title: "Error", message: "Please select a ticket tier");
-  //     return;
-  //   }
-
-  //   // Check if user is eligible
-  //   if (state.eligibilityResponse.value?.eligible == false) {
-  //     AppSnackbar.error(
-  //       title: "Not Eligible",
-  //       message:
-  //           state.eligibilityResponse.value?.reason ??
-  //           "You already have a ticket for this tier",
-  //     );
-  //     return;
-  //   }
-
-  //   final eventInfo = state.eventInfo.value;
-  //   if (eventInfo == null) return;
-
-  //   try {
-  //     state.isRegistering.value = true;
-
-  //     await TicketBookingApi.registerTicket(
-  //       eventId: eventInfo.id,
-  //       ticketTierId: state.selectedTicketTier.value!.id,
-  //       // quantity: state.quantity.value,
-  //     );
-
-  //     navigateToMyTicketPage();
-  //   } catch (err) {
-  //     if (err is DioException) {
-  //       final statusCode = err.response?.statusCode;
-
-  //       if (statusCode == 401) {
-  //         UserStore.to.clearStore();
-  //         navigateToSignInPage();
-  //         return; // Stop further error handling
-  //       }
-  //       ApiErrorHandler.handleError(err, "Registration Failed");
-  //     } else {
-  //       AppSnackbar.error(
-  //         title: "Registration Failed",
-  //         message: "Something went wrong. Please try again.",
-  //       );
-  //     }
-  //   } finally {
-  //     state.isRegistering.value = false;
-  //   }
-  // }
-
   Future<void> proceedToCheckout() async {
     if (state.selectedTicketTier.value == null) {
       AppSnackbar.error(title: "Error", message: "Please select a ticket tier");
