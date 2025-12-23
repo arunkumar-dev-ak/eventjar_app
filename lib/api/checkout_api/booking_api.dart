@@ -6,19 +6,11 @@ import 'package:eventjar/model/checkout/tikcet_payment_model.dart';
 class TicketBookingApi {
   static final Dio _dio = DioClient().dio;
 
-  static Future<void> registerTicket({
-    required String eventId,
-    required String ticketTierId,
-    // int quantity = 1,
-  }) async {
+  static Future<void> createFreeEventRegistration(dynamic options) async {
     try {
       final response = await _dio.post(
         '/attendee/tickets/register',
-        data: {
-          'eventId': eventId,
-          'ticketTierId': ticketTierId,
-          // 'quantity': quantity,
-        },
+        data: options,
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -42,6 +34,18 @@ class TicketBookingApi {
         return TicketPaymentModel.fromJson(response.data);
       }
       throw Exception('Failed to create ticket payment');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // In booking_api.dart
+  static Future<Map<String, dynamic>> verifyPaymentAndCreateTickets(
+    Map<String, dynamic> payload,
+  ) async {
+    try {
+      final response = await _dio.post('/payments/verify', data: payload);
+      return {'success': true, 'data': response.data};
     } catch (e) {
       rethrow;
     }

@@ -9,6 +9,7 @@ import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/helper/date_handler.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/checkout/cart_line.dart';
 import 'package:eventjar/model/checkout/tikcet_payment_model.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:eventjar/routes/route_name.dart';
@@ -41,26 +42,64 @@ class CheckoutController extends GetxController {
 
     if (eventInfoArg != null && eventInfoArg is Rxn<EventInfo>) {
       state.eventInfo.value = eventInfoArg.value;
-      if (state.eventInfo.value != null) {
-        state.selectedTicketTier.value =
-            state.eventInfo.value!.ticketTiers.first;
-        checkEligibility(state.eventInfo.value!.ticketTiers.first);
+      // if (state.eventInfo.value != null) {
+      //   state.selectedTicketTier.value =
+      //       state.eventInfo.value!.ticketTiers.first;
+      //   checkEligibility(state.eventInfo.value!.ticketTiers.first);
+      // }
+    }
+  }
+
+  void addOrIncreaseTicket(TicketTier tier) {
+    final index = state.cartLines.indexWhere(
+      (line) => line.ticket.id == tier.id,
+    );
+    final remaining = tier.quantity - tier.sold;
+
+    if (index == -1) {
+      // NEW: Always start with qty=1 when adding
+      if (remaining > 0) {
+        state.cartLines.add(CartLine(ticket: tier, qty: 1));
+      }
+    } else {
+      // Existing logic for increment
+      final line = state.cartLines[index];
+      if (line.quantity.value < remaining) {
+        line.quantity.value++;
       }
     }
   }
 
-  void incrementQuantity() {
-    state.quantity.value++;
-  }
+  void decreaseTicketQty(TicketTier tier) {
+    final index = state.cartLines.indexWhere(
+      (line) => line.ticket.id == tier.id,
+    );
+    if (index == -1) return;
 
-  void decrementQuantity() {
-    if (state.quantity.value > 1) {
-      state.quantity.value--;
+    final line = state.cartLines[index];
+    if (line.quantity.value > 1) {
+      line.quantity.value--;
+    } else {
+      // remove line when goes to 0
+      state.cartLines.removeAt(index);
     }
   }
 
+  double get subtotal {
+    return state.cartLines.fold(0.0, (sum, line) {
+      final price = double.tryParse(line.ticket.price) ?? 0;
+      return sum + price * line.quantity.value;
+    });
+  }
+
+  double get platformFee => 0; // later: compute
+
+  double get total => subtotal + platformFee;
+
+  /*----- Checkout -----*/
+
   Future<void> proceedToCheckout() async {
-    if (state.selectedTicketTier.value == null) {
+    if (state.cartLines.isEmpty) {
       AppSnackbar.error(title: "Error", message: "Please select a ticket tier");
       return;
     }
@@ -84,16 +123,77 @@ class CheckoutController extends GetxController {
     }
   }
 
+  Future<void> startPayment() async {
+    state.isRegistering.value = true;
+
+    try {
+      final eventInfo = state.eventInfo.value;
+      if (eventInfo == null) {
+        AppSnackbar.error(title: "Error", message: "Event not found");
+        return;
+      }
+
+      if (state.cartLines.isEmpty) {
+        AppSnackbar.error(title: "Error", message: "No tickets in cart");
+        return;
+      }
+
+      final paymentPayload = _buildPaymentPayload(eventInfo);
+
+      TicketPaymentModel paymentResponse =
+          await TicketBookingApi.createTicketPayment(paymentPayload);
+
+      LoggerService.loggerInstance.dynamic_d(
+        "Payment Response: ${paymentResponse.toJson()}",
+      );
+
+      final razorpayOptions = {
+        'key': paymentResponse.razorpayKeyId,
+        'order_id': paymentResponse.paymentId,
+        'name': 'EventJar',
+        'description': 'Tickets for ${eventInfo.title}',
+        'prefill': {
+          'contact': UserStore.to.profile['phone'] ?? '',
+          'email': UserStore.to.profile['email'] ?? '',
+        },
+      };
+
+      _razorpay.open(razorpayOptions);
+    } catch (e) {
+      LoggerService.loggerInstance.e('Payment init failed: $e');
+      AppSnackbar.error(
+        title: "Payment Error",
+        message: "Failed to start payment: $e",
+      );
+    } finally {
+      state.isRegistering.value = false;
+    }
+  }
+
   Future<void> _handleFreeTicket() async {
     final eventInfo = state.eventInfo.value;
-    if (eventInfo == null) return;
+    if (eventInfo == null) {
+      AppSnackbar.error(title: "Error", message: "Event not found");
+      return;
+    }
+
+    if (state.cartLines.isEmpty) {
+      AppSnackbar.error(title: "Error", message: "No tickets in cart");
+      return;
+    }
 
     try {
       state.isRegistering.value = true;
-      await TicketBookingApi.registerTicket(
-        eventId: eventInfo.id,
-        ticketTierId: state.selectedTicketTier.value!.id,
+
+      final freeTicketPayload = _buildFreeTicketPayload(eventInfo);
+
+      LoggerService.loggerInstance.dynamic_d(
+        "Free Ticket Payload: ${freeTicketPayload.toString()}",
       );
+
+      // Call your free registration API
+      await TicketBookingApi.createFreeEventRegistration(freeTicketPayload);
+
       navigateToMyTicketPage();
     } catch (err) {
       _handleError(err);
@@ -101,6 +201,93 @@ class CheckoutController extends GetxController {
       state.isRegistering.value = false;
     }
   }
+
+  double calculateTotalAmount() {
+    return state.cartLines.fold<double>(0, (sum, line) {
+      final price = double.tryParse(line.ticket.price) ?? 0;
+      return sum + price * line.quantity.value;
+    });
+  }
+
+  Map<String, dynamic> _buildPaymentPayload(EventInfo eventInfo) {
+    // ✅ Extract lineItems from cartLines
+    final lineItems = state.cartLines
+        .map((cartLine) => cartLine.toJson())
+        .toList();
+
+    // ✅ Calculate order summary
+    final subtotal = state.cartLines.fold<double>(0, (sum, line) {
+      final unitPrice = double.tryParse(line.ticket.price) ?? 0;
+      return sum + (unitPrice * line.quantity.value);
+    });
+
+    final totalQuantity = state.cartLines.fold<int>(
+      0,
+      (sum, line) => sum + line.quantity.value,
+    );
+    const discountAmount = 0; // Add promo logic later
+    final finalAmount = subtotal - discountAmount;
+
+    return {
+      // === REQUIRED FIELDS ===
+      'amount': finalAmount.toInt(), // Convert to paise for INR
+      'currency': 'INR',
+      'paymentType': 'event-ticket',
+      'gateway': 'razorpay',
+
+      // === EVENT TICKET FIELDS ===
+      'eventId': eventInfo.id,
+      'organizerId': eventInfo.organizerId,
+      'userId': UserStore.to.profile['id']?.toString() ?? '',
+      'customerEmail': UserStore.to.profile['email'] ?? '',
+
+      // === LINE ITEMS ===
+      'lineItems': lineItems,
+
+      // === ORDER SUMMARY ===
+      'orderSummary': {
+        'subtotal': subtotal,
+        'discountAmount': discountAmount,
+        'totalQuantity': totalQuantity,
+        'finalAmount': finalAmount,
+      },
+
+      // === OPTIONAL FIELDS ===
+      'description': 'Tickets for ${eventInfo.title}',
+
+      // === METADATA ===
+      'metadata': {
+        'eventTitle': eventInfo.title,
+        'eventDate': eventInfo.startDate.toIso8601String(),
+        'isOneMeeting': eventInfo.isOneMeetingEnabled,
+      },
+
+      // === ANALYTICS ===
+      'devicePlatform': 'android',
+    };
+  }
+
+  Map<String, dynamic> _buildFreeTicketPayload(EventInfo eventInfo) {
+    final ticketSelections = state.cartLines.map((cartLine) {
+      final price = double.tryParse(cartLine.ticket.price) ?? 0;
+      return {
+        'tierId': cartLine.ticket.id,
+        'quantity': cartLine.quantity.value,
+        'price': price,
+      };
+    }).toList();
+
+    return {
+      'userId': UserStore.to.profile['id']?.toString() ?? '',
+      'eventId': eventInfo.id,
+      'ticketSelections': ticketSelections,
+      'promoCodeId': null,
+      'promoDiscount': 0,
+      'isOneMeeting': eventInfo.isOneMeetingEnabled,
+    };
+  }
+
+  /*----- Razorpay -----*/
 
   void _handleError(dynamic err) {
     if (err is DioException) {
@@ -115,93 +302,53 @@ class CheckoutController extends GetxController {
     }
   }
 
-  void selectTicketTier(TicketTier ticket) {
-    state.selectedTicketTier.value = ticket;
-    // Check eligibility when ticket is selected
-    checkEligibility(ticket);
-  }
-
-  /*----- Payment -----*/
-  Future<void> startPayment() async {
-    state.isRegistering.value = true;
-
+  void _onSuccess(PaymentSuccessResponse response) async {
     try {
+      state.isRegistering.value = true;
+
       final eventInfo = state.eventInfo.value;
       if (eventInfo == null) {
         AppSnackbar.error(title: "Error", message: "Event not found");
         return;
       }
 
-      final totalAmount = calculateTotalAmount(); // Implement this method
-
-      TicketPaymentModel paymentResponse =
-          await TicketBookingApi.createTicketPayment({
-            "amount": totalAmount,
-            "currency": "INR",
-            "paymentType": "event-ticket",
-            "gateway": "razorpay",
-            "description": "Tickets for ${eventInfo.title}",
-            "customerEmail": UserStore.to.profile['email'],
-            "organizerId": eventInfo.organizerId,
-            "eventId": eventInfo.id,
-          });
-
-      LoggerService.loggerInstance.dynamic_d(
-        "paymentResponse, $paymentResponse",
-      );
-
-      // ✅ Open Razorpay with server response
-      final razorpayOptions = {
-        'key': paymentResponse.razorpayKeyId,
-        'order_id': paymentResponse.paymentId,
-        'name': 'EventJar',
-        'description': 'Tickets for ${eventInfo.title}',
-        'prefill': {
-          'contact': UserStore.to.profile['phone'] ?? '',
-          'email': UserStore.to.profile['email'] ?? '',
-        },
-        // 'currency': 'INR',
-        // 'amount': totalAmount * 100,
+      // ✅ Backend-exact payload structure
+      final verifyPayload = {
+        'gateway': 'razorpay',
+        'paymentType': 'event-ticket',
+        'paymentId': response.paymentId,
+        'orderId': response.orderId,
+        'signature': response.signature,
+        'organizerId': eventInfo.organizerId,
+        'eventId': eventInfo.id,
+        'userId': UserStore.to.profile['id'],
+        'ticketSelections': state.cartLines
+            .map(
+              (line) => ({
+                'tierId': line.ticket.id,
+                'quantity': line.quantity.value,
+                'price': double.tryParse(line.ticket.price) ?? 0.0,
+              }),
+            )
+            .toList(),
       };
 
-      _razorpay.open(razorpayOptions);
+      LoggerService.loggerInstance.d(
+        'Verify payload: ${verifyPayload.toString()}',
+      );
+
+      await TicketBookingApi.verifyPaymentAndCreateTickets(verifyPayload);
+      navigateToMyTicketPage();
     } catch (e) {
-      LoggerService.loggerInstance.e(e);
-      // LoggerService.loggerInstance.e('Payment init failed: $e');
+      LoggerService.loggerInstance.e('Payment verification failed: $e');
       AppSnackbar.error(
-        title: "Payment Error",
-        message: "Failed to start payment",
+        title: "Verification Failed",
+        message:
+            "Payment succeeded but ticket creation failed. Contact support.",
       );
     } finally {
       state.isRegistering.value = false;
     }
-  }
-
-  double calculateTotalAmount() {
-    final ticket = state.selectedTicketTier.value;
-    if (ticket == null) return 0;
-
-    double price = ticket.isEarlyBird && ticket.earlyBirdPrice != null
-        ? ticket.earlyBirdPrice!
-        : double.tryParse(ticket.price) ?? 0.0;
-
-    return price * state.quantity.value;
-  }
-
-  void _onSuccess(PaymentSuccessResponse response) async {
-    // LoggerService.loggerInstance.d("✅ Payment Success: ${response.paymentId}");
-
-    // ✅ Validate payment & navigate
-    // try {
-    //   await validatePayment(response.paymentId);
-    navigateToMyTicketPage();
-    // } catch (e) {
-    //   AppSnackbar.error(
-    //     title: "Validation Failed",
-    //     message: "Payment validation failed",
-    //   );
-    // }
-    state.isRegistering.value = false;
   }
 
   void _onError(PaymentFailureResponse response) {
@@ -221,6 +368,7 @@ class CheckoutController extends GetxController {
     super.onClose();
   }
 
+  /*----- helper -----*/
   Future<void> checkEligibility(TicketTier ticket) async {
     final eventInfo = state.eventInfo.value;
     if (eventInfo == null) return;

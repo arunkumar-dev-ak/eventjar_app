@@ -46,21 +46,28 @@ Widget buildCheckoutEventInfo(EventInfo eventInfo, BuildContext context) {
           SizedBox(height: 2.hp),
 
           // Tags
-          Wrap(
-            spacing: 2.wp,
-            runSpacing: 1.hp,
-            children: [
-              ...eventInfo.tags.map((tag) => _buildSimpleTag(tag)),
-              _buildEventModeTag(
-                eventInfo.isVirtual
-                    ? "Virtual"
-                    : eventInfo.isHybrid
-                    ? "Hybrid"
-                    : "In-Person",
-              ),
-            ],
-          ),
-          SizedBox(height: 2.hp),
+          // Wrap(
+          //   spacing: 2.wp,
+          //   runSpacing: 1.hp,
+          //   children: [
+          //     ...eventInfo.tags.map((tag) => _buildSimpleTag(tag)),
+          //     _buildEventModeTag(
+          //       eventInfo.isVirtual
+          //           ? "Virtual"
+          //           : eventInfo.isHybrid
+          //           ? "Hybrid"
+          //           : "In-Person",
+          //     ),
+          //   ],
+          // ),
+          // _buildEventModeTag(
+          //   eventInfo.isVirtual
+          //       ? "Virtual"
+          //       : eventInfo.isHybrid
+          //       ? "Hybrid"
+          //       : "In-Person",
+          // ),
+          // SizedBox(height: 2.hp),
 
           // Location
           _buildInfoRow(

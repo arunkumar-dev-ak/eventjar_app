@@ -5,7 +5,7 @@ import 'package:eventjar/page/checkout/checkout_header.dart';
 import 'package:eventjar/page/checkout/checkout_price_summary.dart';
 import 'package:eventjar/page/checkout/checkout_submit_button.dart';
 import 'package:eventjar/page/checkout/checkout_terms_text.dart';
-import 'package:eventjar/page/checkout/checkout_ticket_details.dart';
+import 'package:eventjar/page/checkout/checkout_ticket/checkout_ticket_details.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
