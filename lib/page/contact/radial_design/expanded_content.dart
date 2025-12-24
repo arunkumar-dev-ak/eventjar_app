@@ -173,72 +173,78 @@ Widget _buildNextActionColumn(
 ) {
   final isLastStage = activeStageIndex == stageDefinitions.length - 1;
 
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Column(
-      crossAxisAlignment: isLastStage
-          ? CrossAxisAlignment.center
-          : CrossAxisAlignment.start,
-      children: [
-        // Current Stage chip
-        _buildStageChip(
-          stageColor: stageColor,
-          label: stageDefinitions[activeStageIndex].name,
-          icon: Icons.check_circle,
-          isActive: true,
-        ),
-
-        if (!isLastStage) ...[
-          const SizedBox(height: 8),
-
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 6,
-                  horizontal: 16,
-                ),
-                child: Container(
-                  height: 40,
-                  width: 2,
-                  color: Colors.grey.shade300,
-                ),
-              ),
-
-              // Button for NEXT stage
-              NextStageActionButton(
-                currentStage: currentStage,
-                contact: contact,
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 6),
-
+  return Expanded(
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Column(
+        crossAxisAlignment: isLastStage
+            ? CrossAxisAlignment.center
+            : CrossAxisAlignment.start,
+        children: [
+          // Current Stage chip
           _buildStageChip(
-            stageColor: Colors.grey,
-            label: stageDefinitions[activeStageIndex + 1].name,
-            icon: null,
-            isActive: false,
+            stageColor: stageColor,
+            label: stageDefinitions[activeStageIndex].name,
+            icon: Icons.check_circle,
+            isActive: true,
           ),
+
+          if (!isLastStage) ...[
+            const SizedBox(height: 8),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 6,
+                    horizontal: 16,
+                  ),
+                  child: Container(
+                    height: 40,
+                    width: 2,
+                    color: Colors.grey.shade300,
+                  ),
+                ),
+
+                // Button for NEXT stage
+                NextStageActionButton(
+                  currentStage: currentStage,
+                  contact: contact,
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 6),
+
+            _buildStageChip(
+              stageColor: Colors.grey,
+              label: stageDefinitions[activeStageIndex + 1].name,
+              icon: null,
+              isActive: false,
+            ),
+          ],
+
+          if (isLastStage) ...[
+            const SizedBox(height: 8),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+              child: Container(
+                height: 20,
+                width: 2,
+                color: Colors.grey.shade300,
+              ),
+            ),
+
+            const SizedBox(height: 6),
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: _buildCompletedChip(),
+            ),
+          ],
         ],
-
-        if (isLastStage) ...[
-          const SizedBox(height: 8),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-            child: Container(height: 20, width: 2, color: Colors.grey.shade300),
-          ),
-
-          const SizedBox(height: 6),
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: _buildCompletedChip(),
-          ),
-        ],
-      ],
+      ),
     ),
   );
 }
@@ -250,7 +256,8 @@ Widget _buildStageChip({
   required bool isActive,
 }) {
   return Container(
-    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+    // Remove constraints completely - fully dynamic
     decoration: BoxDecoration(
       gradient: isActive
           ? LinearGradient(
@@ -269,16 +276,22 @@ Widget _buildStageChip({
       ),
     ),
     child: Row(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.min, // Key: takes only needed width
       children: [
-        if (icon != null) Icon(icon, size: 14, color: stageColor),
-        if (icon != null) SizedBox(width: 6),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
-            color: isActive ? stageColor : Colors.grey.shade700,
+        if (icon != null) ...[
+          Icon(icon, size: 12, color: stageColor),
+          SizedBox(width: 3),
+        ],
+        Flexible(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+              color: isActive ? stageColor : Colors.grey.shade700,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
         ),
       ],

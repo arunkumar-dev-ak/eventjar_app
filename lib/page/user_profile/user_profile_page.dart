@@ -44,6 +44,10 @@ class UserProfilePage extends GetView<UserProfileController> {
               _buildSection(
                 title: "Basic Information",
                 child: userProfileBuildBasicInfo(),
+                isEditEnabled: false,
+                onEdit: () {
+                  controller.navigateToBasicInfoUpdate();
+                },
               ),
               SizedBox(height: 2.hp),
               _buildSection(
@@ -83,7 +87,19 @@ class UserProfilePage extends GetView<UserProfileController> {
     );
   }
 
-  Widget _buildSection({required String title, required Widget child}) {
+  Widget _buildSection({
+    required String title,
+    required Widget child,
+    bool? isEditEnabled,
+    VoidCallback? onEdit,
+  }) {
+    // Get isEditEnabled from args if not provided
+    final bool editEnabled =
+        isEditEnabled ??
+        (Get.arguments is Map
+            ? Get.arguments['isEditEnabled'] ?? false
+            : false);
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 4.wp),
       decoration: BoxDecoration(
@@ -102,13 +118,35 @@ class UserProfilePage extends GetView<UserProfileController> {
         children: [
           Padding(
             padding: EdgeInsets.all(4.wp),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Title
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                // Edit Icon Button (conditional)
+                if (editEnabled && onEdit != null)
+                  InkWell(
+                    onTap: onEdit,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Padding(
+                      padding: EdgeInsets.all(1.5.wp),
+                      child: Icon(
+                        Icons.edit_outlined,
+                        size: 18.sp,
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
           Divider(height: 1, color: Colors.grey.shade200),

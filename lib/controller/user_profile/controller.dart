@@ -237,6 +237,33 @@ class UserProfileController extends GetxController {
     return state.userProfile.value?.isVerified ?? false;
   }
 
+  void navigateToBasicInfoUpdate() {
+    Get.toNamed(
+      RouteName.basicInfoFormPage,
+      arguments: state.userProfile.value,
+    )?.then((val) => {});
+  }
+
+  void navigateToBusinessInfoUpdate() {
+    Get.toNamed(RouteName.businessInfoFormPage)?.then((val) => {});
+  }
+
+  void navigateToLocationInfoUpdate() {
+    Get.toNamed(RouteName.locationFormPage)?.then((val) => {});
+  }
+
+  void navigateToNetworkingInfoUpdate() {
+    Get.toNamed(RouteName.networkingFormPage)?.then((val) => {});
+  }
+
+  void navigateToProfessionalSummaryUpdate() {
+    Get.toNamed(RouteName.summaryFormPage)?.then((val) => {});
+  }
+
+  void navigateToSocialUpdate() {
+    Get.toNamed(RouteName.socialFormPage)?.then((val) => {});
+  }
+
   /// Get social media links
   Map<String, String> get socialLinks {
     final extended = state.userProfile.value?.extendedProfile;

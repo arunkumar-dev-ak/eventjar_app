@@ -5,10 +5,15 @@ import 'package:eventjar/controller/dashboard/binding.dart';
 import 'package:eventjar/controller/event_info/binding.dart';
 import 'package:eventjar/controller/forgotPassword/binding.dart';
 import 'package:eventjar/controller/my_ticket/binding.dart';
-import 'package:eventjar/controller/my_qr/binding.dart';
 import 'package:eventjar/controller/nfc/binding.dart';
 import 'package:eventjar/controller/nfc_read/binding.dart';
 import 'package:eventjar/controller/nfc_write/binding.dart';
+import 'package:eventjar/controller/profile_form/basic_info/binding.dart';
+import 'package:eventjar/controller/profile_form/business_info/binding.dart';
+import 'package:eventjar/controller/profile_form/location/binding.dart';
+import 'package:eventjar/controller/profile_form/networking/binding.dart';
+import 'package:eventjar/controller/profile_form/social/binding.dart';
+import 'package:eventjar/controller/profile_form/summary/binding.dart';
 import 'package:eventjar/controller/qr_dashboard/binding.dart';
 import 'package:eventjar/controller/qualify_lead/binding.dart';
 import 'package:eventjar/controller/schedule_meeting/binding.dart';
@@ -26,6 +31,12 @@ import 'package:eventjar/page/my_ticket/my_ticket_page.dart';
 import 'package:eventjar/page/nfc/nfc_page.dart';
 import 'package:eventjar/page/nfc_read/nfc_read.dart';
 import 'package:eventjar/page/nfc_write/nfc_write.dart';
+import 'package:eventjar/page/profile_form/basic_info/basic_info.dart';
+import 'package:eventjar/page/profile_form/business_info/business_info.dart';
+import 'package:eventjar/page/profile_form/location_form/location_form.dart';
+import 'package:eventjar/page/profile_form/networking_form/networking_form.dart';
+import 'package:eventjar/page/profile_form/social_form/social_form.dart';
+import 'package:eventjar/page/profile_form/summary_form/summary_form.dart';
 import 'package:eventjar/page/qr_dashboard/qr_dashboard.dart';
 import 'package:eventjar/page/qualify_lead/qualify_lead.dart';
 import 'package:eventjar/page/schedule_meeting/schedule_meeting.dart';
@@ -156,6 +167,44 @@ class RoutePage {
       page: () => QualifyLeadPage(),
       binding: QualifyLeadBinding(),
       // middlewares: [LoginMiddleware()],
+    ),
+
+    /*------ Profile update -----*/
+    GetPage(
+      name: RouteName.basicInfoFormPage,
+      page: () => BasicInfoPage(),
+      binding: BasicInfoBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.businessInfoFormPage,
+      page: () => BusinessInfoPage(),
+      binding: BusinessInfoBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.locationFormPage,
+      page: () => LocationFormPage(),
+      binding: LocationBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.networkingFormPage,
+      page: () => NetworkingFormPage(),
+      binding: NetworkingBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.summaryFormPage,
+      page: () => SummaryFormPage(),
+      binding: SummaryBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.socialFormPage,
+      page: () => SocialFormPage(),
+      binding: SocialBinding(),
+      middlewares: [LoginMiddleware()],
     ),
   ];
 }

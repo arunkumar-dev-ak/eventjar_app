@@ -33,4 +33,12 @@ class RouteName {
   static const nfcPage = '/nfcPage';
   static const nfcReadPage = '/nfcReadPage';
   static const nfcWritePage = '/nfcWritePage';
+
+  //profile form
+  static const basicInfoFormPage = '/basicInfoFormPage';
+  static const businessInfoFormPage = '/businessInfoFormPage';
+  static const locationFormPage = '/locationFormPage';
+  static const networkingFormPage = '/networkingFormPage';
+  static const summaryFormPage = '/summaryFormPage';
+  static const socialFormPage = '/socialFormPage';
 }
