@@ -1,8 +1,10 @@
-import 'package:confetti/confetti.dart';
 import 'package:eventjar/controller/contact/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/page/contact/contact_card_empty_page.dart';
-import 'package:eventjar/page/contact/contact_card_page_card.dart';
 import 'package:eventjar/page/contact/contact_card_shimmer.dart';
+import 'package:eventjar/page/contact/radial_design/accordion_card.dart';
+import 'package:eventjar/page/contact/radial_design/radial_design_func.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,95 +12,66 @@ class ContactCardPage extends StatelessWidget {
   ContactCardPage({super.key});
 
   final ContactController controller = Get.find();
-
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Obx(() {
-          if (controller.state.isLoading.value) {
-            return ListView.builder(
-              padding: const EdgeInsets.only(top: 10),
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                return buildShimmerPlaceholderForContactCard();
-              },
-            );
-          } else if (controller.state.contacts.isEmpty) {
-            return buildEmptyStateForContact();
-          } else {
-            final contacts = controller.state.contacts;
-            return ListView.builder(
-              padding: const EdgeInsets.only(top: 10),
-              itemCount: controller.state.contacts.length,
-              itemBuilder: (context, index) {
-                final contact = contacts[index];
+    return Obx(() {
+      // ✅ Outer Obx
+      if (controller.state.isLoading.value) {
+        return ListView.builder(
+          padding: const EdgeInsets.only(top: 10),
+          itemCount: 3,
+          itemBuilder: (context, index) {
+            return buildShimmerPlaceholderForContactCard();
+          },
+        );
+      } else if (controller.state.contacts.isEmpty) {
+        return buildEmptyStateForContact();
+      }
 
-                return ContactCard(contact: contact, index: index);
-              },
-            );
-          }
-        }),
+      final contacts = controller.state.contacts;
+      final expandedIndex = controller.state.expandedIndex.value;
+      final screenWidth = MediaQuery.of(context).size.width;
+      final isSmallScreen = screenWidth < 360;
 
-        // if (controller.showConfetti.value)
-        // if (true)
-        //   Positioned(
-        //     top: 0,
-        //     left: 0,
-        //     right: 0,
-        //     child: ConfettiWidget(
-        //       confettiController: controller.confettiController,
-        //       blastDirectionality: BlastDirectionality.explosive,
-        //       blastDirection: 0.5,
-        //       emissionFrequency: 0.1, // Higher = more particles
-        //       numberOfParticles: 100,
-        //       gravity: 0.1,
-        //       shouldLoop: false,
-        //       colors: [Colors.green, Colors.blue, Colors.yellow, Colors.purple],
-        //     ),
-        //   ),
-        // if (controller.showConfetti.value)
-        // if (true)
-        //   Center(
-        //     child: Container(
-        //       padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        //       decoration: BoxDecoration(
-        //         gradient: LinearGradient(
-        //           colors: [Colors.green.shade600, Colors.green.shade800],
-        //         ),
-        //         borderRadius: BorderRadius.circular(25),
-        //         boxShadow: [
-        //           BoxShadow(
-        //             color: Colors.green.shade400,
-        //             blurRadius: 30,
-        //             spreadRadius: 5,
-        //           ),
-        //         ],
-        //       ),
-        //       child: Column(
-        //         mainAxisSize: MainAxisSize.min,
-        //         children: [
-        //           Icon(Icons.celebration, color: Colors.white, size: 48),
-        //           SizedBox(height: 12),
-        //           Text(
-        //             'LEAD QUALIFIED! 🎉',
-        //             style: TextStyle(
-        //               color: Colors.white,
-        //               fontSize: 20,
-        //               fontWeight: FontWeight.bold,
-        //               letterSpacing: 1,
-        //             ),
-        //           ),
-        //           SizedBox(height: 4),
-        //           Text(
-        //             'Great job!',
-        //             style: TextStyle(color: Colors.white70, fontSize: 14),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-      ],
-    );
+      return Container(
+        width: 100.wp,
+        height: 100.hp,
+        color: Colors.grey.shade200,
+
+        child: ListView.builder(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          itemCount: contacts.length,
+          itemBuilder: (context, index) {
+            final contact = contacts[index];
+            final isExpanded = expandedIndex == index;
+
+            return radialDesignBuildAccordionCard(
+              contact: contact,
+              stages: _buildStagesForContact(contact.stage.index),
+              isSmallScreen: isSmallScreen,
+              index: index,
+              isExpanded: isExpanded,
+              onToggleExpand: (int val) {
+                controller.state.expandedIndex.value = val;
+              },
+              onCall: () {},
+            );
+          },
+        ),
+      );
+    });
   }
+}
+
+List<PieChartModel> _buildStagesForContact(int activeStageIndex) {
+  return stageDefinitions.asMap().entries.map((entry) {
+    final index = entry.key;
+    final stage = entry.value;
+    final isEnabled = index <= activeStageIndex;
+    return PieChartModel(
+      name: stage.name,
+      color: isEnabled ? stage.color : Colors.grey.shade400,
+      isEnabled: isEnabled,
+    );
+  }).toList();
 }

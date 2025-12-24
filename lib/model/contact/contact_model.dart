@@ -239,4 +239,19 @@ extension ContactStageExtension on ContactStage {
         return 'qualified';
     }
   }
+
+  int get index {
+    switch (this) {
+      case ContactStage.newContact:
+        return 0;
+      case ContactStage.followup24h:
+        return 1;
+      case ContactStage.followup7d:
+        return 2;
+      case ContactStage.followup30d:
+        return 3;
+      case ContactStage.qualified:
+        return 4;
+    }
+  }
 }

@@ -9,9 +9,12 @@ import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-class ContactController extends GetxController {
+class ContactController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   var appBarTitle = "Contact Page";
   final state = ContactState();
   late ConfettiController confettiController;
@@ -144,6 +147,26 @@ class ContactController extends GetxController {
       }
     } finally {
       state.isLoading.value = false;
+    }
+  }
+
+  Future<void> launchPhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
+
+    try {
+      if (await canLaunchUrl(launchUri)) {
+        await launchUrl(launchUri);
+      } else {
+        AppSnackbar.warning(
+          title: "Failed",
+          message: 'Could not launch $phoneNumber',
+        );
+      }
+    } catch (e) {
+      AppSnackbar.warning(
+        title: "Failed",
+        message: 'Could not launch $phoneNumber',
+      );
     }
   }
 

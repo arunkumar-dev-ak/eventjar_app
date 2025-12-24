@@ -10,4 +10,6 @@ class ContactState {
   Rx<ContactAnalytics?> analytics = Rx<ContactAnalytics?>(null);
 
   RxList<Contact> contacts = <Contact>[].obs;
+
+  RxInt expandedIndex = 0.obs;
 }
