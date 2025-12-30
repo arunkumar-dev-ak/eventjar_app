@@ -7,22 +7,43 @@ class ContactAnalyticsShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
+      baseColor: Colors.grey.shade200,
       highlightColor: Colors.grey.shade100,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey.shade300,
+          color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(16),
         ),
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(width: 28, height: 28, color: Colors.grey.shade400),
-            const SizedBox(height: 12),
-            Container(width: 80, height: 16, color: Colors.grey.shade400),
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
             const Spacer(),
-            Container(width: 60, height: 30, color: Colors.grey.shade400),
+            Container(
+              width: 70,
+              height: 12,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              width: 50,
+              height: 20,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
           ],
         ),
       ),
@@ -39,51 +60,41 @@ class OverdueCardShimmer extends StatelessWidget {
       baseColor: Colors.grey.shade300,
       highlightColor: Colors.grey.shade100,
       child: Container(
-        height: 110,
+        height: 70,
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(14),
         ),
-        child: Stack(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Positioned(
-              top: -40,
-              right: -40,
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade400,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
               child: Container(
-                width: 120,
-                height: 120,
+                height: 14,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade400.withValues(alpha: 0.5),
-                  shape: BoxShape.circle,
+                  color: Colors.grey.shade400,
+                  borderRadius: BorderRadius.circular(4),
                 ),
               ),
             ),
-            Positioned.fill(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 24,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 30,
-                      height: 30,
-                      color: Colors.grey.shade400,
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: Container(height: 18, color: Colors.grey.shade400),
-                    ),
-                    Container(
-                      width: 60,
-                      height: 22,
-                      color: Colors.grey.shade400,
-                    ),
-                  ],
-                ),
+            const SizedBox(width: 10),
+            Container(
+              width: 40,
+              height: 28,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade400,
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
           ],

@@ -1,11 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eventjar/controller/event_info/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
+import 'package:eventjar/model/event_info/event_info_media_extension_model.dart';
 import 'package:eventjar/page/event_info/widget/event_info_shimmer.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 class EventInfoHeader extends StatelessWidget {
@@ -26,318 +26,366 @@ class EventInfoHeader extends StatelessWidget {
         return const SizedBox();
       }
 
-      final organizer = eventInfo.organizer;
+      // Format date display
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      final dateStr = "${eventInfo.startDate.day} ${months[eventInfo.startDate.month - 1]}, ${eventInfo.startDate.year}";
+      final timeStr = eventInfo.startTime != null && eventInfo.startTime!.isNotEmpty
+          ? controller.generateDateTimeAndFormatTime(eventInfo.startTime!, context)
+          : 'Time TBA';
 
-      // Format date and time display (customize formatting as needed)
-      final dateStr =
-          "${eventInfo.startDate.day.toString().padLeft(2, '0')}-${eventInfo.startDate.month.toString().padLeft(2, '0')}-${eventInfo.startDate.year}";
-      final timeStr =
-          eventInfo.startTime != null && eventInfo.startTime!.isNotEmpty
-          ? controller.generateDateTimeAndFormatTime(
-              eventInfo.startTime!,
-              context,
-            )
-          : 'N/A';
-
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 3.wp, horizontal: 3.wp),
+      return Container(
+        padding: EdgeInsets.all(4.wp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Event Title added at the top
-            Text(
-              eventInfo.title,
-              style: TextStyle(
-                fontSize: 11.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-            SizedBox(height: 1.hp),
-            // Organizer row
-            Row(
-              children: [
-                //organizer info
-                Expanded(
-                  child: Row(
-                    children: [
-                      Text(
-                        "Organized By",
-                        style: TextStyle(
-                          color: AppColors.eventInfoHeaderTextColor,
-                          fontSize: 10.sp,
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(width: 2.wp),
-                      buildOrganizerAvatar(organizer.avatarUrl, organizer.name),
-                      SizedBox(width: 2.wp),
-                      Expanded(
-                        child: Text(
-                          organizer.name,
-                          style: TextStyle(
-                            color: AppColors.eventInfoHeaderTextColor,
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w600,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+            // Large Event Image
+            _buildEventImage(eventInfo),
+            SizedBox(height: 2.hp),
 
-                SizedBox(width: 1.wp),
-                eventModeBadge(
-                  mode: eventInfo.isHybrid
-                      ? "Hybrid"
-                      : (eventInfo.isVirtual ? "Virtual" : "In-Person"),
-                ),
-
-                SizedBox(width: 3.wp),
-              ],
-            ),
-
-            SizedBox(height: 1.hp),
-
-            // Location row
-            Row(
-              children: [
-                Icon(
-                  eventInfo.isVirtual
-                      ? Icons.computer
-                      : Icons.location_on_outlined,
-                  color: eventInfo.isVirtual
-                      ? const Color.fromARGB(255, 35, 79, 116).withValues(
-                          alpha: 0.8,
-                        ) // blue shade for virtual
-                      : const Color.fromARGB(255, 255, 109, 99).withValues(
-                          alpha: 0.8,
-                        ), // red shade for physical location
-                ),
-
-                SizedBox(width: 2.wp),
-                Expanded(
-                  child: Text(
-                    eventInfo.isVirtual
-                        ? "Online"
-                        : (eventInfo.city != null && eventInfo.city!.isNotEmpty)
-                        ? "${eventInfo.venue ?? ''}${(eventInfo.venue != null && eventInfo.venue!.isNotEmpty) && eventInfo.city!.isNotEmpty ? ', ' : ''}${eventInfo.city ?? ''}"
-                        : "Location not specified",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: AppColors.eventInfoHeaderTextColor,
-                      fontSize: 10.sp,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: 1.hp),
-
-            // Date & Time row
-            Row(
-              children: [
-                Icon(
-                  FontAwesomeIcons.clock,
-                  color: const Color.fromARGB(255, 7, 102, 180),
-                  size: 18,
-                ),
-                SizedBox(width: 3.wp),
-                Expanded(
-                  child: Text(
-                    "$dateStr • $timeStr",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: AppColors.eventInfoHeaderTextColor,
-                      fontSize: 10.sp,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            // SizedBox(height: 2.hp),
-
-            // Container(
-            //   width: 100.wp,
-            //   height: 1,
-            //   color: Colors.white.withAlpha(125),
-            // ),
-
-            // SizedBox(height: 2.hp),
-
-            // // Attendee avatars and stats
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   crossAxisAlignment: CrossAxisAlignment.center,
-            //   children: [
-            //     // Attended avatars and going count
-            //     Column(
-            //       crossAxisAlignment: CrossAxisAlignment.center,
-            //       mainAxisAlignment: MainAxisAlignment.start,
-            //       children: [
-            //         Row(
-            //           children: [
-            //             SizedBox(
-            //               width: 70,
-            //               height: 35,
-            //               child: Stack(
-            //                 clipBehavior: Clip.none,
-            //                 children: [
-            //                   Positioned(
-            //                     left: 40,
-            //                     child: CircleAvatar(
-            //                       radius: 17,
-            //                       backgroundColor: Colors.white,
-            //                       backgroundImage: const AssetImage(
-            //                         'assets/event_info/event_info_attendes_profile.jpg',
-            //                       ),
-            //                     ),
-            //                   ),
-            //                   Positioned(
-            //                     left: 20,
-            //                     child: CircleAvatar(
-            //                       radius: 17,
-            //                       backgroundColor: Colors.white,
-            //                       backgroundImage: const AssetImage(
-            //                         'assets/event_info/event_info_attendes_profile.jpg',
-            //                       ),
-            //                     ),
-            //                   ),
-            //                   CircleAvatar(
-            //                     radius: 17,
-            //                     backgroundColor: Colors.white,
-            //                     backgroundImage: const AssetImage(
-            //                       'assets/event_info/event_info_attendes_profile.jpg',
-            //                     ),
-            //                   ),
-            //                 ],
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //         SizedBox(height: 2),
-            //         generateBadge(label: "$attendedCount going"),
-            //       ],
-            //     ),
-
-            //     // Attendance count and spots left
-            //     Column(
-            //       children: [
-            //         Row(
-            //           children: [
-            //             Icon(Icons.person, color: AppColors.gradientDarkStart),
-            //             SizedBox(width: 1.wp),
-            //             Text(
-            //               "$attendedCount/$maxAttendees",
-            //               style: TextStyle(
-            //                 color: Colors.white,
-            //                 fontWeight: FontWeight.bold,
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //         SizedBox(height: 1.hp),
-            //         generateBadge(label: "$spotsLeft Spots left"),
-            //       ],
-            //     ),
-
-            //     // Event mode badge
-            //     eventModeBadge(
-            //       mode: eventInfo.isVirtual ? "Virtual" : "In-Person",
-            //     ),
-            //   ],
-            // ),
+            // Quick Info Row
+            _buildQuickInfoRow(eventInfo, dateStr, timeStr),
           ],
         ),
       );
     });
   }
-}
 
-Widget generateBadge({required String label}) {
-  return Container(
-    decoration: BoxDecoration(
-      gradient: AppColors.buttonGradient,
-      borderRadius: BorderRadius.circular(8),
-    ),
-    padding: EdgeInsets.all(1.wp),
-    child: Text(
-      label,
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 8.sp,
-        fontWeight: FontWeight.bold,
+  Widget _buildEventImage(EventInfo eventInfo) {
+    final mediaUrl = eventInfo.media.isNotEmpty
+        ? eventInfo.media.first.resolvedUrl
+        : null;
+
+    return Container(
+      width: double.infinity,
+      height: 28.hp,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
-    ),
-  );
-}
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Image
+            mediaUrl != null
+                ? CachedNetworkImage(
+                    imageUrl: mediaUrl,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      color: Colors.grey.shade200,
+                      child: const Center(
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => _buildImagePlaceholder(),
+                  )
+                : _buildImagePlaceholder(),
 
-Widget eventModeBadge({required String mode}) {
-  return Container(
-    padding: EdgeInsets.all(10),
-    decoration: BoxDecoration(
-      color: AppColors.gradientDarkStart,
-      borderRadius: BorderRadius.circular(15),
-      boxShadow: [
-        BoxShadow(color: Colors.grey, offset: Offset(0.5, 1), blurRadius: 1),
-      ],
-    ),
-    child: Text(
-      mode,
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 8.sp,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-  );
-}
-
-Widget buildOrganizerAvatar(String? avatarUrl, String organizerName) {
-  if (avatarUrl != null && avatarUrl.isNotEmpty) {
-    return ClipOval(
-      child: Image.network(
-        getFileUrl(avatarUrl),
-        width: 30,
-        height: 30,
-        fit: BoxFit.cover,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(width: 30, height: 30, color: Colors.grey.shade300);
-        },
-        errorBuilder: (context, error, stackTrace) {
-          // Show default user icon on error
-          return CircleAvatar(
-            radius: 15,
-            backgroundColor: Colors.white,
-            child: Icon(
-              Icons.person,
-              color: AppColors.gradientDarkStart,
-              size: 20,
+            // Gradient overlay
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 100,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.7),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          );
-        },
+
+            // Mode badge - top left
+            Positioned(
+              top: 12,
+              left: 12,
+              child: _buildModeBadge(
+                isVirtual: eventInfo.isVirtual,
+                isHybrid: eventInfo.isHybrid,
+              ),
+            ),
+
+            // Price badge - top right
+            Positioned(
+              top: 12,
+              right: 12,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: eventInfo.isPaid ? Colors.white : Colors.green,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  eventInfo.isPaid ? '\$${eventInfo.ticketPrice ?? 'Paid'}' : 'FREE',
+                  style: TextStyle(
+                    color: eventInfo.isPaid ? Colors.grey.shade800 : Colors.white,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+
+            // Stats at bottom
+            Positioned(
+              bottom: 16,
+              left: 16,
+              right: 16,
+              child: Row(
+                children: [
+                  _buildImageStat(
+                    icon: Icons.people_alt_rounded,
+                    label: '${eventInfo.currentAttendees} Attending',
+                  ),
+                  SizedBox(width: 3.wp),
+                  _buildImageStat(
+                    icon: Icons.event_seat_rounded,
+                    label: eventInfo.maxAttendees > 0
+                        ? '${eventInfo.maxAttendees} Seats'
+                        : 'Unlimited',
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
-  } else {
-    // Show default CircleAvatar with initial or icon for null/empty avatarUrl
-    return CircleAvatar(
-      radius: 15,
-      backgroundColor: Colors.white,
-      child: Text(
-        organizerName.isNotEmpty ? organizerName[0] : '',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-          color: AppColors.gradientDarkStart,
+  }
+
+  Widget _buildImagePlaceholder() {
+    return Container(
+      color: Colors.grey.shade200,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.image_outlined,
+              color: Colors.grey.shade400,
+              size: 48,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'No Image',
+              style: TextStyle(
+                color: Colors.grey.shade500,
+                fontSize: 12,
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildImageStat({required IconData icon, required String label}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.95),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: AppColors.gradientDarkStart, size: 16),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.grey.shade800,
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModeBadge({required bool isVirtual, required bool isHybrid}) {
+    IconData icon;
+    String label;
+    List<Color> colors;
+
+    if (isHybrid) {
+      icon = Icons.sync_alt_rounded;
+      label = 'Hybrid';
+      colors = [Colors.purple.shade400, Colors.purple.shade600];
+    } else if (isVirtual) {
+      icon = Icons.videocam_rounded;
+      label = 'Virtual';
+      colors = [Colors.blue.shade400, Colors.blue.shade600];
+    } else {
+      icon = Icons.place_rounded;
+      label = 'In-Person';
+      colors = [Colors.green.shade400, Colors.green.shade600];
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: colors),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: colors[0].withValues(alpha: 0.4),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: Colors.white, size: 16),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickInfoRow(EventInfo eventInfo, String dateStr, String timeStr) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Date & Time
+          Expanded(
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.calendar_today_rounded,
+                    color: Colors.orange.shade600,
+                    size: 20,
+                  ),
+                ),
+                SizedBox(width: 3.wp),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        dateStr,
+                        style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        timeStr,
+                        style: TextStyle(
+                          color: Colors.grey.shade500,
+                          fontSize: 8.sp,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: 1,
+            height: 40,
+            color: Colors.grey.shade200,
+          ),
+          SizedBox(width: 4.wp),
+          // Location preview
+          Expanded(
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: (eventInfo.isVirtual ? Colors.blue : Colors.red).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    eventInfo.isVirtual ? Icons.language_rounded : Icons.location_on_rounded,
+                    color: eventInfo.isVirtual ? Colors.blue.shade600 : Colors.red.shade600,
+                    size: 20,
+                  ),
+                ),
+                SizedBox(width: 3.wp),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        eventInfo.isVirtual ? 'Online' : (eventInfo.city ?? 'Location'),
+                        style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        eventInfo.isVirtual ? 'Virtual Event' : (eventInfo.venue ?? 'Venue TBA'),
+                        style: TextStyle(
+                          color: Colors.grey.shade500,
+                          fontSize: 8.sp,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

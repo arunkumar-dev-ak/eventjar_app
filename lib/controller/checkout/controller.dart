@@ -158,6 +158,7 @@ class CheckoutController extends GetxController {
         },
       };
 
+      state.isPaymentLoading.value = true;
       _razorpay.open(razorpayOptions);
     } catch (e) {
       LoggerService.loggerInstance.e('Payment init failed: $e');
@@ -165,6 +166,7 @@ class CheckoutController extends GetxController {
         title: "Payment Error",
         message: "Failed to start payment: $e",
       );
+      state.isPaymentLoading.value = false;
     } finally {
       state.isRegistering.value = false;
     }
@@ -304,6 +306,7 @@ class CheckoutController extends GetxController {
 
   void _onSuccess(PaymentSuccessResponse response) async {
     try {
+      state.isPaymentLoading.value = false;
       state.isRegistering.value = true;
 
       final eventInfo = state.eventInfo.value;
@@ -359,6 +362,7 @@ class CheckoutController extends GetxController {
       title: "Payment Failed",
       message: "Payment Failed Please try again",
     );
+    state.isPaymentLoading.value = false;
     state.isRegistering.value = false;
   }
 

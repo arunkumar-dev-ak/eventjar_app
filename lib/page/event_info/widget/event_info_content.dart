@@ -1,153 +1,19 @@
-import 'package:eventjar/controller/event_info/controller.dart';
-import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/global/widget/gradient_text.dart';
-import 'package:eventjar/page/event_info/tabs/agenda/agenda_page.dart';
-import 'package:eventjar/page/event_info/tabs/connection/connection_page.dart';
-import 'package:eventjar/page/event_info/tabs/location/location_page.dart';
-import 'package:eventjar/page/event_info/tabs/organizer/organizer_page.dart';
-import 'package:eventjar/page/event_info/tabs/overview/overview_page.dart';
-import 'package:eventjar/page/event_info/tabs/reviews/review_page.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
-class EventInfoContent extends StatelessWidget {
-  final EventInfoController controller = Get.find();
-
-  EventInfoContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        width: 100.wp,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          // borderRadius: BorderRadius.only(
-          //   topLeft: Radius.circular(20),
-          //   topRight: Radius.circular(20),
-          // ),
-        ),
-        child: Column(
-          children: [
-            AnimatedBuilder(
-              animation: controller.tabController,
-              builder: (context, child) {
-                return TabBar(
-                  controller: controller.tabController,
-                  tabs: List.generate(6, (i) {
-                    final tabNames = [
-                      "Overview",
-                      "Agenda",
-                      "Location",
-                      "Organizer",
-                      "Reviews",
-                      "Attendees",
-                    ];
-
-                    final isSelected = controller.tabController.index == i;
-
-                    final childText = Text(
-                      tabNames[i],
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    );
-
-                    return Tab(
-                      child: isSelected
-                          ? GradientText(
-                              textSize: 10.sp,
-                              content: tabNames[i],
-                              gradientStart: AppColors.gradientDarkStart,
-                              gradientEnd: AppColors.gradientDarkEnd,
-                              fontWeight: FontWeight.bold,
-                            )
-                          : childText,
-                    );
-                  }),
-                  isScrollable: true,
-                  dividerColor: Colors.grey,
-                  indicatorColor: AppColors.gradientDarkStart,
-                  tabAlignment: TabAlignment.start,
-                );
-              },
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: controller.tabController,
-                children: <Widget>[
-                  OverViewPage(),
-                  AgendaPage(),
-                  LocationPage(),
-                  OrganizerPage(),
-                  ReviewsPage(),
-                  EventInfoConnectionTab(),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-Widget eventInfoBookButton({
-  required bool isFree,
-  required VoidCallback onTap,
-}) {
-  return Padding(
-    padding: EdgeInsets.only(left: 5.wp, right: 5.wp),
-    child: Material(
-      borderRadius: BorderRadius.circular(10),
-      color: Colors.transparent,
-      child: Ink(
-        decoration: BoxDecoration(
-          gradient: AppColors.buttonGradient,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(10),
-          onTap: onTap,
-          child: Padding(
-            padding: EdgeInsets.all(3.wp),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      "Book now",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                if (isFree) ...[freeButtonLabel()],
-              ],
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-}
 
 Widget freeButtonLabel() {
   return Container(
-    padding: EdgeInsets.symmetric(vertical: 1.wp, horizontal: 2.wp),
-
+    padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
     decoration: BoxDecoration(
-      gradient: AppColors.appBarGradient,
-      borderRadius: BorderRadius.circular(10),
+      color: Colors.white.withValues(alpha: 0.2),
+      borderRadius: BorderRadius.circular(20),
     ),
     child: Text(
-      "free",
+      "FREE",
       style: TextStyle(
         color: Colors.white,
         fontSize: 8.sp,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.w700,
       ),
     ),
   );

@@ -18,26 +18,26 @@ class ContactAnalyticsAddContactCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: navigateToAddContact,
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(14),
       child: Container(
-        height: 110,
+        height: 70,
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(14),
           gradient: LinearGradient(
             colors: [
-              Colors.blue.shade600.withValues(alpha: 0.7),
-              Colors.blue.shade400.withValues(alpha: 0.4),
+              Colors.blue.shade600.withValues(alpha: 0.85),
+              Colors.blue.shade400.withValues(alpha: 0.65),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.blue.shade400.withValues(alpha: 0.4),
-              blurRadius: 15,
-              offset: const Offset(4, 6),
+              color: Colors.blue.shade400.withValues(alpha: 0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -46,31 +46,38 @@ class ContactAnalyticsAddContactCard extends StatelessWidget {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: Colors.white.withValues(alpha: 0.25),
                 shape: BoxShape.circle,
               ),
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               child: const Icon(
-                Icons.person_add,
-                size: 30,
+                Icons.person_add_rounded,
+                size: 22,
                 color: Colors.white,
               ),
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 14),
             Expanded(
               child: Text(
                 'Add Contact',
                 style: TextStyle(
-                  color: Colors.white70,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 11.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 9.sp,
                 ),
               ),
             ),
-            const Icon(
-              Icons.arrow_forward_ios,
-              size: 18,
-              color: Colors.white70,
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(
+                Icons.arrow_forward_rounded,
+                size: 16,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
@@ -99,26 +106,26 @@ class ContactAnalyticsOverdueCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(14),
       child: Container(
-        height: 110,
+        height: 70,
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(14),
           gradient: LinearGradient(
             colors: [
-              color.withValues(alpha: 0.7),
-              color.withValues(alpha: 0.4),
+              color.withValues(alpha: 0.85),
+              color.withValues(alpha: 0.65),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           boxShadow: [
             BoxShadow(
-              color: color.withValues(alpha: 0.4),
-              blurRadius: 15,
-              offset: const Offset(4, 6),
+              color: color.withValues(alpha: 0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
@@ -127,29 +134,36 @@ class ContactAnalyticsOverdueCard extends StatelessWidget {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: Colors.white.withValues(alpha: 0.25),
                 shape: BoxShape.circle,
               ),
-              padding: const EdgeInsets.all(12),
-              child: Icon(icon, size: 30, color: Colors.white),
+              padding: const EdgeInsets.all(10),
+              child: Icon(icon, size: 22, color: Colors.white),
             ),
-            const SizedBox(width: 20),
+            const SizedBox(width: 14),
             Expanded(
               child: Text(
                 label,
                 style: TextStyle(
-                  color: Colors.white70,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 11.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 9.sp,
                 ),
               ),
             ),
-            Text(
-              overdueCount.toString(),
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 14.sp,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                overdueCount.toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11.sp,
+                ),
               ),
             ),
           ],

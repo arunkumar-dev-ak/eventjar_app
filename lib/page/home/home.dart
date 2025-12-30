@@ -16,42 +16,22 @@ class HomePage extends GetView<HomeController> {
       decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
       child: SafeArea(
         child: RefreshIndicator(
-          onRefresh: () {
-            return controller.fetchEvents();
-          },
+          onRefresh: () => controller.fetchEvents(),
+          color: AppColors.gradientDarkStart,
+          backgroundColor: Colors.white,
+          strokeWidth: 2.5,
           child: Obx(() {
             return CustomScrollView(
               controller: controller.scrollController,
               physics: controller.state.events.isEmpty
                   ? const NeverScrollableScrollPhysics()
-                  : const AlwaysScrollableScrollPhysics(),
+                  : const BouncingScrollPhysics(),
               slivers: [
-                // SliverAppBar(
-                //   backgroundColor: Colors.transparent,
-                //   elevation: 0,
-                //   expandedHeight: 8.hp,
-                //   pinned: false,
-                //   floating: false,
-                //   flexibleSpace: FlexibleSpaceBar(background: HomeAppBar()),
-                // ),
-                // SliverPersistentHeader(
-                //   pinned: true,
-                //   delegate: _SliverSearchBarDelegate(
-                //     minHeight: 70,
-                //     maxHeight: 70,
-                //     child: Container(
-                //       decoration: const BoxDecoration(
-                //         gradient: AppColors.appBarGradient,
-                //       ),
-                //       child: HomeSearchBar(),
-                //     ),
-                //   ),
-                // ),
                 SliverPersistentHeader(
                   pinned: true,
                   delegate: _SliverSearchBarDelegate(
-                    minHeight: 70,
-                    maxHeight: 70,
+                    minHeight: 75,
+                    maxHeight: 75,
                     child: Container(
                       decoration: const BoxDecoration(
                         gradient: AppColors.appBarGradient,
@@ -61,12 +41,105 @@ class HomePage extends GetView<HomeController> {
                   ),
                 ),
                 DecoratedSliver(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(28),
+                      topRight: Radius.circular(28),
+                    ),
+                  ),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 2.hp),
+                        // Section header
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 5.wp),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Upcoming Events',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.grey.shade800,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Obx(() => Text(
+                                    '${controller.state.events.length} events available',
+                                    style: TextStyle(
+                                      fontSize: 9.sp,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                  )),
+                                ],
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.05),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.tune_rounded,
+                                      size: 16,
+                                      color: AppColors.gradientDarkStart,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Filter',
+                                      style: TextStyle(
+                                        fontSize: 9.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.gradientDarkStart,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 1.hp),
+                      ],
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Container(
+                    color: Colors.grey.shade50,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(28),
+                          topRight: Radius.circular(28),
+                        ),
+                      ),
+                      child: const SizedBox(height: 8),
+                    ),
+                  ),
+                ),
+                DecoratedSliver(
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    ),
                   ),
                   sliver: HomeContent(),
                 ),

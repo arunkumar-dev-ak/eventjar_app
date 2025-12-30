@@ -24,47 +24,37 @@ class OverViewPage extends StatelessWidget {
       // Add event tags
       tags.addAll(eventInfo.tags);
 
-      return SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 1.5.hp),
-            // Tags Horizontal Scroll
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(tags.length, (index) {
-                  return Padding(
-                    padding: EdgeInsets.only(left: index == 0 ? 5.wp : 2.wp),
-                    child: _buildTags(label: tags[index]),
-                  );
-                }),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 1.5.hp),
+          // Tags Horizontal Scroll
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: List.generate(tags.length, (index) {
+                return Padding(
+                  padding: EdgeInsets.only(left: index == 0 ? 5.wp : 2.wp),
+                  child: _buildTags(label: tags[index]),
+                );
+              }),
+            ),
+          ),
+          SizedBox(height: 1.hp),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.wp),
+            child: Text(
+              eventInfo.description ??
+                  "No description available for this event.",
+              style: TextStyle(
+                fontSize: 8.sp,
+                color: Colors.grey.shade600,
+                height: 1.5,
               ),
             ),
-            SizedBox(height: 1.hp),
-            Padding(
-              padding: EdgeInsets.only(left: 5.wp, right: 5.wp),
-              child: Text(
-                eventInfo.title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 11.sp,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            SizedBox(height: 1.hp),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.wp),
-              child: Text(
-                eventInfo.description ??
-                    "No description available for this event.",
-                style: TextStyle(fontSize: 10.sp),
-              ),
-            ),
-          ],
-        ),
+          ),
+          SizedBox(height: 2.hp),
+        ],
       );
     });
   }

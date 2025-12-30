@@ -1,4 +1,6 @@
 import 'package:eventjar/controller/add_contact/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,90 +15,131 @@ class ContactStageDropdown extends StatelessWidget {
       final selected = controller.state.selectedStage.value;
 
       return GestureDetector(
-        onTap: () {
-          showDialog(
-            context: context,
-            builder: (context) => Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              insetPadding: const EdgeInsets.symmetric(
-                horizontal: 40,
-                vertical: 24,
-              ),
-              child: Container(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.5,
-                ),
+        onTap: () => _showStageDialog(context),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.8.hp),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade200, width: 1),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(2.wp),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade50, // light themed background
-                  borderRadius: BorderRadius.circular(16),
+                  color: AppColors.gradientDarkStart.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.all(16),
+                child: Icon(
+                  Icons.flag_rounded,
+                  size: 18,
+                  color: AppColors.gradientDarkStart,
+                ),
+              ),
+              SizedBox(width: 3.wp),
+              Expanded(
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title
                     Text(
-                      'Select Stage',
+                      'Stage',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.blue.shade700, // theme-customized color
+                        fontSize: 7.sp,
+                        color: Colors.grey.shade500,
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Divider(color: Colors.grey.shade300, thickness: 1),
-                    const SizedBox(height: 8),
-                    // List of stages with scrolling
-                    Expanded(child: _buildStageSelection(context)),
-                    const SizedBox(height: 8),
-                    // Cancel / Close button
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 8,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          backgroundColor: Colors.blue.shade50,
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                    SizedBox(height: 0.3.hp),
+                    Text(
+                      selected['value'] ?? 'Select Stage',
+                      style: TextStyle(
+                        fontSize: 9.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey.shade800,
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-          );
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade400, width: 1.5),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                selected['value'] ?? '',
-                style: const TextStyle(fontSize: 16),
+              Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: Colors.grey.shade400,
               ),
-              const Icon(Icons.arrow_drop_down),
             ],
           ),
         ),
       );
     });
+  }
+
+  void _showStageDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.5,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              margin: EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Title
+            Padding(
+              padding: EdgeInsets.all(4.wp),
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(2.wp),
+                    decoration: BoxDecoration(
+                      color: AppColors.gradientDarkStart.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      Icons.flag_rounded,
+                      size: 18,
+                      color: AppColors.gradientDarkStart,
+                    ),
+                  ),
+                  SizedBox(width: 3.wp),
+                  Text(
+                    'Select Stage',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 11.sp,
+                      color: Colors.grey.shade800,
+                    ),
+                  ),
+                  Spacer(),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(Icons.close_rounded),
+                    color: Colors.grey.shade400,
+                  ),
+                ],
+              ),
+            ),
+            Divider(height: 1, color: Colors.grey.shade100),
+            // List of stages
+            Expanded(child: _buildStageSelection(context)),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildStageSelection(BuildContext context) {
@@ -105,26 +148,93 @@ class ContactStageDropdown extends StatelessWidget {
       final selectedKey = controller.state.selectedStage.value["key"];
 
       return ListView.separated(
-        padding: const EdgeInsets.only(top: 8),
+        padding: EdgeInsets.symmetric(vertical: 1.hp),
         shrinkWrap: true,
         itemCount: stages.length,
-        separatorBuilder: (_, __) => Divider(color: Colors.grey.shade300),
+        separatorBuilder: (context, index) => Divider(
+          height: 1,
+          color: Colors.grey.shade100,
+          indent: 4.wp,
+          endIndent: 4.wp,
+        ),
         itemBuilder: (_, index) {
           final stage = stages[index];
           final isSelected = stage['key'] == selectedKey;
 
-          return ListTile(
-            title: Text(stage['value'] ?? ''),
-            trailing: isSelected
-                ? Icon(Icons.check_circle, color: Colors.green.shade700)
-                : null,
+          return InkWell(
             onTap: () {
               controller.selectStage(stage);
               Navigator.pop(context);
             },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.5.hp),
+              color: isSelected
+                  ? AppColors.gradientDarkStart.withValues(alpha: 0.05)
+                  : Colors.transparent,
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(2.wp),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppColors.gradientDarkStart.withValues(alpha: 0.15)
+                          : Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      _getStageIcon(stage['key'] ?? ''),
+                      size: 16,
+                      color: isSelected
+                          ? AppColors.gradientDarkStart
+                          : Colors.grey.shade500,
+                    ),
+                  ),
+                  SizedBox(width: 3.wp),
+                  Expanded(
+                    child: Text(
+                      stage['value'] ?? '',
+                      style: TextStyle(
+                        fontSize: 9.sp,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        color: isSelected
+                            ? AppColors.gradientDarkStart
+                            : Colors.grey.shade700,
+                      ),
+                    ),
+                  ),
+                  if (isSelected)
+                    Icon(
+                      Icons.check_circle_rounded,
+                      size: 20,
+                      color: AppColors.gradientDarkStart,
+                    ),
+                ],
+              ),
+            ),
           );
         },
       );
     });
+  }
+
+  IconData _getStageIcon(String key) {
+    switch (key.toLowerCase()) {
+      case 'new':
+        return Icons.fiber_new_rounded;
+      case 'contacted':
+        return Icons.call_made_rounded;
+      case 'qualified':
+        return Icons.verified_rounded;
+      case 'proposal':
+        return Icons.description_rounded;
+      case 'negotiation':
+        return Icons.handshake_rounded;
+      case 'closed':
+        return Icons.check_circle_rounded;
+      case 'lost':
+        return Icons.cancel_rounded;
+      default:
+        return Icons.flag_rounded;
+    }
   }
 }

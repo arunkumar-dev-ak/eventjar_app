@@ -27,8 +27,8 @@ class DashboardPage extends GetView<DashboardController> {
             children: const [
               HomePage(),
               NetworkPage(),
-              UserProfilePage(),
               MyTicketPage(),
+              UserProfilePage(),
             ],
           );
         }),

@@ -24,15 +24,15 @@ class AgendaHeader extends StatelessWidget {
             Icon(
               FontAwesomeIcons.clock,
               color: const Color.fromARGB(255, 7, 102, 180),
-              size: 20,
+              size: 16,
             ),
-            SizedBox(width: 2.wp),
+            SizedBox(width: 1.5.wp),
             Text(
               eventTimeRange,
               style: TextStyle(
-                color: Colors.black,
-                fontSize: 10.sp,
-                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade800,
+                fontSize: 8.sp,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -58,17 +58,17 @@ class AgendaHeader extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(Icons.calendar_month, color: Colors.white, size: 20),
-              SizedBox(width: 2.wp),
+              Icon(Icons.calendar_month, color: Colors.white, size: 16),
+              SizedBox(width: 1.5.wp),
               Text(
                 eventDate,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 8.sp,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(width: 2.wp),
+              SizedBox(width: 1.5.wp),
             ],
           ),
         ),

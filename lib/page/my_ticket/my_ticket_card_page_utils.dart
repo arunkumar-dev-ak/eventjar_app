@@ -1,7 +1,6 @@
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_shaper_painter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 Widget myTicketBuildBadge(String label, Color textColor, Color bgColor) {
@@ -72,7 +71,6 @@ Widget myTicketBuildInfoRow(
 Widget myTicketBuildQRCodeSection(
   String qrData,
   String confirmationCode,
-  String registeredDate,
 ) {
   return Column(
     children: [
@@ -88,7 +86,7 @@ Widget myTicketBuildQRCodeSection(
           width: double.infinity,
           decoration: const BoxDecoration(color: Colors.transparent),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // QR Code
               Container(
@@ -100,22 +98,23 @@ Widget myTicketBuildQRCodeSection(
                 child: QrImageView(
                   data: qrData,
                   version: QrVersions.auto,
-                  size: 120,
+                  size: 100,
                   backgroundColor: Colors.white,
                 ),
               ),
               SizedBox(width: 3.wp),
 
-              // Details
+              // Confirmation details
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Confirmation Number',
+                      'Confirmation Code',
                       style: TextStyle(
-                        fontSize: 8.sp,
-                        color: Colors.grey.shade600,
+                        fontSize: 7.sp,
+                        color: Colors.grey.shade500,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -123,27 +122,19 @@ Widget myTicketBuildQRCodeSection(
                     Text(
                       confirmationCode,
                       style: TextStyle(
-                        fontSize: 9.sp,
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: Colors.grey.shade800,
+                        letterSpacing: 1,
                       ),
                     ),
-                    SizedBox(height: 2.hp),
+                    SizedBox(height: 1.hp),
                     Text(
-                      'Registered On',
+                      'Scan QR for entry',
                       style: TextStyle(
-                        fontSize: 8.sp,
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: 0.5.hp),
-                    Text(
-                      registeredDate,
-                      style: TextStyle(
-                        fontSize: 9.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        fontSize: 7.sp,
+                        color: Colors.grey.shade400,
+                        fontStyle: FontStyle.italic,
                       ),
                     ),
                   ],

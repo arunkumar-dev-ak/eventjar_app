@@ -18,63 +18,89 @@ class UserProfilePage extends GetView<UserProfileController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: Text(
-          "Profile",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
-        ),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(gradient: AppColors.appBarGradient),
-        ),
-        elevation: 0,
-      ),
+      backgroundColor: Colors.grey.shade100,
       body: Obx(() {
         // Loading state
         if (controller.state.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
+          return SafeArea(
+            child: Center(
+              child: CircularProgressIndicator(
+                color: AppColors.gradientDarkStart,
+              ),
+            ),
+          );
         }
 
         // Profile loaded
         return SingleChildScrollView(
           child: Column(
             children: [
+              // LinkedIn-style header (no AppBar, full bleed)
               UserProfileHeader(),
+
               SizedBox(height: 2.hp),
+
+              // Contact Info Card
               _buildSection(
-                title: "Basic Information",
+                icon: Icons.person_outline_rounded,
+                title: "Contact Info",
                 child: userProfileBuildBasicInfo(),
               ),
-              SizedBox(height: 2.hp),
+
+              SizedBox(height: 1.5.hp),
+
+              // About Section
               _buildSection(
-                title: "Business Information",
-                child: userProfileBuildBusinessInfo(),
-              ),
-              SizedBox(height: 2.hp),
-              _buildSection(
-                title: "Location & Regions",
-                child: userProfileBuildLocationInfo(),
-              ),
-              SizedBox(height: 2.hp),
-              _buildSection(
-                title: "Networking & Interests",
-                child: userProfileBuildNetworkInfo(),
-              ),
-              SizedBox(height: 2.hp),
-              _buildSection(
-                title: "Professional Summary",
+                icon: Icons.info_outline_rounded,
+                title: "About",
                 child: userProfilebuildSummary(),
               ),
-              SizedBox(height: 2.hp),
+
+              SizedBox(height: 1.5.hp),
+
+              // Experience / Business Section
               _buildSection(
-                title: "Social & Contact Links",
+                icon: Icons.business_center_outlined,
+                title: "Experience",
+                child: userProfileBuildBusinessInfo(),
+              ),
+
+              SizedBox(height: 1.5.hp),
+
+              // Location Section
+              _buildSection(
+                icon: Icons.location_on_outlined,
+                title: "Location",
+                child: userProfileBuildLocationInfo(),
+              ),
+
+              SizedBox(height: 1.5.hp),
+
+              // Skills & Interests Section
+              _buildSection(
+                icon: Icons.interests_outlined,
+                title: "Skills & Interests",
+                child: userProfileBuildNetworkInfo(),
+              ),
+
+              SizedBox(height: 1.5.hp),
+
+              // Social Links Section
+              _buildSection(
+                icon: Icons.link_rounded,
+                title: "Social Links",
                 child: userProfileBuildSocialLinks(),
               ),
-              SizedBox(height: 2.hp),
+
+              SizedBox(height: 1.5.hp),
+
+              // Settings & Security Section
               _buildSection(
-                title: "Security & Sessions",
+                icon: Icons.settings_outlined,
+                title: "Settings",
                 child: userProfileBuildSecurity(),
               ),
+
               SizedBox(height: 4.hp),
             ],
           ),
@@ -83,16 +109,20 @@ class UserProfilePage extends GetView<UserProfileController> {
     );
   }
 
-  Widget _buildSection({required String title, required Widget child}) {
+  Widget _buildSection({
+    required IconData icon,
+    required String title,
+    required Widget child,
+  }) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4.wp),
+      margin: EdgeInsets.symmetric(horizontal: 3.wp),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.shade200,
-            blurRadius: 8,
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
             offset: Offset(0, 2),
           ),
         ],
@@ -100,19 +130,40 @@ class UserProfilePage extends GetView<UserProfileController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Section Header
           Padding(
-            padding: EdgeInsets.all(4.wp),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
+            padding: EdgeInsets.fromLTRB(4.wp, 3.wp, 4.wp, 2.wp),
+            child: Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(2.wp),
+                  decoration: BoxDecoration(
+                    color: AppColors.gradientDarkStart.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 18,
+                    color: AppColors.gradientDarkStart,
+                  ),
+                ),
+                SizedBox(width: 3.wp),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade800,
+                  ),
+                ),
+              ],
             ),
           ),
-          Divider(height: 1, color: Colors.grey.shade200),
-          Padding(padding: EdgeInsets.all(4.wp), child: child),
+          Divider(height: 1, color: Colors.grey.shade100),
+          Padding(
+            padding: EdgeInsets.all(4.wp),
+            child: child,
+          ),
         ],
       ),
     );
