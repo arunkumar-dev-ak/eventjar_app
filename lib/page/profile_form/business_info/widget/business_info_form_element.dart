@@ -2,19 +2,23 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class BasicInfoFormElement extends StatelessWidget {
+class BusinessInfoFormElement extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
   final List<TextInputFormatter>? inputFormatters;
+  final int? maxLines; // ← ADD THIS
+  final int? minLines; // ← ADD THIS
 
-  const BasicInfoFormElement({
+  const BusinessInfoFormElement({
     required this.controller,
     required this.label,
     this.keyboardType,
     this.validator,
     this.inputFormatters,
+    this.maxLines,
+    this.minLines,
     super.key,
   });
 
@@ -28,6 +32,8 @@ class BasicInfoFormElement extends StatelessWidget {
       keyboardType: keyboardType,
       validator: validator,
       inputFormatters: formatters,
+      maxLines: maxLines ?? 1,
+      minLines: minLines ?? 1,
       style: TextStyle(fontSize: defaultFontSize),
       decoration: InputDecoration(
         labelText: label,

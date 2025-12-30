@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:eventjar/api/user_profile_api/user_profile_api.dart';
 import 'package:eventjar/controller/profile_form/basic_info/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/user_profile/user_profile.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/widgets.dart';
@@ -14,7 +14,13 @@ class BasicInfoFormController extends GetxController {
   final state = BasicInfoFormState();
   final formKey = GlobalKey<FormState>();
 
-  String? profileId;
+  // String? profileId;
+
+  late String? _originalFullName;
+  late String? _originalUsername;
+  late String? _originalEmail;
+  late String? _originalPhone;
+  late String? _originalJobTitle;
 
   final fullNameController = TextEditingController();
   final usernameController = TextEditingController();
@@ -35,43 +41,107 @@ class BasicInfoFormController extends GetxController {
       profile = args['profile'];
     }
 
-    LoggerService.loggerInstance.dynamic_d(profile);
-
     handleProfile(profile);
     super.onInit();
   }
 
   void handleProfile(UserProfile? profile) {
     if (profile == null) {
-      profileId = null;
       return;
     }
 
-    profileId = profile.id;
-    fullNameController.text = profile.extendedProfile?.fullName ?? '';
+    _originalFullName =
+        profile.extendedProfile?.fullName ?? profile.name ?? profile.username;
+    _originalUsername = profile.username;
+    _originalEmail = profile.email;
+    _originalPhone = profile.phone ?? profile.extendedProfile?.mobileNumber;
+    _originalJobTitle = profile.extendedProfile?.position ?? profile.jobTitle;
+
+    // full name
+    fullNameController.text =
+        profile.extendedProfile?.fullName ?? profile.name ?? profile.username;
+    // username
     usernameController.text = profile.username;
+    // email
     emailController.text = profile.email;
-    mobileController.text = profile.extendedProfile?.mobileNumber ?? '';
-    professionalTitleController.text = profile.extendedProfile?.position ?? '';
+    // phone
+    final localNumber = getLocalNumberSimple(
+      profile.phone ?? profile.extendedProfile?.mobileNumber,
+    );
+    mobileController.text = localNumber;
+    // professional title
+    professionalTitleController.text =
+        profile.extendedProfile?.position ?? profile.jobTitle ?? '';
+  }
+
+  String getLocalNumberSimple(String? phone) {
+    if (phone == null || phone.isEmpty) return '';
+
+    if (phone.startsWith('+') && phone.length > 3) {
+      return phone.substring(3);
+    }
+
+    return phone;
   }
 
   void clearForm() {
-    fullNameController.clear();
-    usernameController.clear();
-    emailController.clear();
-    mobileController.clear();
-    professionalTitleController.clear();
-    formKey.currentState?.reset();
+    final args = Get.arguments;
+    UserProfile? profile;
+
+    if (args is UserProfileResponse) {
+      profile = args.data;
+    } else if (args is UserProfile) {
+      profile = args;
+    } else if (args is Map && args.containsKey('profile')) {
+      profile = args['profile'];
+    }
+
+    handleProfile(profile);
+    // formKey.currentState?.reset();
+  }
+
+  bool _hasFieldChanged({required String? original, required String current}) {
+    return original?.trim() != current.trim();
   }
 
   Map<String, dynamic> _gatherFormData() {
-    return {
-      'fullName': fullNameController.text.trim(),
-      'username': usernameController.text.trim(),
-      'email': emailController.text.trim(),
-      'mobileNumber': mobileController.text.trim(),
-      'position': professionalTitleController.text.trim(),
-    };
+    final phoneWithCode =
+        '${state.selectedCountryCode.value}${mobileController.text.trim()}';
+    final data = <String, dynamic>{};
+
+    if (_hasFieldChanged(
+      original: _originalFullName,
+      current: fullNameController.text,
+    )) {
+      data['name'] = fullNameController.text.trim();
+    }
+
+    if (_hasFieldChanged(
+      original: _originalUsername,
+      current: usernameController.text,
+    )) {
+      data['username'] = usernameController.text.trim();
+    }
+
+    if (_hasFieldChanged(
+      original: _originalEmail,
+      current: emailController.text,
+    )) {
+      data['email'] = emailController.text.trim();
+    }
+
+    if (_hasFieldChanged(original: _originalPhone, current: phoneWithCode)) {
+      data['phone'] = phoneWithCode;
+    }
+
+    if (_hasFieldChanged(
+      original: _originalJobTitle,
+      current: professionalTitleController.text,
+    )) {
+      data['jobTitle'] = professionalTitleController.text.trim();
+    }
+
+    return data;
   }
 
   Future<void> submitForm(BuildContext context) async {
@@ -80,15 +150,12 @@ class BasicInfoFormController extends GetxController {
     try {
       state.isLoading.value = true;
       final data = _gatherFormData();
-
-      if (profileId == null) {
-        throw Exception("Profile ID is required for update");
+      if (data.isEmpty) {
+        Navigator.pop(context);
+        return;
       }
 
-      // await ProfileUpdateApi.updateBasicInfo(
-      //   data: data,
-      //   id: profileId!,
-      // ); // Adjust API call
+      await UserProfileApi.updateUserProfile(data);
 
       AppSnackbar.success(
         title: "Success",
@@ -114,10 +181,6 @@ class BasicInfoFormController extends GetxController {
     } finally {
       state.isLoading.value = false;
     }
-  }
-
-  bool checkIsForUpdate() {
-    return profileId != null && profileId!.isNotEmpty;
   }
 
   void navigateToSignInPage() {

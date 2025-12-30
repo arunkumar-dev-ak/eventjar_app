@@ -241,27 +241,66 @@ class UserProfileController extends GetxController {
     Get.toNamed(
       RouteName.basicInfoFormPage,
       arguments: state.userProfile.value,
-    )?.then((val) => {});
+    )?.then(
+      (val) => {
+        if (val == 'refresh') {onTabOpen()},
+      },
+    );
   }
 
   void navigateToBusinessInfoUpdate() {
-    Get.toNamed(RouteName.businessInfoFormPage)?.then((val) => {});
+    Get.toNamed(
+      RouteName.businessInfoFormPage,
+      arguments: state.userProfile.value,
+    )?.then(
+      (val) => {
+        if (val == 'refresh') {onTabOpen()},
+      },
+    );
   }
 
   void navigateToLocationInfoUpdate() {
-    Get.toNamed(RouteName.locationFormPage)?.then((val) => {});
+    Get.toNamed(
+      RouteName.locationFormPage,
+      arguments: state.userProfile.value,
+    )?.then(
+      (val) => {
+        if (val == 'refresh') {onTabOpen()},
+      },
+    );
   }
 
   void navigateToNetworkingInfoUpdate() {
-    Get.toNamed(RouteName.networkingFormPage)?.then((val) => {});
+    Get.toNamed(
+      RouteName.networkingFormPage,
+      arguments: state.userProfile.value,
+    )?.then(
+      (val) => {
+        if (val == 'refresh') {onTabOpen()},
+      },
+    );
   }
 
   void navigateToProfessionalSummaryUpdate() {
-    Get.toNamed(RouteName.summaryFormPage)?.then((val) => {});
+    Get.toNamed(
+      RouteName.summaryFormPage,
+      arguments: state.userProfile.value,
+    )?.then(
+      (val) => {
+        if (val == 'refresh') {onTabOpen()},
+      },
+    );
   }
 
   void navigateToSocialUpdate() {
-    Get.toNamed(RouteName.socialFormPage)?.then((val) => {});
+    Get.toNamed(
+      RouteName.socialFormPage,
+      arguments: state.userProfile.value,
+    )?.then(
+      (val) => {
+        if (val == 'refresh') {onTabOpen()},
+      },
+    );
   }
 
   /// Get social media links

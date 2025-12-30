@@ -63,6 +63,19 @@ Widget userProfileBuildBusinessInfo() {
             : "Not specified",
         iconColor: Colors.indigo,
       ),
+      SizedBox(height: 2.hp),
+      if (extended != null && extended.preferredLocations.isNotEmpty)
+        userProfileBuildChipSection(
+          label: "Operating Regions",
+          chips: extended.preferredLocations,
+        )
+      else
+        userProfilebuildInfoRow(
+          icon: Icons.public,
+          label: "Operating Regions",
+          value: "Not specified",
+          iconColor: Colors.blue,
+        ),
     ],
   );
 }

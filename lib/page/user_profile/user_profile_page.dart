@@ -4,7 +4,6 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/user_profile/user_profile_basic_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_business_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_header.dart';
-import 'package:eventjar/page/user_profile/user_profile_location.dart';
 import 'package:eventjar/page/user_profile/user_profile_network_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_security/user_profile_security_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_social_links.dart';
@@ -44,7 +43,7 @@ class UserProfilePage extends GetView<UserProfileController> {
               _buildSection(
                 title: "Basic Information",
                 child: userProfileBuildBasicInfo(),
-                isEditEnabled: false,
+                isEditEnabled: true,
                 onEdit: () {
                   controller.navigateToBasicInfoUpdate();
                 },
@@ -53,26 +52,37 @@ class UserProfilePage extends GetView<UserProfileController> {
               _buildSection(
                 title: "Business Information",
                 child: userProfileBuildBusinessInfo(),
-              ),
-              SizedBox(height: 2.hp),
-              _buildSection(
-                title: "Location & Regions",
-                child: userProfileBuildLocationInfo(),
+                isEditEnabled: true,
+                onEdit: () {
+                  controller.navigateToBusinessInfoUpdate();
+                },
               ),
               SizedBox(height: 2.hp),
               _buildSection(
                 title: "Networking & Interests",
                 child: userProfileBuildNetworkInfo(),
+                isEditEnabled: true,
+                onEdit: () {
+                  controller.navigateToNetworkingInfoUpdate();
+                },
               ),
               SizedBox(height: 2.hp),
               _buildSection(
                 title: "Professional Summary",
                 child: userProfilebuildSummary(),
+                isEditEnabled: true,
+                onEdit: () {
+                  controller.navigateToProfessionalSummaryUpdate();
+                },
               ),
               SizedBox(height: 2.hp),
               _buildSection(
                 title: "Social & Contact Links",
                 child: userProfileBuildSocialLinks(),
+                isEditEnabled: true,
+                onEdit: () {
+                  controller.navigateToSocialUpdate();
+                },
               ),
               SizedBox(height: 2.hp),
               _buildSection(
@@ -94,11 +104,7 @@ class UserProfilePage extends GetView<UserProfileController> {
     VoidCallback? onEdit,
   }) {
     // Get isEditEnabled from args if not provided
-    final bool editEnabled =
-        isEditEnabled ??
-        (Get.arguments is Map
-            ? Get.arguments['isEditEnabled'] ?? false
-            : false);
+    final bool editEnabled = isEditEnabled ?? false;
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 4.wp),

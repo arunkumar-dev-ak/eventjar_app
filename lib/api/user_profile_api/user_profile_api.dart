@@ -24,6 +24,24 @@ class UserProfileApi {
     }
   }
 
+  static Future<bool> updateUserProfile(dynamic data) async {
+    try {
+      final response = await _dio.put('/user/profiles/me', data: data);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        error: "Failed to update",
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Future<bool> deleteUserProfile({required String password}) async {
     try {
       final response = await _dio.post(
