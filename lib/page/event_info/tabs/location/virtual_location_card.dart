@@ -1,7 +1,6 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/event_info/tabs/location/location_page_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,9 +21,9 @@ Widget buildVirtualEventCard({required String platform, String? meetingLink}) {
           Text(
             "Platform",
             style: TextStyle(
-              color: Colors.black87,
-              fontSize: 10.sp,
-              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade800,
+              fontSize: 8.sp,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const Spacer(),
@@ -39,8 +38,8 @@ Widget buildVirtualEventCard({required String platform, String? meetingLink}) {
               platform,
               style: TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 8.5.sp,
+                fontWeight: FontWeight.w600,
+                fontSize: 7.5.sp,
               ),
             ),
           ),
@@ -92,8 +91,8 @@ Widget buildVirtualEventCard({required String platform, String? meetingLink}) {
                         : "Link Not Available Yet",
                     style: TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 8.sp,
                     ),
                   ),
                 ],

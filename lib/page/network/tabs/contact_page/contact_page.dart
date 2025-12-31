@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:eventjar/controller/network/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
@@ -23,88 +25,43 @@ class ContactNetworkStatusCards extends StatelessWidget {
     final NetworkScreenController controller = Get.find();
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 3.wp),
       child: Obx(() {
         final isLoading = controller.state.isLoading.value;
         final analytics = controller.state.analytics.value;
         return SingleChildScrollView(
           child: Column(
             children: [
+              SizedBox(height: 1.hp),
               ContactAnalyticsAddContactCard(),
 
-              SizedBox(height: 2.hp),
-              // Grid for all cards except "Overdue"
+              SizedBox(height: 1.5.hp),
+              // Grid layout
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                itemCount:
-                    _statusCards.length - 1, // exclude last item (overdue)
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
                   childAspectRatio: 1.1,
                 ),
+                itemCount: _statusCards.length - 1,
                 itemBuilder: (context, index) {
                   final card = _statusCards[index];
-                  final count = _getCountByKey(analytics, card.key);
                   if (isLoading) {
                     return ContactAnalyticsShimmer();
                   }
-                  return InkWell(
+                  return _buildGridCard(
+                    card: card,
+                    count: _getCountByKey(analytics, card.key),
                     onTap: () => controller.navigateToContactPage(card),
-                    borderRadius: BorderRadius.circular(16),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            card.color.withValues(alpha: 0.9),
-                            card.color.withValues(alpha: 0.7),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: card.color.withValues(alpha: 0.4),
-                            blurRadius: 12,
-                            offset: const Offset(3, 5),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(18),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(card.icon, size: 17.sp, color: Colors.white),
-                          SizedBox(height: 1.hp),
-                          Text(
-                            card.label,
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 10.sp,
-                            ),
-                          ),
-                          const Spacer(),
-                          Text(
-                            formatCount(count),
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.sp,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   );
                 },
               ),
 
               // Full width Overdue card below grid
-              SizedBox(height: 2.hp),
+              SizedBox(height: 1.5.hp),
               if (isLoading) ...[
                 OverdueCardShimmer(),
               ] else ...[
@@ -120,6 +77,7 @@ class ContactNetworkStatusCards extends StatelessWidget {
                       controller.navigateToContactPage(_statusCards.last),
                 ),
               ],
+              SizedBox(height: 1.hp),
             ],
           ),
         );
@@ -192,4 +150,89 @@ int _getCountByKey(ContactAnalytics analytics, String key) {
     default:
       return 0;
   }
+}
+
+// Grid card widget
+Widget _buildGridCard({
+  required NetworkStatusCardData card,
+  required int count,
+  required VoidCallback onTap,
+}) {
+  return InkWell(
+    onTap: onTap,
+    borderRadius: BorderRadius.circular(16),
+    child: Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            card.color.withValues(alpha: 0.9),
+            card.color.withValues(alpha: 0.7),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: card.color.withValues(alpha: 0.35),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          // Large blurred icon in background
+          Positioned(
+            right: -15,
+            bottom: -15,
+            child: ImageFiltered(
+              imageFilter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+              child: Icon(
+                card.icon,
+                size: 100,
+                color: Colors.white.withValues(alpha: 0.3),
+              ),
+            ),
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  card.label,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.9),
+                    fontWeight: FontWeight.w500,
+                    fontSize: 8.sp,
+                  ),
+                ),
+                SizedBox(height: 0.5.hp),
+                Text(
+                  formatCount(count),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.sp,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(card.icon, size: 18, color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

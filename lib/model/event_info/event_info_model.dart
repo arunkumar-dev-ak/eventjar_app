@@ -1,5 +1,6 @@
 class EventInfo {
   final String id;
+  final String slug;
   final String organizerId;
   final String title;
   final String? description;
@@ -77,6 +78,7 @@ class EventInfo {
   EventInfo({
     required this.id,
     required this.organizerId,
+    required this.slug,
     required this.title,
     this.description,
     this.venue,
@@ -162,6 +164,7 @@ class EventInfo {
 
       return EventInfo(
         id: json['id']?.toString() ?? '',
+        slug: json['slug']?.toString() ?? '',
         organizerId: json['organizerId']?.toString() ?? '',
         title: json['title']?.toString() ?? '',
         description: json['description']?.toString(),
@@ -278,6 +281,7 @@ class EventInfo {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'slug': slug,
       'organizerId': organizerId,
       'title': title,
       'description': description,

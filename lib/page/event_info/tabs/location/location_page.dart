@@ -1,9 +1,7 @@
 import 'package:eventjar/controller/event_info/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:eventjar/page/event_info/tabs/location/location_page_contact_card.dart';
-import 'package:eventjar/page/event_info/tabs/location/location_page_utils.dart';
 import 'package:eventjar/page/event_info/tabs/location/physical_location_card.dart';
 import 'package:eventjar/page/event_info/tabs/location/virtual_location_card.dart';
 import 'package:flutter/material.dart';
@@ -28,50 +26,49 @@ class LocationPage extends StatelessWidget {
       final hasPhysicalLocation =
           eventInfo.venue != null && eventInfo.venue!.isNotEmpty;
 
-      return SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(4.wp),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // virtual
-              if (isVirtual || isHybrid) ...[
-                _buildCardSection(
-                  title: "Virtual Event",
-                  icon: Icons.monitor,
-                  child: buildVirtualEventCard(
-                    platform: eventInfo.virtualPlatform ?? "Online Platform",
-                    meetingLink: eventInfo.virtualLink,
-                  ),
+      return Padding(
+        padding: EdgeInsets.all(4.wp),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // virtual
+            if (isVirtual || isHybrid) ...[
+              _buildCardSection(
+                title: "Virtual Event",
+                icon: Icons.monitor,
+                child: buildVirtualEventCard(
+                  platform: eventInfo.virtualPlatform ?? "Online Platform",
+                  meetingLink: eventInfo.virtualLink,
                 ),
-                SizedBox(height: 2.hp),
-              ],
-
-              // physical
-              if (hasPhysicalLocation || isHybrid) ...[
-                _buildCardSection(
-                  title: "Physical Event",
-                  icon: Icons.location_city,
-                  child: buildPhysicalEventCard(eventInfo),
-                ),
-                SizedBox(height: 2.hp),
-              ],
-
-              // Contact Information
-              if (eventInfo.organizerContactPhone != null &&
-                  eventInfo.organizerContactPhone!.isNotEmpty) ...[
-                _buildCardSection(
-                  title: "Contact Information",
-                  icon: Icons.contact_phone,
-                  child: buildContactCard(
-                    phone: eventInfo.organizerContactPhone!,
-                    name: eventInfo.organizerContactName,
-                    email: eventInfo.organizerContactEmail,
-                  ),
-                ),
-              ],
+              ),
+              SizedBox(height: 2.hp),
             ],
-          ),
+
+            // physical
+            if (hasPhysicalLocation || isHybrid) ...[
+              _buildCardSection(
+                title: "Physical Event",
+                icon: Icons.location_city,
+                child: buildPhysicalEventCard(eventInfo),
+              ),
+              SizedBox(height: 2.hp),
+            ],
+
+            // Contact Information
+            if (eventInfo.organizerContactPhone != null &&
+                eventInfo.organizerContactPhone!.isNotEmpty) ...[
+              _buildCardSection(
+                title: "Contact Information",
+                icon: Icons.contact_phone,
+                child: buildContactCard(
+                  phone: eventInfo.organizerContactPhone!,
+                  name: eventInfo.organizerContactName,
+                  email: eventInfo.organizerContactEmail,
+                ),
+              ),
+            ],
+            SizedBox(height: 2.hp),
+          ],
         ),
       );
     });
@@ -118,20 +115,20 @@ class LocationPage extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: EdgeInsets.all(2.wp),
+          padding: EdgeInsets.all(1.5.wp),
           decoration: BoxDecoration(
             gradient: AppColors.buttonGradient,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: Colors.white, size: 18),
+          child: Icon(icon, color: Colors.white, size: 14),
         ),
-        SizedBox(width: 3.wp),
+        SizedBox(width: 2.wp),
         Text(
           title,
           style: TextStyle(
-            color: Colors.black,
-            fontSize: 10.sp,
-            fontWeight: FontWeight.bold,
+            color: Colors.grey.shade800,
+            fontSize: 9.sp,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],

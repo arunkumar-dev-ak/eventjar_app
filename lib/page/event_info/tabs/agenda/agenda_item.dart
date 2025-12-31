@@ -77,9 +77,9 @@ Widget _agendaContent(
         Text(
           title,
           style: TextStyle(
-            color: Colors.black,
-            fontSize: 10.sp,
-            fontWeight: FontWeight.bold,
+            color: Colors.grey.shade800,
+            fontSize: 8.sp,
+            fontWeight: FontWeight.w600,
           ),
         ),
         SizedBox(height: 1.hp),
@@ -109,8 +109,9 @@ Widget _agendaContent(
           description,
           maxLines: 100,
           style: TextStyle(
-            color: Colors.grey,
-            fontSize: 9.sp,
+            color: Colors.grey.shade600,
+            fontSize: 7.5.sp,
+            height: 1.4,
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -125,22 +126,22 @@ Widget _agendaBadge({
   required MaterialColor color,
 }) {
   return Container(
-    padding: EdgeInsets.symmetric(vertical: 1.hp, horizontal: 2.wp),
+    padding: EdgeInsets.symmetric(vertical: 0.8.hp, horizontal: 2.wp),
     decoration: BoxDecoration(
       color: color.shade50,
       borderRadius: BorderRadius.circular(8),
     ),
     child: Row(
       children: [
-        Icon(icon, color: color.shade700, size: 18),
-        SizedBox(width: 2.wp),
+        Icon(icon, color: color.shade700, size: 14),
+        SizedBox(width: 1.5.wp),
         Expanded(
           child: Text(
             text,
             style: TextStyle(
               color: color.shade900,
-              fontSize: 9.sp,
-              fontWeight: FontWeight.w600,
+              fontSize: 7.5.sp,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

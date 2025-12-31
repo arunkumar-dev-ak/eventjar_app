@@ -43,14 +43,14 @@ Widget _infoRow(IconData icon, String title, String value) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Container(
-        padding: EdgeInsets.all(2.wp),
+        padding: EdgeInsets.all(1.5.wp),
         decoration: BoxDecoration(
           color: AppColors.gradientDarkStart.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(icon, color: AppColors.gradientDarkStart, size: 18),
+        child: Icon(icon, color: AppColors.gradientDarkStart, size: 14),
       ),
-      SizedBox(width: 3.wp),
+      SizedBox(width: 2.wp),
       Expanded(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,17 +58,17 @@ Widget _infoRow(IconData icon, String title, String value) {
             Text(
               title,
               style: TextStyle(
-                fontSize: 9.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                fontSize: 8.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey.shade800,
               ),
             ),
-            SizedBox(height: 0.5.hp),
+            SizedBox(height: 0.3.hp),
             Text(
               value,
               style: TextStyle(
-                fontSize: 9.sp,
-                color: Colors.grey[700],
+                fontSize: 8.sp,
+                color: Colors.grey.shade600,
                 fontWeight: FontWeight.w500,
               ),
             ),

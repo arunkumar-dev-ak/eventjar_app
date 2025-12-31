@@ -4,6 +4,6 @@ import 'package:flutter/material.dart';
 Widget buildAboutSection(String bio) {
   return Text(
     bio,
-    style: TextStyle(fontSize: 9.5.sp, color: Colors.grey[700], height: 1.5),
+    style: TextStyle(fontSize: 8.sp, color: Colors.grey[600], height: 1.5),
   );
 }
