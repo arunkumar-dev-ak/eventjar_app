@@ -4,6 +4,7 @@ import 'package:eventjar/global/device_helper.dart';
 import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/auth/login_model.dart';
+import 'package:eventjar/model/auth/refresh_token_model.dart';
 import 'package:eventjar/storage/storage_service.dart';
 import 'package:get/get.dart';
 
@@ -17,6 +18,7 @@ class UserStore extends GetxController {
   final _profile = RxMap<String, dynamic>(); // Declare as RxMap
 
   bool get isLogin => _isLogin.value;
+  RxBool get isLoginReactive => _isLogin;
   String get accessToken => _accessToken.value;
   String get refreshToken => _refreshToken.value;
   String get deviceId => _deviceId.value;
@@ -70,6 +72,17 @@ class UserStore extends GetxController {
     _profile.value = loginData.user.toJson();
   }
 
+  Future<void> handleSetLocalDataForRefreshToken(
+    RefreshTokenResponse loginData,
+  ) async {
+    LoggerService.loggerInstance.dynamic_d(loginData);
+    _isLogin.value = true;
+    await setAccessToken(loginData.accessToken);
+    _accessToken.value = loginData.accessToken;
+    await setRefreshToken(loginData.refreshToken);
+    _refreshToken.value = loginData.refreshToken;
+  }
+
   Future<void> setAccessToken(String accessToken) async {
     await StorageService.to.setString(storageAccessToken, accessToken);
   }
@@ -100,7 +113,7 @@ class UserStore extends GetxController {
     await StorageService.to.deleteString(storageRefreshToken);
     await StorageService.to.deleteString(storageProfile);
 
-    _isLogin.value = true;
+    _isLogin.value = false;
     _accessToken.value = '';
     _refreshToken.value = '';
   }

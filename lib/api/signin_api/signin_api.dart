@@ -13,6 +13,12 @@ class SignInApi {
       final response = await _dio.post(
         '/auth/login',
         data: {'email': email, 'password': password},
+        options: Options(
+          headers: {
+            'X-Client-Type': 'mobile',
+            'Content-Type': 'application/json',
+          },
+        ),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

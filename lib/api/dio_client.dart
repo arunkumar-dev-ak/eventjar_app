@@ -3,6 +3,7 @@ import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/auth/login_model.dart';
+import 'package:eventjar/model/auth/refresh_token_model.dart';
 
 class DioClient {
   static final DioClient _instance = DioClient._internal();
@@ -65,6 +66,7 @@ class DioClient {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'X-Client-Platform': 'mobile',
                     'X-Device-Id': UserStore.to.deviceId,
+                    'X-Client-Type': 'mobile',
                   },
                 ),
                 data: {'refreshToken': refreshToken},
@@ -79,7 +81,7 @@ class DioClient {
 
               if (refreshResponse.statusCode == 200 ||
                   refreshResponse.statusCode == 201) {
-                final loginResponse = LoginResponse.fromJson(
+                final loginResponse = RefreshTokenResponse.fromJson(
                   refreshResponse.data,
                 );
 
@@ -87,7 +89,9 @@ class DioClient {
                   'handling set local data',
                 );
 
-                await UserStore.to.handleSetLocalData(loginResponse);
+                await UserStore.to.handleSetLocalDataForRefreshToken(
+                  loginResponse,
+                );
 
                 final newAccessToken = loginResponse.accessToken;
 

@@ -5,6 +5,7 @@ import 'package:eventjar/controller/user_profile/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/user_profile/user_profile_security/user_profile_security_info.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,8 @@ class UserProfileController extends GetxController {
   var appBarTitle = "EventJar";
   final state = UserProfileState();
   final formKey = GlobalKey<FormState>();
+
+  RxBool get isLoggedIn => UserStore.to.isLoginReactive;
 
   final passwordController = TextEditingController();
 
@@ -26,7 +29,9 @@ class UserProfileController extends GetxController {
   void onTabOpen() async {
     state.isLoading.value = true;
     await fetchUserProfile();
-    await checkDeletionStatus();
+    if (isLoggedIn.value == true) {
+      await checkDeletionStatus();
+    }
     state.isDeleteLoading.value = false;
   }
 
@@ -72,11 +77,12 @@ class UserProfileController extends GetxController {
       final response = await UserProfileApi.getUserProfile();
       state.userProfile.value = response.data;
     } catch (err) {
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
 
         if (statusCode == 401) {
-          UserStore.to.clearStore();
+          await UserStore.to.clearStore();
           navigateToSignInPage();
           return; // Stop further error handling
         }

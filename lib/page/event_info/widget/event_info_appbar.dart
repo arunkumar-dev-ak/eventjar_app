@@ -78,13 +78,13 @@ class EventInfoAppBar extends GetView<EventInfoController> {
           SizedBox(width: 2.wp),
 
           // Favorite
-          _buildActionButton(
-            icon: Icons.favorite_border_rounded,
-            onTap: () {
-              HapticFeedback.lightImpact();
-              // controller.toggleFavorite();
-            },
-          ),
+          // _buildActionButton(
+          //   icon: Icons.favorite_border_rounded,
+          //   onTap: () {
+          //     HapticFeedback.lightImpact();
+          //     // controller.toggleFavorite();
+          //   },
+          // ),
         ],
       ),
     );
