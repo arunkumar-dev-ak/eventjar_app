@@ -5,7 +5,6 @@ import 'package:eventjar/controller/my_ticket/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:get/get.dart';
 
@@ -18,10 +17,6 @@ class MyTicketController extends GetxController {
 
   @override
   void onInit() {
-    LoggerService.loggerInstance.dynamic_d(Get.previousRoute);
-    if (Get.previousRoute == RouteName.eventInfoPage) {
-      LoggerService.loggerInstance.dynamic_d("In event info page");
-    }
     super.onInit();
   }
 

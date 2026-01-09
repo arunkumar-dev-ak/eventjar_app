@@ -4,6 +4,7 @@ import 'package:eventjar/controller/signIn/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -74,6 +75,7 @@ class SignInController extends GetxController {
       navigateToBackPage(context);
     } catch (err) {
       state.isLoading.value = false;
+      LoggerService.loggerInstance.dynamic_d(err);
       if (err is DioException) {
         ApiErrorHandler.handleError(err, "Login Error");
       } else {

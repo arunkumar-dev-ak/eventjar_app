@@ -23,8 +23,8 @@ class BasicInfoFormController extends GetxController {
   late String? _originalJobTitle;
 
   final fullNameController = TextEditingController();
-  final usernameController = TextEditingController();
-  final emailController = TextEditingController();
+  // final usernameController = TextEditingController();
+  // final emailController = TextEditingController();
   final mobileController = TextEditingController();
   final professionalTitleController = TextEditingController();
 
@@ -59,11 +59,14 @@ class BasicInfoFormController extends GetxController {
 
     // full name
     fullNameController.text =
-        profile.extendedProfile?.fullName ?? profile.name ?? profile.username;
+        profile.extendedProfile?.fullName ??
+        profile.name ??
+        profile.username ??
+        '';
     // username
-    usernameController.text = profile.username;
+    // usernameController.text = profile.username ?? '';
     // email
-    emailController.text = profile.email;
+    // emailController.text = profile.email;
     // phone
     final localNumber = getLocalNumberSimple(
       profile.phone ?? profile.extendedProfile?.mobileNumber,
@@ -116,19 +119,19 @@ class BasicInfoFormController extends GetxController {
       data['name'] = fullNameController.text.trim();
     }
 
-    if (_hasFieldChanged(
-      original: _originalUsername,
-      current: usernameController.text,
-    )) {
-      data['username'] = usernameController.text.trim();
-    }
+    // if (_hasFieldChanged(
+    //   original: _originalUsername,
+    //   current: usernameController.text,
+    // )) {
+    //   data['username'] = usernameController.text.trim();
+    // }
 
-    if (_hasFieldChanged(
-      original: _originalEmail,
-      current: emailController.text,
-    )) {
-      data['email'] = emailController.text.trim();
-    }
+    // if (_hasFieldChanged(
+    //   original: _originalEmail,
+    //   current: emailController.text,
+    // )) {
+    //   data['email'] = emailController.text.trim();
+    // }
 
     if (_hasFieldChanged(original: _originalPhone, current: phoneWithCode)) {
       data['phone'] = phoneWithCode;

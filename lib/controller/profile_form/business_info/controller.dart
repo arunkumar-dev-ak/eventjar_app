@@ -27,7 +27,6 @@ class BusinessInfoFormController extends GetxController {
   final businessEmailController = TextEditingController();
   final businessPhoneController = TextEditingController();
   final businessAddressController = TextEditingController();
-  final yearsInBusinessController = TextEditingController();
 
   // Business categories
   final List<String> businessCategories = [
@@ -99,7 +98,6 @@ class BusinessInfoFormController extends GetxController {
     businessPhoneController.text = localPhone;
 
     businessAddressController.text = _originalBusinessAddress ?? '';
-    yearsInBusinessController.text = _originalYearsInBusiness ?? '';
   }
 
   String getLocalNumberSimple(String? phone) {
@@ -168,12 +166,6 @@ class BusinessInfoFormController extends GetxController {
       current: businessAddressController.text,
     )) {
       data['location'] = businessAddressController.text.trim();
-    }
-    if (_hasFieldChanged(
-      original: _originalYearsInBusiness,
-      current: yearsInBusinessController.text,
-    )) {
-      data['yearsInBusiness'] = yearsInBusinessController.text.trim();
     }
 
     return data;

@@ -22,7 +22,8 @@ class UserProfileController extends GetxController {
 
   final DashboardController dashboardController = Get.find();
 
-  void onInint() {
+  @override
+  void onInit() async {
     super.onInit();
   }
 
@@ -358,7 +359,8 @@ class UserProfileController extends GetxController {
 
   void handleLogout() {
     UserStore.to.clearStore();
-    dashboardController.state.selectedIndex.value = 0;
+    // dashboardController.state.selectedIndex.value = 0;
+    Get.offAllNamed(RouteName.dashboardpage);
     AppSnackbar.success(
       title: "Logged Out Successfully",
       message: "You have been logged out.",

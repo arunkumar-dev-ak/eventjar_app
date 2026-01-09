@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 class EventInfoState {
   RxBool isLoading = false.obs;
+  RxInt tabCount = 5.obs;
 
   Rxn<EventInfo> eventInfo = Rxn<EventInfo>();
 

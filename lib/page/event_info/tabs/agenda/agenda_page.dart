@@ -45,7 +45,9 @@ class AgendaPage extends StatelessWidget {
       }
 
       // Format event date for header display
-      final eventDate = DateFormat('MMMM d, yyyy').format(eventInfo.startDate);
+      final eventDate = eventInfo.startDate != null
+          ? DateFormat('MMMM d, yyyy').format(eventInfo.startDate!)
+          : 'Date TBA';
       final eventTimeRange = "$startTime - $endTime";
 
       return Padding(

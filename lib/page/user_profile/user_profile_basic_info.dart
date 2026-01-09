@@ -9,13 +9,13 @@ Widget userProfileBuildBasicInfo() {
 
   return Column(
     children: [
-      userProfilebuildInfoRow(
-        icon: Icons.person,
-        label: "Username",
-        value: controller.username.isEmpty ? "N/A" : controller.username,
-        iconColor: Colors.blue,
-      ),
-      SizedBox(height: 2.hp),
+      // userProfilebuildInfoRow(
+      //   icon: Icons.person,
+      //   label: "Username",
+      //   value: controller.username.isEmpty ? "N/A" : controller.username,
+      //   iconColor: Colors.blue,
+      // ),
+      // SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
         icon: Icons.email,
         label: "Email Address",

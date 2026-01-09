@@ -143,27 +143,6 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                   ),
                   SizedBox(height: 2.hp),
 
-                  // Years In Business
-                  BusinessInfoFormElement(
-                    controller: controller.yearsInBusinessController,
-                    label: 'Years In Business',
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(3), // Max 999 years
-                    ],
-                    validator: (val) {
-                      if (val == null || val.trim().isEmpty) {
-                        return null;
-                      }
-                      final years = int.tryParse(val.trim());
-                      return years != null && years >= 0 && years <= 100
-                          ? null
-                          : 'Enter valid years (0-100)';
-                    },
-                  ),
-                  SizedBox(height: 3.hp),
-
                   // Buttons row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

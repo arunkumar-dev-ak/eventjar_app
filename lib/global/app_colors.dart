@@ -26,6 +26,12 @@ class AppColors {
     end: Alignment.centerRight,
   );
 
+  static const LinearGradient disabledButtonGradient = LinearGradient(
+    colors: [Color(0xFFB0B0B0), Color(0xFF8E8E8E)],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+
   static const placeHolderColor = Color(0xFFA2A2A2);
   static const splashScreenBackground = Color(0xFFCCE4FF);
   static const liteBlue = Color(0xFFE8F2FF);

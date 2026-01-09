@@ -159,8 +159,10 @@ Tap "Book Now" → $shortLink''';
   }
 
   // Format date
-  String _formatDate(DateTime date) {
-    final months = [
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'Date TBA';
+
+    const months = [
       'Jan',
       'Feb',
       'Mar',
@@ -174,6 +176,7 @@ Tap "Book Now" → $shortLink''';
       'Nov',
       'Dec',
     ];
+
     return '${date.day} ${months[date.month - 1]}';
   }
 

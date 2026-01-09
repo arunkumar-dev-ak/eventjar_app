@@ -9,7 +9,6 @@ import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 

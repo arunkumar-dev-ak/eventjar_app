@@ -6,7 +6,7 @@ class EventInfoApi {
   static final Dio _dio = DioClient().dio;
 
   static Future<EventInfo> getEventInfo(String eventId) async {
-    final response = await _dio.get('/events/$eventId');
+    final response = await _dio.get('/mobile/events/$eventId');
     if (response.statusCode == 200) {
       return EventInfo.fromJson(response.data);
     }

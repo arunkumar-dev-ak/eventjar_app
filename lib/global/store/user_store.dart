@@ -72,6 +72,11 @@ class UserStore extends GetxController {
     _profile.value = loginData.user.toJson();
   }
 
+  Future<void> deleteAccessToken() async {
+    await setAccessToken("");
+    _accessToken.value = "";
+  }
+
   Future<void> handleSetLocalDataForRefreshToken(
     RefreshTokenResponse loginData,
   ) async {

@@ -15,7 +15,7 @@ class HomeController extends GetxController {
   final state = HomeState();
   final formKey = GlobalKey<FormState>();
   final logoPath = 'assets/app_icon/event_app_icon.png';
-  ScrollController scrollController = ScrollController();
+  ScrollController homeScrollController = ScrollController();
   final int _currentPage = 1;
   final int _limit = 10;
 
@@ -26,11 +26,29 @@ class HomeController extends GetxController {
   TextEditingController get searchBarController => _searchBarController.value;
 
   @override
-  void onInit() async {
-    onTabOpen();
+  void onInit() {
     super.onInit();
+    onTabOpen();
+  }
 
-    scrollController.addListener(_onScroll);
+  void debugScrollPositions() {
+    final positions = homeScrollController.positions;
+    print('🔍 ScrollController Positions (${positions.length}):');
+
+    for (int i = 0; i < positions.length; i++) {
+      final position = positions.elementAt(i);
+      print('  📍 Position $i:');
+      print('    - context: ${position.context}');
+      print('    - minScrollExtent: ${position.minScrollExtent}');
+      print('    - maxScrollExtent: ${position.maxScrollExtent}');
+      print('    - pixels: ${position.pixels}');
+      print('    - viewportDimension: ${position.viewportDimension}');
+      print('    - widget type: ${position.context.runtimeType}');
+    }
+
+    if (positions.isEmpty) {
+      print('  ❌ NO ScrollPositions attached!');
+    }
   }
 
   void onTabOpen() {
@@ -39,15 +57,14 @@ class HomeController extends GetxController {
   }
 
   void _onScroll() {
-    if (!scrollController.hasClients) return;
+    if (!homeScrollController.hasClients) return;
+
+    final maxScroll = homeScrollController.position.maxScrollExtent;
+    final currentScroll = homeScrollController.position.pixels;
 
     const double prefetchThreshold = 200.0;
-
-    final maxScroll = scrollController.position.maxScrollExtent;
-    final currentScroll = scrollController.position.pixels;
-
     if (maxScroll - currentScroll <= prefetchThreshold) {
-      // Only fetch when metadata exists and not already fetching
+      LoggerService.loggerInstance.dynamic_d("triggering");
       if (state.meta.value != null &&
           state.meta.value!.hasNext == true &&
           !state.isFetching.value) {
@@ -202,5 +219,12 @@ class HomeController extends GetxController {
 
   void navigateToQrPage() {
     Get.toNamed(RouteName.qrDashboardPage);
+  }
+
+  @override
+  void onClose() {
+    homeScrollController.removeListener(_onScroll);
+    homeScrollController.dispose();
+    super.onClose();
   }
 }

@@ -30,6 +30,15 @@ class NetworkingFormController extends GetxController {
     'Knowledge Sharing',
   ];
 
+  final List<String> experienceRanges = [
+    '0-1 years',
+    '2-5 years',
+    '6-10 years',
+    '11-15 years',
+    '16-20 years',
+    '20+ years',
+  ];
+
   final List<String> connectionTypes = [
     'Investors',
     'Vendors',

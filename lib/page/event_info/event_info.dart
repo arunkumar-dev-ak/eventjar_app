@@ -8,11 +8,13 @@ import 'package:eventjar/page/event_info/tabs/organizer/organizer_page.dart';
 import 'package:eventjar/page/event_info/tabs/overview/overview_page.dart';
 import 'package:eventjar/page/event_info/tabs/reviews/review_page.dart';
 import 'package:eventjar/page/event_info/widget/event_info_appbar.dart';
+import 'package:eventjar/page/event_info/widget/event_info_book_now_button.dart';
 import 'package:eventjar/page/event_info/widget/event_info_header.dart';
 import 'package:eventjar/page/event_info/widget/event_info_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:eventjar/controller/event_info/extension/event_info_extension.dart';
 
 class EventInfoPage extends GetView<EventInfoController> {
   const EventInfoPage({super.key});
@@ -59,11 +61,8 @@ class EventInfoPage extends GetView<EventInfoController> {
             child: Container(
               margin: EdgeInsets.only(bottom: 1.hp, top: 0.5.hp),
               height: 6.hp,
-              child: eventInfoBookButton(
+              child: EventInfoBookButton(
                 isFree: !(controller.state.eventInfo.value?.isPaid ?? false),
-                onTap: () {
-                  controller.navigateToCheckOut();
-                },
               ),
             ),
           );
@@ -117,34 +116,39 @@ class EventInfoPage extends GetView<EventInfoController> {
       padding: EdgeInsets.only(bottom: 1.hp),
       child: Obx(() {
         final isLoading = controller.state.isLoading.value;
+        final tabController = controller.tabControllerRx.value;
 
-        if (isLoading) {
+        if (isLoading || tabController == null) {
           return EventInfoTabBarShimmer();
         }
+
+        final canShowAttendees = controller.canShowAttendeesTab;
+
+        final tabNames = [
+          "Overview",
+          "Agenda",
+          "Location",
+          "Organizer",
+          "Reviews",
+          if (canShowAttendees) "Attendees",
+        ];
+
+        final tabIcons = [
+          Icons.info_outline_rounded,
+          Icons.event_note_rounded,
+          Icons.location_on_outlined,
+          Icons.person_outline_rounded,
+          Icons.star_outline_rounded,
+          if (canShowAttendees) Icons.people_outline_rounded,
+        ];
+
         return AnimatedBuilder(
-          animation: controller.tabController,
+          animation: tabController,
           builder: (context, child) {
             return TabBar(
-              controller: controller.tabController,
-              tabs: List.generate(6, (i) {
-                final tabNames = [
-                  "Overview",
-                  "Agenda",
-                  "Location",
-                  "Organizer",
-                  "Reviews",
-                  "Attendees",
-                ];
-                final tabIcons = [
-                  Icons.info_outline_rounded,
-                  Icons.event_note_rounded,
-                  Icons.location_on_outlined,
-                  Icons.person_outline_rounded,
-                  Icons.star_outline_rounded,
-                  Icons.people_outline_rounded,
-                ];
-
-                final isSelected = controller.tabController.index == i;
+              controller: tabController,
+              tabs: List.generate(tabNames.length, (i) {
+                final isSelected = tabController.index == i;
 
                 return Tab(
                   child: AnimatedContainer(
@@ -200,18 +204,19 @@ class EventInfoPage extends GetView<EventInfoController> {
   Widget _buildTabContent() {
     return Obx(() {
       final isLoading = controller.state.isLoading.value;
+      final tabController = controller.tabControllerRx.value;
 
-      if (isLoading) {
+      if (isLoading || tabController == null) {
         return EventInfoTabContentShimmer();
       }
 
       return Container(
         color: Colors.grey.shade50,
         child: AnimatedBuilder(
-          animation: controller.tabController,
+          animation: tabController,
           builder: (context, child) {
             // Show content based on selected tab index
-            switch (controller.tabController.index) {
+            switch (tabController.index) {
               case 0:
                 return OverViewPage();
               case 1:
@@ -232,85 +237,4 @@ class EventInfoPage extends GetView<EventInfoController> {
       );
     });
   }
-}
-
-Widget eventInfoBookButton({
-  required bool isFree,
-  required VoidCallback onTap,
-}) {
-  return Container(
-    margin: EdgeInsets.symmetric(horizontal: 5.wp),
-    decoration: BoxDecoration(
-      gradient: AppColors.buttonGradient,
-      borderRadius: BorderRadius.circular(16),
-      boxShadow: [
-        BoxShadow(
-          color: AppColors.gradientDarkEnd.withValues(alpha: 0.4),
-          blurRadius: 20,
-          offset: const Offset(0, 8),
-        ),
-      ],
-    ),
-    child: Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 3.5.wp),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.confirmation_num_rounded,
-                color: Colors.white,
-                size: 22,
-              ),
-              SizedBox(width: 3.wp),
-              Text(
-                "Book Now",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              if (isFree) ...[
-                SizedBox(width: 3.wp),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.25),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.4),
-                    ),
-                  ),
-                  child: Text(
-                    "FREE",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 8.sp,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-              ],
-              SizedBox(width: 2.wp),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                color: Colors.white,
-                size: 16,
-              ),
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
 }

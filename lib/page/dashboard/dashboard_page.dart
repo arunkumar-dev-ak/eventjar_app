@@ -13,27 +13,46 @@ class DashboardPage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Obx(() {
-          return IndexedStack(
-            index: controller.state.selectedIndex.value,
-            children: const [
-              HomePage(),
-              NetworkPage(),
-              UserProfilePage(),
-              MyTicketPage(),
-            ],
-          );
-        }),
-        bottomNavigationBar: CustomBottomNavigationBar(),
-      ),
+    //need to test the back button feature
+    // return PopScope(
+    //   canPop: false,
+    //   onPopInvokedWithResult: (didPop, result) {
+    //     if (didPop) return;
+
+    //     if (controller.state.selectedIndex.value != 0) {
+    //       // controller.changeTab(0);
+    //     } else {
+    //       SystemNavigator.pop();
+    //     }
+    //   },
+    //   child: Scaffold(
+    //     body: Obx(() {
+    //       return IndexedStack(
+    //         index: controller.state.selectedIndex.value,
+    //         children: const [
+    //           HomePage(),
+    //           NetworkPage(),
+    //           UserProfilePage(),
+    //           MyTicketPage(),
+    //         ],
+    //       );
+    //     }),
+    //     bottomNavigationBar: CustomBottomNavigationBar(),
+    //   ),
+    // );
+    return Scaffold(
+      body: Obx(() {
+        return IndexedStack(
+          index: controller.state.selectedIndex.value,
+          children: const [
+            HomePage(),
+            NetworkPage(),
+            UserProfilePage(),
+            MyTicketPage(),
+          ],
+        );
+      }),
+      bottomNavigationBar: CustomBottomNavigationBar(),
     );
   }
 }

@@ -41,4 +41,10 @@ class RouteName {
   static const networkingFormPage = '/networkingFormPage';
   static const summaryFormPage = '/summaryFormPage';
   static const socialFormPage = '/socialFormPage';
+
+  //network page
+  static const networkPage = '/networkPage';
+  static const connectionPage = '/connectionPage';
+  static const campaignPage = '/campaignPage';
+  static const reminderPage = '/reminderPage';
 }

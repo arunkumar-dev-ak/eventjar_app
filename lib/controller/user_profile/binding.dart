@@ -1,9 +1,9 @@
-import 'package:eventjar/controller/user_profile/controller.dart';
-import 'package:get/get.dart';
+// import 'package:eventjar/controller/user_profile/controller.dart';
+// import 'package:get/get.dart';
 
-class MyTicketBinding extends Bindings {
-  @override
-  void dependencies() {
-    Get.lazyPut<UserProfileController>(() => UserProfileController());
-  }
-}
+// class UserProfileBinding extends Bindings {
+//   @override
+//   void dependencies() {
+//     Get.lazyPut<UserProfileController>(() => UserProfileController());
+//   }
+// }

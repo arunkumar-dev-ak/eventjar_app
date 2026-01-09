@@ -3,51 +3,119 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/api/event_info_api/event_info_api.dart';
 import 'package:eventjar/api/event_info_api/event_info_attendee_list_api.dart';
 import 'package:eventjar/api/event_info_api/event_info_attendee_req_api.dart';
+import 'package:eventjar/controller/dashboard/controller.dart';
 import 'package:eventjar/controller/event_info/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/event_info/event_attendee_model.dart';
+import 'package:eventjar/page/event_info/tabs/agenda/agenda_page.dart';
+import 'package:eventjar/page/event_info/tabs/connection/connection_page.dart';
+import 'package:eventjar/page/event_info/tabs/location/location_page.dart';
+import 'package:eventjar/page/event_info/tabs/organizer/organizer_page.dart';
+import 'package:eventjar/page/event_info/tabs/overview/overview_page.dart';
+import 'package:eventjar/page/event_info/tabs/reviews/review_page.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:eventjar/controller/event_info/extension/event_info_extension.dart';
 
 class EventInfoController extends GetxController
     with GetTickerProviderStateMixin {
   var appBarTitle = "EventJar";
   final state = EventInfoState();
-  late final TabController tabController;
   late final String eventId;
 
   final TextEditingController searchController = TextEditingController();
   final CarouselSliderController carouselSliderController =
       CarouselSliderController();
+  final DashboardController dashboardController = Get.find();
 
-  final imageUrl =
-      "https://thumbs.dreamstime.com/b/abstract-illuminated-light-stage-colourful-background-bokeh-143498898.jpg";
+  final Rx<TabController?> tabControllerRx = Rx<TabController?>(null);
+  RxBool get isLoggedIn => UserStore.to.isLoginReactive;
+  int get tabCount => canShowAttendeesTab ? 6 : 5;
+
+  List<String> get tabNames => [
+    "Overview",
+    "Agenda",
+    "Location",
+    "Organizer",
+    "Reviews",
+    if (canShowAttendeesTab) "Attendees",
+  ];
+
+  List<IconData> get tabIcons => [
+    Icons.info_outline_rounded,
+    Icons.event_note_rounded,
+    Icons.location_on_outlined,
+    Icons.person_outline_rounded,
+    Icons.star_outline_rounded,
+    if (canShowAttendeesTab) Icons.people_outline_rounded,
+  ];
+
+  List<Widget> get tabPages => [
+    OverViewPage(),
+    AgendaPage(),
+    LocationPage(),
+    OrganizerPage(),
+    ReviewsPage(),
+    if (canShowAttendeesTab) EventInfoConnectionTab(),
+  ];
 
   @override
   void onInit() async {
-    tabController = TabController(length: 6, vsync: this);
+    eventId = Get.parameters['eventId'] ?? '';
 
-    tabController.addListener(() async {
-      if (tabController.indexIsChanging) return;
+    // LoggerService.loggerInstance.dynamic_d(eventId);
 
-      if (tabController.index == 5) {
-        if (!UserStore.to.isLogin) {
-          navigateToSignInPage();
-        }
+    _createTabController(tabCount);
 
-        await fetchAllAttendeeData();
-      }
+    ever(state.eventInfo, (_) {
+      _rebuildTabControllerIfNeeded();
     });
 
-    eventId = Get.parameters['eventId'] ?? '';
     await fetchEventInfo();
     super.onInit();
+  }
+
+  void _createTabController(int length) {
+    tabControllerRx.value?.dispose();
+
+    final controller = TabController(length: length, vsync: this);
+
+    attachTabListener(controller);
+    tabControllerRx.value = controller;
+  }
+
+  void _rebuildTabControllerIfNeeded() {
+    final controller = tabControllerRx.value;
+    if (controller == null) return;
+
+    if (controller.length == tabCount) return;
+
+    final oldIndex = controller.index;
+
+    _createTabController(tabCount);
+
+    tabControllerRx.value!.index = oldIndex.clamp(0, tabCount - 1);
+  }
+
+  void attachTabListener(TabController controller) {
+    controller.addListener(() async {
+      if (controller.indexIsChanging) return;
+
+      // Attendees tab is ALWAYS index 5 when enabled
+      if (canShowAttendeesTab && controller.index == 5) {
+        if (!UserStore.to.isLogin) {
+          navigateToSignInPage();
+        } else {
+          await fetchAllAttendeeData();
+        }
+      }
+    });
   }
 
   Future<void> fetchAllAttendeeData() async {
@@ -62,8 +130,6 @@ class EventInfoController extends GetxController
       state.isLoading.value = true;
       final response = await EventInfoApi.getEventInfo(eventId);
       state.eventInfo.value = response;
-
-      LoggerService.loggerInstance.dynamic_d(response.bookingLastDate);
     } catch (e) {
       LoggerService.loggerInstance.e('Failed to load event info: $e');
       AppSnackbar.error(title: "error", message: e.toString());
@@ -78,7 +144,6 @@ class EventInfoController extends GetxController
       final response = await EventInfoApiAttendeeList.getEventAttendeeList(
         eventId,
       );
-      // LoggerService.loggerInstance.dynamic_d("attendee list is $response");
       state.attendeeList.value = response;
     } catch (err) {
       LoggerService.loggerInstance.dynamic_d(err);
@@ -163,7 +228,35 @@ class EventInfoController extends GetxController
     return formattedTime;
   }
 
-  void navigateToCheckOut() {
+  void handleBottomButton() {
+    final eventInfo = state.eventInfo.value;
+    if (eventInfo == null) return;
+
+    if (!isLoggedIn.value) {
+      navigateToSignInPage();
+      return;
+    }
+
+    final organizerId = eventInfo.organizer.id;
+    final isEventOwner = isOrganizer(organizerId);
+
+    if (isEventOwner) {
+      AppSnackbar.warning(
+        title: "Organizer access",
+        message: "This event belongs to you, so booking is disabled.",
+      );
+      return;
+    }
+
+    final userTicketStatus = eventInfo.userTicketStatus;
+    final bool isRegistered = userTicketStatus?.isRegistered == true;
+
+    if (isRegistered) {
+      final dashboardController = Get.find<DashboardController>();
+      dashboardController.popAndMoveToTicketPage();
+      return;
+    }
+
     Get.toNamed(RouteName.checkoutPage, arguments: state.eventInfo);
   }
 
@@ -217,7 +310,6 @@ class EventInfoController extends GetxController
 
   void sendMeetingRequest(String toUserId, String attendeeName) async {
     final buttonId = toUserId;
-    LoggerService.loggerInstance.dynamic_d('buttonId $buttonId');
     if (state.isMeetReqProcessingRequest.value) {
       AppSnackbar.warning(
         title: "Please wait a moment",
@@ -267,15 +359,14 @@ class EventInfoController extends GetxController
   void navigateToSignInPage() {
     Get.toNamed(RouteName.signInPage)?.then((result) async {
       if (result == "logged_in") {
-        await fetchAllAttendeeData();
+        await fetchEventInfo();
       } else {
-        tabController.index = 0;
+        tabControllerRx.value?.index = 0;
       }
     });
   }
 
   void handleAttendeeButtonAction(String attendeeId, String buttonText) async {
-    LoggerService.loggerInstance.dynamic_d(attendeeId + buttonText);
     if (buttonText == 'Add to Contacts') {
       // Add to contacts logic
     } else {
@@ -298,6 +389,16 @@ class EventInfoController extends GetxController
     } catch (e) {
       Get.snackbar('Error', 'Could not open the video.');
     }
+  }
+
+  bool isOrganizer(String organizerId) {
+    final userProfile = UserStore.to.profile;
+    if (userProfile.isEmpty) return false;
+
+    final userId = userProfile['id'];
+    if (userId == null || userId.toString().isEmpty) return false;
+
+    return userId == organizerId;
   }
 
   // In EventInfoController
@@ -368,7 +469,7 @@ class EventInfoController extends GetxController
 
   @override
   void onClose() {
-    tabController.dispose();
+    tabControllerRx.value?.dispose();
     super.onClose();
   }
 }

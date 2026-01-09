@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/profile_form/summary/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/profile_form/summary_form/widget/summary_dropdown.dart';
 import 'package:eventjar/page/profile_form/summary_form/widget/summary_form_element.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -68,38 +69,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                   SizedBox(height: 4.hp),
 
                   // Years in Business
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Experience in Years',
-                        style: TextStyle(
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      SizedBox(height: 1.hp),
-                      SummaryFormElement(
-                        controller: controller.yearsInBusinessController,
-                        label: 'Years',
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(3),
-                        ],
-                        validator: (val) {
-                          if (val == null || val.trim().isEmpty) {
-                            return null;
-                          }
-                          final years = int.tryParse(val.trim());
-                          return years != null && years >= 0 && years <= 100
-                              ? null
-                              : 'Enter valid years (0-100)';
-                        },
-                      ),
-                    ],
-                  ),
+                  ExperienceDropdown(),
                   SizedBox(height: 3.hp),
 
                   // Availability Slots

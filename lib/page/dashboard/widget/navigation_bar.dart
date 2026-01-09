@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/dashboard/controller.dart';
 import 'package:eventjar/controller/home/controller.dart';
 import 'package:eventjar/controller/my_ticket/controller.dart';
+import 'package:eventjar/controller/network/controller.dart';
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
@@ -61,30 +62,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         ],
         currentIndex: selectedIndex,
         onTap: (index) {
-          if (index == 0) {
-            controller.state.selectedIndex.value = index;
-            if (!Get.isRegistered<HomeController>()) {
-              Get.put(HomeController()).onTabOpen();
-            } else {
-              Get.find<HomeController>().onTabOpen();
-            }
-          } else if (index == 1) {
-            controller.handleNetworkTabSwitch();
-          } else if (index == 2) {
-            controller.state.selectedIndex.value = index;
-            if (!Get.isRegistered<UserProfileController>()) {
-              Get.put(UserProfileController()).onTabOpen();
-            } else {
-              Get.find<UserProfileController>().onTabOpen();
-            }
-          } else if (index == 3) {
-            controller.state.selectedIndex.value = index;
-            if (!Get.isRegistered<MyTicketController>()) {
-              Get.put(MyTicketController()).onTabOpen();
-            } else {
-              Get.find<MyTicketController>().onTabOpen();
-            }
-          }
+          controller.changeTab(index);
         },
       );
     });

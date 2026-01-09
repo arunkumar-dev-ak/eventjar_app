@@ -48,34 +48,33 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                   SizedBox(height: 2.hp),
 
                   // Username
-                  BasicInfoFormElement(
-                    controller: controller.usernameController,
-                    label: 'Username',
-                    validator: (val) => val == null || val.trim().isEmpty
-                        ? 'Username is required'
-                        : null,
-                  ),
-                  SizedBox(height: 2.hp),
+                  // BasicInfoFormElement(
+                  //   controller: controller.usernameController,
+                  //   label: 'Username',
+                  //   validator: (val) => val == null || val.trim().isEmpty
+                  //       ? 'Username is required'
+                  //       : null,
+                  // ),
+                  // SizedBox(height: 2.hp),
 
                   // Email
-                  BasicInfoFormElement(
-                    controller: controller.emailController,
-                    label: 'Email Address',
-                    keyboardType: TextInputType.emailAddress,
-                    validator: (val) {
-                      if (val == null || val.trim().isEmpty) {
-                        return 'Email is required';
-                      }
-                      final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                      if (!emailRegex.hasMatch(val.trim())) {
-                        return 'Enter a valid email';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 2.hp),
+                  // BasicInfoFormElement(
+                  //   controller: controller.emailController,
+                  //   label: 'Email Address',
+                  //   keyboardType: TextInputType.emailAddress,
+                  //   validator: (val) {
+                  //     if (val == null || val.trim().isEmpty) {
+                  //       return 'Email is required';
+                  //     }
+                  //     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                  //     if (!emailRegex.hasMatch(val.trim())) {
+                  //       return 'Enter a valid email';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
+                  // SizedBox(height: 2.hp),
 
-                  // Mobile Number
                   // Mobile Number
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,

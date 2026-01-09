@@ -3,7 +3,6 @@ import 'package:eventjar/api/checkout_api/booking_api.dart';
 import 'package:eventjar/api/checkout_api/eligibility_api.dart';
 import 'package:eventjar/controller/checkout/state.dart';
 import 'package:eventjar/controller/dashboard/controller.dart';
-import 'package:eventjar/controller/my_ticket/controller.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
@@ -23,7 +22,7 @@ class CheckoutController extends GetxController {
   final state = CheckoutState();
   late Razorpay _razorpay;
 
-  final MyTicketController ticketController = Get.find();
+  // final MyTicketController ticketController = Get.find();
   final DashboardController dashboardController = Get.find();
 
   @override
@@ -171,6 +170,7 @@ class CheckoutController extends GetxController {
   }
 
   Future<void> _handleFreeTicket() async {
+    LoggerService.loggerInstance.dynamic_d("in handleFree ticket");
     final eventInfo = state.eventInfo.value;
     if (eventInfo == null) {
       AppSnackbar.error(title: "Error", message: "Event not found");
@@ -258,7 +258,7 @@ class CheckoutController extends GetxController {
       // === METADATA ===
       'metadata': {
         'eventTitle': eventInfo.title,
-        'eventDate': eventInfo.startDate.toIso8601String(),
+        'eventDate': eventInfo.startDate?.toIso8601String(),
         'isOneMeeting': eventInfo.isOneMeetingEnabled,
       },
 
@@ -268,22 +268,22 @@ class CheckoutController extends GetxController {
   }
 
   Map<String, dynamic> _buildFreeTicketPayload(EventInfo eventInfo) {
-    final ticketSelections = state.cartLines.map((cartLine) {
-      final price = double.tryParse(cartLine.ticket.price) ?? 0;
-      return {
-        'tierId': cartLine.ticket.id,
-        'quantity': cartLine.quantity.value,
-        'price': price,
-      };
-    }).toList();
+    // final ticketSelections = state.cartLines.map((cartLine) {
+    //   final price = double.tryParse(cartLine.ticket.price) ?? 0;
+    //   return {
+    //     'tierId': cartLine.ticket.id,
+    //     'quantity': cartLine.quantity.value,
+    //     'price': price,
+    //   };
+    // }).toList();
 
     return {
-      'userId': UserStore.to.profile['id']?.toString() ?? '',
+      // 'userId': UserStore.to.profile['id']?.toString() ?? '',
       'eventId': eventInfo.id,
-      'ticketSelections': ticketSelections,
+      // 'ticketSelections': ticketSelections,
       'promoCodeId': null,
       'promoDiscount': 0,
-      'isOneMeeting': eventInfo.isOneMeetingEnabled,
+      // 'isOneMeeting': eventInfo.isOneMeetingEnabled,
     };
   }
 
@@ -411,7 +411,7 @@ class CheckoutController extends GetxController {
   void navigateToMyTicketPage() {
     Get.until((route) => route.settings.name == RouteName.dashboardpage);
     dashboardController.state.selectedIndex.value = 3;
-    ticketController.onTabOpen();
+    Get.toNamed(RouteName.myTicketPage, id: 1);
   }
 
   String formatEventDateTimeForHome(dynamic event, BuildContext context) {

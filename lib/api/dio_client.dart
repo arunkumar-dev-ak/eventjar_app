@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/logger_service.dart';
-import 'package:eventjar/model/auth/login_model.dart';
 import 'package:eventjar/model/auth/refresh_token_model.dart';
 
 class DioClient {
@@ -37,7 +36,6 @@ class DioClient {
 
         // ✅ TOKEN REFRESH LOGIC
         onError: (DioException e, ErrorInterceptorHandler handler) async {
-          LoggerService.loggerInstance.dynamic_d(e.requestOptions.path);
           if (e.requestOptions.path == '/auth/refresh-token') {
             return handler.next(e);
           }
@@ -50,7 +48,7 @@ class DioClient {
             final refreshToken = UserStore.to.refreshToken;
 
             LoggerService.loggerInstance.dynamic_d(
-              'refreshToken is $refreshToken',
+              'previous refreshToken is $refreshToken',
             );
 
             if (refreshToken.isEmpty) {
@@ -70,13 +68,6 @@ class DioClient {
                   },
                 ),
                 data: {'refreshToken': refreshToken},
-              );
-
-              LoggerService.loggerInstance.dynamic_d(
-                'refreshTokenResponse is ${refreshResponse.data}',
-              );
-              LoggerService.loggerInstance.dynamic_d(
-                'refreshTokenResponse.statusCode ${refreshResponse.statusCode}',
               );
 
               if (refreshResponse.statusCode == 200 ||
@@ -106,9 +97,6 @@ class DioClient {
                   },
                 );
 
-                LoggerService.loggerInstance.dynamic_d('options is');
-                LoggerService.loggerInstance.dynamic_d(options);
-
                 final response = await dio.request(
                   options.path,
                   data: options.data,
@@ -118,9 +106,6 @@ class DioClient {
                     headers: options.headers,
                   ),
                 );
-
-                LoggerService.loggerInstance.dynamic_d('response is');
-                LoggerService.loggerInstance.dynamic_d(response);
 
                 return handler.resolve(response);
               }

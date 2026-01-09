@@ -423,6 +423,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:eventjar/controller/event_info/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:eventjar/model/event_info/event_info_media_extension_model.dart';
 import 'package:eventjar/page/event_info/widget/event_info_shimmer.dart';
@@ -768,8 +769,11 @@ class EventInfoHeader extends StatelessWidget {
       'Nov',
       'Dec',
     ];
-    final dateStr =
-        "${eventInfo.startDate.day} ${months[eventInfo.startDate.month - 1]}, ${eventInfo.startDate.year}";
+    final startDate = eventInfo.startDate;
+
+    final dateStr = startDate == null
+        ? 'Date TBA'
+        : '${startDate.day} ${months[startDate.month - 1]}, ${startDate.year}';
     final timeStr =
         eventInfo.startTime != null && eventInfo.startTime!.isNotEmpty
         ? controller.generateDateTimeAndFormatTime(

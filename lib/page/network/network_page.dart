@@ -1,118 +1,128 @@
 import 'package:eventjar/controller/network/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/page/network/coming_soon_page.dart';
-import 'package:eventjar/page/network/tabs/contact_page/contact_page.dart';
+import 'package:eventjar/page/network/widget/network_header.dart';
+import 'package:eventjar/page/network/widget/network_navigation_card.dart';
+import 'package:eventjar/page/network/widget/network_overdue.dart';
+import 'package:eventjar/page/network/widget/network_shimmer.dart';
+import 'package:eventjar/page/network/widget/network_status_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class NetworkPage extends GetView<NetworkScreenController> {
   const NetworkPage({super.key});
 
-  final List<_TabData> tabList = const [
-    _TabData('Contacts', Icons.person),
-    _TabData('Connection', Icons.connect_without_contact),
-    _TabData('Scheduler', Icons.schedule),
-    _TabData('Reminders', Icons.notifications_active),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.all(2.wp),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: AppColors.buttonGradient,
-                  borderRadius: BorderRadius.circular(22),
-                ),
-                child: GetBuilder<NetworkScreenController>(
-                  builder: (ctrl) {
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: List.generate(tabList.length, (i) {
-                          final selected = ctrl.state.selectedTab.value == i;
-                          return GestureDetector(
-                            onTap: () => ctrl.changeTab(i),
-                            child: AnimatedContainer(
-                              duration: Duration(milliseconds: 140),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 4.wp,
-                                vertical: 2.hp,
+    return Container(
+      width: 100.wp,
+      color: AppColors.liteBlue.withValues(alpha: 0.3),
+      child: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 3.wp),
+          child: Column(
+            children: [
+              SizedBox(height: 2.hp),
+
+              NetworkHeader(),
+
+              Expanded(
+                child: Obx(() {
+                  final isLoading = controller.state.isLoading.value;
+                  final analytics = controller.state.analytics.value;
+
+                  return SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 2.hp),
+
+                        /// -------- STATUS GRID (TOP) ----------
+                        if (isLoading)
+                          networkStatusCardShimmer(crossAxisCount: 3)
+                        else
+                          NetworkStatusGrid(
+                            analytics: analytics,
+                            startIndex: 0,
+                            crossAxisCount: 3,
+                          ),
+
+                        SizedBox(height: 1.5.hp),
+
+                        /// -------- STATUS GRID (BOTTOM) ----------
+                        if (isLoading)
+                          networkStatusCardShimmer(crossAxisCount: 3)
+                        else
+                          NetworkStatusGrid(
+                            analytics: analytics,
+                            startIndex: 3,
+                            crossAxisCount: 3,
+                          ),
+
+                        SizedBox(height: 2.hp),
+
+                        /// -------- OVERDUE CARD ----------
+                        if (isLoading)
+                          const NetworkOverdueShimmer()
+                        else
+                          NetworkOverdueWrapper(
+                            child: NetworkOverdueCard(
+                              data: controller.statusCards.last,
+                              count: controller.getCountByKey(
+                                analytics,
+                                controller.statusCards.last.key,
                               ),
-                              decoration: BoxDecoration(
-                                color: selected
-                                    ? Colors.white.withValues(alpha: 0.12)
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  if (selected)
-                                    Icon(
-                                      tabList[i].icon,
-                                      size: 18,
-                                      color: Colors.white,
-                                    ),
-                                  if (selected) SizedBox(width: 8),
-                                  Text(
-                                    tabList[i].label,
-                                    style: TextStyle(
-                                      color: Colors.white.withValues(
-                                        alpha: selected ? 1.0 : 0.7,
-                                      ),
-                                      fontWeight: selected
-                                          ? FontWeight.bold
-                                          : FontWeight.w500,
-                                      fontSize: 8.sp,
-                                    ),
-                                  ),
-                                ],
+                              onTap: () => controller.navigateToContactPage(
+                                controller.statusCards.last,
                               ),
                             ),
-                          );
-                        }),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
+                          ),
 
-            // Tab body
-            Expanded(
-              child: GetBuilder<NetworkScreenController>(
-                builder: (ctrl) {
-                  switch (ctrl.state.selectedTab.value) {
-                    case 0:
-                      return ContactNetworkStatusCards();
-                    case 1:
-                      return Center(child: ComingSoonWidget());
-                    case 2:
-                      return Center(child: ComingSoonWidget());
-                    case 3:
-                      return Center(child: ComingSoonWidget());
-                    default:
-                      return Center(child: ComingSoonWidget());
-                  }
-                },
+                        SizedBox(height: 4.hp),
+
+                        /// -------- ACTIONS ----------
+                        Text(
+                          "Actions",
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                        SizedBox(height: 1.hp),
+
+                        NetworkNavigationCard(
+                          icon: Icons.link,
+                          label: "Connections",
+                          isPrimary: false,
+                          onTap: controller.onConnectionTap,
+                        ),
+                        SizedBox(height: 0.8.hp),
+
+                        NetworkNavigationCard(
+                          icon: Icons.event,
+                          label: "Campaigns",
+                          onTap: controller.onSchedulerTap,
+                        ),
+                        SizedBox(height: 0.8.hp),
+
+                        NetworkNavigationCard(
+                          icon: Icons.notifications,
+                          label: "Reminders",
+                          onTap: controller.onReminderTap,
+                        ),
+
+                        SizedBox(height: 3.hp),
+                      ],
+                    ),
+                  );
+                }),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
-}
-
-class _TabData {
-  final String label;
-  final IconData icon;
-  const _TabData(this.label, this.icon);
 }

@@ -1,10 +1,10 @@
 import 'package:eventjar/controller/add_contact/binding.dart';
 import 'package:eventjar/controller/checkout/binding.dart';
+import 'package:eventjar/controller/connection/binding.dart';
 import 'package:eventjar/controller/contact/binding.dart';
 import 'package:eventjar/controller/dashboard/binding.dart';
 import 'package:eventjar/controller/event_info/binding.dart';
 import 'package:eventjar/controller/forgotPassword/binding.dart';
-import 'package:eventjar/controller/my_ticket/binding.dart';
 import 'package:eventjar/controller/nfc/binding.dart';
 import 'package:eventjar/controller/nfc_read/binding.dart';
 import 'package:eventjar/controller/nfc_write/binding.dart';
@@ -23,11 +23,11 @@ import 'package:eventjar/controller/splashScreen/binding.dart';
 import 'package:eventjar/controller/thank_you_message/binding.dart';
 import 'package:eventjar/page/add_contact/add_contact.dart';
 import 'package:eventjar/page/checkout/checkout_page.dart';
+import 'package:eventjar/page/connection/connection_page.dart';
 import 'package:eventjar/page/contact/contact_page.dart';
 import 'package:eventjar/page/dashboard/dashboard_page.dart';
 import 'package:eventjar/page/event_info/event_info.dart';
 import 'package:eventjar/page/forgot_password/forgot_password.dart';
-import 'package:eventjar/page/my_ticket/my_ticket_page.dart';
 import 'package:eventjar/page/nfc/nfc_page.dart';
 import 'package:eventjar/page/nfc_read/nfc_read.dart';
 import 'package:eventjar/page/nfc_write/nfc_write.dart';
@@ -81,6 +81,15 @@ class RoutePage {
       name: RouteName.dashboardpage,
       page: () => DashboardPage(),
       binding: DashboardBinding(),
+      // transition: Transition.downToUp,
+      // transitionDuration: Duration(milliseconds: 1500),
+    ),
+
+    /*------ NetworkPage ------*/
+    GetPage(
+      name: RouteName.connectionPage,
+      page: () => ConnectionPage(),
+      binding: ConnectionBinding(),
     ),
 
     /*----- EventInfo page -----*/
@@ -95,14 +104,6 @@ class RoutePage {
       name: RouteName.checkoutPage,
       page: () => CheckoutPage(),
       binding: CheckoutBinding(),
-      middlewares: [LoginMiddleware()],
-    ),
-
-    /*----- Ticket List page -----*/
-    GetPage(
-      name: RouteName.myTicketPage,
-      page: () => MyTicketPage(),
-      binding: MyTicketBinding(),
       middlewares: [LoginMiddleware()],
     ),
 
@@ -134,19 +135,19 @@ class RoutePage {
       name: RouteName.nfcPage,
       page: () => NfcPage(),
       binding: NfcBinding(),
-      // middlewares: [LoginMiddleware()],
+      middlewares: [LoginMiddleware()],
     ),
     GetPage(
       name: RouteName.nfcReadPage,
       page: () => NfcReadPage(),
       binding: NfcReadBinding(),
-      // middlewares: [LoginMiddleware()],
+      middlewares: [LoginMiddleware()],
     ),
     GetPage(
       name: RouteName.nfcWritePage,
       page: () => NfcWritePage(),
       binding: NfcWriteBinding(),
-      // middlewares: [LoginMiddleware()],
+      middlewares: [LoginMiddleware()],
     ),
 
     /*----- Stage form page -----*/
@@ -154,19 +155,19 @@ class RoutePage {
       name: RouteName.thankYouMessagePage,
       page: () => ThankYouMessagePage(),
       binding: ThankYouMessageBinding(),
-      // middlewares: [LoginMiddleware()],
+      middlewares: [LoginMiddleware()],
     ),
     GetPage(
       name: RouteName.scheduleMeetingPage,
       page: () => ScheduleMeetingPage(),
       binding: ScheduleMeetingBinding(),
-      // middlewares: [LoginMiddleware()],
+      middlewares: [LoginMiddleware()],
     ),
     GetPage(
       name: RouteName.qualifyLeadPage,
       page: () => QualifyLeadPage(),
       binding: QualifyLeadBinding(),
-      // middlewares: [LoginMiddleware()],
+      middlewares: [LoginMiddleware()],
     ),
 
     /*------ Profile update -----*/

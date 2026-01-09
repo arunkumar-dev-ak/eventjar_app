@@ -4,7 +4,6 @@ import 'package:eventjar/controller/profile_form/summary/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/user_profile/user_profile.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/widgets.dart';
@@ -20,7 +19,6 @@ class SummaryFormController extends GetxController {
   late String? _originalAvailabilitySlots;
 
   final shortBioController = TextEditingController();
-  final yearsInBusinessController = TextEditingController();
   final availabilitySlotsController = TextEditingController();
 
   @override
@@ -52,8 +50,15 @@ class SummaryFormController extends GetxController {
 
     // Populate controllers
     shortBioController.text = _originalShortBio ?? '';
-    yearsInBusinessController.text = _originalYearsInBusiness ?? '';
     availabilitySlotsController.text = _originalAvailabilitySlots ?? '';
+
+    final yearsInBusinessStr = extended?.yearsInBusiness?.toString();
+    if (yearsInBusinessStr != null &&
+        _isValidExperienceRange(yearsInBusinessStr)) {
+      state.experienceRange.value = yearsInBusinessStr;
+    } else {
+      state.experienceRange.value = state.experienceRanges[0]; // default
+    }
   }
 
   void clearForm() {
@@ -69,6 +74,10 @@ class SummaryFormController extends GetxController {
     }
 
     handleProfile(profile);
+  }
+
+  bool _isValidExperienceRange(String value) {
+    return state.experienceRanges.any((range) => range == value.trim());
   }
 
   bool _hasFieldChanged({required String? original, required String current}) {
@@ -91,12 +100,9 @@ class SummaryFormController extends GetxController {
 
     if (_hasFieldChanged(
       original: _originalYearsInBusiness,
-      current: yearsInBusinessController.text,
+      current: state.experienceRange.value,
     )) {
-      final years = int.tryParse(yearsInBusinessController.text.trim());
-      if (years != null) {
-        data['yearsInBusiness'] = years;
-      }
+      data['yearsInBusiness'] = state.experienceRange.value;
     }
 
     if (_hasFieldChanged(
