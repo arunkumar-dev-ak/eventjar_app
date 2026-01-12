@@ -12,6 +12,10 @@ Widget buildCheckoutPriceSummarySection() {
     final platformFee = controller.platformFee;
     final total = controller.total;
 
+    final promo = controller.state.promoCodeResponse.value;
+    final promoDiscount = promo?.discountAmount ?? 0.0;
+    final isPromoApplied = promo?.valid == true && promoDiscount > 0;
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 4.wp),
       padding: EdgeInsets.all(4.wp),
@@ -33,10 +37,10 @@ Widget buildCheckoutPriceSummarySection() {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Title
+          /// Title
           Row(
             children: [
-              Icon(Icons.receipt_long, color: Colors.white, size: 20),
+              const Icon(Icons.receipt_long, color: Colors.white, size: 20),
               SizedBox(width: 3.wp),
               Text(
                 "Price Summary",
@@ -50,7 +54,7 @@ Widget buildCheckoutPriceSummarySection() {
           ),
           SizedBox(height: 2.hp),
 
-          // Per-ticket lines
+          /// Content Card
           Container(
             padding: EdgeInsets.all(3.wp),
             decoration: BoxDecoration(
@@ -63,7 +67,7 @@ Widget buildCheckoutPriceSummarySection() {
             ),
             child: Column(
               children: [
-                // list rows like: Ticket A (x2)  ₹200.00
+                /// Ticket Lines
                 ...lines.map((line) {
                   final price = double.tryParse(line.ticket.price) ?? 0;
                   final lineTotal = price * line.quantity.value;
@@ -75,17 +79,29 @@ Widget buildCheckoutPriceSummarySection() {
                       "₹${lineTotal.toStringAsFixed(2)}",
                     ),
                   );
-                }).toList(),
+                }),
 
                 if (lines.isNotEmpty) SizedBox(height: 1.5.hp),
 
-                // Subtotal
+                /// Subtotal
                 _buildPriceRowWhite(
                   "Subtotal",
                   "₹${subtotal.toStringAsFixed(2)}",
                 ),
                 SizedBox(height: 1.5.hp),
 
+                /// Promo Discount
+                if (isPromoApplied) ...[
+                  _buildPriceRowWhite(
+                    "Promo Discount",
+                    "- ₹${promoDiscount.toStringAsFixed(2)}",
+                  ),
+                  SizedBox(height: 1.5.hp),
+
+                  SizedBox(height: 1.5.hp),
+                ],
+
+                /// Platform Fee
                 _buildPriceRowWhite(
                   "Platform Fee",
                   "₹${platformFee.toStringAsFixed(2)}",
@@ -98,7 +114,7 @@ Widget buildCheckoutPriceSummarySection() {
                 ),
                 SizedBox(height: 1.5.hp),
 
-                // Total line (same as before)
+                /// Total
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -146,6 +162,7 @@ Widget buildCheckoutPriceSummarySection() {
   });
 }
 
+/// Reusable row
 Widget _buildPriceRowWhite(String label, String amount) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,

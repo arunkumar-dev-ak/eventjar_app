@@ -5,6 +5,7 @@ import 'package:eventjar/page/checkout/checkout_header.dart';
 import 'package:eventjar/page/checkout/checkout_price_summary.dart';
 import 'package:eventjar/page/checkout/checkout_submit_button.dart';
 import 'package:eventjar/page/checkout/checkout_terms_text.dart';
+import 'package:eventjar/page/checkout/checkout_ticket/checkout_savings_section.dart';
 import 'package:eventjar/page/checkout/checkout_ticket/checkout_ticket_details.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,29 +34,37 @@ class CheckoutPage extends GetView<CheckoutController> {
           return const Center(child: Text("No event information available"));
         }
 
-        return SingleChildScrollView(
-          child: Column(
-            children: [
-              // Event Information Card
-              buildCheckoutEventInfo(eventInfo, context),
-              SizedBox(height: 2.hp),
+        return GestureDetector(
+          onTap: () {
+            Get.focusScope?.unfocus();
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Event Information Card
+                buildCheckoutEventInfo(eventInfo, context),
+                SizedBox(height: 2.hp),
 
-              // Ticket Details Card (with warning inside if applicable)
-              buildCheckoutPageTicketDetailsCard(eventInfo),
-              SizedBox(height: 2.hp),
+                // Ticket Details Card (with warning inside if applicable)
+                buildCheckoutPageTicketDetailsCard(eventInfo),
+                SizedBox(height: 2.hp),
 
-              // Price Summary Section (Blue gradient)
-              buildCheckoutPriceSummarySection(),
-              SizedBox(height: 2.hp),
+                buildCheckoutSavingsSection(),
+                SizedBox(height: 2.hp),
 
-              // Continue Button
-              buildCheckoutContinueButton(),
-              SizedBox(height: 1.hp),
+                // Price Summary Section (Blue gradient)
+                buildCheckoutPriceSummarySection(),
+                SizedBox(height: 2.hp),
 
-              // Terms and Conditions
-              buildCheckoutTermsText(),
-              SizedBox(height: 3.hp),
-            ],
+                // Continue Button
+                buildCheckoutContinueButton(),
+                SizedBox(height: 1.hp),
+
+                // Terms and Conditions
+                buildCheckoutTermsText(),
+                SizedBox(height: 3.hp),
+              ],
+            ),
           ),
         );
       }),

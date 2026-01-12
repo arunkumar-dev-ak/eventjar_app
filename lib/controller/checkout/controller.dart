@@ -9,6 +9,7 @@ import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/helper/date_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/checkout/cart_line.dart';
+import 'package:eventjar/model/checkout/promo_code_model.dart';
 import 'package:eventjar/model/checkout/tikcet_payment_model.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:eventjar/routes/route_name.dart';
@@ -21,6 +22,29 @@ class CheckoutController extends GetxController {
   var appBarTitle = "EventJar";
   final state = CheckoutState();
   late Razorpay _razorpay;
+  final promoCodeController = TextEditingController();
+
+  String? get appliedPromoId => state.promoCodeResponse.value?.promoCodeId;
+
+  double get subtotal {
+    return state.cartLines.fold<double>(0, (sum, line) {
+      final price = double.tryParse(line.ticket.price) ?? 0;
+      return sum + price * line.quantity.value;
+    });
+  }
+
+  double get promoDiscount {
+    final promo = state.promoCodeResponse.value;
+    if (promo == null || promo.valid != true) return 0.0;
+    return promo.discountAmount;
+  }
+
+  double get platformFee => 0; // later: compute
+
+  double get total {
+    final amount = subtotal + platformFee - promoDiscount;
+    return amount < 0 ? 0 : amount;
+  }
 
   // final MyTicketController ticketController = Get.find();
   final DashboardController dashboardController = Get.find();
@@ -32,6 +56,26 @@ class CheckoutController extends GetxController {
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _onError);
     super.onInit();
+    ever<EventInfo?>(state.eventInfo, (eventData) {
+      if (eventData == null) return;
+      if (state.cartLines.isNotEmpty) return;
+      if (eventData.ticketTiers.isEmpty) return;
+      LoggerService.loggerInstance.dynamic_d(eventData);
+
+      final firstTier = eventData.ticketTiers.first;
+
+      addOrIncreaseTicket(firstTier);
+
+      // optional
+      // checkEligibility(firstTier);
+    });
+
+    ever<List<CartLine>>(state.cartLines, (_) {
+      if (state.promoCodeResponse.value != null) {
+        removePromoCode(); // clear promo code
+        LoggerService.loggerInstance.d("Promo code reset due to cart change");
+      }
+    });
     _fetchEventInfo();
   }
 
@@ -40,7 +84,8 @@ class CheckoutController extends GetxController {
     final eventInfoArg = Get.arguments;
 
     if (eventInfoArg != null && eventInfoArg is Rxn<EventInfo>) {
-      state.eventInfo.value = eventInfoArg.value;
+      final eventData = eventInfoArg.value;
+      state.eventInfo.value = eventData;
       // if (state.eventInfo.value != null) {
       //   state.selectedTicketTier.value =
       //       state.eventInfo.value!.ticketTiers.first;
@@ -67,6 +112,8 @@ class CheckoutController extends GetxController {
         line.quantity.value++;
       }
     }
+
+    removePromoCode();
   }
 
   void decreaseTicketQty(TicketTier tier) {
@@ -82,18 +129,9 @@ class CheckoutController extends GetxController {
       // remove line when goes to 0
       state.cartLines.removeAt(index);
     }
+
+    removePromoCode();
   }
-
-  double get subtotal {
-    return state.cartLines.fold(0.0, (sum, line) {
-      final price = double.tryParse(line.ticket.price) ?? 0;
-      return sum + price * line.quantity.value;
-    });
-  }
-
-  double get platformFee => 0; // later: compute
-
-  double get total => subtotal + platformFee;
 
   /*----- Checkout -----*/
 
@@ -203,13 +241,12 @@ class CheckoutController extends GetxController {
   }
 
   double calculateTotalAmount() {
-    return state.cartLines.fold<double>(0, (sum, line) {
-      final price = double.tryParse(line.ticket.price) ?? 0;
-      return sum + price * line.quantity.value;
-    });
+    return total;
   }
 
   Map<String, dynamic> _buildPaymentPayload(EventInfo eventInfo) {
+    final promo = state.promoCodeResponse.value;
+
     // ✅ Extract lineItems from cartLines
     final lineItems = state.cartLines
         .map((cartLine) => cartLine.toJson())
@@ -225,8 +262,12 @@ class CheckoutController extends GetxController {
       0,
       (sum, line) => sum + line.quantity.value,
     );
-    const discountAmount = 0; // Add promo logic later
-    final finalAmount = subtotal - discountAmount;
+
+    final discountAmount = promo != null && promo.valid
+        ? promo.discountAmount
+        : 0.0;
+
+    final finalAmount = (subtotal - discountAmount).clamp(0, double.infinity);
 
     return {
       // === REQUIRED FIELDS ===
@@ -247,6 +288,10 @@ class CheckoutController extends GetxController {
       // === ORDER SUMMARY ===
       'orderSummary': {
         'subtotal': subtotal,
+        'promoCode': promo != null && promo.valid
+            ? promoCodeController.text.trim()
+            : null,
+        'promoCodeId': promo?.promoCodeId,
         'discountAmount': discountAmount,
         'totalQuantity': totalQuantity,
         'finalAmount': finalAmount,
@@ -258,7 +303,7 @@ class CheckoutController extends GetxController {
       // === METADATA ===
       'metadata': {
         'eventTitle': eventInfo.title,
-        'eventDate': eventInfo.startDate?.toIso8601String(),
+        'eventDate': eventInfo.startDate.toIso8601String(),
         'isOneMeeting': eventInfo.isOneMeetingEnabled,
       },
 
@@ -277,12 +322,13 @@ class CheckoutController extends GetxController {
     //   };
     // }).toList();
 
+    final promo = state.promoCodeResponse.value;
+
     return {
       // 'userId': UserStore.to.profile['id']?.toString() ?? '',
       'eventId': eventInfo.id,
       // 'ticketSelections': ticketSelections,
-      'promoCodeId': null,
-      'promoDiscount': 0,
+      'promoCodeId': promo?.promoCodeId,
       // 'isOneMeeting': eventInfo.isOneMeetingEnabled,
     };
   }
@@ -368,6 +414,51 @@ class CheckoutController extends GetxController {
     super.onClose();
   }
 
+  /*----- Promo Code -----*/
+  Future<void> validatePromoCode() async {
+    String code = promoCodeController.text;
+    final eventInfo = state.eventInfo.value;
+    if (code.trim().isEmpty || eventInfo == null) return;
+
+    try {
+      state.isPromoLoading.value = true;
+      state.promoCodeResponse.value = null;
+
+      final response = await TicketBookingApi.validatePromoCode(
+        code: code.trim(),
+        eventId: eventInfo.id,
+        userId: UserStore.to.profile['id'].toString(),
+        subtotal: subtotal,
+      );
+
+      LoggerService.loggerInstance.dynamic_d(response.toJson());
+
+      state.promoCodeResponse.value = response;
+
+      if (response.valid) {
+        AppSnackbar.success(
+          title: "Success",
+          message: "Promo code applied successfully",
+        );
+      }
+    } catch (e) {
+      // fallback error (network / unknown)
+      state.promoCodeResponse.value = PromoCodeValidationResponse(
+        valid: false,
+        message: "Failed to validate promo code",
+        discountAmount: 0,
+      );
+    } finally {
+      state.isPromoLoading.value = false;
+    }
+  }
+
+  void removePromoCode() {
+    promoCodeController.clear();
+    state.isPromoLoading.value = false;
+    state.promoCodeResponse.value = null;
+  }
+
   /*----- helper -----*/
   Future<void> checkEligibility(TicketTier ticket) async {
     final eventInfo = state.eventInfo.value;
@@ -409,9 +500,7 @@ class CheckoutController extends GetxController {
   }
 
   void navigateToMyTicketPage() {
-    Get.until((route) => route.settings.name == RouteName.dashboardpage);
-    dashboardController.state.selectedIndex.value = 3;
-    Get.toNamed(RouteName.myTicketPage, id: 1);
+    dashboardController.popAndMoveToTicketPage();
   }
 
   String formatEventDateTimeForHome(dynamic event, BuildContext context) {

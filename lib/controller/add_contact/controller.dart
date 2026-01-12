@@ -4,7 +4,9 @@ import 'package:eventjar/controller/add_contact/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
+import 'package:eventjar/model/contact/contact_tag_model.dart';
 import 'package:eventjar/model/contact/nfc_contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/widgets.dart';
@@ -23,6 +25,7 @@ class AddContactController extends GetxController {
   final state = AddContactState();
 
   final formKey = GlobalKey<FormState>();
+  final searchTagsController = TextEditingController();
 
   String? contactId;
 
@@ -53,6 +56,7 @@ class AddContactController extends GetxController {
     }
 
     handleArgs(contact);
+    fetchTags();
 
     super.onInit();
   }
@@ -117,9 +121,37 @@ class AddContactController extends GetxController {
     return phone;
   }
 
+  Future<void> fetchTags() async {
+    try {
+      state.isDropDownLoading.value = true;
+
+      final List<TagModel> result = await AddContactApi.getTagList();
+      state.availableTags.value = result.map((tag) => tag.name).toList();
+      state.filteredTags.value = state.availableTags;
+    } catch (err) {
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return;
+        }
+
+        ApiErrorHandler.handleError(err, "Failed to fetch analytics");
+      } else {
+        AppSnackbar.error(
+          title: "Failed",
+          message: "Something went wrong. Please try again.",
+        );
+      }
+    } finally {
+      state.isDropDownLoading.value = false;
+    }
+  }
+
   void clearForm() {
     final args = Get.arguments;
-    Contact? contact;
 
     // If NFC contact, reset to NFC data
     if (args is NfcContactModel) {
@@ -127,7 +159,8 @@ class AddContactController extends GetxController {
     }
     // Existing update logic
     else if (args is Set<Contact> && args.isNotEmpty) {
-      handleArgs(contact);
+      final argContact = args.first;
+      handleArgs(argContact);
     } else {
       nameController.clear();
       emailController.clear();
@@ -156,6 +189,25 @@ class AddContactController extends GetxController {
       'tags': state.selectedTags.toList(),
       'notes': notesController.text.trim(),
     };
+  }
+
+  void filterTags(String query) {
+    if (query.isEmpty) {
+      state.filteredTags.value = state.availableTags;
+    } else {
+      state.filteredTags.value = state.availableTags
+          .where((tag) => tag.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+  }
+
+  void selectTag(String tagName) {
+    final lowerTag = tagName.toLowerCase();
+    final exists = state.selectedTags.any((t) => t.toLowerCase() == lowerTag);
+
+    if (!exists) {
+      state.selectedTags.add(tagName);
+    }
   }
 
   Future<void> submitForm(BuildContext context) async {
@@ -240,5 +292,11 @@ class AddContactController extends GetxController {
       case ContactStage.qualified:
         return 'qualified';
     }
+  }
+
+  @override
+  void onClose() {
+    searchTagsController.dispose();
+    super.onClose();
   }
 }

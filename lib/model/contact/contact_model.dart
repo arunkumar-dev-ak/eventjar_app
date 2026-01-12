@@ -26,6 +26,8 @@ class ContactResponse {
 class Contact {
   final String id;
   final String? organizerId;
+  final String? user1Id;
+  final String? user2Id;
   final String name;
   final String? username;
   final String email;
@@ -63,6 +65,8 @@ class Contact {
   Contact({
     required this.id,
     this.organizerId,
+    this.user1Id,
+    this.user2Id,
     required this.name,
     this.username,
     required this.email,
@@ -102,6 +106,8 @@ class Contact {
       return Contact(
         id: json['id'],
         organizerId: json['organizerId'],
+        user1Id: json['user1Id'],
+        user2Id: json['user2Id'],
         name: json['name'],
         username: json['username'],
         email: json['email'],
@@ -160,6 +166,8 @@ class Contact {
   Map<String, dynamic> toJson() => {
     'id': id,
     'organizerId': organizerId,
+    'user1Id': user1Id,
+    'user2Id': user2Id,
     'name': name,
     'username': username,
     'email': email,

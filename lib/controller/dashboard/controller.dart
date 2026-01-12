@@ -21,6 +21,8 @@ class DashboardController extends GetxController {
 
   void popAndMoveToTicketPage() {
     state.selectedIndex.value = 3;
+    MyTicketController ticketController = Get.find();
+    ticketController.onTabOpen();
 
     Get.until((route) => route.settings.name == RouteName.dashboardpage);
   }

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/add_contact_api/add_contact_api.dart';
-import 'package:eventjar/api/contact_api/contact_api.dart';
 import 'package:eventjar/controller/qualify_lead/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
@@ -19,9 +18,10 @@ class QualifyLeadController extends GetxController {
   final formKey = GlobalKey<FormState>();
 
   TextEditingController leadScoreController = TextEditingController();
-  TextEditingController interestNeedsController = TextEditingController();
-  TextEditingController decisionTimelineController = TextEditingController();
-  TextEditingController qualificationNotesController = TextEditingController();
+  TextEditingController interestsController = TextEditingController();
+  TextEditingController budgetController = TextEditingController();
+  TextEditingController timelineController = TextEditingController();
+  TextEditingController notesController = TextEditingController();
 
   @override
   void onInit() {
@@ -37,11 +37,26 @@ class QualifyLeadController extends GetxController {
     return score != null && score >= 0 && score <= 10;
   }
 
-  // Qualify lead
+  bool get isSharedContact {
+    final contact = state.contact.value;
+    if (contact == null) return false;
+    final hasSharedFields =
+        !!(contact.user1Id?.isNotEmpty == true &&
+            contact.user2Id?.isNotEmpty == true);
+    final hasSharedTag = contact.tags.contains('shared_contact') == true;
+    return hasSharedFields || hasSharedTag;
+  }
+
+  String get currentUserKey {
+    final contact = state.contact.value;
+    if (contact == null) return 'single';
+    final currentUserId = UserStore.to.profile['id'];
+    if (!isSharedContact) return 'single';
+    return (contact.user1Id == currentUserId) ? 'user1' : 'user2';
+  }
+
   Future<void> qualifyLead(BuildContext context) async {
-    if (!(formKey.currentState?.validate() ?? false)) {
-      return;
-    }
+    if (!(formKey.currentState?.validate() ?? false)) return;
 
     final contact = state.contact.value;
     if (contact == null) return;
@@ -49,73 +64,67 @@ class QualifyLeadController extends GetxController {
     state.isLoading.value = true;
 
     try {
-      final currentUserId = UserStore.to.profile['id']; // adapt to your store
-      final String contactId = contact.id;
+      final currentUserId = UserStore.to.profile['id'];
+      final contactId = contact.id;
 
-      // Determine userKey (single / user1 / user2) like in Next.js
-      // final bool isSharedContact =
-      //     contact.user1Id != null && contact.user2Id != null;
-
-      // String userKey;
-      // if (isSharedContact) {
-      //   if (contact.user1Id == currentUserId) {
-      //     userKey = 'user1';
-      //   } else {
-      //     userKey = 'user2';
-      //   }
-      // } else {
-      //   userKey = 'single';
-      // }
-
-      String userKey = 'single';
-
-      // Build qualificationData similar to frontend QualificationData
+      // Match Next.js QualificationData exactly
       final qualificationData = {
-        'userId': currentUserId,
-        'leadScore': int.tryParse(leadScoreController.text),
-        'interestNeeds': interestNeedsController.text.trim(),
-        'decisionTimeline': decisionTimelineController.text.trim(),
-        'qualificationNotes': qualificationNotesController.text.trim(),
-        'qualifiedAt': DateTime.now().toIso8601String(),
+        'score': int.tryParse(leadScoreController.text) ?? 5,
+        'notes': notesController.text.trim(),
+        'interests': interestsController.text.trim(),
+        'budget': budgetController.text.trim(),
+        'timeline': timelineController.text.trim(),
       };
 
-      final Map<String, dynamic> existingCustomAttributes =
-          (contact.customAttributes ?? {});
-      final updatedCustomAttributes = {
-        ...existingCustomAttributes,
-        'qualification_$userKey': jsonEncode(qualificationData),
-      };
-      final Map<String, dynamic> backendUpdates = {
-        'customAttributes': updatedCustomAttributes,
-        'stage': 'qualified',
-        'meetingScheduled': false,
-        'meetingConfirmed': false,
-        'meetingCompleted': false,
-      };
+      if (isSharedContact) {
+        await AddContactApi.qualifyAndSplitContact(
+          contactId: contactId,
+          qualificationData: qualificationData,
+        );
+      } else {
+        // Single user: direct update (matches web fallback)
+        final existingCustomAttributes = Map<String, dynamic>.from(
+          contact.customAttributes ?? {},
+        );
+        final updatedCustomAttributes = {
+          ...existingCustomAttributes,
+          'qualification_$currentUserKey': jsonEncode({
+            ...qualificationData,
+            'userId': currentUserId,
+            'qualifiedAt': DateTime.now().toIso8601String(),
+          }),
+        };
 
-      await AddContactApi.updateContact(id: contactId, data: backendUpdates);
+        final updates = {
+          'stage': 'qualified',
+          'customAttributes': updatedCustomAttributes,
+          'meetingCompleted': false,
+          'meetingScheduled': false,
+          'meetingConfirmed': false,
+        };
+
+        await AddContactApi.updateContact(
+          id: contactId,
+          data: updates,
+          isFromQualify: true,
+        );
+      }
 
       AppSnackbar.success(
         title: "Lead Qualified",
-        message: "Contact qualified successfully",
+        message: "Contact qualified successfully!",
       );
-
-      // Optionally close page and return data
       Navigator.pop(context, true);
     } catch (err) {
       if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-        if (statusCode == 401) {
+        if (err.response?.statusCode == 401) {
           UserStore.to.clearStore();
-          navigateToSignInPage();
+          Get.toNamed(RouteName.signInPage);
           return;
         }
         ApiErrorHandler.handleError(err, "Failed to qualify lead");
       } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
+        AppSnackbar.error(title: "Failed", message: "Something went wrong.");
       }
     } finally {
       state.isLoading.value = false;
@@ -128,19 +137,20 @@ class QualifyLeadController extends GetxController {
 
   void resetForm() {
     leadScoreController.clear();
-    interestNeedsController.clear();
-    decisionTimelineController.clear();
-    qualificationNotesController.clear();
-
+    interestsController.clear();
+    budgetController.clear();
+    timelineController.clear();
+    notesController.clear();
     formKey.currentState?.reset();
   }
 
   @override
   void onClose() {
     leadScoreController.dispose();
-    interestNeedsController.dispose();
-    decisionTimelineController.dispose();
-    qualificationNotesController.dispose();
+    interestsController.dispose();
+    budgetController.dispose();
+    timelineController.dispose();
+    notesController.dispose();
     super.onClose();
   }
 }

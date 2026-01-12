@@ -51,7 +51,7 @@ class ContactController extends GetxController
 
       final List<Contact> filteredContacts;
 
-      if (stageKey == "total") {
+      if (stageKey == "totalContacts") {
         // No filter for total contacts
         filteredContacts = response.contacts;
       } else if (stageKey == "overdue") {
@@ -67,13 +67,13 @@ class ContactController extends GetxController
           case "new":
             stageFilter = ContactStage.newContact;
             break;
-          case "followup_24h":
+          case "followup24h":
             stageFilter = ContactStage.followup24h;
             break;
-          case "followup_7d":
+          case "followup7d":
             stageFilter = ContactStage.followup7d;
             break;
-          case "followup_30d":
+          case "followup30d":
             stageFilter = ContactStage.followup30d;
             break;
           case "qualified":

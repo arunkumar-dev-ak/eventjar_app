@@ -2,8 +2,8 @@ import 'package:country_code_picker/country_code_picker.dart';
 import 'package:eventjar/controller/add_contact/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/add_contact/add_contact_form_element.dart';
+import 'package:eventjar/page/add_contact/add_contact_multi_tag.dart';
 import 'package:eventjar/page/add_contact/add_contact_stage_dropdown.dart';
-import 'package:eventjar/page/add_contact/add_contact_tag_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -112,15 +112,15 @@ class AddContactPage extends GetView<AddContactController> {
                     ),
                   ],
                 ),
+
                 SizedBox(height: 2.hp),
 
                 // Stage dropdown widget
                 ContactStageDropdown(),
-
                 SizedBox(height: 2.hp),
 
                 // Multi-select tags widget
-                MultiSelectTagsInput(),
+                AddMultiSelectTagsInput(),
 
                 SizedBox(height: 2.hp),
 
@@ -129,7 +129,7 @@ class AddContactPage extends GetView<AddContactController> {
                   controller: controller.notesController,
                   label: 'Notes',
                   maxLines: 4,
-                  minLines: 2,
+                  minLines: 3,
                 ),
 
                 SizedBox(height: 3.hp),

@@ -1,9 +1,9 @@
-import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/qr_contact_model.dart';
 import 'package:get/get.dart';
 
 class AddContactState {
   final RxBool isLoading = false.obs;
+  final RxBool isDropDownLoading = false.obs;
 
   RxString selectedCountryCode = '+91'.obs;
 
@@ -14,6 +14,9 @@ class AddContactState {
     {'key': 'followup_30d', 'value': '30D Followup'},
     {'key': 'qualified', 'value': 'Qualified Lead'},
   ].obs;
+
+  RxList<String> availableTags = <String>[].obs;
+  RxList<String> filteredTags = <String>[].obs;
 
   Rx<Map<String, String>> selectedStage = Rx<Map<String, String>>({
     'key': 'new',

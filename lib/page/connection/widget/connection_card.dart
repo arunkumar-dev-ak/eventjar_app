@@ -197,10 +197,12 @@ class ConnectionCard extends GetView<ConnectionController> {
                   child: Text(
                     request.message,
                     style: TextStyle(fontSize: 8.5.sp, color: Colors.grey[800]),
-                    maxLines: 2,
+                    maxLines: 10,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+
+              SizedBox(height: 1.hp),
 
               // Status + Actions (Bottom Row)
               Row(

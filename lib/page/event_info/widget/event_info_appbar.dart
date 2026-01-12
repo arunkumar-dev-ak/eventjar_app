@@ -100,15 +100,15 @@ class EventInfoAppBar extends GetView<EventInfoController> {
 
   Future<void> _shareWithRichPreview(EventInfo eventInfo) async {
     try {
-      final imageUrl = eventInfo.media.isNotEmpty
-          ? eventInfo.media.first.resolvedUrl
-          : '';
+      final imageUrl =
+          eventInfo.featuredImageUrl ??
+          (eventInfo.media.isNotEmpty ? eventInfo.media.first.resolvedUrl : '');
 
-      // ✅ Perfect Flipkart-style text
-      final shareText = _generateShareText(eventInfo);
+      // Generate rich share text
+      final shareText = _generateWhatsAppShareText(eventInfo);
 
       if (imageUrl.isNotEmpty) {
-        // ✅ Download image
+        // Download the image temporarily
         final tempDir = await getTemporaryDirectory();
         final imageFile = File(
           '${tempDir.path}/event_${DateTime.now().millisecondsSinceEpoch}.jpg',
@@ -120,42 +120,90 @@ class EventInfoAppBar extends GetView<EventInfoController> {
         );
         await imageFile.writeAsBytes(response.data);
 
-        // ✅ FIXED: Use shareXFiles() NOT ShareParams.files
+        // Share with image
         await Share.shareXFiles(
           [XFile(imageFile.path)],
-          text: shareText, // ✅ Text
+          text: shareText,
           subject: eventInfo.title,
         );
       } else {
-        // ✅ Text only - NO uri conflict
-        await Share.share(shareText);
+        // Share text-only
+        await Share.share(shareText, subject: eventInfo.title);
       }
     } catch (e) {
       print('Share error: $e');
-      await Share.share(_generateShareText(eventInfo));
+      await Share.share(_generateWhatsAppShareText(eventInfo));
     }
   }
 
-  // Fallback simple text share
-  String _generateShareText(EventInfo eventInfo) {
-    final title = eventInfo.title;
-    final date = _formatDate(eventInfo.startDate);
-    final city = eventInfo.city ?? 'Online';
-    final price = _formatPrice(eventInfo);
-    final attendees = eventInfo.currentAttendees;
+  String _generateWhatsAppShareText(EventInfo eventInfo) {
+    final title = '🎉 ${eventInfo.title}';
+
+    final dateTimeLocation = _formatEventDateTimeForShare(eventInfo);
+
     final slug = eventInfo.slug;
-    final shortLink = 'https://myeventjar.com/events/$slug';
+    final link =
+        'https://myeventjar.com/api/event-preview/$slug?utm_source=whatsapp&utm_medium=social&utm_campaign=event_share&utm_content=$slug';
 
-    return '''🎊 $title
+    return '''$title
 
-📅 $date
-📍 $city
-💰 $price
+$dateTimeLocation
 
-👥 $attendees+ attending ✨
-⏰ Limited spots!
+👉 $link''';
+  }
 
-Tap "Book Now" → $shortLink''';
+  String _formatEventDateTimeForShare(EventInfo eventInfo) {
+    if (eventInfo.startDate == null) return 'Date TBA';
+
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    // Start date
+    final start = eventInfo.startDate!;
+    final startDateStr =
+        '${start.day} ${months[start.month - 1]}, ${start.year}';
+
+    // Start time
+    String startTimeStr = 'Time TBA';
+    if (eventInfo.startTime != null && eventInfo.startTime!.isNotEmpty) {
+      startTimeStr = controller.generateDateTimeAndFormatTime(
+        eventInfo.startTime!,
+        Get.context!,
+      );
+    }
+
+    // End time (optional)
+    // String endTimeStr = '';
+    // if (eventInfo.endTime != null && eventInfo.endTime!.isNotEmpty) {
+    //   endTimeStr = controller.generateDateTimeAndFormatTime(
+    //     eventInfo.endTime!,
+    //     Get.context!,
+    //   );
+    // }
+
+    // final timeDisplay = endTimeStr.isNotEmpty
+    //     ? '$startTimeStr – $endTimeStr IST'
+    //     : '$startTimeStr IST';
+
+    final timeDisplay = '$startTimeStr IST';
+
+    final location = eventInfo.isVirtual
+        ? '📍 Virtual Event'
+        : '📍 ${eventInfo.city ?? 'Location'}';
+
+    return '📅 $startDateStr at $timeDisplay | $location';
   }
 
   // Format date
