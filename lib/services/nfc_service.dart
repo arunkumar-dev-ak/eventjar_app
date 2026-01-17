@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:eventjar/model/contact/nfc_contact_model.dart';
-import 'package:eventjar/model/contact/qr_contact_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:nfc_manager/ndef_record.dart';
 import 'package:nfc_manager/nfc_manager.dart';

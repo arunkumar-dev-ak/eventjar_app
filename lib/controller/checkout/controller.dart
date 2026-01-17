@@ -184,6 +184,23 @@ class CheckoutController extends GetxController {
         "Payment Response: ${paymentResponse.toJson()}",
       );
 
+      if (!paymentResponse.success) {
+        AppSnackbar.error(
+          title: "Payment Error",
+          message: paymentResponse.error ?? "Failed to initialize payment",
+        );
+        return;
+      }
+
+      // ✅ CHECK RAZORPAY READY
+      if (!paymentResponse.canOpenRazorpay) {
+        AppSnackbar.error(
+          title: "Payment Error",
+          message: "Payment gateway not ready. Please try again.",
+        );
+        return;
+      }
+
       final razorpayOptions = {
         'key': paymentResponse.razorpayKeyId,
         'order_id': paymentResponse.paymentId,

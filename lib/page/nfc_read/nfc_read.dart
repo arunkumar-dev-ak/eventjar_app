@@ -1,6 +1,5 @@
 import 'package:eventjar/controller/nfc_read/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/model/contact/nfc_contact_model.dart';
 import 'package:eventjar/page/nfc_read/nfc_read_bottom_control.dart';
 import 'package:eventjar/page/nfc_read/nfc_read_scanning_zone.dart';
 import 'package:flutter/material.dart';

@@ -49,7 +49,7 @@ class CheckoutPromoCodeSection extends GetView<CheckoutController> {
                     textCapitalization: TextCapitalization.characters,
                     decoration: InputDecoration(
                       hintText: "Enter promo code",
-                      errorText: hasError ? promo!.message : null,
+                      errorText: hasError ? promo.message : null,
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: 3.wp,
                         vertical: 1.2.hp,

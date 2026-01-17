@@ -31,25 +31,25 @@ class HomeController extends GetxController {
     onTabOpen();
   }
 
-  void debugScrollPositions() {
-    final positions = homeScrollController.positions;
-    print('🔍 ScrollController Positions (${positions.length}):');
+  // void debugScrollPositions() {
+  //   final positions = homeScrollController.positions;
+  //   print('🔍 ScrollController Positions (${positions.length}):');
 
-    for (int i = 0; i < positions.length; i++) {
-      final position = positions.elementAt(i);
-      print('  📍 Position $i:');
-      print('    - context: ${position.context}');
-      print('    - minScrollExtent: ${position.minScrollExtent}');
-      print('    - maxScrollExtent: ${position.maxScrollExtent}');
-      print('    - pixels: ${position.pixels}');
-      print('    - viewportDimension: ${position.viewportDimension}');
-      print('    - widget type: ${position.context.runtimeType}');
-    }
+  //   for (int i = 0; i < positions.length; i++) {
+  //     final position = positions.elementAt(i);
+  //     print('  📍 Position $i:');
+  //     print('    - context: ${position.context}');
+  //     print('    - minScrollExtent: ${position.minScrollExtent}');
+  //     print('    - maxScrollExtent: ${position.maxScrollExtent}');
+  //     print('    - pixels: ${position.pixels}');
+  //     print('    - viewportDimension: ${position.viewportDimension}');
+  //     print('    - widget type: ${position.context.runtimeType}');
+  //   }
 
-    if (positions.isEmpty) {
-      print('  ❌ NO ScrollPositions attached!');
-    }
-  }
+  //   if (positions.isEmpty) {
+  //     print('  ❌ NO ScrollPositions attached!');
+  //   }
+  // }
 
   void onTabOpen() {
     state.isLoading.value = true;
@@ -189,23 +189,34 @@ class HomeController extends GetxController {
     try {
       DateTime dateTime;
 
+      // Case 1: ISO string (2024-01-25T06:00:00Z)
       if (event.startTime.contains('T') || event.startTime.contains('Z')) {
         dateTime = DateTime.parse(event.startTime).toLocal();
-      } else {
-        final formattedDate = DateFormat('yyyy-MM-dd').format(event.startDate);
-        dateTime = DateTime.parse(
-          "$formattedDate ${event.startTime}:00",
+      }
+      // Case 2: HH:mm (06:00)
+      else {
+        final date = event.startDate as DateTime;
+        final parts = event.startTime.split(':');
+
+        dateTime = DateTime(
+          date.year,
+          date.month,
+          date.day,
+          int.parse(parts[0]),
+          int.parse(parts[1]),
         ).toLocal();
       }
 
-      final formattedDate =
-          '${event.startDate.day.toString().padLeft(2, '0')}-${event.startDate.month.toString().padLeft(2, '0')}-${event.startDate.year}';
+      // 📅 Jan 25, 2024
+      final formattedDate = DateFormat('MMM dd, yyyy').format(dateTime);
+
+      // ⏰ Uses your helper → respects 12/24h
       final formattedTime = formatTimeFromDateTime(dateTime, context);
 
-      return "$formattedDate • $formattedTime";
+      return '$formattedDate • $formattedTime';
     } catch (e) {
       LoggerService.loggerInstance.e('Date parse error: $e');
-      return "Invalid date";
+      return 'Invalid date';
     }
   }
 

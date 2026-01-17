@@ -68,7 +68,7 @@ class HomeAppBar extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Discover Events',
+                    'Discover Networking',
                     style: TextStyle(
                       fontSize: 8.sp,
                       color: Colors.white.withValues(alpha: 0.8),

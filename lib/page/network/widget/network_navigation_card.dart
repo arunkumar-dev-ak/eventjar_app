@@ -95,7 +95,7 @@ class NetworkNavigationCard extends StatelessWidget {
 
               /// Arrow
               Icon(
-                Icons.arrow_forward_ios,
+                isPrimary ? Icons.arrow_forward_ios : Icons.lock,
                 size: 14,
                 color: const Color(0xFF5A7FCB),
               ),

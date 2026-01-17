@@ -1,6 +1,5 @@
 import 'package:eventjar/controller/add_contact/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

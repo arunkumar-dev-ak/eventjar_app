@@ -1,4 +1,3 @@
-import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/qr_contact_model.dart';
 import 'package:get/get.dart';
 

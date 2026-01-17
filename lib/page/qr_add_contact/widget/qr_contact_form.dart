@@ -5,7 +5,6 @@ import 'package:eventjar/page/qr_add_contact/widget/qr_section_label.dart';
 import 'package:eventjar/page/qr_add_contact/widget/qr_tag_selector.dart';
 import 'package:eventjar/page/qr_add_contact/widget/qr_text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class QrContactForm extends GetView<QrAddContactController> {
@@ -13,8 +12,6 @@ class QrContactForm extends GetView<QrAddContactController> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

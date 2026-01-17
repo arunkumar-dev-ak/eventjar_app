@@ -11,8 +11,8 @@ Widget buildPhysicalEventCard(EventInfo eventInfo) {
         _infoRow(Icons.apartment, "Venue", eventInfo.venue!),
         Divider(height: 3.hp, color: Colors.grey.shade300),
       ],
-      if (eventInfo.address != null && eventInfo.address!.isNotEmpty) ...[
-        _infoRow(Icons.home, "Address", eventInfo.address!),
+      if (eventInfo.address.isNotEmpty) ...[
+        _infoRow(Icons.home, "Address", eventInfo.address),
         Divider(height: 3.hp, color: Colors.grey.shade300),
       ],
       _infoRow(

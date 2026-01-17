@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/controller/event_info/controller.dart';
@@ -8,7 +7,6 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:eventjar/model/event_info/event_info_media_extension_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -90,7 +88,7 @@ class EventInfoAppBar extends GetView<EventInfoController> {
     );
   }
 
-  /// ✅ Main share entry point
+  // Main share entry point
   Future<void> _showNativeShareSheet() async {
     final eventInfo = controller.state.eventInfo.value;
     if (eventInfo == null) return;
@@ -153,8 +151,6 @@ $dateTimeLocation
   }
 
   String _formatEventDateTimeForShare(EventInfo eventInfo) {
-    if (eventInfo.startDate == null) return 'Date TBA';
-
     final months = [
       'Jan',
       'Feb',
@@ -171,31 +167,17 @@ $dateTimeLocation
     ];
 
     // Start date
-    final start = eventInfo.startDate!;
+    final start = eventInfo.startDate;
     final startDateStr =
         '${start.day} ${months[start.month - 1]}, ${start.year}';
 
     // Start time
     String startTimeStr = 'Time TBA';
-    if (eventInfo.startTime != null && eventInfo.startTime!.isNotEmpty) {
-      startTimeStr = controller.generateDateTimeAndFormatTime(
-        eventInfo.startTime!,
-        Get.context!,
-      );
-    }
 
-    // End time (optional)
-    // String endTimeStr = '';
-    // if (eventInfo.endTime != null && eventInfo.endTime!.isNotEmpty) {
-    //   endTimeStr = controller.generateDateTimeAndFormatTime(
-    //     eventInfo.endTime!,
-    //     Get.context!,
-    //   );
-    // }
-
-    // final timeDisplay = endTimeStr.isNotEmpty
-    //     ? '$startTimeStr – $endTimeStr IST'
-    //     : '$startTimeStr IST';
+    startTimeStr = controller.generateDateTimeAndFormatTime(
+      eventInfo.startTime,
+      Get.context!,
+    );
 
     final timeDisplay = '$startTimeStr IST';
 
@@ -206,34 +188,7 @@ $dateTimeLocation
     return '📅 $startDateStr at $timeDisplay | $location';
   }
 
-  // Format date
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'Date TBA';
-
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-
-    return '${date.day} ${months[date.month - 1]}';
-  }
-
-  // Format price
-  String _formatPrice(EventInfo eventInfo) {
-    return eventInfo.isPaid ? '\$${eventInfo.ticketPrice ?? 'Paid'}' : 'FREE';
-  }
-
-  /// ✅ Action button builder
+  // Action button builder
   Widget _buildActionButton({
     required IconData icon,
     required VoidCallback onTap,

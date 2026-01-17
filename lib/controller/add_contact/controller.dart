@@ -4,7 +4,6 @@ import 'package:eventjar/controller/add_contact/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_tag_model.dart';
 import 'package:eventjar/model/contact/nfc_contact_model.dart';

@@ -11,7 +11,7 @@ class RefreshTokenResponse {
         refreshToken: json['refreshToken'],
       );
     } catch (e) {
-      throw Exception('Error in LoginResponse: $e');
+      throw Exception('Error in RefreshTokenResponse: $e');
     }
   }
 

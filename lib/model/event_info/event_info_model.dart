@@ -1,5 +1,4 @@
 import 'package:eventjar/global/utils/helpers.dart';
-import 'package:eventjar/logger_service.dart';
 
 class EventInfo {
   // Core - Required non-null from Prisma
@@ -224,7 +223,9 @@ class EventInfo {
       allowMultipleTickets: json['allowMultipleTickets'] ?? false,
       maxTicketsPerUser: json['maxTicketsPerUser'] ?? 1,
       badgeRequirementEnabled: json['badgeRequirementEnabled'] ?? false,
-      requiredBadgeId: List<String>.from(json['requiredBadgeId'] ?? []),
+      requiredBadgeId: json['requiredBadgeId'] != null
+          ? List<String>.from(json['requiredBadgeId'])
+          : [],
       agenda: json['agenda'] ?? [],
       media: (json['media'] as List? ?? [])
           .map((e) => Media.fromJson(e))

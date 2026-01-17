@@ -41,6 +41,7 @@ class UserProfileController extends GetxController {
       final response = await UserProfileApi.fetchDeletionAccountRequest();
       state.deleteAccountResponse.value = response;
     } catch (err) {
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
 
@@ -62,14 +63,24 @@ class UserProfileController extends GetxController {
     }
   }
 
-  void checkPopupView() {
-    final deleteResponse = state.deleteAccountResponse.value;
+  bool get isAccountDeleted {
+    final response = state.deleteAccountResponse.value;
+    if (response?.data.deletedAt != null) return true;
+    return false;
+  }
 
-    if (deleteResponse != null &&
-        deleteResponse.data.hasPendingDeletion == true) {
+  bool get hasPendingDeletion {
+    final response = state.deleteAccountResponse.value;
+    return response?.data.hasPendingDeletion == true;
+  }
+
+  void checkPopupView() {
+    if (isAccountDeleted) {
+      showDeletedAccountDialog(this);
+    } else if (hasPendingDeletion) {
       userProfileShowDeleteAccountDialog(this, isReactivate: true);
     } else {
-      userProfileShowDeleteAccountDialog(this);
+      userProfileShowDeleteAccountDialog(this, isReactivate: false);
     }
   }
 
@@ -147,8 +158,6 @@ class UserProfileController extends GetxController {
           UserStore.to.clearStore();
           dashboardController.state.selectedIndex.value = 0;
         }
-
-        Get.back();
       }
     } catch (err) {
       if (err is DioException) {
@@ -373,7 +382,7 @@ class UserProfileController extends GetxController {
 
   @override
   void onClose() {
-    passwordController.dispose();
+    // passwordController.dispose();
     super.onClose();
   }
 }

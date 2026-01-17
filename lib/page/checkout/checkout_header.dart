@@ -85,9 +85,7 @@ Widget buildCheckoutEventInfo(EventInfo eventInfo, BuildContext context) {
           // Date & Time
           _buildInfoRow(
             Icons.calendar_today,
-            eventInfo.startTime != null && eventInfo.endTime != null
-                ? controller.formatEventDateTimeForHome(eventInfo, context)
-                : "Date and time to be announced",
+            controller.formatEventDateTimeForHome(eventInfo, context),
             Colors.blue.shade400,
           ),
           SizedBox(height: 1.hp),
@@ -104,7 +102,7 @@ Widget buildCheckoutEventInfo(EventInfo eventInfo, BuildContext context) {
   );
 }
 
-Widget _buildSimpleTag(String label) {
+Widget buildSimpleTag(String label) {
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 2.5.wp, vertical: 0.5.hp),
     decoration: BoxDecoration(
@@ -124,7 +122,7 @@ Widget _buildSimpleTag(String label) {
 }
 
 /*----- Tags ------*/
-Widget _buildEventModeTag(String mode) {
+Widget buildEventModeTag(String mode) {
   Color bgColor;
   Color borderColor;
   Color textColor;

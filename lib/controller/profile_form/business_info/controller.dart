@@ -20,7 +20,6 @@ class BusinessInfoFormController extends GetxController {
   late String? _originalBusinessEmail;
   late String? _originalBusinessPhone;
   late String? _originalBusinessAddress;
-  late String? _originalYearsInBusiness;
 
   final businessNameController = TextEditingController();
   final businessWebsiteController = TextEditingController();
@@ -86,7 +85,6 @@ class BusinessInfoFormController extends GetxController {
     _originalBusinessEmail = extended?.businessEmail;
     _originalBusinessPhone = extended?.businessPhone;
     _originalBusinessAddress = profile.location;
-    _originalYearsInBusiness = extended?.yearsInBusiness?.toString();
 
     // Populate form controllers
     businessNameController.text = _originalBusinessName ?? '';

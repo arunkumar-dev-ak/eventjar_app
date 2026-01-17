@@ -1,6 +1,5 @@
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/user_profile/user_profile_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,8 +9,6 @@ Widget userProfileBuildBusinessInfo() {
 
   final user = controller.state.userProfile.value;
   final extended = user?.extendedProfile;
-
-  final years = extended?.yearsInBusiness;
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,

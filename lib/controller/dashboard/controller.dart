@@ -11,12 +11,24 @@ import 'package:get/get.dart';
 class DashboardController extends GetxController {
   var appBarTitle = "EventJar";
   final state = DashboardState();
+  DateTime lastBackPressed = DateTime.now();
 
   RxBool get isLoggedIn => UserStore.to.isLoginReactive;
 
   void onInint() {
     state.selectedIndex.value = 0;
     super.onInit();
+  }
+
+  bool shouldExit() {
+    final now = DateTime.now();
+    final difference = now.difference(lastBackPressed);
+
+    if (difference > const Duration(seconds: 2)) {
+      lastBackPressed = now;
+      return false;
+    }
+    return true;
   }
 
   void popAndMoveToTicketPage() {

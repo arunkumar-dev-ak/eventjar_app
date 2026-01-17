@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:eventjar/controller/my_qr/state.dart';
 import 'package:eventjar/global/store/user_store.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/services/encryption_service.dart';
 import 'package:flutter/material.dart';

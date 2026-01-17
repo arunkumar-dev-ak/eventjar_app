@@ -21,9 +21,10 @@ class DeleteRequestResponse {
 class DeleteRequestData {
   final bool hasPendingDeletion;
   final String message;
-  final String? cancelledAt;
-  final String? requestedAt;
-  final String? scheduledFor;
+  final DateTime? cancelledAt;
+  final DateTime? requestedAt;
+  final DateTime? scheduledFor;
+  final DateTime? deletedAt;
   final int? remainingDays;
   final String? reason;
 
@@ -31,6 +32,7 @@ class DeleteRequestData {
     required this.hasPendingDeletion,
     required this.message,
     this.cancelledAt,
+    this.deletedAt,
     this.requestedAt,
     this.scheduledFor,
     this.remainingDays,
@@ -42,9 +44,18 @@ class DeleteRequestData {
       return DeleteRequestData(
         hasPendingDeletion: json['hasPendingDeletion'] ?? false,
         message: json['message'] ?? '',
-        cancelledAt: json['cancelledAt'],
-        requestedAt: json['requestedAt'],
-        scheduledFor: json['scheduledFor'],
+        cancelledAt: json['cancelledAt'] != null
+            ? DateTime.parse(json['cancelledAt'])
+            : null,
+        requestedAt: json['requestedAt'] != null
+            ? DateTime.parse(json['requestedAt'])
+            : null,
+        scheduledFor: json['scheduledFor'] != null
+            ? DateTime.parse(json['scheduledFor'])
+            : null,
+        deletedAt: json['deletedAt'] != null
+            ? DateTime.parse(json['deletedAt'])
+            : null,
         remainingDays: json['remainingDays'],
         reason: json['reason'],
       );
@@ -57,6 +68,7 @@ class DeleteRequestData {
     'hasPendingDeletion': hasPendingDeletion,
     'message': message,
     'cancelledAt': cancelledAt,
+    'deletedAt': deletedAt,
     'requestedAt': requestedAt,
     'scheduledFor': scheduledFor,
     'remainingDays': remainingDays,

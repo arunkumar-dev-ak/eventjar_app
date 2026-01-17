@@ -105,7 +105,9 @@ class ConnectionController extends GetxController {
       state.sent.value = response.sent;
       state.received.value = response.received;
 
-      LoggerService.loggerInstance.d("Connections fetched successfully");
+      LoggerService.loggerInstance.dynamic_d(
+        state.received.value?.requests.length,
+      );
     } catch (err) {
       if (err is DioException) {
         final statusCode = err.response?.statusCode;

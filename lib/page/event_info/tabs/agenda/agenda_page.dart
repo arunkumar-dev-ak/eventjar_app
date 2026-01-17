@@ -30,24 +30,18 @@ class AgendaPage extends StatelessWidget {
       String startTime = "N/A";
       String endTime = "N/A";
 
-      if (eventInfo.startTime != null && eventInfo.startTime!.isNotEmpty) {
-        startTime = controller.generateDateTimeAndFormatTime(
-          eventInfo.startTime!,
-          context,
-        );
-      }
+      startTime = controller.generateDateTimeAndFormatTime(
+        eventInfo.startTime,
+        context,
+      );
 
-      if (eventInfo.endTime != null && eventInfo.endTime!.isNotEmpty) {
-        endTime = controller.generateDateTimeAndFormatTime(
-          eventInfo.endTime!,
-          context,
-        );
-      }
+      endTime = controller.generateDateTimeAndFormatTime(
+        eventInfo.endTime,
+        context,
+      );
 
       // Format event date for header display
-      final eventDate = eventInfo.startDate != null
-          ? DateFormat('MMMM d, yyyy').format(eventInfo.startDate!)
-          : 'Date TBA';
+      final eventDate = DateFormat('MMMM d, yyyy').format(eventInfo.startDate);
       final eventTimeRange = "$startTime - $endTime";
 
       return Padding(
@@ -69,7 +63,7 @@ class AgendaPage extends StatelessWidget {
               if (agendaItem['startTime'] != null &&
                   agendaItem['startTime'].isNotEmpty) {
                 agendaStartTime = controller.generateDateTimeAndFormatTime(
-                  eventInfo.startTime!,
+                  eventInfo.startTime,
                   context,
                 );
               }
@@ -77,7 +71,7 @@ class AgendaPage extends StatelessWidget {
               if (agendaItem['endTime'] != null &&
                   agendaItem['endTime']!.isNotEmpty) {
                 agendaEndTime = controller.generateDateTimeAndFormatTime(
-                  eventInfo.endTime!,
+                  eventInfo.endTime,
                   context,
                 );
               }

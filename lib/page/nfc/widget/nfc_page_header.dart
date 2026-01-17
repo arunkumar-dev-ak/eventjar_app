@@ -61,7 +61,6 @@ class _StatusBadge extends GetView<NfcController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final lastStatus = controller.state.nfcStatus.value;
       final nfcStatusText = controller.getNfcStatusText();
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

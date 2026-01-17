@@ -1,9 +1,7 @@
 import 'package:eventjar/controller/qr_add_contact/controller.dart';
 import 'package:eventjar/controller/qr_dashboard/controller.dart';
 import 'package:eventjar/controller/qr_scan/state.dart';
-import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/logger_service.dart';
-import 'package:eventjar/model/auth/login_model.dart';
 import 'package:eventjar/model/contact/qr_contact_model.dart';
 import 'package:eventjar/services/encryption_service.dart';
 import 'package:get/get.dart';

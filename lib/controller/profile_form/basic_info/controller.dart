@@ -17,8 +17,6 @@ class BasicInfoFormController extends GetxController {
   // String? profileId;
 
   late String? _originalFullName;
-  late String? _originalUsername;
-  late String? _originalEmail;
   late String? _originalPhone;
   late String? _originalJobTitle;
 
@@ -52,8 +50,6 @@ class BasicInfoFormController extends GetxController {
 
     _originalFullName =
         profile.extendedProfile?.fullName ?? profile.name ?? profile.username;
-    _originalUsername = profile.username;
-    _originalEmail = profile.email;
     _originalPhone = profile.phone ?? profile.extendedProfile?.mobileNumber;
     _originalJobTitle = profile.extendedProfile?.position ?? profile.jobTitle;
 

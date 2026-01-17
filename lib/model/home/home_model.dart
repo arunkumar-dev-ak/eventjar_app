@@ -26,6 +26,7 @@ class EventResponse {
 class Event {
   final String id;
   final String title;
+  final String slug;
   final String description;
   final String? venue;
   final String? address;
@@ -53,6 +54,7 @@ class Event {
     required this.id,
     required this.title,
     required this.description,
+    required this.slug,
     this.venue,
     this.address,
     this.location,
@@ -81,6 +83,7 @@ class Event {
       return Event(
         id: json['id'],
         title: json['title'] ?? '',
+        slug: json['slug'],
         description: json['description'] ?? '',
         venue: json['venue'],
         address: json['address'],
@@ -106,9 +109,11 @@ class Event {
         featuredImageUrl: json['featuredImageUrl'],
         status: json['status'] ?? '',
         organizer: Organizer.fromJson(json['organizer']),
-        ticketTiers: (json['ticketTiers'] as List)
-            .map((t) => TicketTier.fromJson(t))
-            .toList(),
+        ticketTiers:
+            (json['ticketTiers'] as List?)
+                ?.map((t) => TicketTier.fromJson(t))
+                .toList() ??
+            [],
       );
     } catch (e) {
       throw Exception('Error in Event: $e');
@@ -118,6 +123,7 @@ class Event {
   Map<String, dynamic> toJson() => {
     'id': id,
     'title': title,
+    'slug': slug,
     'description': description,
     'venue': venue,
     'address': address,

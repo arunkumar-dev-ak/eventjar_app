@@ -97,91 +97,24 @@ class NetworkPage extends GetView<NetworkScreenController> {
                         NetworkNavigationCard(
                           icon: Icons.link,
                           label: "Connections",
-                          isPrimary: false,
+                          isPrimary: true,
                           onTap: controller.onConnectionTap,
                         ),
                         SizedBox(height: 0.8.hp),
 
-                        // NetworkNavigationCard(
-                        //   icon: Icons.event,
-                        //   label: "Campaigns",
-                        //   onTap: controller.onSchedulerTap,
-                        // ),
-                        // SizedBox(height: 0.8.hp),
-
-                        // NetworkNavigationCard(
-                        //   icon: Icons.notifications,
-                        //   label: "Reminders",
-                        //   onTap: controller.onReminderTap,
-                        // ),
-                        /// Blurred / disabled Campaign Card
-                        Stack(
-                          children: [
-                            NetworkNavigationCard(
-                              icon: Icons.event,
-                              label: "Campaigns",
-                              onTap: () {}, // Disabled
-                            ),
-                            Positioned.fill(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                    sigmaX: 5,
-                                    sigmaY: 5,
-                                  ),
-                                  child: Container(
-                                    color: Colors.white.withOpacity(0.4),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // Optional subtle lock icon instead of "Coming Soon"
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Icon(
-                                Icons.lock,
-                                color: Colors.grey.shade700,
-                                size: 16,
-                              ),
-                            ),
-                          ],
+                        NetworkNavigationCard(
+                          icon: Icons.schedule_rounded,
+                          label: "Scheduler",
+                          onTap: () {}, // Disabled
                         ),
+
                         SizedBox(height: 0.8.hp),
 
                         /// Blurred / disabled Reminders Card
-                        Stack(
-                          children: [
-                            NetworkNavigationCard(
-                              icon: Icons.notifications,
-                              label: "Reminders",
-                              onTap: () {}, // Disabled
-                            ),
-                            Positioned.fill(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                    sigmaX: 5,
-                                    sigmaY: 5,
-                                  ),
-                                  child: Container(
-                                    color: Colors.white.withOpacity(0.4),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Icon(
-                                Icons.lock,
-                                color: Colors.grey.shade700,
-                                size: 16,
-                              ),
-                            ),
-                          ],
+                        NetworkNavigationCard(
+                          icon: Icons.notifications,
+                          label: "Reminders",
+                          onTap: () {}, // Disabled
                         ),
 
                         SizedBox(height: 3.hp),

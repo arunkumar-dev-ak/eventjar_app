@@ -1,5 +1,4 @@
 import 'package:eventjar/controller/campaign/controller.dart';
-import 'package:eventjar/controller/connection/controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,17 +11,18 @@ class CampaignPage extends GetView<CampaignController> {
   }
 }
 
-class _ConnectionTab extends StatelessWidget {
+class ConnectionTab extends StatelessWidget {
   final String label;
   final int count;
   final bool selected;
   final VoidCallback onTap;
 
-  const _ConnectionTab({
+  const ConnectionTab({
     required this.label,
     required this.count,
     required this.selected,
     required this.onTap,
+    super.key,
   });
 
   @override

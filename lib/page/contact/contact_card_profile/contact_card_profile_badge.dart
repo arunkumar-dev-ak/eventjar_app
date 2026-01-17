@@ -63,7 +63,7 @@ class ContactCardProfileTags extends StatelessWidget {
     );
   }
 
-  Widget _buildOverdueBadge() {
+  Widget buildOverdueBadge() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       decoration: BoxDecoration(
