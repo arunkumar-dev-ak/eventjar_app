@@ -28,6 +28,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _onScroll();
     onTabOpen();
   }
 

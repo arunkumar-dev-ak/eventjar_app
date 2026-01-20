@@ -14,7 +14,12 @@ class PieChartModel {
 
 class PieChartStageDefinition {
   final String name;
+  final String fullName;
   final Color color;
 
-  PieChartStageDefinition({required this.name, required this.color});
+  PieChartStageDefinition({
+    required this.name,
+    required this.color,
+    required this.fullName,
+  });
 }

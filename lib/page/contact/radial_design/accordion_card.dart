@@ -1,6 +1,7 @@
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
+import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/page/contact/radial_design/contact_card_header.dart';
 import 'package:eventjar/page/contact/radial_design/expanded_content.dart';
 import 'package:eventjar/page/contact/radial_design/notes_section.dart';
@@ -8,7 +9,7 @@ import 'package:eventjar/page/contact/radial_design/radial_design_func.dart';
 import 'package:flutter/material.dart';
 
 Widget radialDesignBuildAccordionCard({
-  required Contact contact,
+  required MobileContact contact,
   required List<PieChartModel> stages,
   required bool isSmallScreen,
   required int index,
@@ -54,6 +55,7 @@ Widget radialDesignBuildAccordionCard({
       borderRadius: BorderRadius.circular(20),
       child: Column(
         children: [
+          //header
           ContactCardHeader(
             isSmallScreen: isSmallScreen,
             index: index,
@@ -61,6 +63,7 @@ Widget radialDesignBuildAccordionCard({
             contact: contact,
             stages: stages,
           ),
+          //body
           AnimatedCrossFade(
             firstChild: SizedBox.shrink(),
             secondChild: buildExpandedContent(

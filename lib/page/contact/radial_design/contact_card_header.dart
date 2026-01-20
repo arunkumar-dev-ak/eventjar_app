@@ -1,7 +1,7 @@
 import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
+import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/page/contact/radial_design/circular_pie_chart_painter.dart';
 import 'package:eventjar/page/contact/radial_design/radial_design_func.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +10,7 @@ import 'package:get/get.dart';
 class ContactCardHeader extends StatelessWidget {
   final bool isSmallScreen;
   final bool isExpanded;
-  final Contact contact;
+  final MobileContact contact;
   final int index;
   final List<PieChartModel> stages;
 
@@ -54,12 +54,12 @@ class ContactCardHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildNameWithCallButton(
-                        contact.name,
-                        contact,
-                        isExpanded,
-                        controller,
+                        name: contact.name,
+                        contact: contact,
+                        isExpanded: isExpanded,
+                        controller: controller,
+                        nameFontWeight: FontWeight.bold,
                       ),
-
                       SizedBox(height: 3),
                       _buildInfoRow(
                         Icons.email_outlined,
@@ -82,6 +82,7 @@ class ContactCardHeader extends StatelessWidget {
               if (isExpanded)
                 Expanded(
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: Column(
@@ -106,37 +107,10 @@ class ContactCardHeader extends StatelessWidget {
 
                             // Phone
                             if (contact.phone != null)
-                              GestureDetector(
-                                onTap: () async => {
-                                  await controller.launchPhoneCall(
-                                    contact.phone!,
-                                  ),
-                                },
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.phone_rounded,
-                                      size: 14,
-                                      color: Colors.green.shade600,
-                                    ),
-                                    SizedBox(width: 6),
-                                    Text(
-                                      contact.phone!,
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.green.shade700,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-
-                                    SizedBox(width: 6),
-                                    Icon(
-                                      Icons.open_in_new,
-                                      size: 12,
-                                      color: Colors.green.shade600,
-                                    ),
-                                  ],
-                                ),
+                              _buildInfoRow(
+                                Icons.phone_rounded,
+                                Colors.grey.shade600,
+                                contact.phone!,
                               ),
                           ],
                         ),
@@ -186,6 +160,36 @@ class ContactCardHeader extends StatelessWidget {
                               ],
                             ),
                           ),
+                          PopupMenuItem(
+                            value: ContactCardAction.mail,
+                            child: Row(
+                              children: [
+                                Icon(Icons.email, color: Colors.blue, size: 18),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Mail',
+                                  style: TextStyle(color: Colors.grey.shade800),
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: ContactCardAction.call,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.phone,
+                                  color: Colors.green,
+                                  size: 18,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Call',
+                                  style: TextStyle(color: Colors.grey.shade800),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                         onSelected: (action) => {
                           handleContactCardAction(
@@ -199,17 +203,6 @@ class ContactCardHeader extends StatelessWidget {
                     ],
                   ),
                 ),
-
-              // Expand/Collapse Icon
-              AnimatedRotation(
-                turns: isExpanded ? 0.5 : 0,
-                duration: Duration(milliseconds: 300),
-                child: Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  color: stageColor,
-                  size: 28,
-                ),
-              ),
             ],
           ),
         ),
@@ -244,20 +237,23 @@ Widget _buildInfoRow(IconData icon, Color iconColor, String value) {
 }
 
 //phone call
-Widget _buildNameWithCallButton(
-  String name,
-  Contact contact,
-  bool isExpanded,
-  ContactController controller,
-) {
+Widget _buildNameWithCallButton({
+  required String name,
+  required MobileContact contact,
+  required bool isExpanded,
+  required ContactController controller,
+  FontWeight nameFontWeight = FontWeight.normal,
+  double nameFontSize = 10.0,
+  double callFontSize = 7.0,
+}) {
   return Row(
     children: [
       Expanded(
         child: Text(
           name,
           style: TextStyle(
-            fontSize: 10.sp,
-            fontWeight: FontWeight.bold,
+            fontSize: nameFontSize.sp,
+            fontWeight: nameFontWeight,
             color: Colors.black87,
           ),
         ),
@@ -280,18 +276,13 @@ Widget _buildNameWithCallButton(
               Text(
                 "Call",
                 style: TextStyle(
-                  fontSize: 7.sp,
+                  fontSize: callFontSize.sp,
                   color: Colors.green,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ],
           ),
-          // child: NameWithActionButton(
-          //   name: contact.name,
-          //   isExpanded: isExpanded,
-          //   contact: contact,
-          // ),
         ),
       ),
     ],

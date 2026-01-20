@@ -15,49 +15,104 @@ class ContactCardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // ✅ Outer Obx
-      if (controller.state.isLoading.value) {
-        return ListView.builder(
-          padding: const EdgeInsets.only(top: 10),
-          itemCount: 3,
-          itemBuilder: (context, index) {
-            return buildShimmerPlaceholderForContactCard();
-          },
-        );
-      } else if (controller.state.contacts.isEmpty) {
-        return buildEmptyStateForContact();
-      }
-
-      final contacts = controller.state.contacts;
-      final expandedIndex = controller.state.expandedIndex.value;
       final screenWidth = MediaQuery.of(context).size.width;
       final isSmallScreen = screenWidth < 360;
 
-      return Container(
-        width: 100.wp,
-        height: 100.hp,
-        color: Colors.grey.shade200,
+      return Stack(
+        children: [
+          IgnorePointer(
+            ignoring: controller.state.isSearching.value,
+            child: controller.state.isLoading.value
+                ? ListView.builder(
+                    padding: const EdgeInsets.only(top: 10),
+                    itemCount: 3,
+                    itemBuilder: (context, index) {
+                      return buildShimmerPlaceholderForContactCard();
+                    },
+                  )
+                : controller.state.contacts.isEmpty
+                ? buildEmptyStateForContact()
+                : Container(
+                    width: 100.wp,
+                    height: 100.hp,
+                    color: Colors.grey.shade200,
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
+                      itemCount: controller.state.contacts.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == controller.state.contacts.length + 1) {
+                          return buildShimmerPlaceholderForContactCard();
+                        }
 
-        child: ListView.builder(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          itemCount: contacts.length,
-          itemBuilder: (context, index) {
-            final contact = contacts[index];
-            final isExpanded = expandedIndex == index;
+                        final contact = controller.state.contacts[index];
+                        final isExpanded =
+                            controller.state.expandedIndex.value == index;
 
-            return radialDesignBuildAccordionCard(
-              contact: contact,
-              stages: _buildStagesForContact(contact.stage.index),
-              isSmallScreen: isSmallScreen,
-              index: index,
-              isExpanded: isExpanded,
-              onToggleExpand: (int val) {
-                controller.state.expandedIndex.value = val;
-              },
-              onCall: () {},
-            );
-          },
-        ),
+                        return radialDesignBuildAccordionCard(
+                          contact: contact,
+                          stages: _buildStagesForContact(contact.stage.index),
+                          isSmallScreen: isSmallScreen,
+                          index: index,
+                          isExpanded: isExpanded,
+                          onToggleExpand: (int val) {
+                            controller.state.expandedIndex.value = val;
+                          },
+                          onCall: () {},
+                        );
+                      },
+                    ),
+                  ),
+          ),
+
+          if (controller.state.isSearching.value)
+            Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100, // Light grey background
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.grey.shade300, width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 12,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Circular loader
+                    SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        valueColor: AlwaysStoppedAnimation(
+                          Colors.grey.shade700,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    // Processing text
+                    Text(
+                      "Processing...",
+                      style: TextStyle(
+                        color: Colors.grey.shade800,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
       );
     });
   }

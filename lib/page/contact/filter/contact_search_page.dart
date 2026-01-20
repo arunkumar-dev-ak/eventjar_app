@@ -16,54 +16,72 @@ class ContactsSearchAndFilters extends GetView<ContactController> {
           child: Row(
             children: [
               // Expanded Search
-              Expanded(
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search contacts',
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade400,
-                        width: 1.5,
+              Obx(() {
+                return Expanded(
+                  child: TextField(
+                    controller: controller.searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search contacts',
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+                      suffixIcon: controller.state.searchQuery.value.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(
+                                Icons.clear,
+                                size: 20,
+                                color: Colors.grey[600],
+                              ),
+                              onPressed: () {
+                                controller.searchController.clear();
+                              },
+                            )
+                          : null,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade400,
+                          width: 1.5,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade400,
+                          width: 1.5,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: Colors.grey, width: 2),
                       ),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade400,
-                        width: 1.5,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey, width: 2),
-                    ),
+                    onChanged: (val) {
+                      controller.fetchContactsOnSearch();
+                    },
                   ),
-                ),
-              ),
-              SizedBox(width: 10),
+                );
+              }),
+              // SizedBox(width: 10),
               // Filter Icon
-              Material(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: controller.toggleFilterRow,
-                  child: Container(
-                    height: 2.hp,
-                    width: 2.hp,
-                    alignment: Alignment.center,
-                    child: Icon(Icons.tune, color: Colors.grey),
-                  ),
-                ),
-              ),
+              // Material(
+              //   color: Colors.white,
+              //   borderRadius: BorderRadius.circular(12),
+              //   child: InkWell(
+              //     borderRadius: BorderRadius.circular(12),
+              //     onTap: controller.toggleFilterRow,
+              //     child: Container(
+              //       height: 2.hp,
+              //       width: 2.hp,
+              //       alignment: Alignment.center,
+              //       child: Icon(Icons.tune, color: Colors.grey),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),

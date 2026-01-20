@@ -2,6 +2,7 @@ import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
+import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/page/contact/radial_design/circular_pie_chart_painter.dart';
 import 'package:eventjar/page/contact/radial_design/next_stage_action_button.dart';
 import 'package:eventjar/page/contact/radial_design/radial_design_func.dart';
@@ -9,242 +10,215 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 Widget buildExpandedContent(
-  Contact contact,
+  MobileContact contact,
   List<PieChartModel> stages,
   double chartSize,
   Color stageColor,
   int activeStageIndex,
   bool isSmallScreen,
 ) {
-  final adjustedChartSize = isSmallScreen ? 180.0 : 210.0;
+  final adjustedChartSize = isSmallScreen ? 250.0 : 270.0;
 
   return Container(
     padding: EdgeInsets.fromLTRB(12, 0, 12, 12),
     child: Column(
       children: [
-        Divider(color: Colors.grey.shade200),
-        SizedBox(height: 8),
+        SizedBox(height: 1.hp),
+        // Divider(color: Colors.grey.shade200),
+        SizedBox(
+          width: adjustedChartSize,
+          height: adjustedChartSize,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Pie Chart (background)
+              CustomPaint(
+                size: Size(adjustedChartSize, adjustedChartSize),
+                painter: CircularPieChartPainter(
+                  stages: stages,
+                  animationValue: 1.0,
+                  showText: true,
+                  activeStageIndex: contact.stage.index,
+                ),
+              ),
 
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Pie Chart
-            SizedBox(
-              width: adjustedChartSize,
-              height: adjustedChartSize,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Pie Chart (background)
-                  CustomPaint(
-                    size: Size(adjustedChartSize, adjustedChartSize),
-                    painter: CircularPieChartPainter(
-                      stages: stages,
-                      animationValue: 1.0,
-                      showText: true,
-                      activeStageIndex: contact.stage.index,
+              // Center Button
+              if (contact.stage.index < 4) // Not qualified
+                GestureDetector(
+                  onTap: () => _showTransitionDialog(contact: contact),
+                  child: Container(
+                    width: adjustedChartSize * 0.38,
+                    height: adjustedChartSize * 0.38,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: stageDefinitions[contact.stage.index].color
+                              .withAlpha(40),
+                          blurRadius: 12,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                      border: Border.all(
+                        color: stageDefinitions[contact.stage.index].color
+                            .withAlpha(80),
+                        width: 2,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.touch_app,
+                          size: isSmallScreen ? 18 : 22,
+                          color: stageDefinitions[contact.stage.index].color,
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          "Tap for",
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 6 : 7,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        Text(
+                          "Next Stage",
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 7 : 8,
+                            fontWeight: FontWeight.w700,
+                            color: stageDefinitions[contact.stage.index].color,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-
-                  // Center Button
-                  if (contact.stage.index < 4) // Not qualified
-                    GestureDetector(
-                      onTap: () => _showTransitionDialog(contact: contact),
-                      child: Container(
-                        width: adjustedChartSize * 0.38,
-                        height: adjustedChartSize * 0.38,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: stageDefinitions[contact.stage.index].color
-                                  .withAlpha(40),
-                              blurRadius: 12,
-                              spreadRadius: 2,
-                            ),
-                          ],
-                          border: Border.all(
-                            color: stageDefinitions[contact.stage.index].color
-                                .withAlpha(80),
-                            width: 2,
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.touch_app,
-                              size: isSmallScreen ? 18 : 22,
-                              color:
-                                  stageDefinitions[contact.stage.index].color,
-                            ),
-                            SizedBox(height: 2),
-                            Text(
-                              "Tap for",
-                              style: TextStyle(
-                                fontSize: isSmallScreen ? 6 : 7,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                            Text(
-                              "Next Stage",
-                              style: TextStyle(
-                                fontSize: isSmallScreen ? 7 : 8,
-                                fontWeight: FontWeight.w700,
-                                color:
-                                    stageDefinitions[contact.stage.index].color,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  else // Qualified Stage (index == 4)
-                    Container(
-                      width: adjustedChartSize * 0.38,
-                      height: adjustedChartSize * 0.38,
-                      decoration: BoxDecoration(
-                        gradient: RadialGradient(
-                          // ✅ Green gradient
-                          colors: [
-                            Colors.green.shade400,
-                            Colors.green.shade600,
-                            Colors.green.shade700,
-                          ],
-                        ),
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.green.withAlpha(60),
-                            blurRadius: 20,
-                            spreadRadius: 4,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.verified,
-                            size: isSmallScreen ? 22 : 26,
-                            color: Colors.white,
-                          ),
-                          SizedBox(height: 4),
-                          Text(
-                            "Qualified", // ✅ Success message
-                            style: TextStyle(
-                              fontSize: isSmallScreen ? 9 : 11,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ],
-                      ),
+                )
+              else // Qualified Stage (index == 4)
+                Container(
+                  width: adjustedChartSize * 0.38,
+                  height: adjustedChartSize * 0.38,
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      // ✅ Green gradient
+                      colors: [
+                        Colors.green.shade400,
+                        Colors.green.shade600,
+                        Colors.green.shade700,
+                      ],
                     ),
-                ],
-              ),
-            ),
-
-            SizedBox(width: 5.wp),
-
-            _buildNextActionColumn(
-              stageColor,
-              activeStageIndex,
-              contact.stage,
-              contact,
-            ),
-          ],
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.green.withAlpha(60),
+                        blurRadius: 20,
+                        spreadRadius: 4,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.verified,
+                        size: isSmallScreen ? 22 : 26,
+                        color: Colors.white,
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        "Qualified", // ✅ Success message
+                        style: TextStyle(
+                          fontSize: isSmallScreen ? 9 : 11,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
         ),
 
-        SizedBox(height: 12),
+        SizedBox(height: 3.hp),
+
+        //timeline
+        _buildNextActionRow(
+          stageColor,
+          activeStageIndex,
+          contact.stage,
+          contact,
+        ),
+
+        SizedBox(height: 1.hp),
       ],
     ),
   );
 }
 
-Widget _buildNextActionColumn(
+Widget _buildNextActionRow(
   Color stageColor,
   int activeStageIndex,
   ContactStage currentStage,
-  Contact contact,
+  MobileContact contact,
 ) {
   final isLastStage = activeStageIndex == stageDefinitions.length - 1;
 
-  return Expanded(
-    child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Column(
-        crossAxisAlignment: isLastStage
-            ? CrossAxisAlignment.center
-            : CrossAxisAlignment.start,
-        children: [
-          // Current Stage chip
-          _buildStageChip(
-            stageColor: stageColor,
-            label: stageDefinitions[activeStageIndex].name,
-            icon: Icons.check_circle,
-            isActive: true,
-          ),
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 4),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Current Stage chip (LEFT)
+        _buildStageChip(
+          stageColor: stageColor,
+          label: stageDefinitions[activeStageIndex].fullName,
+          icon: Icons.check_circle,
+          isActive: true,
+        ),
 
-          if (!isLastStage) ...[
-            const SizedBox(height: 8),
-
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 6,
-                    horizontal: 16,
-                  ),
-                  child: Container(
-                    height: 40,
-                    width: 2,
-                    color: Colors.grey.shade300,
-                  ),
-                ),
-
-                // Button for NEXT stage
-                NextStageActionButton(
-                  currentStage: currentStage,
-                  contact: contact,
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 6),
-
-            _buildStageChip(
-              stageColor: Colors.grey,
-              label: stageDefinitions[activeStageIndex + 1].name,
-              icon: null,
-              isActive: false,
-            ),
-          ],
-
-          if (isLastStage) ...[
-            const SizedBox(height: 8),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
-              child: Container(
-                height: 20,
-                width: 2,
+        if (!isLastStage) ...[
+          // Horizontal connector line
+          SizedBox(width: 12),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              // Background line (under button)
+              Container(
+                height: 2,
+                width: 80, // Extended to cover button width
                 color: Colors.grey.shade300,
               ),
-            ),
 
-            const SizedBox(height: 6),
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: _buildCompletedChip(),
-            ),
-          ],
+              // Next Stage button ON TOP of line
+              NextStageActionButton(
+                currentStage: currentStage,
+                contact: contact,
+              ),
+            ],
+          ),
+
+          SizedBox(width: 12),
+
+          // Next Stage chip (RIGHT)
+          _buildStageChip(
+            stageColor: Colors.grey,
+            label: stageDefinitions[activeStageIndex + 1].fullName,
+            icon: null,
+            isActive: false,
+          ),
         ],
-      ),
+
+        if (isLastStage) ...[
+          SizedBox(width: 12),
+          Container(height: 2, width: 30, color: Colors.green.shade300),
+          SizedBox(width: 8),
+          _buildCompletedChip(),
+        ],
+      ],
     ),
   );
 }
@@ -326,7 +300,7 @@ Widget _buildCompletedChip() {
   );
 }
 
-void _showTransitionDialog({required Contact contact}) {
+void _showTransitionDialog({required MobileContact contact}) {
   final ContactController controller = Get.find();
   final currentStage = contact.stage;
   switch (currentStage) {

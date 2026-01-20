@@ -1,19 +1,18 @@
 import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
+import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class NextStageActionButton extends StatelessWidget {
+class NextStageActionButton extends GetView<ContactController> {
   final ContactStage currentStage;
-  final Contact contact;
+  final MobileContact contact;
 
   const NextStageActionButton({
     super.key,
     required this.currentStage,
     required this.contact,
   });
-
-  ContactController get _controller => Get.find<ContactController>();
 
   IconData get _icon {
     switch (currentStage) {
@@ -44,16 +43,22 @@ class NextStageActionButton extends StatelessWidget {
   }
 
   void _handleTap() {
+    // Stop pulse → BIG pulse → restart
+    controller.heartbeatController.stop();
+    controller.heartbeatController.forward().then((_) {
+      controller.heartbeatController.repeat(reverse: true);
+    });
+
     switch (currentStage) {
       case ContactStage.newContact:
-        _controller.navigateToThankyouMessage(contact);
+        controller.navigateToThankyouMessage(contact);
         break;
       case ContactStage.followup24h:
       case ContactStage.followup7d:
-        _controller.navigateToScheduleMeeting(contact);
+        controller.navigateToScheduleMeeting(contact);
         break;
       case ContactStage.followup30d:
-        _controller.navigateToQualifyLead(contact);
+        controller.navigateToQualifyLead(contact);
         break;
       default:
         break;
@@ -61,54 +66,47 @@ class NextStageActionButton extends StatelessWidget {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _handleTap,
-      child: Material(
-        elevation: 2,
-        shadowColor: _color.withValues(alpha: 0.25),
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          padding: EdgeInsets.all(3),
-          decoration: BoxDecoration(
-            gradient: RadialGradient(
-              // ✅ DARK gradient background
-              colors: [
-                _color.withValues(alpha: 0.7),
-                _color.withValues(alpha: 0.5),
-                _color.withValues(alpha: 0.6),
-              ],
-              center: Alignment.center,
-              radius: 0.8,
-            ),
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: _color.withValues(alpha: 0.8),
-              width: 2.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: _color.withValues(alpha: 0.4),
-                blurRadius: 16,
-                offset: Offset(0, 6),
-                spreadRadius: 0,
+      child: AnimatedBuilder(
+        animation: controller.heartbeatController,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: controller.pulseAnimation.value,
+            child: Material(
+              elevation: 4 * controller.glowAnimation.value,
+              shadowColor: _color.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    colors: [
+                      _color.withValues(alpha: 0.8),
+                      _color.withValues(alpha: 0.4),
+                    ],
+                  ),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: _color.withValues(alpha: 1.0),
+                    width: 2.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _color.withValues(
+                        alpha: controller.glowAnimation.value,
+                      ),
+                      blurRadius: 20,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Icon(_icon, size: 20, color: Colors.white),
               ),
-              // Subtle inner glow
-              BoxShadow(
-                color: _color.withValues(alpha: 0.2),
-                blurRadius: 8,
-                offset: Offset(0, 2),
-                spreadRadius: -1,
-              ),
-            ],
-          ),
-          child: Icon(
-            _icon,
-            size: 20,
-            color: Colors.white.withValues(alpha: 0.95), // ✅ Crisp white
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

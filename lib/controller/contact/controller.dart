@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:confetti/confetti.dart';
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/contact_api/contact_api.dart';
@@ -7,8 +9,9 @@ import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
-import 'package:eventjar/model/contact/contact_model.dart';
+import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -17,6 +20,16 @@ class ContactController extends GetxController
   var appBarTitle = "Contact Page";
   final state = ContactState();
   late ConfettiController confettiController;
+  Timer? _debounceTimer;
+
+  late AnimationController heartbeatController;
+  late Animation<double> pulseAnimation;
+  late Animation<double> glowAnimation;
+
+  final TextEditingController searchController = TextEditingController();
+  ScrollController homeScrollController = ScrollController();
+  final int _currentPage = 1;
+  final int _limit = 10;
 
   @override
   void onInit() async {
@@ -33,6 +46,29 @@ class ContactController extends GetxController
       }
     }
 
+    _initHeartbeat();
+    searchController.addListener(() {
+      state.searchQuery.value = searchController.text;
+    });
+
+    searchController.addListener(() {
+      state.searchQuery.value = searchController.text;
+
+      _debounceTimer?.cancel();
+
+      _debounceTimer = Timer(Duration(milliseconds: 500), () {
+        if (searchController.text.isNotEmpty) {
+          state.isSearching.value = true;
+          fetchContactsOnSearch();
+        } else {
+          state.isSearching.value = false;
+          fetchContacts(); // Show all
+        }
+      });
+    });
+
+    _onScroll();
+
     confettiController = ConfettiController(duration: Duration(seconds: 3));
     // triggerConfetti();
 
@@ -41,59 +77,105 @@ class ContactController extends GetxController
     super.onInit();
   }
 
-  Future<void> fetchContacts() async {
+  void _onScroll() {
+    if (!homeScrollController.hasClients) return;
+
+    final maxScroll = homeScrollController.position.maxScrollExtent;
+    final currentScroll = homeScrollController.position.pixels;
+
+    const double prefetchThreshold = 200.0;
+    if (maxScroll - currentScroll <= prefetchThreshold) {
+      LoggerService.loggerInstance.dynamic_d("triggering");
+      if (state.meta.value != null &&
+          state.meta.value!.hasNext == true &&
+          !state.isFetching.value) {
+        fetchContactsOnScroll();
+      }
+    }
+  }
+
+  void _initHeartbeat() {
+    heartbeatController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 2000),
+    );
+
+    pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
+      CurvedAnimation(parent: heartbeatController, curve: Curves.easeInOut),
+    );
+
+    glowAnimation = Tween<double>(begin: 0.2, end: 0.3).animate(
+      CurvedAnimation(parent: heartbeatController, curve: Curves.easeInOut),
+    );
+
+    heartbeatController.repeat(reverse: true);
+  }
+
+  // enum ContactStage {
+  //   new
+  //   followup_24h
+  //   followup_7d
+  //   followup_30d
+  //   qualified
+  // }
+
+  String getEndpoint({bool onRefresh = false}) {
+    final searchQuery = state.searchQuery.value.trim();
+    final stageKey = state.selectedTab.value!.label;
+    LoggerService.loggerInstance.dynamic_d(stageKey);
+    final page = onRefresh ? _currentPage : _getNextPage();
+    final limit = onRefresh ? _limit : _getLimit();
+
+    var endpoint = '/mobile/contacts?page=$page&limit=$limit';
+
+    if (stageKey.isNotEmpty &&
+        stageKey != 'totalContacts' &&
+        stageKey != 'overdue') {
+      final encodedStage = Uri.encodeComponent(stageKey);
+      endpoint += '&stage=$encodedStage';
+    }
+
+    if (searchQuery.isNotEmpty) {
+      final encodedSearch = Uri.encodeComponent(searchQuery);
+      endpoint += '&search=$encodedSearch';
+    }
+
+    return endpoint;
+  }
+
+  int _getNextPage() {
+    if (state.meta.value == null) {
+      return 1;
+    }
+
+    final meta = state.meta.value!;
+    int nextPage = meta.page + 1;
+
+    if (nextPage > meta.totalPages) {
+      return meta.totalPages;
+    }
+
+    return nextPage;
+  }
+
+  int _getLimit() {
+    return state.meta.value?.limit ?? _limit;
+  }
+
+  Future<void> fetchContacts({bool fromSearch = false}) async {
     try {
-      final stageKey = state.selectedTab.value!.key;
-
-      state.isLoading.value = true;
-
-      ContactResponse response = await ContactApi.getEventList('/contacts');
-
-      final List<Contact> filteredContacts;
-
-      if (stageKey == "totalContacts") {
-        // No filter for total contacts
-        filteredContacts = response.contacts;
-      } else if (stageKey == "overdue") {
-        // Filter by isOverdue flag true
-        filteredContacts = response.contacts
-            .where((contact) => contact.isOverdue == true)
-            .toList();
+      if (fromSearch) {
+        state.isSearching.value = true;
       } else {
-        // Map stageKey string to ContactStage enum value
-        ContactStage? stageFilter;
-
-        switch (stageKey) {
-          case "new":
-            stageFilter = ContactStage.newContact;
-            break;
-          case "followup24h":
-            stageFilter = ContactStage.followup24h;
-            break;
-          case "followup7d":
-            stageFilter = ContactStage.followup7d;
-            break;
-          case "followup30d":
-            stageFilter = ContactStage.followup30d;
-            break;
-          case "qualified":
-            stageFilter = ContactStage.qualified;
-            break;
-          default:
-            stageFilter = null;
-        }
-
-        if (stageFilter != null) {
-          filteredContacts = response.contacts
-              .where((contact) => contact.stage == stageFilter)
-              .toList();
-        } else {
-          // Fallback to empty list or all contacts if unknown stageKey
-          filteredContacts = [];
-        }
+        state.isLoading.value = true;
       }
 
-      state.contacts.value = filteredContacts;
+      MobileContactResponse response = await ContactApi.getEventList(
+        getEndpoint(onRefresh: true),
+      );
+
+      state.contacts.value = response.data.contacts;
+      state.meta.value = response.data.pagination;
     } catch (err) {
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
@@ -114,7 +196,46 @@ class ContactController extends GetxController
         );
       }
     } finally {
+      if (state.isSearching.value) {
+        state.isSearching.value = false;
+      }
       state.isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchContactsOnSearch() async {
+    state.isSearching.value = true;
+    fetchContacts(fromSearch: true);
+    state.isSearching.value = false;
+  }
+
+  Future<void> fetchContactsOnScroll() async {
+    try {
+      MobileContactResponse response = await ContactApi.getEventList(
+        getEndpoint(),
+      );
+
+      state.contacts.value = response.data.contacts;
+      state.meta.value = response.data.pagination;
+    } catch (err) {
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return;
+        }
+
+        ApiErrorHandler.handleError(err, "Failed to load Contacts");
+      } else if (err is Exception) {
+        AppSnackbar.error(title: "Exception", message: err.toString());
+      } else {
+        AppSnackbar.error(
+          title: "Error",
+          message: "Something went wrong (${err.runtimeType})",
+        );
+      }
     }
   }
 
@@ -169,6 +290,26 @@ class ContactController extends GetxController
     }
   }
 
+  Future<void> launchEmail(String email) async {
+    final Uri launchUri = Uri(scheme: 'mailto', path: email);
+
+    try {
+      if (await canLaunchUrl(launchUri)) {
+        await launchUrl(launchUri);
+      } else {
+        AppSnackbar.warning(
+          title: "Failed",
+          message: 'Could not launch email for $email',
+        );
+      }
+    } catch (e) {
+      AppSnackbar.warning(
+        title: "Failed",
+        message: 'Could not launch email for $email',
+      );
+    }
+  }
+
   void toggleFilterRow() {
     state.showFilterRow.value = !state.showFilterRow.value;
   }
@@ -201,7 +342,7 @@ class ContactController extends GetxController
     );
   }
 
-  void navigateToUpdateContact(Contact contact) {
+  void navigateToUpdateContact(MobileContact contact) {
     Get.toNamed(RouteName.addContactPage, arguments: {contact})?.then(
       (result) async => {
         if (result == 'refresh') {await fetchContacts()},
@@ -209,7 +350,7 @@ class ContactController extends GetxController
     );
   }
 
-  void navigateToThankyouMessage(Contact contact) {
+  void navigateToThankyouMessage(MobileContact contact) {
     Get.toNamed(RouteName.thankYouMessagePage, arguments: contact)?.then((
       result,
     ) async {
@@ -219,7 +360,7 @@ class ContactController extends GetxController
     });
   }
 
-  void navigateToScheduleMeeting(Contact contact) {
+  void navigateToScheduleMeeting(MobileContact contact) {
     Get.toNamed(RouteName.scheduleMeetingPage, arguments: contact)?.then((
       result,
     ) async {
@@ -229,7 +370,7 @@ class ContactController extends GetxController
     });
   }
 
-  void navigateToQualifyLead(Contact contact) {
+  void navigateToQualifyLead(MobileContact contact) {
     Get.toNamed(RouteName.qualifyLeadPage, arguments: contact)?.then((
       result,
     ) async {
@@ -237,5 +378,12 @@ class ContactController extends GetxController
         await fetchContacts();
       }
     });
+  }
+
+  @override
+  void onClose() {
+    _debounceTimer?.cancel();
+    heartbeatController.dispose();
+    super.onClose();
   }
 }

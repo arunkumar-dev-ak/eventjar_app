@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/page/contact/contact_card_page.dart';
+import 'package:eventjar/page/contact/filter/contact_search_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -142,7 +143,7 @@ class ContactPage extends GetView<ContactController> {
           // SizedBox(height: 1.hp),
 
           // Search and Contact cards below
-          // ContactsSearchAndFilters(),
+          ContactsSearchAndFilters(),
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
@@ -165,17 +166,17 @@ int _getCountByKey(ContactAnalytics? analytics, String? key) {
   switch (key) {
     case 'new':
       return analytics.newCount;
-    case 'followup_24h':
+    case 'followup24h':
       return analytics.followup24h;
-    case 'followup_7d':
+    case 'followup7d':
       return analytics.followup7d;
-    case 'followup_30d':
+    case 'followup30d':
       return analytics.followup30d;
     case 'qualified':
       return analytics.qualified;
     case 'overdue':
       return analytics.overdue;
-    case 'total':
+    case 'totalContacts':
       return analytics.total;
     default:
       return 0;
