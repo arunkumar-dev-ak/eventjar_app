@@ -61,6 +61,9 @@ dependencies:
   nfc_manager_ndef: ^1.1.0
   razorpay_flutter: 1.4.0
   fluttertoast: ^8.0.7
+  firebase_messaging: ^16.0.0
+  firebase_core: ^4.0.0
+  flutter_local_notifications: ^19.4.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

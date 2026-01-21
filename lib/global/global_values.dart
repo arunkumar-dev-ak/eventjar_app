@@ -1,7 +1,10 @@
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/storage/storage_service.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+
+import '../notification_service.dart';
 
 class Global {
   static Future onInit() async {
@@ -12,8 +15,10 @@ class Global {
     // SystemChrome.setSystemUIOverlayStyle(
     //   SystemUiOverlayStyle(statusBarColor: Config.appBarColor),
     // );
+    await Firebase.initializeApp();
     await Get.putAsync<StorageService>(() => StorageService().init());
     Get.put<UserStore>(UserStore());
+    await NotificationService().init();
   }
 }
 
