@@ -4,12 +4,15 @@ import 'package:eventjar/controller/add_contact/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_tag_model.dart';
 import 'package:eventjar/model/contact/nfc_contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+
+import '../../model/card_info.dart';
 
 enum AddContactContactStage {
   newContact,
@@ -40,11 +43,15 @@ class AddContactController extends GetxController {
   void onInit() {
     final args = Get.arguments;
     Contact? contact;
-
+    LoggerService.loggerInstance.dynamic_d(args.runtimeType);
     // Handle NfcContactModel from NFC read
     if (args is NfcContactModel) {
       appBarTitle = "Add NFC Contact";
       handleNfcContact(args);
+    } else if (args is VisitingCardInfo) {
+      appBarTitle = "Add Card Contact";
+      handleVisitingCardContact(args);
+      LoggerService.loggerInstance.dynamic_d("inside card");
     }
     // Adjust based on how you pass the argument
     else if (args is Set<Contact> && args.isNotEmpty) {
@@ -52,12 +59,30 @@ class AddContactController extends GetxController {
       contact = args.first;
     } else if (args is Map && args.containsKey('contact')) {
       contact = args['contact'];
+    } else {
+      handleArgs(contact);
     }
 
-    handleArgs(contact);
     fetchTags();
 
     super.onInit();
+  }
+
+  void handleVisitingCardContact(VisitingCardInfo cardInfo) {
+    contactId = null; // Always new contact from NFC
+
+    nameController.text = cardInfo.name!;
+    phoneController.text = cardInfo.phone!;
+    emailController.text = cardInfo.email!;
+
+    // Set default stage for NFC contacts
+    state.selectedStage.value = {
+      'key': AddContactContactStage.newContact.toString(),
+      'value': 'New Contact',
+    };
+
+    state.selectedTags.clear();
+    formKey.currentState?.reset();
   }
 
   void handleNfcContact(NfcContactModel nfcContact) {

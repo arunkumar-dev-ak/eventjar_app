@@ -233,6 +233,10 @@ class HomeController extends GetxController {
     Get.toNamed(RouteName.qrDashboardPage);
   }
 
+  void navigateToScanPage() {
+    Get.toNamed(RouteName.scanCardPage);
+  }
+
   @override
   void onClose() {
     homeScrollController.removeListener(_onScroll);

@@ -48,6 +48,9 @@ import 'package:eventjar/routes/route_auth.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:get/get.dart';
 
+import '../controller/scan_card/binding.dart';
+import '../page/scan_card/scan_card.dart';
+
 class RoutePage {
   List<GetPage> getPage = [
     /*----- Auth page -----*/
@@ -127,6 +130,14 @@ class RoutePage {
       name: RouteName.qrDashboardPage,
       page: () => QrCodePage(),
       binding: QrDashboardBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+
+    /*----- Scan card page -----*/
+    GetPage(
+      name: RouteName.scanCardPage,
+      page: () => ScanCard(),
+      binding: ScanCardBinding(),
       middlewares: [LoginMiddleware()],
     ),
 

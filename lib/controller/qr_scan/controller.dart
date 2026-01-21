@@ -25,12 +25,10 @@ class QrScanScreenController extends GetxController
   }
 
   void onTabOpen() async {
-    if (scannerController == null) {
-      scannerController = MobileScannerController(
-        detectionSpeed: DetectionSpeed.noDuplicates,
-        facing: CameraFacing.back,
-      );
-    }
+    scannerController ??= MobileScannerController(
+      detectionSpeed: DetectionSpeed.noDuplicates,
+      facing: CameraFacing.back,
+    );
 
     checkCameraStatus();
   }

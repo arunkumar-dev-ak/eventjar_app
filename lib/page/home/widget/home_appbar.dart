@@ -184,12 +184,31 @@ class HomeAppBar extends StatelessWidget {
             ),
             _buildMenuItem(
               icon: Icons.qr_code_scanner_rounded,
-              title: 'Scanner',
+              title: 'QR Scanner',
               subtitle: 'Scan QR code to add contact',
               gradientColors: [Colors.purple.shade400, Colors.purple.shade600],
               onTap: () {
                 Navigator.pop(context);
                 controller.navigateToQrPage();
+              },
+            ),
+            Divider(
+              height: 1,
+              indent: 20,
+              endIndent: 20,
+              color: Colors.grey.shade200,
+            ),
+            _buildMenuItem(
+              icon: Icons.document_scanner,
+              title: 'Scan Visting card',
+              subtitle: 'Scan Visting card to add contact',
+              gradientColors: [
+                Colors.orangeAccent.shade400,
+                Colors.orangeAccent.shade700,
+              ],
+              onTap: () {
+                Navigator.pop(context);
+                controller.navigateToScanPage();
               },
             ),
             SizedBox(height: 3.hp),

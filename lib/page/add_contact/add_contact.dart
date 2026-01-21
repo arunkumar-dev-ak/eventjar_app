@@ -163,7 +163,7 @@ class AddContactPage extends GetView<AddContactController> {
                         child: Text(
                           'Clear',
                           style: TextStyle(
-                            fontSize: defaultFontSize,
+                            fontSize: 8.sp,
                             fontWeight: FontWeight.w600, // bolder text
                             letterSpacing: 0.5,
                           ),
@@ -207,8 +207,9 @@ class AddContactPage extends GetView<AddContactController> {
                                 )
                               : Text(
                                   controller.appBarTitle,
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: defaultFontSize,
+                                    fontSize: 8.sp,
                                     fontWeight: FontWeight.w700,
                                     letterSpacing: 0.5,
                                   ),
