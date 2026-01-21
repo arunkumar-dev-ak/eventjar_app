@@ -1,4 +1,3 @@
-import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,7 +37,6 @@ class SplashScreenController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    _startTime = DateTime.now();
     _setupAnimations();
     _startAnimations();
     _navigateToHome();
@@ -166,18 +164,8 @@ class SplashScreenController extends GetxController
   }
 
   void _navigateToHome() async {
-    // Run initialization in parallel with splash animation
-    await Global.onInit();
-
-    // Ensure minimum splash display time of 2 seconds for animation
-    final elapsed = DateTime.now().difference(_startTime).inMilliseconds;
-    final remaining = 2000 - elapsed;
-    if (remaining > 0) {
-      await Future.delayed(Duration(milliseconds: remaining));
-    }
-
-    Get.offNamed(RouteName.dashboardpage);
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      Get.offNamed(RouteName.dashboardpage);
+    });
   }
-
-  late DateTime _startTime;
 }
