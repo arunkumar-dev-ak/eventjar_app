@@ -1,20 +1,19 @@
-import 'package:country_code_picker/country_code_picker.dart';
 import 'package:eventjar/controller/add_contact/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/add_contact/add_contact_form_element.dart';
 import 'package:eventjar/page/add_contact/add_contact_multi_tag.dart';
 import 'package:eventjar/page/add_contact/add_contact_stage_dropdown.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_intl_phone_field/country_picker_dialog.dart';
 import 'package:get/get.dart';
+
+import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 
 class AddContactPage extends GetView<AddContactController> {
   const AddContactPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final defaultFontSize = 10.sp;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -28,159 +27,163 @@ class AddContactPage extends GetView<AddContactController> {
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
       body: GestureDetector(
-        onTap: () {
-          Get.focusScope?.unfocus();
-        },
+        onTap: () => Get.focusScope?.unfocus(),
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 3.hp),
+          padding: EdgeInsets.all(4.wp),
           child: Form(
             key: controller.formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Name
+                // Name ✅ Auto-validation
                 ContactFormElement(
                   controller: controller.nameController,
-                  label: 'Name',
-                  validator: (val) => val == null || val.trim().isEmpty
-                      ? 'Name is required'
-                      : null,
+                  label: 'Name *',
+                  validator: controller.validateName,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 SizedBox(height: 2.hp),
 
-                // Email
+                // Email ✅ Auto-validation
                 ContactFormElement(
                   controller: controller.emailController,
-                  label: 'Email',
+                  label: 'Email *',
                   keyboardType: TextInputType.emailAddress,
-                  validator: (val) {
-                    if (val == null || val.trim().isEmpty) {
-                      return 'Email is required';
-                    }
-                    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                    if (!emailRegex.hasMatch(val.trim())) {
-                      return 'Enter a valid email';
+                  validator: controller.validateEmail,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                ),
+                SizedBox(height: 2.hp),
+
+                // ✅ MOBILE: IntlPhoneField with ContactFormElement styling
+                IntlPhoneField(
+                  decoration: InputDecoration(
+                    labelText: 'Phone Number *',
+                    labelStyle: TextStyle(fontSize: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade400,
+                        width: 1.5,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: BorderSide(
+                        color: Colors.blue.shade700,
+                        width: 2.0,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 2.0,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                      borderSide: const BorderSide(
+                        color: Colors.redAccent,
+                        width: 2.0,
+                      ),
+                    ),
+                    errorStyle: const TextStyle(height: 0),
+                  ),
+                  pickerDialogStyle: PickerDialogStyle(
+                    countryNameStyle: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 10.sp,
+                    ),
+                    countryCodeStyle: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                    ),
+                  ),
+                  initialCountryCode:
+                      controller.state.selectedCountry.value.code,
+                  onChanged: (_) {},
+                  onCountryChanged: (country) {
+                    controller.state.selectedCountry.value = country;
+                  },
+                  controller: controller.phoneController,
+                  validator: (value) {
+                    if (value == null || !value.isValidNumber()) {
+                      return 'Invalid phone number';
                     }
                     return null;
                   },
-                ),
-                SizedBox(height: 2.hp),
-
-                // Phone
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // First container for CountryCodePicker
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade400),
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: CountryCodePicker(
-                        onChanged: (country) {
-                          controller.state.selectedCountryCode.value =
-                              country.dialCode ?? '+91';
-                        },
-                        initialSelection: 'IN',
-                        favorite: ['+91', 'IN'],
-                        showCountryOnly: false,
-                        showOnlyCountryWhenClosed: false,
-                        dialogBackgroundColor: Colors.white,
-                        textStyle: TextStyle(
-                          color: Colors.grey[800],
-                          fontSize: defaultFontSize,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    // Second container for Phone Number TextField
-                    Expanded(
-                      child: ContactFormElement(
-                        controller: controller.phoneController,
-                        label: 'Phone Number',
-                        keyboardType: TextInputType.phone,
-                        maxLength: 10,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(15),
-                        ],
-                        validator: (val) => val == null || val.trim().isEmpty
-                            ? 'Phone number is required'
-                            : null,
-                      ),
-                    ),
-                  ],
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
 
                 SizedBox(height: 2.hp),
 
-                // Stage dropdown widget
+                // Stage dropdown
                 ContactStageDropdown(),
                 SizedBox(height: 2.hp),
 
-                // Multi-select tags widget
+                // Tags
                 AddMultiSelectTagsInput(),
-
                 SizedBox(height: 2.hp),
 
-                // Notes (multiline)
+                // Notes
                 ContactFormElement(
                   controller: controller.notesController,
                   label: 'Notes',
                   maxLines: 4,
                   minLines: 3,
                 ),
-
                 SizedBox(height: 3.hp),
 
-                // Buttons row
+                // Submit
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: OutlinedButton(
-                        onPressed: controller.clearForm,
-                        style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 6.wp,
-                            vertical: 1.8.hp,
+                      child: Obx(
+                        () => OutlinedButton(
+                          onPressed: controller.state.isLoading.value
+                              ? null
+                              : controller.clearForm,
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 6.wp,
+                              vertical: 1.8.hp,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            side: BorderSide(
+                              color: Colors.blue.shade700,
+                              width: 2,
+                            ),
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.blue.shade700,
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              12,
-                            ), // smoother corners
-                          ),
-                          side: BorderSide(
-                            color: Colors.blue.shade700,
-                            width: 2,
-                          ),
-                          backgroundColor: Colors.white,
-                          foregroundColor:
-                              Colors.blue.shade700, // text and icon color
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          'Clear',
-                          style: TextStyle(
-                            fontSize: 8.sp,
-                            fontWeight: FontWeight.w600, // bolder text
-                            letterSpacing: 0.5,
+                          child: Text(
+                            controller.state.clearButtonTitle.value,
+                            style: TextStyle(
+                              fontSize: 8.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
                     ),
                     SizedBox(width: 3.wp),
+
+                    // Submit Button
                     Expanded(
-                      child: Obx(() {
-                        final isLoading = controller.state.isLoading.value;
-                        return ElevatedButton(
-                          onPressed: isLoading
-                              ? null
-                              : () {
-                                  Get.focusScope?.unfocus();
-                                  controller.submitForm(context);
-                                },
+                      child: Obx(
+                        () => ElevatedButton(
+                          onPressed: () {
+                            if (controller.state.isLoading.value) return;
+                            if (controller.formKey.currentState?.validate() ??
+                                false) {
+                              Get.focusScope?.unfocus();
+                              controller.submitForm(context);
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.symmetric(
                               horizontal: 6.wp,
@@ -189,17 +192,14 @@ class AddContactPage extends GetView<AddContactController> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            elevation: 5,
-                            shadowColor: Colors.blue.shade700.withValues(
-                              alpha: 0.5,
-                            ),
                             backgroundColor: Colors.blue.shade700,
                             foregroundColor: Colors.white,
+                            elevation: 5,
                           ),
-                          child: isLoading
+                          child: controller.state.isLoading.value
                               ? SizedBox(
-                                  height: defaultFontSize,
-                                  width: defaultFontSize,
+                                  height: 20,
+                                  width: 20,
                                   child: CircularProgressIndicator(
                                     color: Colors.white,
                                     strokeWidth: 2,
@@ -207,15 +207,13 @@ class AddContactPage extends GetView<AddContactController> {
                                 )
                               : Text(
                                   controller.appBarTitle,
-                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 8.sp,
                                     fontWeight: FontWeight.w700,
-                                    letterSpacing: 0.5,
                                   ),
                                 ),
-                        );
-                      }),
+                        ),
+                      ),
                     ),
                   ],
                 ),

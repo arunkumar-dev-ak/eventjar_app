@@ -99,7 +99,7 @@ class RoutePage {
       binding: ConnectionBinding(),
     ),
     GetPage(
-      name: RouteName.scheduleMeetingPage,
+      name: RouteName.schedulerPage,
       page: () => SchedulerPage(),
       binding: SchedulerBinding(),
     ),

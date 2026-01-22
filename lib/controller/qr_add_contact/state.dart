@@ -1,7 +1,7 @@
 import 'package:eventjar/model/contact/qr_contact_model.dart';
 import 'package:get/get.dart';
 
-class AddContactState {
+class QrContactState {
   final RxBool isLoading = false.obs;
 
   RxString selectedCountryCode = '+91'.obs;

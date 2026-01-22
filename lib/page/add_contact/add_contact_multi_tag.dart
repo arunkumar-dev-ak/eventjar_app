@@ -59,9 +59,7 @@ class AddMultiSelectTagsInput extends StatelessWidget {
                     SizedBox(width: 2.wp),
                     Expanded(
                       child: Text(
-                        controller.state.selectedTags.isEmpty
-                            ? 'Add tags'
-                            : 'Edit tags',
+                        'Add tags',
                         style: TextStyle(fontSize: 10.sp),
                       ),
                     ),
@@ -78,22 +76,26 @@ class AddMultiSelectTagsInput extends StatelessWidget {
             ),
           ),
 
-          /// Selected Tags
+          // Selected Tags
           Obx(
-            () => controller.state.selectedTags.isEmpty
+            () => controller.state.selectedTagsMap.isEmpty
                 ? const SizedBox.shrink()
                 : Padding(
                     padding: EdgeInsets.only(top: 2.hp),
                     child: Wrap(
                       spacing: 8,
                       runSpacing: 6,
-                      children: controller.state.selectedTags.map((tag) {
+                      children: controller.state.selectedTagsMap.values.map((
+                        tag,
+                      ) {
                         return Chip(
                           label: Text(tag, style: TextStyle(fontSize: 9.sp)),
                           backgroundColor: Colors.blue.shade50,
                           deleteIcon: const Icon(Icons.close, size: 16),
-                          onDeleted: () =>
-                              controller.state.selectedTags.remove(tag),
+                          onDeleted: () {
+                            final lowerKey = tag.toLowerCase();
+                            controller.state.selectedTagsMap.remove(lowerKey);
+                          },
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -108,9 +110,6 @@ class AddMultiSelectTagsInput extends StatelessWidget {
   }
 }
 
-/// ===============================
-/// Tag Search Bottom Sheet
-/// ===============================
 class TagSearchPopup extends StatelessWidget {
   const TagSearchPopup({super.key});
 
@@ -186,7 +185,100 @@ class TagSearchPopup extends StatelessWidget {
                 ),
               ),
 
-              // LIST — this is the magic
+              // ✅ CREATE NEW TAG SECTION (Always visible when typing)
+              Obx(() {
+                final searchText = controller.searchTagsController.text.trim();
+                final lowerSearch = searchText.toLowerCase();
+
+                final existsInFiltered = controller.state.filteredTags.any(
+                  (tag) => tag.toLowerCase() == lowerSearch,
+                );
+                final existsInSelected = controller.state.selectedTagsMap
+                    .containsKey(lowerSearch);
+
+                // ✅ 3 States:
+                if (searchText.isEmpty) {
+                  return const SizedBox.shrink(); // Hidden
+                } else if (existsInFiltered || existsInSelected) {
+                  // ✅ ALREADY CREATED - Show feedback
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50, // ✅ Green for success
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.green.shade200),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.check_circle,
+                          color: Colors.green.shade600,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            '"$searchText" is already created', // ✅ Clear feedback
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.green.shade800,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  // ✅ NEW TAG - Show create
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.blue.shade200),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '"$searchText" is not in the list',
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Get.focusScope?.unfocus();
+                            controller.createNewTag(searchText);
+                            controller.searchTagsController.clear();
+                            controller.filterTags("");
+                            Get.back();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade700,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text(
+                            'Create',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              }),
+
+              // Tags List
               Expanded(
                 child: Obx(() {
                   if (controller.state.isDropDownLoading.value) {
@@ -208,18 +300,7 @@ class TagSearchPopup extends StatelessWidget {
                             color: Colors.grey.shade400,
                           ),
                           const SizedBox(height: 12),
-                          Text('No tags found'),
-                          const SizedBox(height: 12),
-                          ElevatedButton(
-                            onPressed: () {
-                              Get.focusScope?.unfocus();
-                              controller.selectTag(searchText);
-                              controller.searchTagsController.clear();
-                              controller.filterTags("");
-                              Get.back();
-                            },
-                            child: Text('Create "$searchText"'),
-                          ),
+                          const Text('No tags found'),
                         ],
                       ),
                     );
@@ -230,26 +311,24 @@ class TagSearchPopup extends StatelessWidget {
                     itemCount: controller.state.filteredTags.length,
                     itemBuilder: (context, index) {
                       final tag = controller.state.filteredTags[index];
-                      final isSelected = controller.state.selectedTags.any(
-                        (e) => e.toLowerCase() == tag.toLowerCase(),
-                      );
 
-                      return ListTile(
-                        leading: Icon(
-                          isSelected
-                              ? Icons.check_circle
-                              : Icons.radio_button_unchecked,
-                          color: isSelected ? Colors.blue : Colors.grey,
-                        ),
-                        title: Text(tag),
-                        onTap: () {
-                          Get.focusScope?.unfocus();
-                          controller.selectTag(tag);
-                          controller.searchTagsController.clear();
-                          controller.filterTags("");
-                          Get.back();
-                        },
-                      );
+                      return Obx(() {
+                        final isSelected = controller.state.selectedTagsMap
+                            .containsKey(tag.toLowerCase());
+                        return CheckboxListTile(
+                          value: isSelected,
+                          onChanged: (value) {
+                            if (value == true) {
+                              controller.selectTag(tag);
+                            } else {
+                              controller.unSelectTag(tag);
+                            }
+                          },
+                          title: Text(tag),
+                          activeColor: Colors.blue.shade700,
+                          controlAffinity: ListTileControlAffinity.leading,
+                        );
+                      });
                     },
                   );
                 }),

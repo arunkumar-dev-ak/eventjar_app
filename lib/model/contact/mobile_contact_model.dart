@@ -52,6 +52,9 @@ class MobileContact {
   final String name;
   final String email;
   final String? phone;
+  final String? user1Id;
+  final String? user2Id;
+  final Map<String, dynamic>? customAttributes;
   final PhoneParsed? phoneParsed;
   final String? company;
   final String? position;
@@ -62,7 +65,6 @@ class MobileContact {
   final String? source;
   final String status;
   final DateTime? nextFollowUpDate;
-  final DateTime? stageEnteredAt;
   final DateTime createdAt;
   final DateTime updatedAt;
   final dynamic linkedUser;
@@ -72,8 +74,11 @@ class MobileContact {
     required this.id,
     required this.name,
     required this.email,
+    this.user1Id,
+    this.user2Id,
     this.phone,
     this.phoneParsed,
+    this.customAttributes,
     this.company,
     this.position,
     this.industry,
@@ -83,7 +88,6 @@ class MobileContact {
     this.source,
     required this.status,
     required this.nextFollowUpDate,
-    required this.stageEnteredAt,
     required this.createdAt,
     required this.updatedAt,
     this.linkedUser,
@@ -97,6 +101,11 @@ class MobileContact {
         name: json['name'],
         email: json['email'],
         phone: json['phone'],
+        user1Id: json['user1Id'],
+        customAttributes: json['customAttributes'] != null
+            ? Map<String, dynamic>.from(json['customAttributes'])
+            : null,
+        user2Id: json['user2Id'],
         phoneParsed: json['phoneParsed'] != null
             ? PhoneParsed.fromJson(json['phoneParsed'])
             : null,
@@ -108,8 +117,9 @@ class MobileContact {
         notes: json['notes'],
         source: json['source'],
         status: json['status'],
-        nextFollowUpDate: DateTime.parse(json['nextFollowUpDate']),
-        stageEnteredAt: DateTime.parse(json['stageEnteredAt']),
+        nextFollowUpDate: json['nextFollowUpDate'] != null
+            ? DateTime.parse(json['nextFollowUpDate'])
+            : null,
         createdAt: DateTime.parse(json['createdAt']),
         updatedAt: DateTime.parse(json['updatedAt']),
         linkedUser: json['linkedUser'],
@@ -126,6 +136,9 @@ class MobileContact {
     'name': name,
     'email': email,
     'phone': phone,
+    'user1Id': user1Id,
+    'user2Id': user2Id,
+    'customAttributes': customAttributes,
     'phoneParsed': phoneParsed?.toJson(),
     'company': company,
     'position': position,
@@ -136,7 +149,6 @@ class MobileContact {
     'source': source,
     'status': status,
     'nextFollowUpDate': nextFollowUpDate?.toIso8601String(),
-    'stageEnteredAt': stageEnteredAt?.toIso8601String(),
     'createdAt': createdAt.toIso8601String(),
     'updatedAt': updatedAt.toIso8601String(),
     'linkedUser': linkedUser,

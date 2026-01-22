@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/add_contact_api/add_contact_api.dart';
-import 'package:eventjar/controller/add_contact/state.dart';
+import 'package:eventjar/controller/qr_add_contact/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
@@ -20,7 +20,7 @@ enum AddContactContactStage {
 
 class QrAddContactController extends GetxController {
   var appBarTitle = "Add Contact";
-  final state = AddContactState();
+  final state = QrContactState();
 
   final formKey = GlobalKey<FormState>();
 

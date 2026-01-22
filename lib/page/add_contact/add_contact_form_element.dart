@@ -6,6 +6,7 @@ class ContactFormElement extends StatelessWidget {
   final String label;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final AutovalidateMode? autovalidateMode; // ✅ ADDED
   final int? maxLines;
   final int? minLines;
   final List<TextInputFormatter>? inputFormatters;
@@ -18,6 +19,7 @@ class ContactFormElement extends StatelessWidget {
     required this.label,
     this.keyboardType,
     this.validator,
+    this.autovalidateMode, // ✅ ADDED
     this.maxLines = 1,
     this.minLines,
     this.maxLength,
@@ -32,16 +34,17 @@ class ContactFormElement extends StatelessWidget {
     final defaultFontSize = labelStyle?.fontSize ?? 14.0;
     final List<TextInputFormatter> formatters = inputFormatters ?? [];
     if (maxLength != null) {
-      formatters.add(LengthLimitingTextInputFormatter(maxLength));
+      formatters.add(LengthLimitingTextInputFormatter(maxLength!));
     }
 
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       validator: validator,
+      autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
       maxLines: maxLines,
       minLines: minLines,
-      inputFormatters: inputFormatters,
+      inputFormatters: formatters,
       obscureText: obscureText,
       style: TextStyle(fontSize: defaultFontSize),
       decoration: InputDecoration(

@@ -1,6 +1,5 @@
 import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/page/contact/contact_card_empty_page.dart';
 import 'package:eventjar/page/contact/contact_card_shimmer.dart';
@@ -113,26 +112,26 @@ class ContactCardPage extends StatelessWidget {
       width: 100.wp,
       height: 100.hp,
       color: Colors.grey.shade200,
-      child: Obx(() {
-        return ListView.builder(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          controller: controller.contactScrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: haveNextPage
-              ? controller.state.contacts.length + 1
-              : controller.state.contacts.length,
-          itemBuilder: (context, index) {
-            // Pagination loader
-            if (index >= controller.state.contacts.length) {
-              return buildShimmerPlaceholderForContactCard(
-                isBottomNeedToLoad: false,
-              );
-            }
+      child: ListView.builder(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        controller: controller.contactScrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: haveNextPage
+            ? controller.state.contacts.length + 1
+            : controller.state.contacts.length,
+        itemBuilder: (context, index) {
+          // Pagination loader
+          if (index >= controller.state.contacts.length) {
+            return buildShimmerPlaceholderForContactCard(
+              isBottomNeedToLoad: false,
+            );
+          }
 
-            // Contact card
-            final contact = controller.state.contacts[index];
+          // Contact card
+          final contact = controller.state.contacts[index];
+
+          return Obx(() {
             final isExpanded = controller.state.expandedIndex.value == index;
-
             return radialDesignBuildAccordionCard(
               contact: contact,
               stages: _buildStagesForContact(contact.stage.index),
@@ -146,9 +145,9 @@ class ContactCardPage extends StatelessWidget {
                 // controller.launchPhoneCall(contact.phoneNumber ?? '');
               },
             );
-          },
-        );
-      }),
+          });
+        },
+      ),
     );
   }
 }

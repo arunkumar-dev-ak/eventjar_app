@@ -173,11 +173,13 @@ Widget _buildNextActionRow(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Current Stage chip (LEFT)
-        _buildStageChip(
-          stageColor: stageColor,
-          label: stageDefinitions[activeStageIndex].fullName,
-          icon: Icons.check_circle,
-          isActive: true,
+        Expanded(
+          child: _buildStageChip(
+            stageColor: stageColor,
+            label: stageDefinitions[activeStageIndex].fullName,
+            icon: Icons.check_circle,
+            isActive: true,
+          ),
         ),
 
         if (!isLastStage) ...[
@@ -187,16 +189,20 @@ Widget _buildNextActionRow(
             alignment: Alignment.center,
             children: [
               // Background line (under button)
-              Container(
-                height: 2,
-                width: 80, // Extended to cover button width
-                color: Colors.grey.shade300,
+              Expanded(
+                child: Container(
+                  height: 2,
+                  width: 80, // Extended to cover button width
+                  color: Colors.grey.shade300,
+                ),
               ),
 
               // Next Stage button ON TOP of line
-              NextStageActionButton(
-                currentStage: currentStage,
-                contact: contact,
+              Expanded(
+                child: NextStageActionButton(
+                  currentStage: currentStage,
+                  contact: contact,
+                ),
               ),
             ],
           ),
@@ -216,7 +222,7 @@ Widget _buildNextActionRow(
           SizedBox(width: 12),
           Container(height: 2, width: 30, color: Colors.green.shade300),
           SizedBox(width: 8),
-          _buildCompletedChip(),
+          Expanded(child: _buildCompletedChip()),
         ],
       ],
     ),
@@ -231,7 +237,6 @@ Widget _buildStageChip({
 }) {
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-    // Remove constraints completely - fully dynamic
     decoration: BoxDecoration(
       gradient: isActive
           ? LinearGradient(
@@ -250,12 +255,14 @@ Widget _buildStageChip({
       ),
     ),
     child: Row(
-      mainAxisSize: MainAxisSize.min, // Key: takes only needed width
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (icon != null) ...[
           Icon(icon, size: 12, color: stageColor),
           SizedBox(width: 3),
         ],
+        // ✅ SINGLE Flexible for entire content
         Flexible(
           child: Text(
             label,
@@ -264,8 +271,9 @@ Widget _buildStageChip({
               fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
               color: isActive ? stageColor : Colors.grey.shade700,
             ),
-            overflow: TextOverflow.ellipsis,
             maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
           ),
         ),
       ],
@@ -284,15 +292,21 @@ Widget _buildCompletedChip() {
     ),
     child: Row(
       mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(Icons.verified, size: 14, color: Colors.green),
         SizedBox(width: 4),
-        Text(
-          "Completed",
-          style: TextStyle(
-            fontSize: 11,
-            color: Colors.green,
-            fontWeight: FontWeight.w600,
+        Flexible(
+          child: Text(
+            "Completed",
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.green,
+              fontWeight: FontWeight.w600,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
           ),
         ),
       ],

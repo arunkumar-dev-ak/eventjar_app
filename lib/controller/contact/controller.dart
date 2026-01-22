@@ -114,7 +114,7 @@ class ContactController extends GetxController
 
     var endpoint = '/mobile/contacts?page=$page&limit=$limit';
 
-    if (stageKey.isNotEmpty && stageKey != 'overdue') {
+    if (stageKey.isNotEmpty) {
       final encodedStage = Uri.encodeComponent(stageKey);
       endpoint += '&stage=$encodedStage';
     }

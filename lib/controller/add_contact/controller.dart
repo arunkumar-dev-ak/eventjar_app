@@ -12,7 +12,7 @@ import 'package:eventjar/model/contact/nfc_contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-
+import 'package:flutter_intl_phone_field/countries.dart';
 import '../../model/card_info.dart';
 
 enum AddContactContactStage {
@@ -61,6 +61,7 @@ class AddContactController extends GetxController {
 
   void handleVisitingCardContact(VisitingCardInfo cardInfo) {
     contactId = null; // Always new contact from NFC
+    state.clearButtonTitle.value = "Reset";
 
     nameController.text = cardInfo.name!;
     phoneController.text = cardInfo.phone!;
@@ -72,13 +73,13 @@ class AddContactController extends GetxController {
       'value': 'New Contact',
     };
 
-    state.selectedTags.clear();
+    state.selectedTagsMap.clear();
     formKey.currentState?.reset();
   }
 
   void handleNfcContact(NfcContactModel nfcContact) {
     contactId = null; // Always new contact from NFC
-
+    state.clearButtonTitle.value = "Reset";
     nameController.text = nfcContact.name;
     phoneController.text = nfcContact.phone;
     emailController.text = nfcContact.email;
@@ -90,12 +91,13 @@ class AddContactController extends GetxController {
       'value': 'New Contact',
     };
 
-    state.selectedTags.clear();
+    state.selectedTagsMap.clear();
     formKey.currentState?.reset();
   }
 
   void handleUpdate(MobileContact contact) {
     contactId = contact.id;
+    state.clearButtonTitle.value = "Reset";
 
     nameController.text = contact.name;
     emailController.text = contact.email;
@@ -103,31 +105,30 @@ class AddContactController extends GetxController {
     phoneController.text = contact.phoneParsed?.phoneNumber ?? "";
     notesController.text = contact.notes ?? '';
 
-    // state.selectedCountryCode.value = contact.phoneCountryCode ?? '+91';
+    final selectedCountryCode = contact.phoneParsed?.countryCode ?? "+91";
+    final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
+    state.selectedCountry.value = countries.firstWhere(
+      (country) => country.fullCountryCode == cleanCountryCode,
+    );
 
     final contactStageKey = contactStageToKey(contact.stage);
     final matchedStage = state.stages.firstWhere(
       (stage) => stage['key'] == contactStageKey,
       orElse: () => {'key': 'new', 'value': 'New Contact'},
     );
-    state.selectedStage.value = matchedStage;
+    if (state.selectedStage.value != matchedStage) {
+      state.selectedStage.value = matchedStage;
+    }
 
-    // Set tags or clear if none
     if (contact.tags.isNotEmpty) {
-      state.selectedTags.value = List<String>.from(contact.tags);
+      state.selectedTagsMap.clear();
+      for (String tag in contact.tags) {
+        final lowerKey = tag.toLowerCase().trim();
+        state.selectedTagsMap[lowerKey] = tag;
+      }
     } else {
-      state.selectedTags.clear();
+      state.selectedTagsMap.clear();
     }
-  }
-
-  String getLocalNumberSimple(String? phone) {
-    if (phone == null || phone.isEmpty) return '';
-
-    if (phone.startsWith('+') && phone.length > 3) {
-      return phone.substring(3);
-    }
-
-    return phone;
   }
 
   Future<void> fetchTags() async {
@@ -179,12 +180,12 @@ class AddContactController extends GetxController {
       emailController.clear();
       phoneController.clear();
       notesController.clear();
+      state.selectedStage.value = {
+        'key': AddContactContactStage.newContact.toString(),
+        'value': 'New Contact',
+      };
     }
 
-    state.selectedStage.value = {
-      'key': AddContactContactStage.newContact.toString(),
-      'value': 'New Contact', // set to proper display string
-    };
     // Existing update logic
     // else if (args is Set<Contact> && args.isNotEmpty) {
     //   final argContact = args.first;
@@ -206,17 +207,26 @@ class AddContactController extends GetxController {
   }
 
   Map<String, dynamic> _gatherFormData() {
-    final phoneWithCode =
-        '${state.selectedCountryCode.value}${phoneController.text.trim()}';
+    final countryCode = state.selectedCountry.value.fullCountryCode;
+    final localPhoneNumber = phoneController.text.trim();
+    final fullPhoneNumber = '+$countryCode$localPhoneNumber';
 
     return {
       'name': nameController.text.trim(),
       'email': emailController.text.trim(),
-      'phone': phoneWithCode,
+      'phone': fullPhoneNumber,
       'stage': state.selectedStage.value['key'],
-      'tags': state.selectedTags.toList(),
+      'tags': state.selectedTagsMap.values.toList(),
       'notes': notesController.text.trim(),
     };
+  }
+
+  void selectTag(String tagName) {
+    state.selectedTagsMap[tagName.toLowerCase()] = tagName;
+  }
+
+  void unSelectTag(String tagName) {
+    state.selectedTagsMap.remove(tagName.toLowerCase());
   }
 
   void filterTags(String query) {
@@ -227,15 +237,7 @@ class AddContactController extends GetxController {
           .where((tag) => tag.toLowerCase().contains(query.toLowerCase()))
           .toList();
     }
-  }
-
-  void selectTag(String tagName) {
-    final lowerTag = tagName.toLowerCase();
-    final exists = state.selectedTags.any((t) => t.toLowerCase() == lowerTag);
-
-    if (!exists) {
-      state.selectedTags.add(tagName);
-    }
+    update();
   }
 
   Future<void> submitForm(BuildContext context) async {
@@ -280,6 +282,10 @@ class AddContactController extends GetxController {
     return contactId != null && contactId!.isNotEmpty;
   }
 
+  void createNewTag(String tagName) {
+    state.selectedTagsMap[tagName.toLowerCase()] = tagName;
+  }
+
   void selectStage(Map<String, String> stage) {
     state.selectedStage.value = stage;
   }
@@ -288,24 +294,24 @@ class AddContactController extends GetxController {
     Get.toNamed(RouteName.signInPage);
   }
 
-  void addTag(String tag) {
-    final lowerTag = tag.trim().toLowerCase();
-    if (lowerTag.isEmpty) return;
+  // void addTag(String tag) {
+  //   final lowerTag = tag.trim().toLowerCase();
+  //   if (lowerTag.isEmpty) return;
 
-    final exists = state.selectedTags.any((t) => t.toLowerCase() == lowerTag);
+  //   final exists = state.selectedTags.any((t) => t.toLowerCase() == lowerTag);
 
-    if (!exists) {
-      state.selectedTags.add(tag.trim());
-    }
-  }
+  //   if (!exists) {
+  //     state.selectedTags.add(tag.trim());
+  //   }
+  // }
 
-  void toggleTagSelection(String tag) {
-    if (state.selectedTags.contains(tag)) {
-      state.selectedTags.remove(tag);
-    } else {
-      state.selectedTags.add(tag);
-    }
-  }
+  // void toggleTagSelection(String tag) {
+  //   if (state.selectedTags.contains(tag)) {
+  //     state.selectedTags.remove(tag);
+  //   } else {
+  //     state.selectedTags.add(tag);
+  //   }
+  // }
 
   String contactStageToKey(ContactStage stage) {
     switch (stage) {
@@ -320,6 +326,20 @@ class AddContactController extends GetxController {
       case ContactStage.qualified:
         return 'qualified';
     }
+  }
+
+  String? validateName(String? val) {
+    if (val == null || val.trim().isEmpty) return 'Name is required';
+    if (val.trim().length < 2) return 'Name must be at least 2 characters';
+    return null;
+  }
+
+  // ✅ Email validator
+  String? validateEmail(String? val) {
+    if (val == null || val.trim().isEmpty) return 'Email is required';
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (!emailRegex.hasMatch(val.trim())) return 'Enter valid email';
+    return null;
   }
 
   @override

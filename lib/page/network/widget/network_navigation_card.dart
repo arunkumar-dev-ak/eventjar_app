@@ -90,7 +90,11 @@ class NetworkNavigationCard extends StatelessWidget {
               ),
 
               /// Arrow
-              Icon(Icons.lock, size: 14, color: const Color(0xFF5A7FCB)),
+              Icon(
+                onTap == null ? Icons.lock : Icons.arrow_right,
+                size: onTap == null ? 20 : 25,
+                color: const Color(0xFF5A7FCB),
+              ),
             ],
           ),
         ),
