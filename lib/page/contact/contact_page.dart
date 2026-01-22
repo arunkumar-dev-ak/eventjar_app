@@ -144,14 +144,7 @@ class ContactPage extends GetView<ContactController> {
 
           // Search and Contact cards below
           ContactsSearchAndFilters(),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                await controller.fetchContacts();
-              },
-              child: ContactCardPage(),
-            ),
-          ),
+          Expanded(child: ContactCardPage()),
         ],
       ),
     );

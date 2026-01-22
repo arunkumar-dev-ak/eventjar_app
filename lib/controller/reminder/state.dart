@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
 
-class SchedulerState {
+class ReminderState {
   RxBool isLoading = false.obs;
 }

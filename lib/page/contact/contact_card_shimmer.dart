@@ -2,11 +2,11 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
-Widget buildShimmerPlaceholderForContactCard() {
+Widget buildShimmerPlaceholderForContactCard({bool isBottomNeedToLoad = true}) {
   return Card(
     elevation: 3,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-    margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
+    margin: EdgeInsets.symmetric(vertical: 16, horizontal: 1.wp),
     child: Padding(
       padding: EdgeInsets.all(2.wp),
       child: Shimmer.fromColors(
@@ -40,16 +40,18 @@ Widget buildShimmerPlaceholderForContactCard() {
                 ),
               ],
             ),
-            SizedBox(height: 15),
-            Container(
-              height: 36,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
+            if (isBottomNeedToLoad) ...[
+              SizedBox(height: 15),
+              Container(
+                height: 36,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            Container(height: 200, color: Colors.white),
+              SizedBox(height: 20),
+              Container(height: 200, color: Colors.white),
+            ],
           ],
         ),
       ),

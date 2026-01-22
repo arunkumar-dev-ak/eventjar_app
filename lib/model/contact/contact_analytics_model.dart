@@ -45,6 +45,7 @@ class ContactAnalytics {
 class NetworkStatusCardData {
   final String label;
   final String key;
+  final String enumKey;
   final Color color;
   final IconData icon;
 
@@ -53,5 +54,16 @@ class NetworkStatusCardData {
     required this.key,
     required this.color,
     required this.icon,
+    required this.enumKey,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'label': label,
+      'key': key,
+      'color': color,
+      'icon': icon,
+      'enumKey': enumKey,
+    };
+  }
 }

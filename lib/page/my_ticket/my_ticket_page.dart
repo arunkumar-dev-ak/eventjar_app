@@ -4,6 +4,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_card_Page.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_empty_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class MyTicketPage extends GetView<MyTicketController> {
@@ -17,6 +18,10 @@ class MyTicketPage extends GetView<MyTicketController> {
         title: Text(
           "My Tickets",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
+        ),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
         ),
         flexibleSpace: Container(
           decoration: BoxDecoration(gradient: AppColors.appBarGradient),

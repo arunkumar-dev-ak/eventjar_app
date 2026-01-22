@@ -7,6 +7,7 @@ import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_tag_model.dart';
+import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/model/contact/nfc_contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/widgets.dart';
@@ -42,8 +43,6 @@ class AddContactController extends GetxController {
   @override
   void onInit() {
     final args = Get.arguments;
-    Contact? contact;
-    LoggerService.loggerInstance.dynamic_d(args.runtimeType);
     // Handle NfcContactModel from NFC read
     if (args is NfcContactModel) {
       appBarTitle = "Add NFC Contact";
@@ -51,20 +50,12 @@ class AddContactController extends GetxController {
     } else if (args is VisitingCardInfo) {
       appBarTitle = "Add Card Contact";
       handleVisitingCardContact(args);
-      LoggerService.loggerInstance.dynamic_d("inside card");
-    }
-    // Adjust based on how you pass the argument
-    else if (args is Set<Contact> && args.isNotEmpty) {
+    } else if (args is MobileContact) {
       appBarTitle = "Update Contact";
-      contact = args.first;
-    } else if (args is Map && args.containsKey('contact')) {
-      contact = args['contact'];
-    } else {
-      handleArgs(contact);
+      handleUpdate(args);
     }
 
     fetchTags();
-
     super.onInit();
   }
 
@@ -103,19 +94,13 @@ class AddContactController extends GetxController {
     formKey.currentState?.reset();
   }
 
-  void handleArgs(Contact? contact) {
-    if (contact == null) {
-      contactId = null;
-      return;
-    }
-
+  void handleUpdate(MobileContact contact) {
     contactId = contact.id;
 
     nameController.text = contact.name;
     emailController.text = contact.email;
     //phoneController
-    final localNumber = getLocalNumberSimple(contact.phone);
-    phoneController.text = localNumber;
+    phoneController.text = contact.phoneParsed?.phoneNumber ?? "";
     notesController.text = contact.notes ?? '';
 
     // state.selectedCountryCode.value = contact.phoneCountryCode ?? '+91';
@@ -179,24 +164,43 @@ class AddContactController extends GetxController {
 
     // If NFC contact, reset to NFC data
     if (args is NfcContactModel) {
+      appBarTitle = "Add NFC Contact";
       handleNfcContact(args);
+    } else if (args is VisitingCardInfo) {
+      appBarTitle = "Add Card Contact";
+      handleVisitingCardContact(args);
     }
-    // Existing update logic
-    else if (args is Set<Contact> && args.isNotEmpty) {
-      final argContact = args.first;
-      handleArgs(argContact);
+    // Adjust based on how you pass the argument
+    else if (args is MobileContact) {
+      appBarTitle = "Update Contact";
+      handleUpdate(args);
     } else {
       nameController.clear();
       emailController.clear();
       phoneController.clear();
       notesController.clear();
-      state.selectedCountryCode.value = '+91';
-      state.selectedStage.value = {
-        'key': AddContactContactStage.newContact.toString(),
-        'value': 'New Contact', // set to proper display string
-      };
-      state.selectedTags.clear();
     }
+
+    state.selectedStage.value = {
+      'key': AddContactContactStage.newContact.toString(),
+      'value': 'New Contact', // set to proper display string
+    };
+    // Existing update logic
+    // else if (args is Set<Contact> && args.isNotEmpty) {
+    //   final argContact = args.first;
+    //   handleArgs(argContact);
+    // } else {
+    //   nameController.clear();
+    //   emailController.clear();
+    //   phoneController.clear();
+    //   notesController.clear();
+    //   state.selectedCountryCode.value = '+91';
+    //   state.selectedStage.value = {
+    //     'key': AddContactContactStage.newContact.toString(),
+    //     'value': 'New Contact', // set to proper display string
+    //   };
+    //   state.selectedTags.clear();
+    // }
 
     formKey.currentState?.reset();
   }

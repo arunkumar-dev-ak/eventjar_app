@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/page/contact/radial_design/circular_pie_chart_painter.dart';

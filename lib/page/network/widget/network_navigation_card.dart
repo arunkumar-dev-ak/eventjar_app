@@ -5,14 +5,12 @@ class NetworkNavigationCard extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback? onTap;
-  final bool isPrimary;
 
   const NetworkNavigationCard({
     super.key,
     required this.icon,
     required this.label,
     this.onTap,
-    this.isPrimary = false,
   });
 
   @override
@@ -23,7 +21,7 @@ class NetworkNavigationCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(22),
         child: Container(
-          height: isPrimary ? 72 : 64,
+          height: 64,
           padding: const EdgeInsets.symmetric(horizontal: 18),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(22),
@@ -32,9 +30,7 @@ class NetworkNavigationCard extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: isPrimary
-                  ? [const Color(0xFFEAF4FF), const Color(0xFFD6ECFF)]
-                  : [const Color(0xFFF5FAFF), const Color(0xFFE9F3FF)],
+              colors: [const Color(0xFFF5FAFF), const Color(0xFFE9F3FF)],
             ),
 
             /// Subtle blue border
@@ -94,11 +90,7 @@ class NetworkNavigationCard extends StatelessWidget {
               ),
 
               /// Arrow
-              Icon(
-                isPrimary ? Icons.arrow_forward_ios : Icons.lock,
-                size: 14,
-                color: const Color(0xFF5A7FCB),
-              ),
+              Icon(Icons.lock, size: 14, color: const Color(0xFF5A7FCB)),
             ],
           ),
         ),

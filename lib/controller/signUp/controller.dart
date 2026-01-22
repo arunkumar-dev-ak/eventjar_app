@@ -3,6 +3,7 @@ import 'package:eventjar/api/sign_up_api/sign_up_api.dart';
 import 'package:eventjar/controller/signUp/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -40,7 +41,7 @@ class SignUpController extends GetxController {
       "password": passwordController.text.trim(),
       "name": fullNameController.text.trim(),
       "phone": mobileNumberController.text.trim(),
-      "countryCode": state.selectedCountryCode.value,
+      "countryCode": state.selectedCountry.value.code,
     };
   }
 
@@ -52,7 +53,7 @@ class SignUpController extends GetxController {
         "password": passwordController.text.trim(),
         "name": fullNameController.text.trim(),
         "phone": mobileNumberController.text.trim(),
-        "countryCode": state.selectedCountryCode.value,
+        "countryCode": '+${state.selectedCountry.value.fullCountryCode}',
         "mobile": mobileNumberController.text.trim(),
       };
 
@@ -91,5 +92,47 @@ class SignUpController extends GetxController {
 
   void navigateToBackPage(BuildContext context) {
     Navigator.pop(context);
+  }
+
+  // Full Name validator
+  String? validateFullName(String? val) {
+    if (val == null || val.trim().isEmpty) return "Full Name is required";
+    if (val.trim().length < 2) return "Full Name must be at least 2 characters";
+    if (!RegExp(r"^[a-zA-Z\s\-']+$").hasMatch(val.trim())) {
+      return "Full Name can only contain letters, spaces, hyphens, or apostrophes";
+    }
+    return null;
+  }
+
+  // Email validator
+  String? validateEmail(String? val) {
+    if (val == null || val.isEmpty) return "Email is required";
+    if (!RegExp(
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$",
+    ).hasMatch(val)) {
+      return "Enter a valid email address";
+    }
+    return null;
+  }
+
+  // Mobile Number validator
+  String? validateMobileNumber(String? val) {
+    if (val == null || val.isEmpty) return "Mobile Number is required";
+    if (!RegExp(r"^\d{10}$").hasMatch(val)) {
+      return "Mobile Number must be exactly 10 digits";
+    }
+    return null;
+  }
+
+  // Password validator
+  String? validatePassword(String? val) {
+    if (val == null || val.isEmpty) return "Password is required";
+    if (val.length < 8) return "Password must be at least 8 characters";
+    if (!RegExp(
+      r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+    ).hasMatch(val)) {
+      return "Password must contain uppercase, lowercase, number, and special character";
+    }
+    return null;
   }
 }

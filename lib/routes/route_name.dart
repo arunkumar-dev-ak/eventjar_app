@@ -48,6 +48,6 @@ class RouteName {
   //network page
   static const networkPage = '/networkPage';
   static const connectionPage = '/connectionPage';
-  static const campaignPage = '/campaignPage';
+  static const schedulerPage = '/schedulerPage';
   static const reminderPage = '/reminderPage';
 }

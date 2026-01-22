@@ -9,6 +9,7 @@ import 'package:eventjar/page/user_profile/user_profile_security/user_profile_se
 import 'package:eventjar/page/user_profile/user_profile_social_links.dart';
 import 'package:eventjar/page/user_profile/user_profile_summary.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class UserProfilePage extends GetView<UserProfileController> {
@@ -22,6 +23,10 @@ class UserProfilePage extends GetView<UserProfileController> {
         title: Text(
           "Profile",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
+        ),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
         ),
         flexibleSpace: Container(
           decoration: BoxDecoration(gradient: AppColors.appBarGradient),

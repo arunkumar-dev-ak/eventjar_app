@@ -14,34 +14,41 @@ class DashboardPage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
-        if (controller.state.selectedIndex.value != 0) {
-          controller.changeTab(0);
-        } else {
-          // Home tab → ask before exit
-          if (controller.shouldExit()) {
-            SystemNavigator.pop();
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+          if (controller.state.selectedIndex.value != 0) {
+            controller.changeTab(0);
           } else {
-            AppToast.exitApp();
+            // Home tab → ask before exit
+            if (controller.shouldExit()) {
+              SystemNavigator.pop();
+            } else {
+              AppToast.exitApp();
+            }
           }
-        }
-      },
-      child: Scaffold(
-        body: Obx(() {
-          return IndexedStack(
-            index: controller.state.selectedIndex.value,
-            children: const [
-              HomePage(),
-              NetworkPage(),
-              UserProfilePage(),
-              MyTicketPage(),
-            ],
-          );
-        }),
-        bottomNavigationBar: CustomBottomNavigationBar(),
+        },
+        child: Scaffold(
+          body: Obx(() {
+            return IndexedStack(
+              index: controller.state.selectedIndex.value,
+              children: const [
+                HomePage(),
+                NetworkPage(),
+                UserProfilePage(),
+                MyTicketPage(),
+              ],
+            );
+          }),
+          bottomNavigationBar: CustomBottomNavigationBar(),
+        ),
       ),
     );
   }

@@ -33,11 +33,13 @@ class NetworkScreenController extends GetxController
     NetworkStatusCardData(
       key: 'totalContacts',
       label: 'Total Contacts',
+      enumKey: 'all',
       icon: Icons.people,
       color: Colors.blue,
     ),
     NetworkStatusCardData(
       key: 'new',
+      enumKey: 'new',
       label: 'New',
       icon: Icons.fiber_new,
       color: Colors.green,
@@ -45,29 +47,34 @@ class NetworkScreenController extends GetxController
     NetworkStatusCardData(
       key: 'followup24h',
       label: '24H Followup',
+      enumKey: 'followup_24h',
       icon: Icons.access_time,
       color: Colors.orange,
     ),
     NetworkStatusCardData(
       key: 'followup7d',
       label: '7D Followup',
+      enumKey: 'followup_7d',
       icon: Icons.calendar_view_week,
       color: Colors.purple,
     ),
     NetworkStatusCardData(
       key: 'followup30d',
       label: '30D Followup',
+      enumKey: 'followup_30d',
       icon: Icons.calendar_month,
       color: Colors.teal,
     ),
     NetworkStatusCardData(
       key: 'qualified',
       label: 'Qualified',
+      enumKey: 'qualified',
       icon: Icons.verified,
       color: Colors.indigo,
     ),
     NetworkStatusCardData(
       key: 'overdue',
+      enumKey: 'overdue',
       label: 'Overdue',
       icon: Icons.warning_amber_rounded,
       color: Colors.red,
@@ -151,10 +158,10 @@ class NetworkScreenController extends GetxController
   }
 
   void onSchedulerTap() {
-    // open scheduler UI
+    Get.toNamed(RouteName.schedulerPage);
   }
 
   void onReminderTap() {
-    // open reminders UI
+    Get.toNamed(RouteName.reminderPage);
   }
 }

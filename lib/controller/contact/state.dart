@@ -7,8 +7,10 @@ import 'package:get/get.dart';
 class ContactState {
   final RxBool isLoading = false.obs;
   final RxString searchQuery = ''.obs;
+
   final RxBool isSearching = false.obs;
   final RxBool isFetching = false.obs;
+  final RxBool isFetchingWhileScrolling = false.obs;
 
   RxBool showFilterRow = false.obs;
   Rx<NetworkStatusCardData?> selectedTab = Rx<NetworkStatusCardData?>(null);

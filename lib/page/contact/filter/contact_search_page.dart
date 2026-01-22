@@ -60,9 +60,9 @@ class ContactsSearchAndFilters extends GetView<ContactController> {
                         borderSide: BorderSide(color: Colors.grey, width: 2),
                       ),
                     ),
-                    onChanged: (val) {
-                      controller.fetchContactsOnSearch();
-                    },
+                    // onChanged: (val) {
+                    //   controller.fetchContactsOnSearch();
+                    // },
                   ),
                 );
               }),

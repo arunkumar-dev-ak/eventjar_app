@@ -27,7 +27,7 @@ class ContactController extends GetxController
   late Animation<double> glowAnimation;
 
   final TextEditingController searchController = TextEditingController();
-  ScrollController homeScrollController = ScrollController();
+  ScrollController contactScrollController = ScrollController();
   final int _currentPage = 1;
   final int _limit = 10;
 
@@ -47,48 +47,42 @@ class ContactController extends GetxController
     }
 
     _initHeartbeat();
-    searchController.addListener(() {
-      state.searchQuery.value = searchController.text;
-    });
 
-    searchController.addListener(() {
-      state.searchQuery.value = searchController.text;
+    searchController.addListener(_onSearchListener);
 
-      _debounceTimer?.cancel();
-
-      _debounceTimer = Timer(Duration(milliseconds: 500), () {
-        if (searchController.text.isNotEmpty) {
-          state.isSearching.value = true;
-          fetchContactsOnSearch();
-        } else {
-          state.isSearching.value = false;
-          fetchContacts(); // Show all
-        }
-      });
-    });
-
-    _onScroll();
+    contactScrollController.addListener(_onScrollListener);
 
     confettiController = ConfettiController(duration: Duration(seconds: 3));
-    // triggerConfetti();
 
-    await fetchContacts();
+    await fetchContactsOnFirstLoad();
 
     super.onInit();
   }
 
-  void _onScroll() {
-    if (!homeScrollController.hasClients) return;
+  void _onSearchListener() {
+    final query = searchController.text;
+    if (query == state.searchQuery.value) return;
 
-    final maxScroll = homeScrollController.position.maxScrollExtent;
-    final currentScroll = homeScrollController.position.pixels;
+    state.searchQuery.value = query;
+    state.isSearching.value = true;
 
+    if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
+    _debounceTimer = Timer(Duration(milliseconds: 1000), () {
+      fetchContactsOnSearch();
+    });
+  }
+
+  void _onScrollListener() {
+    if (!contactScrollController.hasClients) return;
+
+    final maxScroll = contactScrollController.position.maxScrollExtent;
+    final currentScroll = contactScrollController.position.pixels;
     const double prefetchThreshold = 200.0;
+
     if (maxScroll - currentScroll <= prefetchThreshold) {
-      LoggerService.loggerInstance.dynamic_d("triggering");
       if (state.meta.value != null &&
           state.meta.value!.hasNext == true &&
-          !state.isFetching.value) {
+          !state.isFetchingWhileScrolling.value) {
         fetchContactsOnScroll();
       }
     }
@@ -111,26 +105,16 @@ class ContactController extends GetxController
     heartbeatController.repeat(reverse: true);
   }
 
-  // enum ContactStage {
-  //   new
-  //   followup_24h
-  //   followup_7d
-  //   followup_30d
-  //   qualified
-  // }
-
+  /*----- fetch contacts ------*/
   String getEndpoint({bool onRefresh = false}) {
     final searchQuery = state.searchQuery.value.trim();
-    final stageKey = state.selectedTab.value!.label;
-    LoggerService.loggerInstance.dynamic_d(stageKey);
+    final stageKey = state.selectedTab.value!.enumKey;
     final page = onRefresh ? _currentPage : _getNextPage();
     final limit = onRefresh ? _limit : _getLimit();
 
     var endpoint = '/mobile/contacts?page=$page&limit=$limit';
 
-    if (stageKey.isNotEmpty &&
-        stageKey != 'totalContacts' &&
-        stageKey != 'overdue') {
+    if (stageKey.isNotEmpty && stageKey != 'overdue') {
       final encodedStage = Uri.encodeComponent(stageKey);
       endpoint += '&stage=$encodedStage';
     }
@@ -162,17 +146,9 @@ class ContactController extends GetxController
     return state.meta.value?.limit ?? _limit;
   }
 
-  Future<void> fetchContacts({bool fromSearch = false}) async {
+  Future<void> fetchContacts({required String endPoint}) async {
     try {
-      if (fromSearch) {
-        state.isSearching.value = true;
-      } else {
-        state.isLoading.value = true;
-      }
-
-      MobileContactResponse response = await ContactApi.getEventList(
-        getEndpoint(onRefresh: true),
-      );
+      MobileContactResponse response = await ContactApi.getEventList(endPoint);
 
       state.contacts.value = response.data.contacts;
       state.meta.value = response.data.pagination;
@@ -196,26 +172,35 @@ class ContactController extends GetxController
         );
       }
     } finally {
-      if (state.isSearching.value) {
-        state.isSearching.value = false;
-      }
-      state.isLoading.value = false;
+      stopLoading();
     }
   }
 
   Future<void> fetchContactsOnSearch() async {
-    state.isSearching.value = true;
-    fetchContacts(fromSearch: true);
-    state.isSearching.value = false;
+    String endPoint = getEndpoint(onRefresh: true);
+    await fetchContacts(endPoint: endPoint);
+  }
+
+  Future<void> fetchContactsOnFirstLoad() async {
+    state.isLoading.value = true;
+    String endPoint = getEndpoint(onRefresh: true);
+    await fetchContacts(endPoint: endPoint);
+  }
+
+  Future<void> fetchContactsOnReload() async {
+    searchController.text = "";
+    state.searchQuery.value = "";
+    String endPoint = getEndpoint(onRefresh: true);
+    await fetchContacts(endPoint: endPoint);
   }
 
   Future<void> fetchContactsOnScroll() async {
     try {
-      MobileContactResponse response = await ContactApi.getEventList(
-        getEndpoint(),
-      );
+      state.isFetchingWhileScrolling.value = true;
+      String endPoint = getEndpoint();
+      MobileContactResponse response = await ContactApi.getEventList(endPoint);
 
-      state.contacts.value = response.data.contacts;
+      state.contacts.addAll(response.data.contacts);
       state.meta.value = response.data.pagination;
     } catch (err) {
       if (err is DioException) {
@@ -236,8 +221,19 @@ class ContactController extends GetxController
           message: "Something went wrong (${err.runtimeType})",
         );
       }
+    } finally {
+      state.isFetchingWhileScrolling.value = true;
     }
   }
+
+  void stopLoading() {
+    if (state.isLoading.value) state.isLoading.value = false;
+    if (state.isSearching.value) state.isSearching.value = false;
+    if (state.isFetchingWhileScrolling.value) {
+      state.isFetchingWhileScrolling.value = false;
+    }
+  }
+  /*------ ------*/
 
   Future<void> deleteContactCard(String id) async {
     try {
@@ -245,7 +241,7 @@ class ContactController extends GetxController
 
       await ContactApi.deleteContact(id);
 
-      await fetchContacts();
+      await fetchContactsOnFirstLoad();
     } catch (err) {
       LoggerService.loggerInstance.dynamic_d(err);
       if (err is DioException) {
@@ -327,7 +323,7 @@ class ContactController extends GetxController
   void navigateToSignInPage() {
     Get.toNamed(RouteName.signInPage)?.then((result) async {
       if (result == "logged_in") {
-        await fetchContacts();
+        await fetchContactsOnFirstLoad();
       } else {
         Get.back();
       }
@@ -337,15 +333,16 @@ class ContactController extends GetxController
   void navigateToAddContact() {
     Get.toNamed(RouteName.addContactPage)?.then(
       (result) async => {
-        if (result == 'refresh') {await fetchContacts()},
+        if (result == 'refresh') {await fetchContactsOnFirstLoad()},
       },
     );
   }
 
   void navigateToUpdateContact(MobileContact contact) {
-    Get.toNamed(RouteName.addContactPage, arguments: {contact})?.then(
+    LoggerService.loggerInstance.dynamic_d(contact);
+    Get.toNamed(RouteName.addContactPage, arguments: contact)?.then(
       (result) async => {
-        if (result == 'refresh') {await fetchContacts()},
+        if (result == 'refresh') {await fetchContactsOnFirstLoad()},
       },
     );
   }
@@ -355,7 +352,7 @@ class ContactController extends GetxController
       result,
     ) async {
       if (result == true) {
-        await fetchContacts();
+        await fetchContactsOnFirstLoad();
       }
     });
   }
@@ -365,7 +362,7 @@ class ContactController extends GetxController
       result,
     ) async {
       if (result == true) {
-        await fetchContacts();
+        await fetchContactsOnFirstLoad();
       }
     });
   }
@@ -375,7 +372,7 @@ class ContactController extends GetxController
       result,
     ) async {
       if (result == true) {
-        await fetchContacts();
+        await fetchContactsOnFirstLoad();
       }
     });
   }
@@ -383,6 +380,8 @@ class ContactController extends GetxController
   @override
   void onClose() {
     _debounceTimer?.cancel();
+    contactScrollController.removeListener(_onScrollListener);
+    searchController.removeListener(_onSearchListener);
     heartbeatController.dispose();
     super.onClose();
   }

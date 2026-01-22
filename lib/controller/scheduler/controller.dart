@@ -10,9 +10,4 @@ class SchedulerController extends GetxController {
   }
 
   void onOpen() {}
-
-  void changeTab(int index) {
-    state.selectedTab.value = index;
-    update();
-  }
 }

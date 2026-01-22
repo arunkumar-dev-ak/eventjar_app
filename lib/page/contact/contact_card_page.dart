@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/page/contact/contact_card_empty_page.dart';
 import 'package:eventjar/page/contact/contact_card_shimmer.dart';
@@ -12,6 +13,7 @@ class ContactCardPage extends StatelessWidget {
   ContactCardPage({super.key});
 
   final ContactController controller = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -20,59 +22,24 @@ class ContactCardPage extends StatelessWidget {
 
       return Stack(
         children: [
-          IgnorePointer(
-            ignoring: controller.state.isSearching.value,
-            child: controller.state.isLoading.value
-                ? ListView.builder(
-                    padding: const EdgeInsets.only(top: 10),
-                    itemCount: 3,
-                    itemBuilder: (context, index) {
-                      return buildShimmerPlaceholderForContactCard();
-                    },
-                  )
-                : controller.state.contacts.isEmpty
-                ? buildEmptyStateForContact()
-                : Container(
-                    width: 100.wp,
-                    height: 100.hp,
-                    color: Colors.grey.shade200,
-                    child: ListView.builder(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 16,
-                      ),
-                      itemCount: controller.state.contacts.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index == controller.state.contacts.length + 1) {
-                          return buildShimmerPlaceholderForContactCard();
-                        }
-
-                        final contact = controller.state.contacts[index];
-                        final isExpanded =
-                            controller.state.expandedIndex.value == index;
-
-                        return radialDesignBuildAccordionCard(
-                          contact: contact,
-                          stages: _buildStagesForContact(contact.stage.index),
-                          isSmallScreen: isSmallScreen,
-                          index: index,
-                          isExpanded: isExpanded,
-                          onToggleExpand: (int val) {
-                            controller.state.expandedIndex.value = val;
-                          },
-                          onCall: () {},
-                        );
-                      },
-                    ),
-                  ),
+          // Main content with RefreshIndicator
+          RefreshIndicator(
+            onRefresh: () async {
+              await controller.fetchContactsOnReload();
+            },
+            child: IgnorePointer(
+              ignoring: controller.state.isSearching.value,
+              child: _buildScrollableContent(isSmallScreen),
+            ),
           ),
 
+          // Searching overlay
           if (controller.state.isSearching.value)
             Center(
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100, // Light grey background
+                  color: Colors.grey.shade100,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.grey.shade300, width: 1.5),
                   boxShadow: [
@@ -86,7 +53,6 @@ class ContactCardPage extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Circular loader
                     SizedBox(
                       width: 24,
                       height: 24,
@@ -98,7 +64,6 @@ class ContactCardPage extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: 12),
-                    // Processing text
                     Text(
                       "Processing...",
                       style: TextStyle(
@@ -115,6 +80,76 @@ class ContactCardPage extends StatelessWidget {
         ],
       );
     });
+  }
+
+  Widget _buildScrollableContent(bool isSmallScreen) {
+    // Loading state
+    if (controller.state.isLoading.value) {
+      return ListView.builder(
+        padding: const EdgeInsets.only(top: 10),
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: 3,
+        itemBuilder: (context, index) {
+          return buildShimmerPlaceholderForContactCard();
+        },
+      );
+    }
+
+    // Empty state
+    if (controller.state.contacts.isEmpty) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(height: 25.hp),
+          buildEmptyStateForContact(),
+        ],
+      );
+    }
+
+    // Contacts list with pagination
+    final haveNextPage = controller.state.meta.value?.hasNext ?? false;
+
+    return Container(
+      width: 100.wp,
+      height: 100.hp,
+      color: Colors.grey.shade200,
+      child: Obx(() {
+        return ListView.builder(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          controller: controller.contactScrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: haveNextPage
+              ? controller.state.contacts.length + 1
+              : controller.state.contacts.length,
+          itemBuilder: (context, index) {
+            // Pagination loader
+            if (index >= controller.state.contacts.length) {
+              return buildShimmerPlaceholderForContactCard(
+                isBottomNeedToLoad: false,
+              );
+            }
+
+            // Contact card
+            final contact = controller.state.contacts[index];
+            final isExpanded = controller.state.expandedIndex.value == index;
+
+            return radialDesignBuildAccordionCard(
+              contact: contact,
+              stages: _buildStagesForContact(contact.stage.index),
+              isSmallScreen: isSmallScreen,
+              index: index,
+              isExpanded: isExpanded,
+              onToggleExpand: (int val) {
+                controller.state.expandedIndex.value = val;
+              },
+              onCall: () {
+                // controller.launchPhoneCall(contact.phoneNumber ?? '');
+              },
+            );
+          },
+        );
+      }),
+    );
   }
 }
 

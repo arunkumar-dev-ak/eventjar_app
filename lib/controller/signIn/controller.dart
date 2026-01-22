@@ -46,6 +46,8 @@ class SignInController extends GetxController {
   String? validatePassword(String? password) {
     if (password == null || password.isEmpty) {
       return "Password is required";
+    } else if (password.length < 8) {
+      return "Password must contain at least 8 characters";
     }
     return null;
   }

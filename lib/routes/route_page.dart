@@ -16,7 +16,9 @@ import 'package:eventjar/controller/profile_form/social/binding.dart';
 import 'package:eventjar/controller/profile_form/summary/binding.dart';
 import 'package:eventjar/controller/qr_dashboard/binding.dart';
 import 'package:eventjar/controller/qualify_lead/binding.dart';
+import 'package:eventjar/controller/reminder/binding.dart';
 import 'package:eventjar/controller/schedule_meeting/binding.dart';
+import 'package:eventjar/controller/scheduler/binding.dart';
 import 'package:eventjar/controller/signIn/binding.dart';
 import 'package:eventjar/controller/signUp/binding.dart';
 import 'package:eventjar/controller/splashScreen/binding.dart';
@@ -39,7 +41,9 @@ import 'package:eventjar/page/profile_form/social_form/social_form.dart';
 import 'package:eventjar/page/profile_form/summary_form/summary_form.dart';
 import 'package:eventjar/page/qr_dashboard/qr_dashboard.dart';
 import 'package:eventjar/page/qualify_lead/qualify_lead.dart';
+import 'package:eventjar/page/reminder/reminder_page.dart';
 import 'package:eventjar/page/schedule_meeting/schedule_meeting.dart';
+import 'package:eventjar/page/scheduler/scheduler_page.dart';
 import 'package:eventjar/page/sign_in/sign_in_page.dart';
 import 'package:eventjar/page/sign_up/sign_up_page.dart';
 import 'package:eventjar/page/splash_screen/splash_screen_page.dart';
@@ -93,6 +97,16 @@ class RoutePage {
       name: RouteName.connectionPage,
       page: () => ConnectionPage(),
       binding: ConnectionBinding(),
+    ),
+    GetPage(
+      name: RouteName.scheduleMeetingPage,
+      page: () => SchedulerPage(),
+      binding: SchedulerBinding(),
+    ),
+    GetPage(
+      name: RouteName.reminderPage,
+      page: () => ReminderPage(),
+      binding: ReminderBinding(),
     ),
 
     /*----- EventInfo page -----*/
