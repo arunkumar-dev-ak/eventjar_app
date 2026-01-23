@@ -64,12 +64,12 @@ class UserStore extends GetxController {
   Future<void> handleSetLocalData(LoginResponse loginData) async {
     LoggerService.loggerInstance.dynamic_d(loginData);
     _isLogin.value = true;
-    await setAccessToken(loginData.accessToken);
-    _accessToken.value = loginData.accessToken;
-    await setRefreshToken(loginData.refreshToken);
-    _refreshToken.value = loginData.refreshToken;
-    await setProfile(loginData.user.toJson());
-    _profile.value = loginData.user.toJson();
+    await setAccessToken(loginData.accessToken!);
+    _accessToken.value = loginData.accessToken!;
+    await setRefreshToken(loginData.refreshToken!);
+    _refreshToken.value = loginData.refreshToken!;
+    await setProfile(loginData.user!.toJson());
+    _profile.value = loginData.user!.toJson();
   }
 
   Future<void> deleteAccessToken() async {

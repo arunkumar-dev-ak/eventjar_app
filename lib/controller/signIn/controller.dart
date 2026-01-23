@@ -5,6 +5,7 @@ import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/page/sign_in/widgets/signin_2fa_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -62,31 +63,52 @@ class SignInController extends GetxController {
   }
 
   void handleSubmit(BuildContext context) async {
-    state.isLoading.value = true;
-    try {
-      var response = await SignInApi.signIn(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-      await UserStore.to.handleSetLocalData(response);
-      AppSnackbar.success(
-        title: "Login Successful",
-        message: "User Logged in successfully",
-      );
-      state.isLoading.value = false;
-      navigateToBackPage(context);
-    } catch (err) {
-      state.isLoading.value = false;
-      LoggerService.loggerInstance.dynamic_d(err);
-      if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Login Error");
-      } else {
-        AppSnackbar.error(
-          title: "Login Error",
-          message: "Something went wrong",
-        );
-      }
-    }
+    signInOpen2FAModal(
+      Get.context!,
+      email: "arunkumar.ak.dev@gmail.com",
+      // tempToken: response.tempToken!,
+      tempToken: "Hello",
+      controller: this,
+    );
+    // state.isLoading.value = true;
+    // try {
+    //   var response = await SignInApi.signIn(
+    //     email: emailController.text,
+    //     password: passwordController.text,
+    //   );
+
+    //   if (response.requires2FA) {
+    //     state.isLoading.value = false;
+
+    //     // // Navigate to 2FA screen with temp token
+    //     // Navigator.pushNamed(
+    //     //   context,
+    //     //   Routes.twoFactor,
+    //     //   arguments: response.tempToken,
+    //     // );
+
+    //     return;
+    //   }
+
+    //   await UserStore.to.handleSetLocalData(response);
+    //   AppSnackbar.success(
+    //     title: "Login Successful",
+    //     message: "User Logged in successfully",
+    //   );
+    //   state.isLoading.value = false;
+    //   navigateToBackPage(context);
+    // } catch (err) {
+    //   state.isLoading.value = false;
+    //   LoggerService.loggerInstance.dynamic_d(err);
+    //   if (err is DioException) {
+    //     ApiErrorHandler.handleError(err, "Login Error");
+    //   } else {
+    //     AppSnackbar.error(
+    //       title: "Login Error",
+    //       message: "Something went wrong",
+    //     );
+    //   }
+    // }
   }
 
   /*----- navigation ----*/
