@@ -4,7 +4,7 @@ import 'package:eventjar/controller/add_contact/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
-import 'package:eventjar/logger_service.dart';
+
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_tag_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
@@ -67,15 +67,12 @@ class AddContactController extends GetxController {
     contactId = null; // Always new contact from NFC
     state.clearButtonTitle.value = "Reset";
 
-    nameController.text = cardInfo.name!;
-    phoneController.text = cardInfo.phone!;
-    emailController.text = cardInfo.email!;
+    nameController.text = cardInfo.name ?? "";
+    phoneController.text = cardInfo.phone ?? "";
+    emailController.text = cardInfo.email ?? "";
 
     // Set default stage for NFC contacts
-    state.selectedStage.value = {
-      'key': AddContactContactStage.newContact.toString(),
-      'value': 'New Contact',
-    };
+    state.selectedStage.value = {'key': 'new', 'value': 'New Contact'};
 
     state.selectedTagsMap.clear();
     formKey.currentState?.reset();
@@ -90,10 +87,7 @@ class AddContactController extends GetxController {
     emailController.text = qrInfo.email;
 
     // Set default stage for NFC contacts
-    state.selectedStage.value = {
-      'key': AddContactContactStage.newContact.toString(),
-      'value': 'New Contact',
-    };
+    state.selectedStage.value = {'key': 'new', 'value': 'New Contact'};
 
     state.selectedTagsMap.clear();
     formKey.currentState?.reset();
@@ -108,10 +102,7 @@ class AddContactController extends GetxController {
     notesController.text = nfcContact.note;
 
     // Set default stage for NFC contacts
-    state.selectedStage.value = {
-      'key': AddContactContactStage.newContact.toString(),
-      'value': 'New Contact',
-    };
+    state.selectedStage.value = {'key': 'new', 'value': 'New Contact'};
 
     state.selectedTagsMap.clear();
     formKey.currentState?.reset();

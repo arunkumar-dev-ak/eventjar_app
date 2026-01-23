@@ -302,7 +302,12 @@ class ScanCardController extends GetxController
     }
 
     // Return mobile number if found, otherwise landline
-    return firstMobile ?? firstLandline;
+    // Remove all spaces, dashes, and other formatting from the final number
+    final result = firstMobile ?? firstLandline;
+    if (result != null) {
+      return result.replaceAll(RegExp(r'[\s\-\(\)\.]'), '');
+    }
+    return null;
   }
 
   String? _findMobileInMerged(String digits) {
@@ -339,11 +344,8 @@ class ScanCardController extends GetxController
   }
 
   String _formatPhone(String digits) {
-    // Format 10-digit phone as "XXXXX XXXXX"
-    if (digits.length == 10) {
-      return '${digits.substring(0, 5)} ${digits.substring(5)}';
-    }
-    return digits;
+    // Return digits only without any spaces
+    return digits.replaceAll(RegExp(r'\s+'), '');
   }
 
   String? _extractName(String text, String? email, String? phone) {
