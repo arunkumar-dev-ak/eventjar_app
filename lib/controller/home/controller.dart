@@ -28,7 +28,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _onScroll();
+    homeScrollController.addListener(_onScroll);
     onTabOpen();
   }
 
@@ -65,10 +65,10 @@ class HomeController extends GetxController {
 
     const double prefetchThreshold = 200.0;
     if (maxScroll - currentScroll <= prefetchThreshold) {
-      LoggerService.loggerInstance.dynamic_d("triggering");
       if (state.meta.value != null &&
           state.meta.value!.hasNext == true &&
           !state.isFetching.value) {
+        LoggerService.loggerInstance.dynamic_d("triggering");
         fetchEventsOnScroll();
       }
     }
@@ -122,6 +122,8 @@ class HomeController extends GetxController {
   Future<void> fetchEvents() async {
     try {
       state.isLoading.value = true;
+      LoggerService.loggerInstance.dynamic_d(_currentPage);
+      LoggerService.loggerInstance.dynamic_d(_limit);
       EventResponse response = await HomeApi.getEventList(
         '/events?page=$_currentPage&limit=$_limit',
       );
