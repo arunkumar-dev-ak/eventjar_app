@@ -9,6 +9,7 @@ import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_tag_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/model/contact/nfc_contact_model.dart';
+import 'package:eventjar/model/contact/qr_contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -53,6 +54,9 @@ class AddContactController extends GetxController {
     } else if (args is MobileContact) {
       appBarTitle = "Update Contact";
       handleUpdate(args);
+    } else if (args is QrContactModel) {
+      appBarTitle = "Add QR Scanned Contact";
+      handleQrScanContact(args);
     }
 
     fetchTags();
@@ -66,6 +70,24 @@ class AddContactController extends GetxController {
     nameController.text = cardInfo.name!;
     phoneController.text = cardInfo.phone!;
     emailController.text = cardInfo.email!;
+
+    // Set default stage for NFC contacts
+    state.selectedStage.value = {
+      'key': AddContactContactStage.newContact.toString(),
+      'value': 'New Contact',
+    };
+
+    state.selectedTagsMap.clear();
+    formKey.currentState?.reset();
+  }
+
+  void handleQrScanContact(QrContactModel qrInfo) {
+    contactId = null; // Always new contact from NFC
+    state.clearButtonTitle.value = "Reset";
+
+    nameController.text = qrInfo.name;
+    phoneController.text = qrInfo.number;
+    emailController.text = qrInfo.email;
 
     // Set default stage for NFC contacts
     state.selectedStage.value = {

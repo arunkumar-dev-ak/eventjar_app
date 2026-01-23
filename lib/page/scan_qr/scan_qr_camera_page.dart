@@ -12,55 +12,68 @@ class ScanQrCameraSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // Scanner
-        ClipRRect(
-          borderRadius: const BorderRadius.vertical(
-            bottom: Radius.circular(32),
-          ),
-          child: MobileScanner(
-            controller: controller.scannerController,
-            onDetect: controller.onDetect,
-          ),
-        ),
+    return Obx(() {
+      // Observe reactive state to trigger rebuild when scanner is ready
+      final isScannerReady = controller.state.isScannerReady.value;
 
-        // Overlay
-        Container(
-          decoration: BoxDecoration(
+      return Stack(
+        children: [
+          // Scanner
+          ClipRRect(
             borderRadius: const BorderRadius.vertical(
               bottom: Radius.circular(32),
             ),
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.black.withValues(alpha: 0.3),
-                Colors.transparent,
-                Colors.transparent,
-                Colors.black.withValues(alpha: 0.3),
-              ],
-              stops: const [0.0, 0.2, 0.8, 1.0],
-            ),
+            child: isScannerReady && controller.scannerController != null
+                ? MobileScanner(
+                    key: ValueKey(controller.scannerController.hashCode),
+                    controller: controller.scannerController,
+                    onDetect: controller.onDetect,
+                  )
+                : Container(
+                    color: Colors.black,
+                    child: const Center(
+                      child: CircularProgressIndicator(color: Colors.white54),
+                    ),
+                  ),
           ),
-        ),
 
-        // Scan frame
-        Center(
-          child: SizedBox(
-            width: size.width * 0.7,
-            height: size.width * 0.7,
-            child: Stack(
-              children: const [
-                ScanQrCorner(alignment: Alignment.topLeft),
-                ScanQrCorner(alignment: Alignment.topRight),
-                ScanQrCorner(alignment: Alignment.bottomLeft),
-                ScanQrCorner(alignment: Alignment.bottomRight),
-              ],
+          // Overlay
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(32),
+              ),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withValues(alpha: 0.3),
+                  Colors.transparent,
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.3),
+                ],
+                stops: const [0.0, 0.2, 0.8, 1.0],
+              ),
             ),
           ),
-        ),
-      ],
-    );
+
+          // Scan frame
+          Center(
+            child: SizedBox(
+              width: size.width * 0.7,
+              height: size.width * 0.7,
+              child: Stack(
+                children: const [
+                  ScanQrCorner(alignment: Alignment.topLeft),
+                  ScanQrCorner(alignment: Alignment.topRight),
+                  ScanQrCorner(alignment: Alignment.bottomLeft),
+                  ScanQrCorner(alignment: Alignment.bottomRight),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
+    });
   }
 }

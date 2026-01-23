@@ -10,6 +10,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../routes/route_name.dart';
+
 class QrScanScreenController extends GetxController
     with GetSingleTickerProviderStateMixin {
   var appBarTitle = "Network";
@@ -24,13 +26,44 @@ class QrScanScreenController extends GetxController
     super.onInit();
   }
 
-  void onTabOpen() async {
-    scannerController ??= MobileScannerController(
-      detectionSpeed: DetectionSpeed.noDuplicates,
-      facing: CameraFacing.back,
-    );
+  Future<void> onTabOpen() async {
+    await checkCameraStatus();
 
-    checkCameraStatus();
+    if (scannerController == null) {
+      scannerController = MobileScannerController(
+        detectionSpeed: DetectionSpeed.normal,
+        facing: CameraFacing.back,
+        autoStart: false,
+      );
+      state.isScannerReady.value = true;
+      // Wait for next frame to ensure widget is mounted
+      await Future.delayed(const Duration(milliseconds: 300));
+    }
+
+    await startCamera();
+  }
+
+  Future<void> startCamera() async {
+    if (state.isCameraActive.value || scannerController == null) return;
+    try {
+      await scannerController!.start();
+      state.isCameraActive.value = true;
+      state.isScanning.value = true;
+      state.hasNavigated.value = false;
+    } catch (e) {
+      LoggerService.loggerInstance.dynamic_d('Error starting camera: $e');
+    }
+  }
+
+  Future<void> stopCamera() async {
+    if (!state.isCameraActive.value || scannerController == null) return;
+    try {
+      await scannerController!.stop();
+      state.isCameraActive.value = false;
+      state.isScanning.value = false;
+    } catch (e) {
+      LoggerService.loggerInstance.dynamic_d('Error stopping camera: $e');
+    }
   }
 
   Future<void> checkCameraStatus() async {
@@ -85,37 +118,50 @@ class QrScanScreenController extends GetxController
       final contact = QrContactModel.fromJson(jsonData);
       LoggerService.loggerInstance.dynamic_d(contact);
 
-      scannerController?.stop();
+      // Stop camera before navigating
+      stopCamera();
 
-      // Update contact controller with scanned data
-      final contactController = Get.find<QrAddContactController>();
-      contactController.handleArgs(contact);
-
-      qrDashboard.state.selectedIndex.value = 2;
-
-      // Navigate to Add Contact tab
-      // final tabsController = Get.find<QRTabsController>();
-      // tabsController.goToAddContact();
+      // Delay 1 second before navigating to add contact page
+      Future.delayed(const Duration(seconds: 1), () {
+        // Navigate and restart camera when returning
+        Get.toNamed(RouteName.addContactPage, arguments: contact)?.then((_) {
+          // Restart camera when user comes back
+          _restartCameraAfterNavigation();
+        });
+      });
     } else {
       // Show error for invalid QR code
       // _showError('Invalid QR code. This QR code is not from Eventjar.');
-    }
-
-    // Reset scanning state
-    Future.delayed(const Duration(milliseconds: 500), () {
+      // Reset scanning state for invalid QR
       state.isScanning.value = true;
       state.hasNavigated.value = false;
-    });
+    }
+  }
+
+  void _restartCameraAfterNavigation() {
+    // Reset states and restart camera
+    state.isScanning.value = true;
+    state.hasNavigated.value = false;
+
+    // Check if still on scan tab before restarting
+    if (qrDashboard.state.selectedIndex.value == 1) {
+      startCamera();
+    }
   }
 
   // Handle barcode detection
   void onDetect(BarcodeCapture capture) {
-    LoggerService.loggerInstance.dynamic_d("in on detect");
-    if (!state.isScanning.value || state.hasNavigated.value) return;
+    LoggerService.loggerInstance.dynamic_d("in on detect - isCameraActive: ${state.isCameraActive.value}, isScanning: ${state.isScanning.value}, hasNavigated: ${state.hasNavigated.value}");
+
+    // Only process if camera is active and scanning is enabled
+    if (!state.isCameraActive.value || !state.isScanning.value || state.hasNavigated.value) return;
 
     final List<Barcode> barcodes = capture.barcodes;
+    LoggerService.loggerInstance.dynamic_d("Barcodes found: ${barcodes.length}");
+
     for (final barcode in barcodes) {
       final String? rawValue = barcode.rawValue;
+      LoggerService.loggerInstance.dynamic_d("Barcode value: $rawValue");
       if (rawValue != null && rawValue.isNotEmpty) {
         processScannedData(rawValue);
         break;
@@ -168,6 +214,9 @@ class QrScanScreenController extends GetxController
   @override
   void onClose() {
     scannerController?.dispose();
+    scannerController = null;
+    state.isScannerReady.value = false;
+    state.isCameraActive.value = false;
     super.onClose();
   }
 }

@@ -1,7 +1,6 @@
 import 'package:eventjar/controller/my_qr/controller.dart';
 import 'package:eventjar/controller/qr_dashboard/controller.dart';
 import 'package:eventjar/controller/qr_scan/controller.dart';
-import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,99 +31,107 @@ class QrDashboardBottomNavigation extends StatelessWidget {
             ),
           ],
         ),
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          selectedItemColor: AppColors.gradientDarkStart,
-          unselectedItemColor: Colors.grey.shade600,
-          selectedLabelStyle: optionStyle.copyWith(
-            color: AppColors.gradientDarkStart,
-            fontWeight: FontWeight.w600,
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildNavButton(
+                    icon: Icons.qr_code,
+                    label: "My QR",
+                    isSelected: selectedIndex == 0,
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF00C853), Color(0xFF1DE9B6)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    onTap: () => _onTabTap(0),
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: _buildNavButton(
+                    icon: Icons.qr_code_scanner,
+                    label: "Scan QR",
+                    isSelected: selectedIndex == 1,
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF2196F3), Color(0xFF00BCD4)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    onTap: () => _onTabTap(1),
+                  ),
+                ),
+              ],
+            ),
           ),
-          unselectedLabelStyle: optionStyle.copyWith(
-            color: Colors.grey.shade500,
-          ),
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
-          items: [
-            _createBottomNavigationItem(
-              filledIcon: Icons.qr_code,
-              outlinedIcon: Icons.qr_code_outlined,
-              label: "My QR",
-              isSelected: selectedIndex == 0,
-            ),
-            _createBottomNavigationItem(
-              filledIcon: Icons.qr_code_scanner,
-              outlinedIcon: Icons.qr_code_scanner_outlined,
-              label: "Scan",
-              isSelected: selectedIndex == 1,
-            ),
-            _createBottomNavigationItem(
-              filledIcon: Icons.person_add,
-              outlinedIcon: Icons.person_add_outlined,
-              label: "Add",
-              isSelected: selectedIndex == 2,
-            ),
-          ],
-          currentIndex: selectedIndex,
-          onTap: (index) {
-            controller.state.selectedIndex.value = index;
-
-            if (index == 0) {
-              if (!Get.isRegistered<MyQrScreenController>()) {
-                Get.put(MyQrScreenController()).onTabOpen();
-              } else {
-                Get.find<MyQrScreenController>().onTabOpen();
-              }
-            } else if (index == 1) {
-              if (!Get.isRegistered<QrScanScreenController>()) {
-                Get.put(QrScanScreenController()).onTabOpen();
-              } else {
-                Get.find<QrScanScreenController>().onTabOpen();
-              }
-            } else if (index == 2) {
-              // controller.state.selectedIndex.value = index;
-              // if (!Get.isRegistered<UserProfileController>()) {
-              //   Get.put(UserProfileController()).onTabOpen();
-              // } else {
-              //   Get.find<UserProfileController>().onTabOpen();
-              // }
-            }
-          },
         ),
       );
     });
   }
 
-  BottomNavigationBarItem _createBottomNavigationItem({
+  Widget _buildNavButton({
+    required IconData icon,
     required String label,
-    required IconData filledIcon,
-    required IconData outlinedIcon,
     required bool isSelected,
+    required LinearGradient gradient,
+    required VoidCallback onTap,
   }) {
-    Widget iconWidget;
-    if (isSelected) {
-      iconWidget = _buildSelectedIcon(filledIcon);
-    } else {
-      iconWidget = _buildUnselectedIcon(outlinedIcon);
-    }
-
-    return BottomNavigationBarItem(icon: iconWidget, label: label);
-  }
-
-  Widget _buildSelectedIcon(IconData iconData) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-      decoration: BoxDecoration(
-        color: AppColors.gradientDarkStart.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        splashColor: Colors.white.withValues(alpha: 0.3),
+        highlightColor: Colors.white.withValues(alpha: 0.1),
+        child: Ink(
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          decoration: BoxDecoration(
+            gradient: gradient,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: Colors.white, size: 20),
+              SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-      child: Icon(iconData, color: AppColors.gradientDarkStart, size: 24),
     );
   }
 
-  Widget _buildUnselectedIcon(IconData iconData) {
-    return Icon(iconData, color: Colors.grey.shade500, size: 24);
+  void _onTabTap(int index) {
+    controller.state.selectedIndex.value = index;
+
+    if (index == 0) {
+      // Stop camera when switching to My QR tab
+      if (Get.isRegistered<QrScanScreenController>()) {
+        Get.find<QrScanScreenController>().stopCamera();
+      }
+
+      if (!Get.isRegistered<MyQrScreenController>()) {
+        Get.put(MyQrScreenController()).onTabOpen();
+      } else {
+        Get.find<MyQrScreenController>().onTabOpen();
+      }
+    } else if (index == 1) {
+      // Start camera when switching to Scan QR tab
+      if (!Get.isRegistered<QrScanScreenController>()) {
+        Get.put(QrScanScreenController()).onTabOpen();
+      } else {
+        Get.find<QrScanScreenController>().onTabOpen();
+      }
+    }
   }
 }
