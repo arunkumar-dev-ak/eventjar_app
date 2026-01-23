@@ -169,10 +169,7 @@ Widget _buildNextActionRow(
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 4),
     child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Current Stage chip (LEFT)
         Expanded(
           child: _buildStageChip(
             stageColor: stageColor,
@@ -183,38 +180,33 @@ Widget _buildNextActionRow(
         ),
 
         if (!isLastStage) ...[
-          // Horizontal connector line
           SizedBox(width: 12),
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              // Background line (under button)
-              Expanded(
-                child: Container(
-                  height: 2,
-                  width: 80, // Extended to cover button width
-                  color: Colors.grey.shade300,
-                ),
-              ),
 
-              // Next Stage button ON TOP of line
-              Expanded(
-                child: NextStageActionButton(
+          SizedBox(
+            width: 80,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Line
+                Container(height: 2, color: Colors.grey.shade300),
+                // Button ON TOP
+                NextStageActionButton(
                   currentStage: currentStage,
                   contact: contact,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
           SizedBox(width: 12),
 
-          // Next Stage chip (RIGHT)
-          _buildStageChip(
-            stageColor: Colors.grey,
-            label: stageDefinitions[activeStageIndex + 1].fullName,
-            icon: null,
-            isActive: false,
+          Expanded(
+            child: _buildStageChip(
+              stageColor: Colors.grey,
+              label: stageDefinitions[activeStageIndex + 1].fullName,
+              icon: null,
+              isActive: false,
+            ),
           ),
         ],
 
