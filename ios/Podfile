@@ -1,71 +1,4 @@
-
-# platform :ios, '13.0'
-
-# ENV['COCOAPODS_DISABLE_STATS'] = 'true'
-
-# project 'Runner', {
-#   'Debug' => :debug,
-#   'Profile' => :release,
-#   'Release' => :release,
-# }
-
-# def flutter_root
-#   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
-#   unless File.exist?(generated_xcode_build_settings_path)
-#     raise "#{generated_xcode_build_settings_path} must exist. If you're running pod install manually, make sure flutter pub get is executed first"
-#   end
-
-#   File.foreach(generated_xcode_build_settings_path) do |line|
-#     matches = line.match(/FLUTTER_ROOT\=(.*)/)
-#     return matches[1].strip if matches
-#   end
-#   raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
-# end
-
-# require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
-
-# flutter_ios_podfile_setup
-
-# target 'Runner' do
-#   use_frameworks!
-#   use_modular_headers!
-
-#   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-#   target 'RunnerTests' do
-#     inherit! :search_paths
-#   end
-# end
-
-# # 🔥 ULTIMATE dSYM FIX - REPLACE YOUR post_install
-# post_install do |installer|
-#   installer.pods_project.targets.each do |target|
-#     flutter_additional_ios_build_settings(target)
-    
-#     target.build_configurations.each do |config|
-#       # 🔥 FORCE dSYM for EVERYTHING
-#       config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf-with-dsym'
-#       config.build_settings['DEBUG_INFORMATION_FORMAT[sdk=iphonesimulator*]'] = 'dwarf-with-dsym'
-      
-#       # 🔥 Razorpay FORCE
-#       config.build_settings['GCC_GENERATE_DEBUGGING_SYMBOLS'] = 'YES'
-#       config.build_settings['STRIP_INSTALLED_PRODUCT'] = 'YES'
-#       config.build_settings['ENABLE_BITCODE'] = 'NO'
-      
-#       # 🔥 Deployment target
-#       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
-      
-#       # 🔥 Razorpay specific targets
-#       if target.name.include?('Razorpay') || target.name.include?('razorpay_flutter')
-#         config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf-with-dsym'
-#         config.build_settings['GCC_GENERATE_DEBUGGING_SYMBOLS'] = 'YES'
-#         config.build_settings['SWIFT_DEBUG_INFORMATION_FORMAT'] = 'DWARF-with-dSYM'
-#       end
-#     end
-#   end
-# end
-
-# Uncomment this line to define a global platform for your project
-platform :ios, '15.5'  # 🔥 FIXED: Firebase 12.8.0 requires 13.0+
+platform :ios, '15.5'  # 🔥 Firebase 12.8.0 + ML Kit + device_info_plus
 
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
@@ -107,24 +40,34 @@ post_install do |installer|
     flutter_additional_ios_build_settings(target)
     
     target.build_configurations.each do |config|
-      # 🔥 FORCE iOS 13.0 for ALL pods
+      # 🔥 FORCE iOS 15.5 FOR ALL PODS (Firebase/ML Kit/device_info_plus)
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.5'
       
-      # 🔥 FORCE dSYM for ALL targets
+      # 🔥 FORCE dSYM for ALL targets (crash reporting)
       config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf-with-dsym'
       config.build_settings['DEBUG_INFORMATION_FORMAT[sdk=iphonesimulator*]'] = 'dwarf-with-dsym'
       
-      # 🔥 Strip & Bitcode
+      # 🔥 Strip & Bitcode (production optimization)
       config.build_settings['STRIP_INSTALLED_PRODUCT'] = 'YES'
       config.build_settings['ENABLE_BITCODE'] = 'NO'
       
-      # 🔥 Razorpay specific
+      # 🔥 Suppress device_info_plus warnings (64-bit → 32-bit conversion)
+      if target.name == 'device_info_plus'
+        config.build_settings['GCC_WARN_ABOUT_RETURN_TYPE'] = 'NO'
+        config.build_settings['CLANG_WARN__DUPLICATE_METHOD_MATCH'] = 'NO'
+        config.build_settings['CLANG_WARN_SHORTEN_64_TO_32'] = 'NO'
+      end
+      
+      # 🔥 Razorpay specific fixes
       if target.name == 'Razorpay' || target.name.include?('razorpay_flutter')
         config.build_settings['GCC_GENERATE_DEBUGGING_SYMBOLS'] = 'YES'
         config.build_settings['STRIP_SWIFT_SYMBOLS'] = 'YES'
         config.build_settings['SWIFT_DEBUG_INFORMATION_FORMAT'] = 'DWARF-with-dSYM'
       end
+      
+      # 🔥 General Flutter optimizations
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'POD_CONFIGURATION_$(CONFIGURATION)=1'
     end
   end
 end
-

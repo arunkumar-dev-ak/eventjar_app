@@ -1,16 +1,9 @@
-import 'dart:convert';
-
-import 'package:eventjar/logger_service.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:get/get.dart';
+import 'package:eventjar/logger_service.dart'; // Adjust import
+import 'package:eventjar/storage/storage_service.dart'; // Adjust import
 
-import 'global/app_toast.dart';
-import 'storage/storage_service.dart';
-
-@pragma('vm:entry-point')
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
@@ -21,47 +14,33 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   static bool _isFlutterLocalNotificationsInitialized = false;
+  static const String storageFcmToken = "myEventJar_fcmToken";
 
   Future<void> init() async {
-    // FIXED: Proper error handling for getToken
-    try {
-      String? token = await _firebaseMessaging.getToken();
-
-      LoggerService.loggerInstance.dynamic_d(token);
-
-      if (token != null) {
-        StorageService.to.setString("storageFcmToken", token);
-      }
-    } on FirebaseException catch (e) {
-      // FIXED: Extract error message from FirebaseException
-      if (Get.context != null) {
-        await Future.delayed(Duration(milliseconds: 300));
-        AppToast.show(
-          message: e.message ?? "Failed to get notification token",
-          title: "Firebase Error",
-          backgroundColor: Colors.red,
-        );
-      }
-    } catch (e) {
-      // FIXED: Handle other exceptions
-      if (Get.context != null) {
-        await Future.delayed(Duration(milliseconds: 300));
-        AppToast.show(
-          message: "Could not initialize notifications",
-          title: "Firebase Error",
-          backgroundColor: Colors.red,
-        );
-      }
-    }
-
-    // Background message handler
+    // 🔥 1. Background handler FIRST (iOS safe)
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    // Request notification permissions
+    // 🔥 2. OLD .then() pattern - iOS SAFE (waits for Firebase)
+    _firebaseMessaging
+        .getToken()
+        .then((token) {
+          if (token != null) {
+            StorageService.to.setString(storageFcmToken, token);
+            LoggerService.loggerInstance.dynamic_d("🔥 FCM Token: $token");
+          } else {
+            LoggerService.loggerInstance.dynamic_d("❌ Failed to get FCM Token");
+          }
+        })
+        .catchError((error) {
+          LoggerService.loggerInstance.dynamic_d("❌ FCM Token Error: $error");
+        });
+
+    // 🔥 3. Request permissions
     await _requestPermission();
 
+    // 🔥 4. iOS + Android settings (iOS CRITICAL)
     const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/ic_launcher'); // or 'logo'
 
     const DarwinInitializationSettings iosSettings =
         DarwinInitializationSettings(
@@ -72,128 +51,66 @@ class NotificationService {
 
     const InitializationSettings initSettings = InitializationSettings(
       android: androidSettings,
-      iOS: iosSettings,
+      iOS: iosSettings, // ✅ iOS SETTINGS REQUIRED
     );
 
-    // Initialize local notifications
+    // 🔥 5. Initialize local notifications
     await flutterLocalNotificationsPlugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: onSelectNotification,
     );
 
-    // Setup foreground and background handlers
+    // 🔥 6. Setup handlers
     _setupMessageHandlers();
   }
 
+  // 🔥 iOS Legacy support (< iOS 10)
+  static void onSelectNotificationLegacy(
+    int id,
+    String? title,
+    String? body,
+    String? payload,
+  ) {
+    LoggerService.loggerInstance.dynamic_d("🔔 Legacy notification: $payload");
+  }
+
   void onSelectNotification(NotificationResponse response) {
+    LoggerService.loggerInstance.dynamic_d(
+      "🔔 Notification tapped: ${response.payload}",
+    );
+
+    // Handle navigation based on payload
     if (response.payload != null) {
-      try {
-        final Map<String, dynamic> val = jsonDecode(response.payload!);
-        LoggerService.loggerInstance.dynamic_d(val);
-
-        // final String vendorType = val['vendorType'] ?? '';
-        // final bool isReceiverVendor = val['isReceiverVendor'] == "true";
-
-        // if (isReceiverVendor) {
-        //   // Vendor-side navigation
-        //   switch (vendorType) {
-        //     case 'PRODUCT':
-        //       Get.offAllNamed(
-        //         AppRouteName.orderHistory,
-        //         arguments: {
-        //           'serviceId': "",
-        //           'payment': "",
-        //           'isService': false,
-        //           "from": "message",
-        //         },
-        //       );
-        //       break;
-        //     case 'BANNER':
-        //       Get.toNamed(
-        //         AppRouteName.bannerHistory,
-        //         arguments: {"from": "message"},
-        //       );
-        //       break;
-        //     case 'SERVICE':
-        //       Get.toNamed(
-        //         AppRouteName.serviceHistory,
-        //         arguments: {"from": "message"},
-        //       );
-        //       break;
-        //   }
-        // } else {
-        //   // Customer-side navigation
-        //   switch (vendorType) {
-        //     case 'BANNER':
-        //       Get.toNamed(
-        //         AppRouteName.customerHistoryList,
-        //         arguments: {'index': 2, "from": "message"},
-        //       );
-        //       break;
-        //     case 'PRODUCT':
-        //       Get.toNamed(
-        //         AppRouteName.customerHistoryList,
-        //         arguments: {'index': 1, "from": "message"},
-        //       );
-        //       break;
-        //     case 'SERVICE':
-        //       Get.toNamed(
-        //         AppRouteName.customerHistoryList,
-        //         arguments: {'index': 3, "from": "message"},
-        //       );
-        //       break;
-        //   }
-        // }
-      } catch (e) {
-        if (Get.context != null) {
-          AppToast.show(
-            message: "Could not open notification",
-            title: "Error",
-            backgroundColor: Colors.red,
-          );
-        }
-      }
+      _handleNotificationTap(response.payload!);
     }
   }
 
-  // Ask user for permission
   Future<void> _requestPermission() async {
-    try {
-      await _firebaseMessaging.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-        provisional: false,
-      );
-    } catch (e) {
-      AppToast.show(
-        message: "Error requesting notification permission: $e",
-        title: "Error",
-        backgroundColor: Colors.red,
-      );
-    }
+    final settings = await _firebaseMessaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+      provisional: false,
+    );
+    LoggerService.loggerInstance.dynamic_d(
+      '🔐 Permission: ${settings.authorizationStatus}',
+    );
   }
 
-  // Setup flutter notifications only once
   Future<void> setupFlutterNotifications() async {
     if (_isFlutterLocalNotificationsInitialized) return;
 
-    try {
-      const AndroidInitializationSettings androidSettings =
-          AndroidInitializationSettings('@mipmap/ic_launcher');
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
-      const InitializationSettings initSettings = InitializationSettings(
-        android: androidSettings,
-      );
+    const InitializationSettings initSettings = InitializationSettings(
+      android: androidSettings,
+    );
 
-      await flutterLocalNotificationsPlugin.initialize(initSettings);
-      _isFlutterLocalNotificationsInitialized = true;
-    } catch (e) {
-      return;
-    }
+    await flutterLocalNotificationsPlugin.initialize(initSettings);
+    _isFlutterLocalNotificationsInitialized = true;
   }
 
-  // Display notification
   Future<void> showNotification(RemoteMessage message) async {
     try {
       final title =
@@ -203,22 +120,29 @@ class NotificationService {
       final body =
           message.data["body"] ??
           message.notification?.body ??
-          'You have a new message';
+          'You have new activity';
       final senderId = message.data['senderId'] ?? 'unknown';
       final notificationId = senderId.hashCode;
 
       const AndroidNotificationDetails androidDetails =
           AndroidNotificationDetails(
-            'chat_channel',
-            'Chat Notifications',
-            channelDescription: 'Notifications for chat messages',
+            'contact_channel', // Changed from chat_channel
+            'Contact Notifications',
+            channelDescription: 'Notifications for contact management',
             importance: Importance.max,
             priority: Priority.high,
             styleInformation: BigTextStyleInformation(''),
           );
 
+      const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      );
+
       const NotificationDetails platformDetails = NotificationDetails(
         android: androidDetails,
+        iOS: iosDetails, // ✅ iOS details
       );
 
       await flutterLocalNotificationsPlugin.show(
@@ -226,76 +150,73 @@ class NotificationService {
         title,
         body,
         platformDetails,
-        payload: jsonEncode(message.data),
+        payload: senderId,
       );
     } catch (e) {
-      return;
+      LoggerService.loggerInstance.e("Notification show error: $e");
     }
   }
 
-  // Background message handler
   @pragma('vm:entry-point')
   static Future<void> _firebaseMessagingBackgroundHandler(
     RemoteMessage message,
   ) async {
     try {
+      // 🔥 iOS: Firebase might not be initialized in background
       await Firebase.initializeApp();
       await NotificationService._instance.setupFlutterNotifications();
       await NotificationService._instance.showNotification(message);
     } catch (e) {
-      return;
+      // Silent fail in background
     }
   }
 
-  // Setup message handlers
   void _setupMessageHandlers() {
-    // Foreground messages
-    FirebaseMessaging.onMessage.listen((message) {
-      showNotification(message);
-    });
+    // Foreground
+    FirebaseMessaging.onMessage.listen(showNotification);
 
-    // App opened from notification
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      _handleBackgroundMessage(message);
-    });
+    // App opened from background
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundMessage);
 
     // App launched from terminated state
-    _firebaseMessaging.getInitialMessage().then((message) {
-      if (message != null) {
-        _handleBackgroundMessage(message);
+    _firebaseMessaging.getInitialMessage().then((initialMessage) {
+      if (initialMessage != null) {
+        _handleBackgroundMessage(initialMessage);
       }
     });
 
-    _firebaseMessaging.onTokenRefresh
-        .listen((newToken) {
-          StorageService.to.setString("storageFcmToken", newToken);
-        })
-        .onError((error) {
-          return;
-        });
+    // Token refresh
+    _firebaseMessaging.onTokenRefresh.listen((newToken) {
+      StorageService.to.setString(storageFcmToken, newToken);
+      LoggerService.loggerInstance.d("🔄 Token refreshed: $newToken");
+    });
   }
 
-  // Handle notification tap
   void _handleBackgroundMessage(RemoteMessage message) {
-    try {
-      if (message.data['type'] == 'chat') {
-        return;
-      }
-    } catch (e) {
-      return;
+    LoggerService.loggerInstance.d("📱 App opened from notification");
+    if (message.data['type'] == 'contact') {
+      final senderId = message.data['senderId'];
+      LoggerService.loggerInstance.d("📨 Navigate to contact: $senderId");
+      // Navigate to contact screen
+      // Get.toNamed('/contact', arguments: senderId);
     }
   }
 
-  // Refresh FCM token
+  void _handleNotificationTap(String payload) {
+    // Handle notification tap navigation
+    LoggerService.loggerInstance.d("🔔 Handling tap: $payload");
+  }
+
+  // Manual token refresh
   Future<void> refreshToken() async {
     try {
       await _firebaseMessaging.deleteToken();
       String? newToken = await _firebaseMessaging.getToken();
       if (newToken != null) {
-        StorageService.to.setString("storageFcmToken", newToken);
+        StorageService.to.setString(storageFcmToken, newToken);
       }
     } catch (e) {
-      return;
+      LoggerService.loggerInstance.e("Token refresh failed: $e");
     }
   }
 }
