@@ -122,8 +122,6 @@ class HomeController extends GetxController {
   Future<void> fetchEvents() async {
     try {
       state.isLoading.value = true;
-      LoggerService.loggerInstance.dynamic_d(_currentPage);
-      LoggerService.loggerInstance.dynamic_d(_limit);
       EventResponse response = await HomeApi.getEventList(
         '/events?page=$_currentPage&limit=$_limit',
       );

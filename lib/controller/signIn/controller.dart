@@ -18,6 +18,11 @@ class SignInController extends GetxController {
   final isPasswordHidden = true.obs;
   bool get isLoading => state.isLoading.value;
 
+  final List<TextEditingController> otpControllers = List.generate(
+    6,
+    (_) => TextEditingController(),
+  );
+
   TextEditingController get emailController => _emailController.value;
   TextEditingController get passwordController => _passwordController.value;
 
@@ -63,52 +68,109 @@ class SignInController extends GetxController {
   }
 
   void handleSubmit(BuildContext context) async {
-    signInOpen2FAModal(
-      Get.context!,
-      email: "arunkumar.ak.dev@gmail.com",
-      // tempToken: response.tempToken!,
-      tempToken: "Hello",
-      controller: this,
-    );
-    // state.isLoading.value = true;
-    // try {
-    //   var response = await SignInApi.signIn(
-    //     email: emailController.text,
-    //     password: passwordController.text,
-    //   );
+    state.isLoading.value = true;
+    try {
+      var response = await SignInApi.signIn(
+        email: emailController.text,
+        password: passwordController.text,
+      );
 
-    //   if (response.requires2FA) {
-    //     state.isLoading.value = false;
+      if (response.requires2FA) {
+        state.isLoading.value = false;
 
-    //     // // Navigate to 2FA screen with temp token
-    //     // Navigator.pushNamed(
-    //     //   context,
-    //     //   Routes.twoFactor,
-    //     //   arguments: response.tempToken,
-    //     // );
+        state.tempToken = response.tempToken;
+        clear2FaController();
+        state.isOtpValid.value = false;
 
-    //     return;
-    //   }
+        signInOpen2FAModal(
+          Get.context!,
+          email: emailController.text,
+          tempToken: state.tempToken!,
+          controller: this,
+        );
 
-    //   await UserStore.to.handleSetLocalData(response);
-    //   AppSnackbar.success(
-    //     title: "Login Successful",
-    //     message: "User Logged in successfully",
-    //   );
-    //   state.isLoading.value = false;
-    //   navigateToBackPage(context);
-    // } catch (err) {
-    //   state.isLoading.value = false;
-    //   LoggerService.loggerInstance.dynamic_d(err);
-    //   if (err is DioException) {
-    //     ApiErrorHandler.handleError(err, "Login Error");
-    //   } else {
-    //     AppSnackbar.error(
-    //       title: "Login Error",
-    //       message: "Something went wrong",
-    //     );
-    //   }
-    // }
+        return;
+      }
+
+      await UserStore.to.handleSetLocalData(response);
+      AppSnackbar.success(
+        title: "Login Successful",
+        message: "User Logged in successfully",
+      );
+      state.isLoading.value = false;
+      navigateToBackPage(context);
+    } catch (err) {
+      state.isLoading.value = false;
+      LoggerService.loggerInstance.dynamic_d(err);
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Login Error");
+      } else {
+        AppSnackbar.error(
+          title: "Login Error",
+          message: "Something went wrong",
+        );
+      }
+    }
+  }
+
+  Future<void> handleSubmit2fa(BuildContext context) async {
+    Get.focusScope?.unfocus();
+    if (state.tempToken == null) {
+      AppSnackbar.warning(
+        title: "Verification Error",
+        message: "Session expired. Please login again.",
+      );
+      return;
+    }
+
+    final otp = otpControllers.map((c) => c.text).join();
+    if (otp.length != 6) {
+      AppSnackbar.warning(
+        title: "Invalid Code",
+        message: "Please enter the 6-digit verification code.",
+      );
+      return;
+    }
+
+    state.is2FaLoading.value = true;
+
+    try {
+      final normalResponse = await SignInApi.verify2FA(
+        tempToken: state.tempToken!,
+        otp: otp,
+      );
+
+      // Save user + tokens
+      await UserStore.to.handleSetLocalData(normalResponse);
+
+      AppSnackbar.success(
+        title: "Login Successful",
+        message: "2FA verified successfully",
+      );
+
+      state.is2FaLoading.value = false;
+      Navigator.pop(context);
+      navigateToBackPage(context);
+    } catch (err) {
+      state.is2FaLoading.value = false;
+      LoggerService.loggerInstance.dynamic_d(err);
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "2FA Error");
+      } else {
+        AppSnackbar.error(title: "2FA Error", message: "Something went wrong");
+      }
+    }
+  }
+
+  void clear2FaController() {
+    for (final c in otpControllers) {
+      c.clear();
+    }
+  }
+
+  void updateOtpValidity() {
+    final otp = otpControllers.map((c) => c.text).join();
+    state.isOtpValid.value = otp.length == 6;
   }
 
   /*----- navigation ----*/
@@ -122,5 +184,13 @@ class SignInController extends GetxController {
 
   void navigateToBackPage(BuildContext context) {
     Navigator.pop(context, "logged_in");
+  }
+
+  @override
+  void onClose() {
+    for (final c in otpControllers) {
+      c.dispose();
+    }
+    super.onClose();
   }
 }
