@@ -20,7 +20,7 @@ class ConnState {
     'accepted',
     'maybe_later',
   ];
-  RxString selectedStatus = 'all'.obs;
+  Rxn<String> selectedStatus = Rxn();
 
   RxMap<String, bool> buttonLoading = <String, bool>{}.obs;
 }

@@ -27,7 +27,8 @@ class ConnectionController extends GetxController {
   }
 
   void configureDebounce() {
-    _statusDebounceWorker = debounce<String>(state.selectedStatus, (_) {
+    state.selectedStatus.value = 'all';
+    _statusDebounceWorker = debounce<String?>(state.selectedStatus, (_) {
       fetchConnections();
     }, time: const Duration(milliseconds: 400));
   }

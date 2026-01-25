@@ -49,13 +49,12 @@ class ConnectionBuildTabs extends GetView<ConnectionController> {
             onSelected: (String status) {
               controller.state.selectedStatus.value = status;
             },
-            listPadding: EdgeInsets.only(top: 5),
-            dropdownPadding: EdgeInsets.symmetric(
+            selectedTextSize: 8.sp,
+            textFieldPadding: EdgeInsets.symmetric(
               horizontal: 10.0,
               vertical: 2.0,
             ),
-            dropdownTextSize: 8.sp,
-            titleFontSize: 10.5.sp,
+            dropDownIconSize: 20,
           ),
         ],
       );

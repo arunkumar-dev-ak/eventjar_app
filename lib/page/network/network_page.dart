@@ -111,7 +111,9 @@ class NetworkPage extends GetView<NetworkScreenController> {
                           NetworkNavigationCard(
                             icon: Icons.schedule_rounded,
                             label: "Scheduler",
-                            // onTap: () {},
+                            onTap: () {
+                              controller.onSchedulerTap();
+                            },
                           ),
 
                           SizedBox(height: 0.8.hp),
@@ -119,7 +121,7 @@ class NetworkPage extends GetView<NetworkScreenController> {
                           NetworkNavigationCard(
                             icon: Icons.notifications,
                             label: "Reminders",
-                            // onTap: () {},
+                            onTap: () {},
                           ),
 
                           SizedBox(height: 3.hp),
