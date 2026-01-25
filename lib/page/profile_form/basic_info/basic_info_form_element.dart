@@ -27,6 +27,7 @@ class BasicInfoFormElement extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       inputFormatters: formatters,
       style: TextStyle(fontSize: defaultFontSize),
       decoration: InputDecoration(

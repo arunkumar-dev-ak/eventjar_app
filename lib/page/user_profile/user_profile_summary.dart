@@ -23,7 +23,7 @@ Widget userProfilebuildSummary() {
         icon: Icons.work_history,
         label: "Experience",
         value: extended?.yearsInBusiness != null
-            ? "${extended!.yearsInBusiness} Years"
+            ? "${extended!.yearsInBusiness}"
             : "Not specified",
         iconColor: Colors.orange,
       ),

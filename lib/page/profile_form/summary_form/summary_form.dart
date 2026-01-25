@@ -119,7 +119,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                             elevation: 0,
                           ),
                           child: Text(
-                            'Clear',
+                            'Reset',
                             style: TextStyle(
                               fontSize: defaultFontSize,
                               fontWeight: FontWeight.w600,

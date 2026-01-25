@@ -37,6 +37,7 @@ class SocialFormElement extends StatelessWidget {
         TextFormField(
           controller: controller,
           keyboardType: keyboardType,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: validator,
           inputFormatters: formatters,
           maxLines: maxLines ?? 1,

@@ -221,6 +221,12 @@ class RoutePage {
       middlewares: [LoginMiddleware()],
     ),
     GetPage(
+      name: RouteName.networkingFormPage,
+      page: () => NetworkingFormPage(),
+      binding: NetworkingBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
       name: RouteName.summaryFormPage,
       page: () => SummaryFormPage(),
       binding: SummaryBinding(),

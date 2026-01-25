@@ -1,6 +1,9 @@
 import 'package:eventjar/global/global_values.dart';
 
 String getFileUrl(String imageUrl) {
+  if (imageUrl.startsWith('http') || imageUrl.contains('cdn.myeventjar.com')) {
+    return imageUrl;
+  }
   return '${backendBaseUrl()}$imageUrl';
 }
 

@@ -41,9 +41,15 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                   BasicInfoFormElement(
                     controller: controller.fullNameController,
                     label: 'Full Name',
-                    validator: (val) => val == null || val.trim().isEmpty
-                        ? 'Full name is required'
-                        : null,
+                    validator: (val) {
+                      if (val == null || val.trim().isEmpty) {
+                        return 'Full name is required';
+                      }
+                      if (val.trim().length < 2) {
+                        return 'Full name must be at least 2 characters';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 2.hp),
 
@@ -113,9 +119,18 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(15),
                           ],
-                          validator: (val) => val == null || val.trim().isEmpty
-                              ? 'Mobile number is required'
-                              : null,
+                          validator: (val) {
+                            if (val == null || val.isEmpty) {
+                              return 'Mobile number is required';
+                            }
+                            if (val.length < 10) {
+                              return 'Enter a 10-digit number';
+                            }
+                            if (val.length > 10) {
+                              return 'Number should be 10 digits';
+                            }
+                            return null;
+                          },
                         ),
                       ),
                     ],
@@ -154,7 +169,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                             elevation: 0,
                           ),
                           child: Text(
-                            'Clear',
+                            'Reset',
                             style: TextStyle(
                               fontSize: defaultFontSize,
                               fontWeight: FontWeight.w600,

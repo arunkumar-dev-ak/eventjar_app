@@ -90,7 +90,7 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
                           elevation: 0,
                         ),
                         child: Text(
-                          'Clear',
+                          'Reset',
                           style: TextStyle(
                             fontSize: defaultFontSize,
                             fontWeight: FontWeight.w600,

@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:path/path.dart' as path;
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/user_profile_api/user_profile_api.dart';
 import 'package:eventjar/controller/dashboard/controller.dart';
@@ -10,11 +12,13 @@ import 'package:eventjar/page/user_profile/user_profile_security/user_profile_se
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UserProfileController extends GetxController {
   var appBarTitle = "EventJar";
   final state = UserProfileState();
   final formKey = GlobalKey<FormState>();
+  final ImagePicker _picker = ImagePicker();
 
   RxBool get isLoggedIn => UserStore.to.isLoginReactive;
 
@@ -184,6 +188,147 @@ class UserProfileController extends GetxController {
     } finally {
       state.isDeleteLoading.value = false;
     }
+  }
+
+  Future<void> selectAvatarImage() async {
+    if (state.isProfileLoading.value) return;
+    await Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Change Profile Photo',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 20),
+            ListTile(
+              leading: Icon(Icons.camera_alt, color: Colors.blue),
+              title: Text('Take Photo'),
+              onTap: () {
+                Get.back();
+                _getImageFromCamera();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.collections, color: Colors.blue),
+              title: Text('Choose from Gallery'),
+              onTap: () {
+                Get.back();
+                _getImageFromGallery();
+              },
+            ),
+            SizedBox(height: 10),
+            TextButton(
+              onPressed: () => Get.back(),
+              child: Text('Cancel', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _getImageFromCamera() async {
+    try {
+      final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+      if (pickedFile != null) {
+        state.selectedAvatarFile.value = File(pickedFile.path);
+        state.isEditingAvatar.value = true;
+      }
+    } catch (e) {
+      LoggerService.loggerInstance.e(e);
+      AppSnackbar.error(title: 'Error', message: 'Could not access camera');
+    }
+  }
+
+  // 4. Pick from gallery
+  Future<void> _getImageFromGallery() async {
+    try {
+      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        state.selectedAvatarFile.value = File(pickedFile.path);
+        state.isEditingAvatar.value = true;
+      }
+    } catch (e) {
+      LoggerService.loggerInstance.e(e);
+      AppSnackbar.error(title: 'Error', message: 'Could not access gallery');
+    }
+  }
+
+  Future<void> uploadProfileAvatar() async {
+    final file = state.selectedAvatarFile.value;
+    if (file == null) {
+      AppSnackbar.error(
+        title: 'Invalid',
+        message: "Something went wrong, Kindly reupload file",
+      );
+      return;
+    }
+
+    // 1. Validate (same rules as web)
+    final validationError = _validateAvatarImage(file);
+    if (validationError != null) {
+      AppSnackbar.error(title: 'Invalid', message: validationError);
+      return;
+    }
+
+    try {
+      state.isProfileLoading.value = true;
+
+      // 2. Upload using API
+      final bool newAvatarUrl = await UserProfileApi.uploadAvatar(file);
+      if (newAvatarUrl == true) {
+        AppSnackbar.success(
+          title: 'Success',
+          message: 'Profile picture updated!',
+        );
+        state.isEditingAvatar.value = false;
+        state.selectedAvatarFile.value = null;
+        onTabOpen();
+      }
+    } on DioException catch (e) {
+      LoggerService.loggerInstance.e(e);
+      if (e.response?.statusCode == 401) {
+        UserStore.to.clearStore();
+        navigateToSignInPage();
+      }
+      final msg = e.response?.data is Map
+          ? e.response?.data['error']?.toString()
+          : 'Failed to upload';
+      AppSnackbar.error(title: 'Error', message: msg ?? 'Failed to upload');
+    } catch (e) {
+      LoggerService.loggerInstance.e(e);
+      AppSnackbar.error(title: 'Error', message: 'Failed to upload');
+    } finally {
+      state.isProfileLoading.value = false;
+    }
+  }
+
+  String? _validateAvatarImage(File file) {
+    final int fileSize = file.lengthSync();
+    const int maxFileSize = 2 * 1024 * 1024; // 2 MB
+
+    if (fileSize > maxFileSize) {
+      return 'File too large. Maximum size is 2MB';
+    }
+
+    final String ext = file.path.split('.').last.toLowerCase();
+    if (!['jpg', 'jpeg', 'png', 'webp'].contains(ext)) {
+      return 'Only JPEG, PNG, WebP images are allowed';
+    }
+
+    final String filename = path.basename(file.path);
+    if (filename.contains(RegExp(r'[<>:"/\\|?*]')) || filename.contains('..')) {
+      return 'File name contains unsafe characters';
+    }
+
+    return null;
   }
 
   //helper func

@@ -126,9 +126,22 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(15),
                           ],
-                          validator: (val) => val == null || val.trim().isEmpty
-                              ? 'Business phone is required'
-                              : null,
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Business phone is required';
+                            }
+
+                            final String digitsOnly = value.replaceAll(
+                              RegExp(r'[^0-9]'),
+                              '',
+                            );
+
+                            if (digitsOnly.length != 10) {
+                              return 'Business phone must be 10 digits';
+                            }
+
+                            return null;
+                          },
                         ),
                       ),
                     ],
@@ -167,7 +180,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                             elevation: 0,
                           ),
                           child: Text(
-                            'Clear',
+                            'Reset',
                             style: TextStyle(
                               fontSize: defaultFontSize,
                               fontWeight: FontWeight.w600,

@@ -171,7 +171,13 @@ class EventInfoHeader extends StatelessWidget {
             // ),
 
             // Price badge - top right
-            Positioned(top: 12, right: 12, child: _buildPriceBadge(eventInfo)),
+            Positioned(
+              top: 12,
+              right: 12,
+              child: eventInfo.isOneMeetingEnabled
+                  ? _buildOneOnOneBadge()
+                  : _buildPriceBadge(eventInfo),
+            ),
 
             // Stats at bottom (matching your app bar style)
             Positioned(
@@ -208,6 +214,36 @@ class EventInfoHeader extends StatelessWidget {
         maxNrOfCacheObjects: 100,
         repo: JsonCacheInfoRepository(databaseName: null), // no disk cache
         fileService: HttpFileService(),
+      ),
+    );
+  }
+
+  Widget _buildOneOnOneBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '1 : 1',
+            style: TextStyle(
+              color: Colors.green.shade700,
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
       ),
     );
   }

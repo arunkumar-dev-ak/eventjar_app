@@ -129,7 +129,7 @@ class SignUpController extends GetxController {
     if (val == null || val.isEmpty) return "Password is required";
     if (val.length < 8) return "Password must be at least 8 characters";
     if (!RegExp(
-      r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$",
+      r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$",
     ).hasMatch(val)) {
       return "Password must contain uppercase, lowercase, number, and special character";
     }

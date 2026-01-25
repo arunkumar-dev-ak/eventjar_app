@@ -35,6 +35,7 @@ class BusinessInfoFormElement extends StatelessWidget {
       maxLines: maxLines ?? 1,
       minLines: minLines ?? 1,
       style: TextStyle(fontSize: defaultFontSize),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(

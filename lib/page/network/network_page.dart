@@ -121,7 +121,7 @@ class NetworkPage extends GetView<NetworkScreenController> {
                           NetworkNavigationCard(
                             icon: Icons.notifications,
                             label: "Reminders",
-                            onTap: () {},
+                            // onTap: () {},
                           ),
 
                           SizedBox(height: 3.hp),

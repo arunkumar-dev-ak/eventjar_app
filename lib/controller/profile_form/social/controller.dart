@@ -141,4 +141,85 @@ class SocialFormController extends GetxController {
       state.isLoading.value = false;
     }
   }
+
+  String? linkedinValidator(String? value) {
+    if (value == null || value.trim().isEmpty) return null; // optional
+
+    final trimmed = value.trim();
+    final RegExp linkedInPattern = RegExp(
+      r'^https?://(?:www\.)?linkedin\.com\/(?:in|company)\/[a-zA-Z0-9-]+/?$',
+      caseSensitive: false,
+    );
+
+    if (!linkedInPattern.hasMatch(trimmed)) {
+      return 'Enter a valid LinkedIn profile URL\n(e.g., https://linkedin.com/in/yourname)';
+    }
+
+    return null;
+  }
+
+  String? whatsappValidator(String? value) {
+    if (value == null || value.isEmpty) return null; // optional
+
+    final digitsOnly = value.replaceAll(RegExp(r'[^0-9]'), '');
+
+    if (digitsOnly.length < 10) {
+      return 'Phone number must be at least 10 digits';
+    }
+
+    // If you want to enforce 10–15 digits (India), use this instead:
+    if (digitsOnly.length < 10 || digitsOnly.length > 15) {
+      return 'Phone number must be 10–15 digits';
+    }
+
+    return null;
+  }
+
+  String? instagramValidator(String? value) {
+    if (value == null || value.trim().isEmpty) return null; // optional
+
+    final trimmed = value.trim();
+    final RegExp instagramPattern = RegExp(
+      r'^https?://(?:www\.)?instagram\.com/([a-zA-Z0-9_.]{1,30})/?$',
+      caseSensitive: false,
+    );
+
+    if (!instagramPattern.hasMatch(trimmed)) {
+      return 'Enter a valid Instagram URL\n(e.g., https://instagram.com/username)';
+    }
+
+    return null;
+  }
+
+  String? twitterValidator(String? value) {
+    if (value == null || value.trim().isEmpty) return null; // optional
+
+    final trimmed = value.trim();
+    final RegExp twitterPattern = RegExp(
+      r'^https?://(?:www\.)?(?:x\.com|twitter\.com)/[a-zA-Z0-9_]{1,15}/?$',
+      caseSensitive: false,
+    );
+
+    if (!twitterPattern.hasMatch(trimmed)) {
+      return 'Enter a valid X/Twitter URL\n(e.g., https://x.com/username)';
+    }
+
+    return null;
+  }
+
+  String? facebookValidator(String? value) {
+    if (value == null || value.trim().isEmpty) return null; // optional
+
+    final trimmed = value.trim();
+    final RegExp facebookPattern = RegExp(
+      r'^https?://(?:www\.)?facebook\.com/([a-zA-Z0-9.\-]+|profile.php\?.*id=\d+)/?$',
+      caseSensitive: false,
+    );
+
+    if (!facebookPattern.hasMatch(trimmed)) {
+      return 'Enter a valid Facebook URL\n(e.g., https://facebook.com/username or profile link)';
+    }
+
+    return null;
+  }
 }
