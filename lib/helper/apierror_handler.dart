@@ -3,39 +3,74 @@ import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/logger_service.dart';
 
 class ApiErrorHandler {
-  static void handleError(DioException err, String title) {
-    LoggerService.loggerInstance.dynamic_d("Error is");
-    LoggerService.loggerInstance.e(err.response?.data);
+  static void handleError(DioException err, String? title) {
+    LoggerService.loggerInstance.e("Error: ${err.runtimeType}, ${err.type}");
 
-    final data = err.response?.data;
-    String errorMessage = "Something went wrong";
+    String errorMessage;
 
-    if (data != null) {
-      final message = data['message'];
+    // ✅ 1. NETWORK ERRORS - Use predefined messages (NO title needed)
+    if (err.type == DioExceptionType.connectionTimeout ||
+        err.type == DioExceptionType.connectionError ||
+        err.type == DioExceptionType.sendTimeout ||
+        err.type == DioExceptionType.receiveTimeout ||
+        err.type == DioExceptionType.unknown ||
+        err.message?.contains('No Internet') == true) {
+      errorMessage = "No Internet Connection";
+    }
+    // ✅ 2. SERVER ERRORS - Use predefined message
+    else if (err.response?.statusCode == 500 ||
+        err.response?.statusCode == 502 ||
+        err.response?.statusCode == 503 ||
+        err.response?.statusCode == 504) {
+      errorMessage = "Server Error. Please try again later.";
+    }
+    // ✅ 3. API RESPONSE ERRORS - Extract from response
+    else {
+      final data = err.response?.data;
 
-      // Case 1: message is a simple string
-      if (message is String) {
-        errorMessage = message;
-      }
-      // Case 2: message is a map
-      else if (message is Map) {
-        final innerMessage = message['message'];
+      if (data != null) {
+        final message = data['message'];
 
-        // Case 2a: inner message is a simple string
-        if (innerMessage is String) {
-          errorMessage = innerMessage;
+        // Case 1: Simple string
+        if (message is String) {
+          errorMessage = message;
         }
-        // Case 2b: inner message is a list → take first item
-        else if (innerMessage is List && innerMessage.isNotEmpty) {
-          final first = innerMessage.first;
+        // Case 2: Nested message map
+        else if (message is Map) {
+          final innerMessage = message['message'];
 
-          if (first is String) {
-            errorMessage = first;
+          if (innerMessage is String) {
+            errorMessage = innerMessage;
+          } else if (innerMessage is List && innerMessage.isNotEmpty) {
+            errorMessage = innerMessage.first.toString();
+          } else {
+            errorMessage = message.values.first.toString();
           }
         }
+        // Case 3: Direct data error
+        else {
+          errorMessage =
+              data['error']?.toString() ??
+              data['detail']?.toString() ??
+              "Something went wrong";
+        }
+      } else {
+        errorMessage = err.message ?? "Something went wrong";
       }
     }
 
-    AppSnackbar.error(title: title, message: errorMessage);
+    // ✅ Show snackbar WITHOUT title for network/server errors
+    if (err.type == DioExceptionType.connectionTimeout ||
+        err.type == DioExceptionType.sendTimeout ||
+        err.type == DioExceptionType.receiveTimeout ||
+        err.type == DioExceptionType.unknown ||
+        err.response?.statusCode == 500 ||
+        err.response?.statusCode == 502 ||
+        err.response?.statusCode == 503 ||
+        err.response?.statusCode == 504) {
+      AppSnackbar.warning(message: errorMessage); // ✅ NO title
+    } else {
+      AppSnackbar.error(title: title ?? "Error", message: errorMessage);
+    }
   }
 }

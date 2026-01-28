@@ -15,14 +15,15 @@ class UserStore extends GetxController {
   final _accessToken = "".obs;
   final _refreshToken = "".obs;
   RxString _deviceId = ''.obs;
-  final _profile = RxMap<String, dynamic>(); // Declare as RxMap
+  // final _profile = RxMap<String, dynamic>();
+  final _profile = <String, dynamic>{}.obs;
 
   bool get isLogin => _isLogin.value;
   RxBool get isLoginReactive => _isLogin;
   String get accessToken => _accessToken.value;
   String get refreshToken => _refreshToken.value;
   String get deviceId => _deviceId.value;
-  Map<String, dynamic> get profile => _profile;
+  RxMap<String, dynamic> get profile => _profile;
 
   // String get name {
   //   final String firstName = capitalize(
@@ -70,6 +71,11 @@ class UserStore extends GetxController {
     _refreshToken.value = loginData.refreshToken!;
     await setProfile(loginData.user!.toJson());
     _profile.value = loginData.user!.toJson();
+  }
+
+  Future<void> handleSetLocalDataForProfileUpdate(User user) async {
+    await setProfile(user.toJson());
+    _profile.value = user.toJson();
   }
 
   Future<void> deleteAccessToken() async {

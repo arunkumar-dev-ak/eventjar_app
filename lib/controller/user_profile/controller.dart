@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:eventjar/model/auth/login_model.dart';
+import 'package:eventjar/model/user_profile/user_profile.dart';
 import 'package:path/path.dart' as path;
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/user_profile_api/user_profile_api.dart';
@@ -21,6 +23,7 @@ class UserProfileController extends GetxController {
   final ImagePicker _picker = ImagePicker();
 
   RxBool get isLoggedIn => UserStore.to.isLoginReactive;
+  RxMap<String, dynamic> get profile => UserStore.to.profile;
 
   final passwordController = TextEditingController();
 
@@ -38,6 +41,62 @@ class UserProfileController extends GetxController {
       await checkDeletionStatus();
     }
     state.isDeleteLoading.value = false;
+  }
+
+  void checkAndUpdateLocalProfileInfo() async {
+    final currentUserProfile = state.userProfile.value;
+    if (currentUserProfile == null || profile.isEmpty) {
+      return;
+    }
+
+    final updatedUser = _mapUserProfileToUser(currentUserProfile);
+
+    final localName = profile['name']?.toString();
+    final localPhone = profile['phone']?.toString();
+    final localAvatar = profile['avatarUrl']?.toString();
+
+    final newName = updatedUser.name;
+    final newPhone = updatedUser.phone;
+    final newAvatar = updatedUser.avatarUrl;
+
+    final hasChanges =
+        localName != newName ||
+        localPhone != newPhone ||
+        localAvatar != newAvatar;
+
+    if (hasChanges) {
+      LoggerService.loggerInstance.d(
+        "🔄 Profile sync: ${updatedUser.displayName}",
+      );
+
+      // Update UserStore
+      await UserStore.to.handleSetLocalDataForProfileUpdate(updatedUser);
+    } else {
+      // LoggerService.loggerInstance.d(
+      //   "✅ Profile up to date: ${updatedUser.displayName}",
+      // );
+    }
+  }
+
+  User _mapUserProfileToUser(UserProfile userProfile) {
+    return User(
+      id: userProfile.id,
+      email: userProfile.email,
+      name: userProfile.name,
+      phone: userProfile.phone,
+      role: userProfile.role,
+      isVerified: userProfile.isVerified,
+      avatarUrl: userProfile.avatarUrl,
+      bio: userProfile.bio,
+      company: userProfile.company,
+      jobTitle: userProfile.jobTitle,
+      location: userProfile.location,
+      linkedin:
+          userProfile.linkedin ?? userProfile.extendedProfile?.linkedinProfile,
+      website:
+          userProfile.website ?? userProfile.extendedProfile?.businessWebsite,
+      username: userProfile.username,
+    );
   }
 
   Future<void> checkDeletionStatus() async {
@@ -92,6 +151,7 @@ class UserProfileController extends GetxController {
     try {
       final response = await UserProfileApi.getUserProfile();
       state.userProfile.value = response.data;
+      checkAndUpdateLocalProfileInfo();
     } catch (err) {
       LoggerService.loggerInstance.e(err);
       if (err is DioException) {

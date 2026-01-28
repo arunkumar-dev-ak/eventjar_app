@@ -1,7 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:eventjar/api/home_api/home_api.dart';
 import 'package:eventjar/controller/home/state.dart';
+import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/palette_generator.dart';
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/helper/date_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/home/home_model.dart';
@@ -127,8 +130,17 @@ class HomeController extends GetxController {
       );
       state.events.value = response.data;
       state.meta.value = response.meta;
-    } catch (e) {
-      LoggerService.loggerInstance.e('Failed to load events: $e');
+    } catch (err) {
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Failed to load Events");
+      } else if (err is Exception) {
+        AppSnackbar.error(title: "Exception", message: err.toString());
+      } else {
+        AppSnackbar.error(
+          title: "Error",
+          message: "Something went wrong (${err.runtimeType})",
+        );
+      }
     } finally {
       state.isLoading.value = false;
     }

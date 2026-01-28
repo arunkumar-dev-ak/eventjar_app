@@ -14,6 +14,7 @@ class DashboardController extends GetxController {
   DateTime lastBackPressed = DateTime.now();
 
   RxBool get isLoggedIn => UserStore.to.isLoginReactive;
+  RxMap<String, dynamic> get profile => UserStore.to.profile;
 
   void onInint() {
     state.selectedIndex.value = 0;

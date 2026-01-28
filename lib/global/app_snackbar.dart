@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AppSnackbar {
-  // Common base method
   static void _show({
-    required String title,
+    required String? title,
     required String message,
     required Color backgroundColor,
     IconData? icon,
     Color? iconColor,
   }) {
     Get.snackbar(
-      title,
+      title ?? '',
       message,
       snackPosition: SnackPosition.TOP,
       backgroundColor: backgroundColor,
@@ -21,10 +20,20 @@ class AppSnackbar {
       icon: Icon(icon, color: iconColor ?? Colors.white),
       duration: const Duration(seconds: 3),
       snackStyle: SnackStyle.FLOATING,
+      // ✅ Hide title bar when empty
+      titleText: title != null && title.isNotEmpty
+          ? Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            )
+          : null,
     );
   }
 
-  // ✅ Success Snackbar
+  // ✅ Success with title
   static void success({required String title, required String message}) {
     _show(
       title: title,
@@ -34,8 +43,8 @@ class AppSnackbar {
     );
   }
 
-  // ⚠️ Warning Snackbar
-  static void warning({required String title, required String message}) {
+  // ⚠️ Warning with title
+  static void warning({String? title, required String message}) {
     _show(
       title: title,
       message: message,
@@ -44,8 +53,11 @@ class AppSnackbar {
     );
   }
 
-  // ❌ Error Snackbar
-  static void error({required String title, required String message}) {
+  // ❌ Error: Title OPTIONAL ✅
+  static void error({
+    String? title, // ✅ Optional title
+    required String message,
+  }) {
     _show(
       title: title,
       message: message,

@@ -15,6 +15,7 @@ class DioClient {
         baseUrl: backendBaseUrl(),
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
+        sendTimeout: const Duration(seconds: 30),
         headers: {
           'Content-Type': 'application/json',
           'X-Client-Platform': 'mobile',
@@ -43,6 +44,21 @@ class DioClient {
           LoggerService.loggerInstance.dynamic_d(
             'e.requestOptions.path ${e.response?.statusCode}',
           );
+
+          if (e.type == DioExceptionType.connectionTimeout ||
+              e.type == DioExceptionType.sendTimeout ||
+              e.type == DioExceptionType.receiveTimeout ||
+              e.type == DioExceptionType.unknown) {
+            LoggerService.loggerInstance.e("🌐 NO INTERNET: ${e.message}");
+            return handler.reject(
+              DioException(
+                requestOptions: e.requestOptions,
+                error: 'No Internet Connection',
+                type: DioExceptionType.connectionError,
+                message: 'No Internet Connection',
+              ),
+            );
+          }
 
           if (e.response?.statusCode == 401) {
             final refreshToken = UserStore.to.refreshToken;
@@ -115,6 +131,29 @@ class DioClient {
               );
             }
           }
+
+          if (e.response?.statusCode == 500 ||
+              e.response?.statusCode == 503 ||
+              e.response?.statusCode == 502) {
+            LoggerService.loggerInstance.e(
+              "🛑 Server Error: ${e.response?.statusCode}",
+            );
+
+            return handler.reject(
+              DioException(
+                requestOptions: e.requestOptions,
+                error: 'Server Error. Please try again later.',
+                type: DioExceptionType.badResponse,
+                response: e.response,
+                message: 'Server Error (${e.response?.statusCode})',
+              ),
+            );
+          }
+
+          // ✅ 5. Pass all other errors through
+          LoggerService.loggerInstance.dynamic_d(
+            '❌ API Error: ${e.response?.statusCode} - ${e.message}',
+          );
 
           return handler.next(e);
         },
