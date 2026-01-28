@@ -42,9 +42,12 @@ class ConnectionPage extends GetView<ConnectionController> {
                     itemBuilder: (context, index) => connectionShimmer(),
                   ),
                 )
-              else if ((controller.state.sent.value?.requests.isEmpty ??
-                      true) &&
-                  (controller.state.received.value?.requests.isEmpty ?? true))
+              else if ((controller.state.selectedTab.value == 0 &&
+                      (controller.state.sent.value?.requests.isEmpty ??
+                          true)) ||
+                  (controller.state.selectedTab.value == 1 &&
+                      (controller.state.received.value?.requests.isEmpty ??
+                          true)))
                 const Expanded(
                   child: Center(
                     child: Text(

@@ -7,6 +7,7 @@ import 'package:eventjar/helper/apierror_handler.dart' show ApiErrorHandler;
 import 'package:eventjar/model/user_profile/user_profile.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_intl_phone_field/countries.dart';
 import 'package:get/get.dart';
 
 class BusinessInfoFormController extends GetxController {
@@ -92,18 +93,20 @@ class BusinessInfoFormController extends GetxController {
     businessWebsiteController.text = _originalBusinessWebsite ?? '';
     businessEmailController.text = _originalBusinessEmail ?? '';
 
-    final localPhone = getLocalNumberSimple(_originalBusinessPhone);
-    businessPhoneController.text = localPhone;
-
     businessAddressController.text = _originalBusinessAddress ?? '';
+
+    handlePhoneNumberArgs(profile);
   }
 
-  String getLocalNumberSimple(String? phone) {
-    if (phone == null || phone.isEmpty) return '';
-    if (phone.startsWith('+') && phone.length > 3) {
-      return phone.substring(3);
-    }
-    return phone;
+  void handlePhoneNumberArgs(UserProfile profile) {
+    final selectedCountryCode =
+        profile.extendedProfile?.businessPhoneParsed?.countryCode ?? "+91";
+    final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
+    state.selectedCountry.value = countries.firstWhere(
+      (country) => country.fullCountryCode == cleanCountryCode,
+    );
+    businessPhoneController.text =
+        profile.extendedProfile?.businessPhoneParsed?.phoneNumber ?? "";
   }
 
   void clearForm() {
@@ -122,8 +125,9 @@ class BusinessInfoFormController extends GetxController {
   }
 
   Map<String, dynamic> _gatherFormData() {
-    final phoneWithCode =
-        '${state.selectedCountryCode.value}${businessPhoneController.text.trim()}';
+    final countryCode = state.selectedCountry.value.fullCountryCode;
+    final localPhoneNumber = businessPhoneController.text.trim();
+    final fullPhoneNumber = '+$countryCode$localPhoneNumber';
     final data = <String, dynamic>{};
 
     if (_hasFieldChanged(
@@ -154,9 +158,9 @@ class BusinessInfoFormController extends GetxController {
 
     if (_hasFieldChanged(
       original: _originalBusinessPhone,
-      current: phoneWithCode,
+      current: fullPhoneNumber,
     )) {
-      data['businessPhone'] = phoneWithCode;
+      data['businessPhone'] = fullPhoneNumber;
     }
 
     if (_hasFieldChanged(

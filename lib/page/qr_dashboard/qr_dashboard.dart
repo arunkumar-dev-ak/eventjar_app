@@ -1,7 +1,6 @@
 import 'package:eventjar/controller/qr_dashboard/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/my_qr/my_qr_page.dart';
-import 'package:eventjar/page/qr_add_contact/qr_add_contact_page.dart';
 import 'package:eventjar/page/qr_dashboard/widget/navigation_bar.dart';
 import 'package:eventjar/page/scan_qr/scan_qr_page.dart';
 import 'package:flutter/material.dart';

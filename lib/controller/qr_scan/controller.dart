@@ -1,4 +1,3 @@
-import 'package:eventjar/controller/qr_add_contact/controller.dart';
 import 'package:eventjar/controller/qr_dashboard/controller.dart';
 import 'package:eventjar/controller/qr_scan/state.dart';
 import 'package:eventjar/logger_service.dart';
@@ -116,7 +115,7 @@ class QrScanScreenController extends GetxController
 
     if (jsonData != null) {
       final contact = QrContactModel.fromJson(jsonData);
-      LoggerService.loggerInstance.dynamic_d(contact);
+      LoggerService.loggerInstance.dynamic_d(contact.toJson());
 
       // Stop camera before navigating
       stopCamera();
@@ -151,13 +150,20 @@ class QrScanScreenController extends GetxController
 
   // Handle barcode detection
   void onDetect(BarcodeCapture capture) {
-    LoggerService.loggerInstance.dynamic_d("in on detect - isCameraActive: ${state.isCameraActive.value}, isScanning: ${state.isScanning.value}, hasNavigated: ${state.hasNavigated.value}");
+    LoggerService.loggerInstance.dynamic_d(
+      "in on detect - isCameraActive: ${state.isCameraActive.value}, isScanning: ${state.isScanning.value}, hasNavigated: ${state.hasNavigated.value}",
+    );
 
     // Only process if camera is active and scanning is enabled
-    if (!state.isCameraActive.value || !state.isScanning.value || state.hasNavigated.value) return;
+    if (!state.isCameraActive.value ||
+        !state.isScanning.value ||
+        state.hasNavigated.value)
+      return;
 
     final List<Barcode> barcodes = capture.barcodes;
-    LoggerService.loggerInstance.dynamic_d("Barcodes found: ${barcodes.length}");
+    LoggerService.loggerInstance.dynamic_d(
+      "Barcodes found: ${barcodes.length}",
+    );
 
     for (final barcode in barcodes) {
       final String? rawValue = barcode.rawValue;

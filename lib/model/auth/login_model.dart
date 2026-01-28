@@ -1,3 +1,5 @@
+import 'package:eventjar/model/contact/mobile_contact_model.dart';
+
 abstract class LoginResponse {
   const LoginResponse();
 
@@ -108,6 +110,7 @@ class User {
   final int? usernameChangeCount;
   final DateTime? usernameLastChangedAt;
   final bool? twoFactorEnabled;
+  final PhoneParsed? phoneParsed;
 
   User({
     this.id,
@@ -130,6 +133,7 @@ class User {
     this.usernameChangeCount,
     this.usernameLastChangedAt,
     this.twoFactorEnabled,
+    this.phoneParsed,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -155,6 +159,9 @@ class User {
         usernameChangeCount: json['usernameChangeCount'] ?? 0,
         usernameLastChangedAt: _parseDate(json['usernameLastChangedAt']),
         twoFactorEnabled: json['twoFactorEnabled'] ?? false,
+        phoneParsed: json['phoneParsed'] != null
+            ? PhoneParsed.fromJson(json['phoneParsed'])
+            : null,
       );
     } catch (e) {
       throw Exception('Error parsing User: $e');
@@ -170,6 +177,7 @@ class User {
     'status': status,
     'isVerified': isVerified,
     'avatarUrl': avatarUrl,
+    'phoneParsed': phoneParsed?.toJson(),
     'bio': bio,
     'company': company,
     'jobTitle': jobTitle,

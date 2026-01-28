@@ -130,7 +130,7 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
         backgroundColor: Colors.transparent,
         insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: Container(
-          constraints: const BoxConstraints(maxHeight: 600, maxWidth: 400),
+          constraints: BoxConstraints(maxHeight: 60.hp, maxWidth: 90.wp),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(24),

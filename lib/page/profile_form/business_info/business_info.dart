@@ -5,6 +5,8 @@ import 'package:eventjar/page/profile_form/business_info/widget/business_categor
 import 'package:eventjar/page/profile_form/business_info/widget/business_info_form_element.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_intl_phone_field/country_picker_dialog.dart';
+import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:get/get.dart';
 
 class BusinessInfoPage extends GetView<BusinessInfoFormController> {
@@ -89,63 +91,71 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                   SizedBox(height: 2.hp),
 
                   // Business Phone
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Country code picker
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade400),
+                  // Mobile Number
+                  Obx(() {
+                    return IntlPhoneField(
+                      decoration: InputDecoration(
+                        labelText: 'Mobile Number *',
+                        labelStyle: TextStyle(fontSize: 14),
+                        border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
-                        child: CountryCodePicker(
-                          onChanged: (country) {
-                            controller.state.selectedCountryCode.value =
-                                country.dialCode ?? '+91';
-                          },
-                          initialSelection: 'IN',
-                          favorite: const ['+91', 'IN'],
-                          showCountryOnly: false,
-                          showOnlyCountryWhenClosed: false,
-                          dialogBackgroundColor: Colors.white,
-                          textStyle: TextStyle(
-                            color: Colors.grey[800],
-                            fontSize: defaultFontSize,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey.shade400,
+                            width: 1.5,
                           ),
                         ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide(
+                            color: Colors.blue.shade700,
+                            width: 2.0,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.red,
+                            width: 2.0,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.redAccent,
+                            width: 2.0,
+                          ),
+                        ),
+                        errorStyle: const TextStyle(height: 0),
                       ),
-                      const SizedBox(width: 8),
-                      // Phone TextFormField
-                      Expanded(
-                        child: BusinessInfoFormElement(
-                          controller: controller.businessPhoneController,
-                          label: 'Business Phone',
-                          keyboardType: TextInputType.phone,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(15),
-                          ],
-                          validator: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Business phone is required';
-                            }
-
-                            final String digitsOnly = value.replaceAll(
-                              RegExp(r'[^0-9]'),
-                              '',
-                            );
-
-                            if (digitsOnly.length != 10) {
-                              return 'Business phone must be 10 digits';
-                            }
-
-                            return null;
-                          },
+                      pickerDialogStyle: PickerDialogStyle(
+                        countryNameStyle: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 10.sp,
+                        ),
+                        countryCodeStyle: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
                         ),
                       ),
-                    ],
-                  ),
+                      initialCountryCode:
+                          controller.state.selectedCountry.value.code,
+                      onChanged: (_) {},
+                      onCountryChanged: (country) {
+                        controller.state.selectedCountry.value = country;
+                      },
+                      controller: controller.businessPhoneController,
+                      validator: (value) {
+                        if (value == null || !value.isValidNumber()) {
+                          return 'Invalid phone number';
+                        }
+                        return null;
+                      },
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                    );
+                  }),
                   SizedBox(height: 2.hp),
 
                   // Business Address

@@ -134,7 +134,7 @@ class EncryptionService {
 
     final filteredData = QrContactModel.fromJson({
       'name': data['name'],
-      'number': data['phone'],
+      'phoneParsed': data['phoneParsed'],
       'email': data['email'],
     });
 

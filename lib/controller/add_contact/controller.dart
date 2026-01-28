@@ -83,7 +83,14 @@ class AddContactController extends GetxController {
     state.clearButtonTitle.value = "Reset";
 
     nameController.text = qrInfo.name;
-    phoneController.text = qrInfo.number;
+
+    phoneController.text = qrInfo.phoneParsed?.phoneNumber ?? "";
+    final selectedCountryCode = qrInfo.phoneParsed?.countryCode ?? "+91";
+    final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
+    state.selectedCountry.value = countries.firstWhere(
+      (country) => country.fullCountryCode == cleanCountryCode,
+    );
+
     emailController.text = qrInfo.email;
 
     // Set default stage for NFC contacts

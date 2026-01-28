@@ -1,11 +1,15 @@
+import 'package:eventjar/controller/event_info/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/event_info/tabs/location/location_page_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 Widget buildVirtualEventCard({required String platform, String? meetingLink}) {
+  final EventInfoController controller = Get.find();
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -50,11 +54,7 @@ Widget buildVirtualEventCard({required String platform, String? meetingLink}) {
       Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: meetingLink != null && meetingLink.isNotEmpty
-              ? AppColors.buttonGradient
-              : LinearGradient(
-                  colors: [Colors.grey.shade400, Colors.grey.shade500],
-                ),
+          gradient: _getButtonGradient(controller, meetingLink),
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -68,8 +68,8 @@ Widget buildVirtualEventCard({required String platform, String? meetingLink}) {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: meetingLink != null && meetingLink.isNotEmpty
-                ? () => _launchURL(meetingLink)
+            onTap: _shouldEnableJoinButton(controller, meetingLink)
+                ? () => _launchURL(meetingLink!)
                 : null,
             borderRadius: BorderRadius.circular(12),
             child: Padding(
@@ -78,17 +78,13 @@ Widget buildVirtualEventCard({required String platform, String? meetingLink}) {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    meetingLink != null && meetingLink.isNotEmpty
-                        ? Icons.video_call
-                        : Icons.link_off,
+                    _getJoinButtonIcon(controller, meetingLink),
                     color: Colors.white,
                     size: 24,
                   ),
                   SizedBox(width: 2.wp),
                   Text(
-                    meetingLink != null && meetingLink.isNotEmpty
-                        ? "Click to Join Meeting"
-                        : "Link Not Available Yet",
+                    _getJoinButtonText(controller, meetingLink),
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
@@ -108,13 +104,11 @@ Widget buildVirtualEventCard({required String platform, String? meetingLink}) {
 Future<void> _launchURL(String url) async {
   try {
     final Uri uri = Uri.parse(url);
-
     if (await canLaunchUrl(uri)) {
       final bool launched = await launchUrl(
         uri,
         mode: LaunchMode.externalApplication,
       );
-
       if (!launched) {
         AppSnackbar.error(
           title: "Launch Failed",
@@ -133,4 +127,80 @@ Future<void> _launchURL(String url) async {
       message: "An unexpected error occurred while opening the link.",
     );
   }
+}
+
+/// ✅ GRADIENT: gradientDarkStart base
+LinearGradient _getButtonGradient(
+  EventInfoController controller,
+  String? meetingLink,
+) {
+  final isEnabled = _shouldEnableJoinButton(controller, meetingLink);
+
+  if (!isEnabled) {
+    // DISABLED: Grey overlay
+    return LinearGradient(
+      colors: [
+        AppColors.gradientDarkStart.withValues(alpha: 0.4),
+        AppColors.gradientDarkStart.withValues(alpha: 0.2),
+      ],
+    );
+  }
+
+  // ENABLED: Full gradientDarkStart gradient
+  return LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [AppColors.gradientDarkStart, AppColors.gradientDarkEnd],
+  );
+}
+
+/// ✅ 1. Button enabled? (Registered OR Organizer)
+bool _shouldEnableJoinButton(
+  EventInfoController controller,
+  String? meetingLink,
+) {
+  final eventInfo = controller.state.eventInfo.value;
+  if (eventInfo == null || meetingLink == null || meetingLink.isEmpty) {
+    return false;
+  }
+
+  final isRegistered = eventInfo.userTicketStatus?.isRegistered == true;
+  final organizerId = eventInfo.organizer.id;
+  final isOrganizer =
+      organizerId.isNotEmpty && controller.isOrganizer(organizerId);
+
+  return isRegistered || isOrganizer;
+}
+
+/// ✅ 2. VIDEO ICON ONLY
+IconData _getJoinButtonIcon(
+  EventInfoController controller,
+  String? meetingLink,
+) {
+  if (!_shouldEnableJoinButton(controller, meetingLink)) {
+    return Icons.lock_outline; // Disabled
+  }
+  return Icons.video_call; // ✅ ALWAYS VIDEO ICON
+}
+
+/// ✅ 3. Text only changes
+String _getJoinButtonText(EventInfoController controller, String? meetingLink) {
+  if (!_shouldEnableJoinButton(controller, meetingLink)) {
+    return "Register to Join Meeting";
+  }
+
+  final eventInfo = controller.state.eventInfo.value!;
+  final organizerId = eventInfo.organizer.id;
+  final isOrganizer =
+      organizerId.isNotEmpty && controller.isOrganizer(organizerId);
+
+  if (isOrganizer) {
+    return meetingLink != null && meetingLink.isNotEmpty
+        ? "You're the Organizer!"
+        : "Your Event Link";
+  }
+
+  return meetingLink != null && meetingLink.isNotEmpty
+      ? "Click to Join Meeting"
+      : "Link Not Available Yet";
 }

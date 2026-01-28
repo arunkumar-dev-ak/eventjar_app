@@ -91,6 +91,7 @@ class UserProfileController extends GetxController {
       company: userProfile.company,
       jobTitle: userProfile.jobTitle,
       location: userProfile.location,
+      phoneParsed: userProfile.phoneParsed,
       linkedin:
           userProfile.linkedin ?? userProfile.extendedProfile?.linkedinProfile,
       website:

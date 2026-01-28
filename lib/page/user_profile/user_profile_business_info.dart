@@ -49,7 +49,7 @@ Widget userProfileBuildBusinessInfo() {
       userProfilebuildInfoRow(
         icon: Icons.phone_in_talk,
         label: "Business Phone",
-        value: extended?.businessPhone ?? "Not provided",
+        value: extended?.businessPhoneParsed?.fullNumber ?? "Not provided",
         iconColor: Colors.green,
       ),
       SizedBox(height: 2.hp),

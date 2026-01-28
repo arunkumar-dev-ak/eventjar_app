@@ -133,6 +133,7 @@ class ExtendedProfile {
   final String? linkedinProfile;
   final SocialMediaLinks socialMediaLinks;
   final List<String> eventInterests;
+  final PhoneParsed? businessPhoneParsed;
 
   ExtendedProfile({
     required this.id,
@@ -161,6 +162,7 @@ class ExtendedProfile {
     this.linkedinProfile,
     required this.socialMediaLinks,
     required this.eventInterests,
+    this.businessPhoneParsed,
   });
 
   factory ExtendedProfile.fromJson(Map<String, dynamic> json) {
@@ -197,6 +199,9 @@ class ExtendedProfile {
             ? SocialMediaLinks.fromJson(json['socialMediaLinks'])
             : SocialMediaLinks.empty(),
         eventInterests: (json['eventInterests'] as List?)?.cast<String>() ?? [],
+        businessPhoneParsed: json['businessPhoneParsed'] != null
+            ? PhoneParsed.fromJson(json['businessPhoneParsed'])
+            : null,
       );
     } catch (e) {
       throw Exception('Error in ExtendedProfile: $e');
@@ -216,6 +221,7 @@ class ExtendedProfile {
     'businessWebsite': businessWebsite,
     'businessEmail': businessEmail,
     'businessPhone': businessPhone,
+    'businessPhoneParsed': businessPhoneParsed?.toJson(),
     'businessAddress': businessAddress,
     'businessType': businessType,
     'numberOfEmployees': numberOfEmployees,

@@ -3,7 +3,9 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/controller/event_info/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/helper/event_share_helper.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:eventjar/model/event_info/event_info_media_extension_model.dart';
 import 'package:flutter/material.dart';
@@ -71,8 +73,31 @@ class EventInfoAppBar extends GetView<EventInfoController> {
           // Share (Native sheet)
           _buildActionButton(
             icon: Icons.share_rounded,
-            onTap: () => _showNativeShareSheet(),
+            onTap: () {
+              final eventInfo = controller.state.eventInfo.value;
+              if (eventInfo == null) {
+                AppSnackbar.warning(
+                  message: "Kindly try again later",
+                  title: "Event Not Found",
+                );
+                return;
+              }
+              ShareEventHelper.shareEvent(
+                context: context,
+                title: eventInfo.title,
+                slug: eventInfo.slug!,
+                startDate: eventInfo.startDate,
+                startTimeHHMM: eventInfo.startTime,
+                mode: eventInfo.isHybrid
+                    ? EventMode.hybrid
+                    : eventInfo.isVirtual
+                    ? EventMode.virtual
+                    : EventMode.physical,
+                city: eventInfo.city,
+              );
+            },
           ),
+
           SizedBox(width: 2.wp),
 
           // Favorite

@@ -167,11 +167,6 @@ class HomeContent extends StatelessWidget {
                                     ? EventMode.virtual
                                     : EventMode.physical,
                                 city: event.city,
-                                imageUrl:
-                                    event.featuredImageUrl != null &&
-                                        event.featuredImageUrl!.isNotEmpty
-                                    ? getFileUrl(event.featuredImageUrl!)
-                                    : null,
                               );
                             },
                             icon: const Icon(Icons.share_rounded),
