@@ -10,7 +10,7 @@ import 'state.dart';
 
 class ScanCardController extends GetxController
     with GetTickerProviderStateMixin {
-  var appBarTitle = "Scan Visting Card";
+  var appBarTitle = "Scan Visiting Card";
   final state = ScanCardState();
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;

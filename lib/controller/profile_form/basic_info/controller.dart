@@ -7,6 +7,7 @@ import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/model/user_profile/user_profile.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_intl_phone_field/countries.dart';
 import 'package:get/get.dart';
 
 class BasicInfoFormController extends GetxController {
@@ -50,7 +51,7 @@ class BasicInfoFormController extends GetxController {
 
     _originalFullName =
         profile.extendedProfile?.fullName ?? profile.name ?? profile.username;
-    _originalPhone = profile.phone ?? profile.extendedProfile?.mobileNumber;
+    _originalPhone = profile.phoneParsed?.fullNumber;
     _originalJobTitle = profile.extendedProfile?.position ?? profile.jobTitle;
 
     // full name
@@ -59,28 +60,20 @@ class BasicInfoFormController extends GetxController {
         profile.name ??
         profile.username ??
         '';
-    // username
-    // usernameController.text = profile.username ?? '';
-    // email
-    // emailController.text = profile.email;
-    // phone
-    final localNumber = getLocalNumberSimple(
-      profile.phone ?? profile.extendedProfile?.mobileNumber,
-    );
-    mobileController.text = localNumber;
     // professional title
     professionalTitleController.text =
         profile.extendedProfile?.position ?? profile.jobTitle ?? '';
+    //mobile
+    handlePhoneNumberArgs(profile);
   }
 
-  String getLocalNumberSimple(String? phone) {
-    if (phone == null || phone.isEmpty) return '';
-
-    if (phone.startsWith('+') && phone.length > 3) {
-      return phone.substring(3);
-    }
-
-    return phone;
+  void handlePhoneNumberArgs(UserProfile profile) {
+    final selectedCountryCode = profile.phoneParsed?.countryCode ?? "+91";
+    final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
+    state.selectedCountry.value = countries.firstWhere(
+      (country) => country.fullCountryCode == cleanCountryCode,
+    );
+    mobileController.text = profile.phoneParsed?.phoneNumber ?? "";
   }
 
   void clearForm() {
@@ -104,8 +97,9 @@ class BasicInfoFormController extends GetxController {
   }
 
   Map<String, dynamic> _gatherFormData() {
-    final phoneWithCode =
-        '${state.selectedCountryCode.value}${mobileController.text.trim()}';
+    final countryCode = state.selectedCountry.value.fullCountryCode;
+    final localPhoneNumber = mobileController.text.trim();
+    final fullPhoneNumber = '+$countryCode$localPhoneNumber';
     final data = <String, dynamic>{};
 
     if (_hasFieldChanged(
@@ -115,22 +109,8 @@ class BasicInfoFormController extends GetxController {
       data['name'] = fullNameController.text.trim();
     }
 
-    // if (_hasFieldChanged(
-    //   original: _originalUsername,
-    //   current: usernameController.text,
-    // )) {
-    //   data['username'] = usernameController.text.trim();
-    // }
-
-    // if (_hasFieldChanged(
-    //   original: _originalEmail,
-    //   current: emailController.text,
-    // )) {
-    //   data['email'] = emailController.text.trim();
-    // }
-
-    if (_hasFieldChanged(original: _originalPhone, current: phoneWithCode)) {
-      data['phone'] = phoneWithCode;
+    if (_hasFieldChanged(original: _originalPhone, current: fullPhoneNumber)) {
+      data['phone'] = fullPhoneNumber;
     }
 
     if (_hasFieldChanged(

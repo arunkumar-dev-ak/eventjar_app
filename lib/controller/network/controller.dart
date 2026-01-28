@@ -157,6 +157,10 @@ class NetworkScreenController extends GetxController
     Get.toNamed(RouteName.connectionPage);
   }
 
+  void onMeetingTap() {
+    Get.toNamed(RouteName.meetingPage);
+  }
+
   void onSchedulerTap() {
     Get.toNamed(RouteName.schedulerPage);
   }

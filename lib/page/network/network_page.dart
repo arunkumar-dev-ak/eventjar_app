@@ -109,10 +109,10 @@ class NetworkPage extends GetView<NetworkScreenController> {
                           SizedBox(height: 0.8.hp),
 
                           NetworkNavigationCard(
-                            icon: Icons.schedule_rounded,
-                            label: "Scheduler",
+                            icon: Icons.meeting_room_rounded,
+                            label: "Meetings",
                             onTap: () {
-                              controller.onSchedulerTap();
+                              controller.onMeetingTap();
                             },
                           ),
 

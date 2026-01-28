@@ -44,7 +44,7 @@ class SummaryFormController extends GetxController {
     final extended = profile.extendedProfile;
 
     // Store original values
-    _originalShortBio = extended?.shortBio;
+    _originalShortBio = profile.bio ?? extended?.shortBio;
     _originalYearsInBusiness = extended?.yearsInBusiness?.toString();
     _originalAvailabilitySlots = extended?.availabilitySlots;
 

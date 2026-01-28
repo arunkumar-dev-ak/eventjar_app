@@ -7,12 +7,18 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+// import 'package:clarity_flutter/clarity_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await Global.onInit();
   await NotificationService().init();
+  // final config = ClarityConfig(
+  //   projectId: "v6b088h0dw",
+  //   logLevel: LogLevel.Verbose,
+  // );
+  // runApp(ClarityWidget(app: MyApp(), clarityConfig: config));
   runApp(const MyApp());
 }
 

@@ -378,9 +378,7 @@ class UserProfileController extends GetxController {
 
   /// Get phone
   String get phone {
-    return state.userProfile.value?.phone ??
-        state.userProfile.value?.extendedProfile?.mobileNumber ??
-        '';
+    return state.userProfile.value?.phoneParsed?.fullNumber ?? '';
   }
 
   /// Get username

@@ -1,3 +1,5 @@
+import 'package:eventjar/model/contact/mobile_contact_model.dart';
+
 class UserProfileResponse {
   final bool success;
   final UserProfile data;
@@ -34,12 +36,14 @@ class UserProfile {
   final String? website;
   final String? username;
   final ExtendedProfile? extendedProfile;
+  final PhoneParsed? phoneParsed;
 
   UserProfile({
     required this.id,
     required this.email,
     this.name,
     this.phone,
+    this.phoneParsed,
     required this.role,
     required this.isVerified,
     this.avatarUrl,
@@ -62,6 +66,9 @@ class UserProfile {
         phone: json['phone'],
         role: json['role'],
         isVerified: json['isVerified'] ?? false,
+        phoneParsed: json['phoneParsed'] != null
+            ? PhoneParsed.fromJson(json['phoneParsed'])
+            : null,
         avatarUrl: json['avatarUrl'],
         bio: json['bio'],
         company: json['company'],
@@ -89,6 +96,7 @@ class UserProfile {
     'avatarUrl': avatarUrl,
     'bio': bio,
     'company': company,
+    'phoneParsed': phoneParsed?.toJson(),
     'jobTitle': jobTitle,
     'location': location,
     'linkedin': linkedin,

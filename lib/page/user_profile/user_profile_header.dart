@@ -1,7 +1,6 @@
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

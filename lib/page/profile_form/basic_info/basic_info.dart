@@ -1,9 +1,12 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:eventjar/controller/profile_form/basic_info/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/profile_form/basic_info/basic_info_form_element.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_intl_phone_field/country_picker_dialog.dart';
+import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:get/get.dart';
 
 class BasicInfoPage extends GetView<BasicInfoFormController> {
@@ -53,88 +56,72 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                   ),
                   SizedBox(height: 2.hp),
 
-                  // Username
-                  // BasicInfoFormElement(
-                  //   controller: controller.usernameController,
-                  //   label: 'Username',
-                  //   validator: (val) => val == null || val.trim().isEmpty
-                  //       ? 'Username is required'
-                  //       : null,
-                  // ),
-                  // SizedBox(height: 2.hp),
-
-                  // Email
-                  // BasicInfoFormElement(
-                  //   controller: controller.emailController,
-                  //   label: 'Email Address',
-                  //   keyboardType: TextInputType.emailAddress,
-                  //   validator: (val) {
-                  //     if (val == null || val.trim().isEmpty) {
-                  //       return 'Email is required';
-                  //     }
-                  //     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                  //     if (!emailRegex.hasMatch(val.trim())) {
-                  //       return 'Enter a valid email';
-                  //     }
-                  //     return null;
-                  //   },
-                  // ),
-                  // SizedBox(height: 2.hp),
-
                   // Mobile Number
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Country code picker
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade400),
+                  Obx(() {
+                    return IntlPhoneField(
+                      decoration: InputDecoration(
+                        labelText: 'Mobile Number *',
+                        labelStyle: TextStyle(fontSize: 14),
+                        border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
-                        child: CountryCodePicker(
-                          onChanged: (country) {
-                            controller.state.selectedCountryCode.value =
-                                country.dialCode ?? '+91';
-                          },
-                          initialSelection: 'IN',
-                          favorite: const ['+91', 'IN'],
-                          showCountryOnly: false,
-                          showOnlyCountryWhenClosed: false,
-                          dialogBackgroundColor: Colors.white,
-                          textStyle: TextStyle(
-                            color: Colors.grey[800],
-                            fontSize: defaultFontSize,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide(
+                            color: Colors.grey.shade400,
+                            width: 1.5,
                           ),
                         ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide(
+                            color: Colors.blue.shade700,
+                            width: 2.0,
+                          ),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.red,
+                            width: 2.0,
+                          ),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: const BorderSide(
+                            color: Colors.redAccent,
+                            width: 2.0,
+                          ),
+                        ),
+                        errorStyle: const TextStyle(height: 0),
                       ),
-                      const SizedBox(width: 8),
-                      // Phone TextFormField
-                      Expanded(
-                        child: BasicInfoFormElement(
-                          controller: controller.mobileController,
-                          label: 'Mobile Number',
-                          keyboardType: TextInputType.phone,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(15),
-                          ],
-                          validator: (val) {
-                            if (val == null || val.isEmpty) {
-                              return 'Mobile number is required';
-                            }
-                            if (val.length < 10) {
-                              return 'Enter a 10-digit number';
-                            }
-                            if (val.length > 10) {
-                              return 'Number should be 10 digits';
-                            }
-                            return null;
-                          },
+                      pickerDialogStyle: PickerDialogStyle(
+                        countryNameStyle: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 10.sp,
+                        ),
+                        countryCodeStyle: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
                         ),
                       ),
-                    ],
-                  ),
+                      initialCountryCode:
+                          controller.state.selectedCountry.value.code,
+                      onChanged: (_) {},
+                      onCountryChanged: (country) {
+                        controller.state.selectedCountry.value = country;
+                      },
+                      controller: controller.mobileController,
+                      validator: (value) {
+                        if (value == null || !value.isValidNumber()) {
+                          return 'Invalid phone number';
+                        }
+                        return null;
+                      },
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                    );
+                  }),
+
                   SizedBox(height: 2.hp),
 
                   // Professional Title

@@ -200,8 +200,8 @@ class HomeAppBar extends StatelessWidget {
             ),
             _buildMenuItem(
               icon: Icons.document_scanner,
-              title: 'Scan Visting card',
-              subtitle: 'Scan Visting card to add contact',
+              title: 'Scan Visiting card',
+              subtitle: 'Scan Visiting card to add contact',
               gradientColors: [
                 Colors.orangeAccent.shade400,
                 Colors.orangeAccent.shade700,

@@ -5,6 +5,7 @@ import 'package:eventjar/controller/contact/binding.dart';
 import 'package:eventjar/controller/dashboard/binding.dart';
 import 'package:eventjar/controller/event_info/binding.dart';
 import 'package:eventjar/controller/forgotPassword/binding.dart';
+import 'package:eventjar/controller/meeting/binding.dart';
 import 'package:eventjar/controller/nfc/binding.dart';
 import 'package:eventjar/controller/nfc_read/binding.dart';
 import 'package:eventjar/controller/nfc_write/binding.dart';
@@ -30,6 +31,7 @@ import 'package:eventjar/page/contact/contact_page.dart';
 import 'package:eventjar/page/dashboard/dashboard_page.dart';
 import 'package:eventjar/page/event_info/event_info.dart';
 import 'package:eventjar/page/forgot_password/forgot_password.dart';
+import 'package:eventjar/page/meeting/meeting_page.dart';
 import 'package:eventjar/page/nfc/nfc_page.dart';
 import 'package:eventjar/page/nfc_read/nfc_read.dart';
 import 'package:eventjar/page/nfc_write/nfc_write.dart';
@@ -97,16 +99,25 @@ class RoutePage {
       name: RouteName.connectionPage,
       page: () => ConnectionPage(),
       binding: ConnectionBinding(),
+      middlewares: [LoginMiddleware()],
     ),
     GetPage(
       name: RouteName.schedulerPage,
       page: () => SchedulerPage(),
       binding: SchedulerBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.meetingPage,
+      page: () => MeetingPage(),
+      binding: MeetingBinding(),
+      middlewares: [LoginMiddleware()],
     ),
     GetPage(
       name: RouteName.reminderPage,
       page: () => ReminderPage(),
       binding: ReminderBinding(),
+      middlewares: [LoginMiddleware()],
     ),
 
     /*----- EventInfo page -----*/
