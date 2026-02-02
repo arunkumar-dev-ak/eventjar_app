@@ -4,8 +4,12 @@ import 'package:eventjar/services/nfc_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../global/app_snackbar.dart';
+import '../../global/store/user_store.dart';
+import '../../model/contact/nfc_contact_model.dart';
+
 class NfcReadController extends GetxController
-    with GetSingleTickerProviderStateMixin {
+    with GetSingleTickerProviderStateMixin, WidgetsBindingObserver {
   var state = NfcReadState();
   final NfcService _nfcService = NfcService();
 
@@ -14,8 +18,77 @@ class NfcReadController extends GetxController
   @override
   void onInit() {
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
     _initAnimations();
-    startScanning();
+    _loadData();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      _checkAndStartScanning();
+    }
+  }
+
+  Future<void> _checkAndStartScanning() async {
+    await _checkNfcStatus();
+    if (state.nfcStatus.value == NfcStatus.available) {
+      if (!state.isScanning.value) {
+        startScanning();
+      }
+    } else {
+      _nfcService.stopSession();
+      state.isScanning.value = false;
+    }
+  }
+
+  Future<void> _loadData() async {
+    state.isLoading.value = true;
+    try {
+      _loadProfile();
+      await Future.wait([
+        _checkNfcStatus(),
+      ]).timeout(const Duration(seconds: 5));
+      startScanning();
+    } catch (_) {
+      state.isLoading.value = false;
+    }
+  }
+
+  Future<void> _checkNfcStatus() async {
+    state.nfcStatus.value = await _nfcService.getNfcStatus();
+  }
+
+  String getNfcStatusText() {
+    switch (state.nfcStatus.value) {
+      case NfcStatus.available:
+        return 'NFC Ready';
+      case NfcStatus.notAvailable:
+        return 'NFC Not Available';
+      case NfcStatus.disabled:
+        return 'NFC Disabled';
+      case NfcStatus.unknown:
+        return 'Checking NFC...';
+    }
+  }
+
+  Future<void> _loadProfile() async {
+    final profile = UserStore.to.profile;
+    final nfcProfile = NfcContactModel(
+      name: profile['name'],
+      phone: profile['phone'],
+      email: profile['email'],
+    );
+    state.profile.value = nfcProfile;
+  }
+
+  void showNfcErrorPrompt() {
+    AppSnackbar.warning(
+      title: 'NFC Error',
+      message:
+          'NFC is not available on this device or Please Turn it ON, in your Setting',
+    );
   }
 
   void _initAnimations() {
@@ -26,6 +99,11 @@ class NfcReadController extends GetxController
   }
 
   Future<void> startScanning() async {
+    if (state.nfcStatus.value != NfcStatus.available) {
+      showNfcErrorPrompt();
+      return;
+    }
+
     state.isScanning.value = true;
     state.errorMessage.value = null;
     state.receivedProfile.value = null;
@@ -34,8 +112,7 @@ class NfcReadController extends GetxController
       onContactReceived: (contact) {
         state.receivedProfile.value = contact;
         state.isScanning.value = false;
-        _nfcService.stopSession();
-        navigateToAddContact();
+        _handleReadSuccess();
       },
       onError: (error) {
         state.errorMessage.value = error;
@@ -55,11 +132,51 @@ class NfcReadController extends GetxController
     startScanning();
   }
 
+  Future<void> navigateToWrite() async {
+    if (state.nfcStatus.value != NfcStatus.available) {
+      showNfcErrorPrompt();
+      return;
+    }
+
+    // Navigate and wait for result
+    await Get.toNamed(RouteName.nfcWritePage);
+
+    // Small delay to ensure write controller is fully disposed
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    // When returning from WritePage, restart scanning
+    resetAndScan();
+  }
+
+  Future<void> _handleReadSuccess() async {
+    // Show processing state
+    state.isProcessing.value = true;
+
+    // Delay to let user move card away before stopping session
+    // This prevents OS from intercepting the NFC tag
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    // Stop NFC session
+    await _nfcService.stopSession();
+
+    state.isProcessing.value = false;
+
+    // Navigate to add contact
+    navigateToAddContact();
+  }
+
   Future<void> navigateToAddContact() async {
-    Get.toNamed(
+    // Navigate and wait for result
+    await Get.toNamed(
       RouteName.addContactPage,
       arguments: state.receivedProfile.value,
     );
+
+    // Small delay to ensure proper cleanup
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    // When returning from AddContactPage, restart scanning
+    resetAndScan();
   }
 
   void cancel() {
@@ -73,6 +190,7 @@ class NfcReadController extends GetxController
 
   @override
   void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
     animationController.dispose();
     _nfcService.stopSession();
     super.onClose();

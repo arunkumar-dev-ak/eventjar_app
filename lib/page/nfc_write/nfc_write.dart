@@ -4,6 +4,7 @@ import 'package:eventjar/page/nfc_write/nfc_write_bottom_control.dart';
 import 'package:eventjar/page/nfc_write/nfc_write_header.dart';
 import 'package:eventjar/page/nfc_write/nfc_write_scanning_zone.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class NfcWritePage extends GetView<NfcWriteController> {
@@ -13,6 +14,11 @@ class NfcWritePage extends GetView<NfcWriteController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

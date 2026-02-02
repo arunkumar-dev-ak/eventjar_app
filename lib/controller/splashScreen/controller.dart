@@ -1,4 +1,5 @@
 import 'package:eventjar/routes/route_name.dart';
+import 'package:eventjar/services/nfc_intent_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -166,6 +167,10 @@ class SplashScreenController extends GetxController
   void _navigateToHome() async {
     Future.delayed(const Duration(milliseconds: 2000), () {
       Get.offNamed(RouteName.dashboardpage);
+      // Notify NFC handler that app is ready to handle NFC intents
+      Future.delayed(const Duration(milliseconds: 500), () {
+        NfcIntentHandler().onAppReady();
+      });
     });
   }
 }

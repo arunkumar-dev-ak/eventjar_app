@@ -3,6 +3,7 @@ import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/notification_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/routes/route_page.dart';
+import 'package:eventjar/services/nfc_intent_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,10 +23,23 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize NFC intent handler after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      NfcIntentHandler().init();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(

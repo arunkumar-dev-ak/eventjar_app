@@ -3,7 +3,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/helper/event_share_helper.dart';
-import 'package:eventjar/logger_service.dart';
+
 import 'package:eventjar/page/home/widget/home_content_shimmer.dart';
 import 'package:eventjar/page/home/widget/home_content_utils.dart';
 import 'package:eventjar/page/home/widget/home_price_button.dart';

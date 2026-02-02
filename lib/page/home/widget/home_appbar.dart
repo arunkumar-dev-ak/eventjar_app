@@ -173,7 +173,8 @@ class HomeAppBar extends StatelessWidget {
               gradientColors: [Colors.green.shade400, Colors.green.shade600],
               onTap: () {
                 Navigator.pop(context);
-                controller.navigateToNfc();
+                //controller.navigateToNfc();
+                controller.navigateToReceive();
               },
             ),
             Divider(

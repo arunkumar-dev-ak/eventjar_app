@@ -16,6 +16,11 @@ class NfcReadScanningZone extends GetView<NfcReadController> {
           return _ErrorPreview();
         }
 
+        // Processing state - after card read, before navigation
+        if (controller.state.isProcessing.value) {
+          return _ProcessingView();
+        }
+
         // Scanning state
         return Container(
           width: 100.wp,
@@ -36,7 +41,7 @@ class NfcReadScanningZone extends GetView<NfcReadController> {
             children: [
               // Pulsing NFC animation
               SizedBox(
-                height: 200,
+                height: 180,
                 child: AnimatedBuilder(
                   animation: controller.animationController,
                   builder: (context, child) {
@@ -98,6 +103,55 @@ class NfcReadScanningZone extends GetView<NfcReadController> {
           ),
         );
       }),
+    );
+  }
+}
+
+class _ProcessingView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 100.wp,
+      padding: EdgeInsets.all(5.wp),
+      decoration: BoxDecoration(
+        gradient: RadialGradient(
+          colors: [Colors.green.withValues(alpha: 0.1), Colors.transparent],
+          center: Alignment.center,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.green.withValues(alpha: 0.3),
+          width: 2,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 80,
+            width: 80,
+            child: CircularProgressIndicator(
+              strokeWidth: 4,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.green.shade600),
+            ),
+          ),
+          SizedBox(height: 3.hp),
+          Text(
+            'Card Read Successfully!',
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.green.shade800,
+            ),
+          ),
+          SizedBox(height: 1.hp),
+          Text(
+            'Please remove the card from your phone',
+            style: TextStyle(fontSize: 8.sp, color: Colors.grey[600]),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

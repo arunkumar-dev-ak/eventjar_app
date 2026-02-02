@@ -241,6 +241,10 @@ class HomeController extends GetxController {
     Get.toNamed(RouteName.nfcPage);
   }
 
+  void navigateToReceive() {
+    Get.toNamed(RouteName.nfcReadPage);
+  }
+
   void navigateToQrPage() {
     Get.toNamed(RouteName.qrDashboardPage);
   }

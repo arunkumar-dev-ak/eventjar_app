@@ -14,6 +14,7 @@ class NfcWriteController extends GetxController
   var state = NfcWriteState();
   late AnimationController animationController;
   final NfcService _nfcService = NfcService();
+  bool _sessionHandled = false;
 
   @override
   void onInit() {
@@ -73,14 +74,16 @@ class NfcWriteController extends GetxController
     state.isSharing.value = false;
 
     try {
-      // Stop NFC session completely
-      await _nfcService.stopSession();
-
-      // Give platform time to cleanup
-      await Future.delayed(Duration(milliseconds: 100));
-
       // Success feedback
       showSuccessPopup();
+
+      // Delay to let user move card away before stopping session
+      // This prevents OS from intercepting the NFC tag
+      await Future.delayed(const Duration(milliseconds: 1500));
+
+      // Stop NFC session
+      await _nfcService.stopSession();
+      _sessionHandled = true;
 
       // Navigate back
       Navigator.of(Get.context!).pop();
@@ -116,7 +119,10 @@ class NfcWriteController extends GetxController
   @override
   void onClose() {
     animationController.dispose();
-    _nfcService.stopSession();
+    // Only stop session if not already handled (e.g., user cancelled)
+    if (!_sessionHandled) {
+      _nfcService.stopSession();
+    }
     super.onClose();
   }
 }

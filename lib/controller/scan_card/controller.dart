@@ -10,7 +10,7 @@ import 'state.dart';
 
 class ScanCardController extends GetxController
     with GetTickerProviderStateMixin {
-  var appBarTitle = "Scan Visiting Card";
+  var appBarTitle = "Scan Visting Card";
   final state = ScanCardState();
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
@@ -267,19 +267,28 @@ class ScanCardController extends GetxController
       if (trimmedLine.contains('@')) continue;
       if (trimmedLine.contains('www')) continue;
 
-      // Look for phone pattern in this line
-      final phoneRegex = RegExp(r'[\+]?[0-9][\d\s\-\(\)\.]{8,}');
+      // Look for phone pattern in this line (supports international format with +)
+      final phoneRegex = RegExp(r'[\+]?[\d][\d\s\-\(\)\.]{7,}');
 
       final matches = phoneRegex.allMatches(trimmedLine);
       for (final match in matches) {
         String phone = match.group(0) ?? '';
         phone = phone.trim();
 
-        // Remove country code +91 or 91 from the beginning
+        // Check if it's an international number (starts with +)
+        final isInternational = phone.startsWith('+');
+
+        // Remove all country codes (+91, +94, +33, etc.)
         phone = _removeCountryCode(phone);
 
         // Count actual digits
         final digitsOnly = phone.replaceAll(RegExp(r'[^\d]'), '');
+
+        // For international numbers, accept if it has 7+ digits (after removing country code)
+        if (isInternational && digitsOnly.length >= 7) {
+          firstMobile ??= phone;
+          continue;
+        }
 
         // Check if this is a merged number (more than 12 digits)
         if (digitsOnly.length > 12) {
@@ -302,10 +311,13 @@ class ScanCardController extends GetxController
     }
 
     // Return mobile number if found, otherwise landline
-    // Remove all spaces, dashes, and other formatting from the final number
+    // Remove all spaces, dashes, parentheses, and dots from the final number
+    // But keep the + for international numbers
     final result = firstMobile ?? firstLandline;
     if (result != null) {
-      return result.replaceAll(RegExp(r'[\s\-\(\)\.]'), '');
+      // Remove all formatting characters except +
+      String cleaned = result.replaceAll(RegExp(r'[\s\-\(\)\.]'), '');
+      return cleaned;
     }
     return null;
   }
@@ -325,17 +337,27 @@ class ScanCardController extends GetxController
     // Remove leading/trailing spaces
     String cleaned = phone.trim();
 
-    // Remove +91 with optional space/dash after it
-    cleaned = cleaned.replaceFirst(RegExp(r'^\+91[\s\-]?'), '');
+    // Remove any country code starting with + (handles all international codes)
+    // Patterns: +91, +1, +94, +33, +971, +1-242, + 91, etc.
+    if (cleaned.startsWith('+')) {
+      // Remove + and any following digits (with optional spaces/dashes between)
+      // This handles: +91, +1, +94 12, +971-4, + 91, +1 (555), etc.
+      cleaned = cleaned.replaceFirst(RegExp(r'^\+[\s\-]?\d{1,4}[\s\-]?'), '');
+    }
 
-    // Remove 91 at the start if followed by a 10-digit number
-    // Check if starts with 91 and remaining digits are 10
+    // Remove 00 prefix (international dialing prefix used in some countries)
+    if (cleaned.startsWith('00')) {
+      // Remove 00 and country code (1-4 digits)
+      cleaned = cleaned.replaceFirst(RegExp(r'^00\d{1,4}[\s\-]?'), '');
+    }
+
+    // Remove 91 at the start if followed by a 10-digit number (Indian without +)
     final digitsOnly = cleaned.replaceAll(RegExp(r'[^\d]'), '');
     if (cleaned.startsWith('91') && digitsOnly.length == 12) {
       cleaned = cleaned.replaceFirst(RegExp(r'^91[\s\-]?'), '');
     }
 
-    // Remove 0 prefix (some Indian numbers have 0 before area code)
+    // Remove 0 prefix (trunk prefix used in many countries)
     if (cleaned.startsWith('0')) {
       cleaned = cleaned.substring(1);
     }
