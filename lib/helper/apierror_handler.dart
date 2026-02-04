@@ -13,7 +13,6 @@ class ApiErrorHandler {
         err.type == DioExceptionType.connectionError ||
         err.type == DioExceptionType.sendTimeout ||
         err.type == DioExceptionType.receiveTimeout ||
-        err.type == DioExceptionType.unknown ||
         err.message?.contains('No Internet') == true) {
       errorMessage = "No Internet Connection";
     }
@@ -68,7 +67,10 @@ class ApiErrorHandler {
         err.response?.statusCode == 502 ||
         err.response?.statusCode == 503 ||
         err.response?.statusCode == 504) {
-      AppSnackbar.warning(message: errorMessage); // ✅ NO title
+      AppSnackbar.warning(
+        title: title ?? "Error",
+        message: errorMessage,
+      ); // ✅ NO title
     } else {
       AppSnackbar.error(title: title ?? "Error", message: errorMessage);
     }

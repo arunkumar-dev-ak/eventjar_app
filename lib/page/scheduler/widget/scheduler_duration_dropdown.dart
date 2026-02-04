@@ -1,6 +1,5 @@
 import 'package:eventjar/controller/scheduler/controller.dart';
 import 'package:eventjar/global/dropdown/single_selected_dropdown.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

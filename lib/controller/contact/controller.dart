@@ -79,6 +79,8 @@ class ContactController extends GetxController
     final currentScroll = contactScrollController.position.pixels;
     const double prefetchThreshold = 200.0;
 
+    // LoggerService.loggerInstance.dynamic_d("$maxScroll, $currentScroll");
+
     if (maxScroll - currentScroll <= prefetchThreshold) {
       if (state.meta.value != null &&
           state.meta.value!.hasNext == true &&
@@ -222,7 +224,7 @@ class ContactController extends GetxController
         );
       }
     } finally {
-      state.isFetchingWhileScrolling.value = true;
+      state.isFetchingWhileScrolling.value = false;
     }
   }
 
@@ -372,6 +374,16 @@ class ContactController extends GetxController
       result,
     ) async {
       if (result == true) {
+        await fetchContactsOnFirstLoad();
+      }
+    });
+  }
+
+  void navigateToContactListMeeting(MobileContact contact) {
+    Get.toNamed(RouteName.contactListMeetingPage, arguments: contact)?.then((
+      result,
+    ) async {
+      if (result == "refresh") {
         await fetchContactsOnFirstLoad();
       }
     });

@@ -57,6 +57,7 @@ class ContactCardHeader extends StatelessWidget {
                       _buildNameWithCallButton(
                         name: contact.name,
                         contact: contact,
+                        isOverDue: contact.isOverdue,
                         isExpanded: isExpanded,
                         controller: controller,
                         nameFontWeight: FontWeight.bold,
@@ -132,6 +133,53 @@ class ContactCardHeader extends StatelessWidget {
                         ),
                         itemBuilder: (context) => [
                           PopupMenuItem(
+                            value: ContactCardAction.mail,
+                            child: Row(
+                              children: [
+                                Icon(Icons.email, color: Colors.blue, size: 18),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Send Mail',
+                                  style: TextStyle(color: Colors.grey.shade800),
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: ContactCardAction.call,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.phone,
+                                  color: Colors.green,
+                                  size: 18,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Call',
+                                  style: TextStyle(color: Colors.grey.shade800),
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: ContactCardAction.addToPhone,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.contacts,
+                                  color: Colors.purple,
+                                  size: 18,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Add to Phone',
+                                  style: TextStyle(color: Colors.grey.shade800),
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
                             value: ContactCardAction.edit,
                             child: Row(
                               children: [
@@ -156,36 +204,6 @@ class ContactCardHeader extends StatelessWidget {
                                 SizedBox(width: 8),
                                 Text(
                                   'Delete Contact',
-                                  style: TextStyle(color: Colors.grey.shade800),
-                                ),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: ContactCardAction.mail,
-                            child: Row(
-                              children: [
-                                Icon(Icons.email, color: Colors.blue, size: 18),
-                                SizedBox(width: 8),
-                                Text(
-                                  'Mail',
-                                  style: TextStyle(color: Colors.grey.shade800),
-                                ),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: ContactCardAction.call,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.phone,
-                                  color: Colors.green,
-                                  size: 18,
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  'Call',
                                   style: TextStyle(color: Colors.grey.shade800),
                                 ),
                               ],
@@ -243,6 +261,7 @@ Widget _buildNameWithCallButton({
   required MobileContact contact,
   required bool isExpanded,
   required ContactController controller,
+  required bool isOverDue,
   FontWeight nameFontWeight = FontWeight.normal,
   double nameFontSize = 10.0,
   double callFontSize = 7.0,
@@ -250,13 +269,31 @@ Widget _buildNameWithCallButton({
   return Row(
     children: [
       Expanded(
-        child: Text(
-          name,
-          style: TextStyle(
-            fontSize: nameFontSize.sp,
-            fontWeight: nameFontWeight,
-            color: Colors.black87,
-          ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (isOverDue) ...[
+              Container(
+                margin: EdgeInsets.only(left: 4),
+                child: Icon(
+                  Icons.warning_rounded,
+                  size: 5.wp,
+                  color: Colors.red,
+                ),
+              ),
+              SizedBox(width: 1.wp),
+            ],
+            Expanded(
+              child: Text(
+                name,
+                style: TextStyle(
+                  fontSize: nameFontSize.sp,
+                  fontWeight: nameFontWeight,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       SizedBox(width: 1.wp),

@@ -1,6 +1,8 @@
 import 'package:eventjar/controller/thank_you_message/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/thank_you_message/thank_you_message_button.dart';
+import 'package:eventjar/page/thank_you_message/widget/thank_you_message_message_method.dart'
+    show thankYouMessageBuildMethodCard;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -59,7 +61,6 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
 
                   SizedBox(height: 3.hp),
 
-                  // Send via section
                   Text(
                     'Send via:',
                     style: TextStyle(
@@ -69,27 +70,37 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                   ),
                   SizedBox(height: 1.5.hp),
 
-                  // Email Card
                   Obx(
-                    () => _buildMethodCard(
+                    () => thankYouMessageBuildMethodCard(
                       title: 'Email',
                       icon: Icons.email_outlined,
+                      isLoading: controller.state.configLoading.value,
                       isSelected: controller.state.emailChecked.value,
-                      onTap: () => controller.state.emailChecked.value =
-                          !controller.state.emailChecked.value,
+                      isDisabled: !controller.canSendEmail,
+                      badgeText: controller.canSendEmail
+                          ? null
+                          : 'Not Configured',
+                      onTap: controller.canSendEmail
+                          ? () => controller.toggleEmail()
+                          : null,
                     ),
                   ),
 
                   SizedBox(height: 1.5.hp),
 
-                  // WhatsApp Card
                   Obx(
-                    () => _buildMethodCard(
+                    () => thankYouMessageBuildMethodCard(
                       title: 'WhatsApp',
                       icon: Icons.message_outlined,
                       isSelected: controller.state.whatsappChecked.value,
-                      onTap: () => controller.state.whatsappChecked.value =
-                          !controller.state.whatsappChecked.value,
+                      isDisabled: !controller.canSendWhatsApp,
+                      badgeText: controller.canSendWhatsApp
+                          ? null
+                          : 'Not Configured',
+                      isLoading: controller.state.configLoading.value,
+                      onTap: controller.canSendWhatsApp
+                          ? () => controller.toggleWhatsApp()
+                          : null,
                     ),
                   ),
 

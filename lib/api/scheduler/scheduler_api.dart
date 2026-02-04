@@ -15,4 +15,22 @@ class SchedulerApi {
       rethrow;
     }
   }
+
+  static Future<bool> rescheduleMeeting({
+    required Map<String, dynamic> dto,
+    required String id,
+  }) async {
+    try {
+      final response = await _dio.patch(
+        '/contact-meetings/$id/reschedule',
+        data: dto,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/schedule_meeting/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/schedule_meeting/schedule_meeting_button.dart';
+import 'package:eventjar/page/schedule_meeting/widget/schedule_meeting_message_method.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -82,9 +83,9 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                     onTap: controller.pickMeetingTime,
                   ),
 
+                  // Send via section - Updated with config checks
                   SizedBox(height: 3.hp),
 
-                  // Send via section
                   Text(
                     'Send Invitation via:',
                     style: TextStyle(
@@ -94,28 +95,40 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                   ),
                   SizedBox(height: 1.5.hp),
 
-                  // Email Card
+                  // ✅ Email Card with Config + Loading
                   Obx(
-                    () => _buildMethodCard(
+                    () => scheduleMeetingMessageBuildMethodCard(
+                      // Reuse the same widget!
                       title: 'Email',
                       icon: Icons.email_outlined,
                       isSelected: controller.state.meetingEmailChecked.value,
-                      onTap: () => controller.state.meetingEmailChecked.value =
-                          !controller.state.meetingEmailChecked.value,
+                      isDisabled: !controller.canSendEmail,
+                      isLoading: controller.state.configLoading.value,
+                      badgeText: controller.canSendEmail
+                          ? null
+                          : 'Not Configured',
+                      onTap: controller.canSendEmail
+                          ? () => controller.toggleMeetingEmail()
+                          : null,
                     ),
                   ),
 
                   SizedBox(height: 1.5.hp),
 
-                  // WhatsApp Card
+                  // ✅ WhatsApp Card with Config + Loading
                   Obx(
-                    () => _buildMethodCard(
+                    () => scheduleMeetingMessageBuildMethodCard(
                       title: 'WhatsApp',
                       icon: Icons.message_outlined,
                       isSelected: controller.state.meetingWhatsappChecked.value,
-                      onTap: () =>
-                          controller.state.meetingWhatsappChecked.value =
-                              !controller.state.meetingWhatsappChecked.value,
+                      isDisabled: !controller.canSendWhatsApp,
+                      isLoading: controller.state.configLoading.value,
+                      badgeText: controller.canSendWhatsApp
+                          ? null
+                          : 'Not Configured',
+                      onTap: controller.canSendWhatsApp
+                          ? () => controller.toggleMeetingWhatsApp()
+                          : null,
                     ),
                   ),
 
@@ -183,72 +196,6 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildMethodCard({
-    required String title,
-    required IconData icon,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(4.wp),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? Colors.blue.withValues(alpha: 0.08)
-              : Colors.grey[50],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey[300]!,
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 4,
-              offset: Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: isSelected ? Colors.blue : Colors.grey[600]),
-                SizedBox(width: 3.wp),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 9.sp,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? Colors.blue[700] : Colors.grey[700],
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected ? Colors.blue : Colors.transparent,
-                border: Border.all(
-                  color: isSelected ? Colors.blue : Colors.grey[400]!,
-                  width: 2,
-                ),
-              ),
-              child: isSelected
-                  ? Icon(Icons.check, color: Colors.white, size: 16)
-                  : null,
-            ),
-          ],
-        ),
       ),
     );
   }

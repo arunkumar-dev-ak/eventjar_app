@@ -1,11 +1,14 @@
 import 'package:eventjar/controller/contact/controller.dart';
+import 'package:eventjar/global/app_toast.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/page/contact/radial_design/contact_card_popup.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 
-enum ContactCardAction { edit, delete, call, mail }
+enum ContactCardAction { edit, delete, call, mail, addToPhone }
 
 int getStageIndexFromContact(ContactStage stage) {
   switch (stage) {
@@ -61,6 +64,10 @@ void handleContactCardAction(
       controller.navigateToUpdateContact(contact);
       break;
 
+    case ContactCardAction.addToPhone:
+      _addContactToPhone(context, contact);
+      break;
+
     case ContactCardAction.delete:
       showDialog(
         context: context,
@@ -73,7 +80,6 @@ void handleContactCardAction(
       break;
 
     case ContactCardAction.mail:
-      // ✅ NEW: Launch Email
       if (contact.email.isNotEmpty) {
         controller.launchEmail(contact.email);
       }
@@ -84,5 +90,75 @@ void handleContactCardAction(
         controller.launchPhoneCall(contact.phone!);
       }
       break;
+  }
+}
+
+Future<void> _addContactToPhone(
+  BuildContext context,
+  MobileContact contact,
+) async {
+  try {
+    // 🔐 Permission
+    final granted = await FlutterContacts.requestPermission();
+    if (!granted) {
+      AppToast.warning('Contacts permission required to save contact');
+      return;
+    }
+
+    LoggerService.loggerInstance.dynamic_d('Contacts permission granted');
+
+    // 📱 Create device contact
+    final newContact = Contact()
+      ..name.first = contact.name
+      ..notes = [Note('Saved from EventJar')];
+
+    // 📞 Phone
+    if (contact.phoneParsed != null &&
+        contact.phoneParsed!.fullNumber.isNotEmpty) {
+      newContact.phones = [Phone(contact.phoneParsed!.fullNumber)];
+    } else if (contact.phone != null && contact.phone!.isNotEmpty) {
+      newContact.phones = [Phone(contact.phone!)];
+    }
+
+    // 📧 Email
+    if (contact.email.isNotEmpty) {
+      newContact.emails = [Email(contact.email)];
+    }
+
+    // 🏢 Company & Job Title
+    if (contact.company != null || contact.position != null) {
+      newContact.organizations = [
+        Organization(
+          company: contact.company ?? '',
+          title: contact.position ?? '',
+        ),
+      ];
+    }
+
+    // 💾 Save contact
+    await FlutterContacts.insertContact(newContact);
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${contact.name} added to phone contacts ✅'),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  } catch (e, s) {
+    LoggerService.loggerInstance.dynamic_d('$e\n$s');
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to save contact. Please try again.'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
 }

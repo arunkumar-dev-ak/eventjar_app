@@ -44,7 +44,8 @@
 	<string>This app needs access to your photo library to select images for card scan and events.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This app needs permission to save images to your photo library.</string>
-
+	<key>NSContactsUsageDescription</key>  
+	<string>This app requires contacts access to save into mobile contacts.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

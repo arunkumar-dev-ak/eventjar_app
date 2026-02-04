@@ -133,6 +133,7 @@ class ContactCardPage extends StatelessWidget {
           return Obx(() {
             final isExpanded = controller.state.expandedIndex.value == index;
             return radialDesignBuildAccordionCard(
+              context: context,
               contact: contact,
               stages: _buildStagesForContact(contact.stage.index),
               isSmallScreen: isSmallScreen,
@@ -141,8 +142,12 @@ class ContactCardPage extends StatelessWidget {
               onToggleExpand: (int val) {
                 controller.state.expandedIndex.value = val;
               },
+              isOverDue: contact.isOverdue,
               onCall: () {
                 // controller.launchPhoneCall(contact.phoneNumber ?? '');
+              },
+              onMeetingClick: () {
+                controller.navigateToContactListMeeting(contact);
               },
             );
           });

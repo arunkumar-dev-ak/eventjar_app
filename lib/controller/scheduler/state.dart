@@ -1,3 +1,5 @@
+import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
+import 'package:eventjar/model/contact-meeting/contact_meeting_status.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/model/meta/meta_model.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,9 @@ import 'package:get/get.dart';
 
 class SchedulerState {
   RxBool isLoading = false.obs;
+
+  Rxn<ContactMeeting> selectedMeeting = Rxn<ContactMeeting>();
+  Rxn<MeetingStatusForReschedule> selectedStatus = Rxn();
 
   // Form fields
   final contactController = TextEditingController();

@@ -45,10 +45,11 @@ class DioClient {
             'e.requestOptions.path ${e.response?.statusCode}',
           );
 
+          LoggerService.loggerInstance.dynamic_d(e.type);
+
           if (e.type == DioExceptionType.connectionTimeout ||
               e.type == DioExceptionType.sendTimeout ||
-              e.type == DioExceptionType.receiveTimeout ||
-              e.type == DioExceptionType.unknown) {
+              e.type == DioExceptionType.receiveTimeout) {
             LoggerService.loggerInstance.e("🌐 NO INTERNET: ${e.message}");
             return handler.reject(
               DioException(

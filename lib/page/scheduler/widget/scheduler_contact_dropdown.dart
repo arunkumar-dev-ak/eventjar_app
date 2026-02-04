@@ -1,5 +1,4 @@
 import 'package:eventjar/controller/scheduler/controller.dart';
-import 'package:eventjar/global/dropdown/single_selected_dropdown.dart';
 import 'package:eventjar/global/dropdown/single_selected_paginated_dropdown.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:flutter/material.dart';

@@ -8,6 +8,8 @@ import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
+import 'package:eventjar/model/contact-meeting/contact_meeting_status.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
@@ -20,12 +22,51 @@ class SchedulerController extends GetxController {
   final formKey = GlobalKey<FormState>();
 
   Timer? _debounceTimer;
+  bool get isRescheduleMode => state.selectedMeeting.value != null;
 
   @override
   void onInit() {
     super.onInit();
+    final ContactMeeting? meeting = Get.arguments;
+    if (meeting != null) {
+      _initializeForReschedule(meeting);
+    } else {
+      _initializeForNewMeeting();
+    }
+
     getQualifiedContactList();
-    state.scheduledAt.value = DateTime.now().add(Duration(minutes: 30));
+  }
+
+  void _initializeForReschedule(ContactMeeting meeting) {
+    state.selectedMeeting.value = meeting;
+    appBarTitle = "Reschedule Meeting";
+
+    state.scheduledAt.value = meeting.scheduledAt.toLocal();
+    state.dateTimeController.text = getFormattedDate(state.scheduledAt.value);
+
+    final durationMatch = state.durations.firstWhere(
+      (d) => d['key'] == meeting.duration.toString(),
+      orElse: () => state.durations[1],
+    );
+    state.selectedDurationMap.value = durationMatch;
+
+    final statusMatch = MeetingStatusForReschedule.values.firstWhere(
+      (d) => d == meeting.status,
+      orElse: () =>
+          state.selectedStatus.value = MeetingStatusForReschedule.SCHEDULED,
+    );
+    state.selectedStatus.value = statusMatch;
+
+    if (meeting.notes != null && meeting.notes!.isNotEmpty) {
+      state.notesController.text = meeting.notes!;
+    } else {
+      state.notesController.clear();
+    }
+  }
+
+  void _initializeForNewMeeting() {
+    appBarTitle = "Schedule Meeting";
+    state.scheduledAt.value = DateTime.now().add(const Duration(minutes: 30));
     state.dateTimeController.text = getFormattedDate(state.scheduledAt.value);
     state.selectedDurationMap.value = state.durations.first;
   }
@@ -54,12 +95,10 @@ class SchedulerController extends GetxController {
 
   void selectContact(MobileContact contact) {
     state.selectedContact.value = contact;
-    update();
   }
 
   void selectDuration(Map<String, String> duration) {
     state.selectedDurationMap.value = duration;
-    update();
   }
 
   Future<void> pickDateTime(BuildContext context) async {
@@ -268,27 +307,79 @@ class SchedulerController extends GetxController {
   }
 
   void clearForm() {
-    state.selectedContact.value = null;
-    state.scheduledAt.value = DateTime.now().add(Duration(minutes: 30));
-    state.dateTimeController.text = getFormattedDate(state.scheduledAt.value);
-    state.selectedDurationMap.value = null;
-    state.selectedDurationMap.value = null;
-    state.notesController.clear();
-    state.contactController.clear();
+    if (state.selectedMeeting.value == null) {
+      state.selectedContact.value = null;
+      state.scheduledAt.value = DateTime.now().add(Duration(minutes: 30));
+      state.dateTimeController.text = getFormattedDate(state.scheduledAt.value);
+      state.selectedDurationMap.value = null;
+      state.selectedDurationMap.value = null;
+      state.notesController.clear();
+      state.contactController.clear();
+    } else {
+      _initializeForReschedule(state.selectedMeeting.value!);
+    }
   }
 
-  Future<void> submitForm(BuildContext context) async {
-    if (!formKey.currentState!.validate()) return;
+  /*----- build sending data -----*/
+  Map<String, dynamic> _buildNewMeetingDto(MobileContact contact) {
+    final scheduledAtUtc = state.scheduledAt.value!.toUtc();
+    return {
+      'contactId': contact.id,
+      'scheduledAt': scheduledAtUtc.toIso8601String(),
+      'duration': int.tryParse(state.selectedDurationMap.value!['key'] ?? '0'),
+      if (state.notesController.text.trim().isNotEmpty)
+        'notes': state.notesController.text.trim(),
+    };
+  }
+
+  Map<String, dynamic> _buildRescheduleDto() {
+    final meeting = state.selectedMeeting.value!;
+    final dto = <String, dynamic>{};
+
+    if (_hasDateTimeChanged(meeting.scheduledAt)) {
+      dto['scheduledAt'] = state.scheduledAt.value!.toUtc().toIso8601String();
+    }
+
+    return dto;
+  }
+
+  // Change detection
+  // bool _hasStatusChanged(String originalStatus) {
+  //   return state.selectedStatus.value?.name != originalStatus;
+  // }
+
+  bool _hasDateTimeChanged(DateTime original) {
+    return !original.isAtSameMomentAs(state.scheduledAt.value!);
+  }
+
+  // bool _hasDurationChanged(int original) {
+  //   return int.tryParse(state.selectedDurationMap.value?['key'] ?? '0') !=
+  //       original;
+  // }
+
+  // bool _hasNotesChanged(String? original) {
+  //   final originalNotes = original ?? '';
+  //   return state.notesController.text.trim() != originalNotes;
+  // }
+
+  // bool _hasDeclineReasonChanged(String? original) {
+  //   final originalReason = original ?? '';
+  //   final newReason = state.notesController.text.trim();
+  //   return newReason != originalReason && newReason.isNotEmpty;
+  // }
+
+  bool _validateForm() {
+    if (!formKey.currentState!.validate()) return false;
 
     Get.focusScope?.unfocus();
 
-    final contact = state.selectedContact.value;
-    if (contact == null) {
+    // Skip contact validation for reschedule mode
+    if (!isRescheduleMode && state.selectedContact.value == null) {
       AppSnackbar.warning(
         title: 'Invalid',
         message: 'Please select a qualified contact',
       );
-      return;
+      return false;
     }
 
     if (state.scheduledAt.value == null) {
@@ -296,46 +387,68 @@ class SchedulerController extends GetxController {
         title: 'Invalid',
         message: 'Please select valid date & time',
       );
-      return;
+      return false;
     }
 
-    final Map<String, String>? durationMap = state.selectedDurationMap.value;
+    final durationMap = state.selectedDurationMap.value;
     if (durationMap == null || durationMap.isEmpty) {
       AppSnackbar.warning(title: 'Invalid', message: 'Please select duration');
-      return;
+      return false;
     }
 
-    if (state.isLoading.value) return;
+    // Status validation only for reschedule
+    if (isRescheduleMode && state.selectedStatus.value == null) {
+      AppSnackbar.warning(title: 'Invalid', message: 'Please select status');
+      return false;
+    }
+
+    if (state.isLoading.value) return false;
+
+    return true;
+  }
+
+  Future<void> submitForm(BuildContext context) async {
+    // ✅ Step 1: Validate form
+    if (!_validateForm()) return;
+    bool success = false;
 
     try {
       state.isLoading.value = true;
 
-      // Prepare DTO
-      final Map<String, dynamic> dto = {
-        'contactId': contact.id,
-        'scheduledAt': state.scheduledAt.value!.toIso8601String(),
-        'duration': int.tryParse(
-          state.selectedDurationMap.value?['key'] ?? '0',
-        ),
-        if (state.notesController.text.trim().isNotEmpty)
-          'notes': state.notesController.text.trim(),
-      };
+      if (isRescheduleMode) {
+        final dto = _buildRescheduleDto();
+        // LoggerService.loggerInstance.dynamic_d(dto);
+        // LoggerService.loggerInstance.dynamic_d(state.selectedMeeting.value!.id);
 
-      final bool created = await SchedulerApi.createMeeting(dto);
+        if (dto.isEmpty) {
+          Navigator.pop(context);
+          return;
+        }
 
-      if (created) {
-        AppSnackbar.success(
-          title: "Meeting Scheduled",
-          message: "Your meeting has been scheduled successfully.",
+        await SchedulerApi.rescheduleMeeting(
+          dto: dto,
+          id: state.selectedMeeting.value!.id,
         );
+        success = true;
+      } else {
+        final contact = state.selectedContact.value!;
+        final dto = _buildNewMeetingDto(contact);
+        await SchedulerApi.createMeeting(dto);
+        success = true;
+      }
 
-        clearForm();
+      // ✅ Step 3: Handle success
+      if (success) {
+        final title = isRescheduleMode
+            ? "Meeting Rescheduled"
+            : "Meeting Scheduled";
+        final message =
+            "Your meeting has been ${isRescheduleMode ? 'rescheduled' : 'scheduled'} successfully.";
 
-        // Close and signal refresh
+        AppSnackbar.success(title: title, message: message);
         Navigator.pop(context, "refresh");
       } else {
-        final String errorMsg = "Something Went Wrong";
-        AppSnackbar.error(title: "Failed", message: errorMsg);
+        AppSnackbar.error(title: "Failed", message: "Something went wrong");
       }
     } catch (err) {
       LoggerService.loggerInstance.e(err);
@@ -346,7 +459,12 @@ class SchedulerController extends GetxController {
           navigateToSignInPage();
           return;
         }
-        ApiErrorHandler.handleError(err, "Failed to Schedule Meeting");
+        ApiErrorHandler.handleError(
+          err,
+          isRescheduleMode
+              ? "Failed to reschedule meeting"
+              : "Failed to schedule meeting",
+        );
       } else {
         AppSnackbar.error(
           title: "Failed",

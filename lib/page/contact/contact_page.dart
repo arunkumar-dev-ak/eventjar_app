@@ -78,74 +78,76 @@ class ContactPage extends GetView<ContactController> {
         }),
       ),
 
-      body: Column(
-        children: [
-          // Buttons row: Add Contact, Import Google, Import Mobile
-          // SingleChildScrollView(
-          //   scrollDirection: Axis.horizontal,
-          //   child: Padding(
-          //     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //       children: [
-          //         ElevatedButton.icon(
-          //           icon: const Icon(Icons.person_add),
-          //           label: const Text("Add Contact"),
-          //           onPressed: () {
-          //             // Add your Add Contact action here
-          //           },
-          //           style: ElevatedButton.styleFrom(
-          //             shape: RoundedRectangleBorder(
-          //               borderRadius: BorderRadius.circular(10),
-          //             ),
-          //             padding: const EdgeInsets.symmetric(
-          //               vertical: 12,
-          //               horizontal: 12,
-          //             ),
-          //           ),
-          //         ),
-          //         ElevatedButton.icon(
-          //           icon: const Icon(Icons.account_circle),
-          //           label: const Text("Import Google"),
-          //           onPressed: () {
-          //             // Add your Import from Google action here
-          //           },
-          //           style: ElevatedButton.styleFrom(
-          //             shape: RoundedRectangleBorder(
-          //               borderRadius: BorderRadius.circular(10),
-          //             ),
-          //             padding: const EdgeInsets.symmetric(
-          //               vertical: 12,
-          //               horizontal: 12,
-          //             ),
-          //           ),
-          //         ),
-          //         ElevatedButton.icon(
-          //           icon: const Icon(Icons.phone_android),
-          //           label: const Text("Import Mobile"),
-          //           onPressed: () {
-          //             // Add your Import from Mobile action here
-          //           },
-          //           style: ElevatedButton.styleFrom(
-          //             shape: RoundedRectangleBorder(
-          //               borderRadius: BorderRadius.circular(10),
-          //             ),
-          //             padding: const EdgeInsets.symmetric(
-          //               vertical: 12,
-          //               horizontal: 12,
-          //             ),
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          // SizedBox(height: 1.hp),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Buttons row: Add Contact, Import Google, Import Mobile
+            // SingleChildScrollView(
+            //   scrollDirection: Axis.horizontal,
+            //   child: Padding(
+            //     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //       children: [
+            //         ElevatedButton.icon(
+            //           icon: const Icon(Icons.person_add),
+            //           label: const Text("Add Contact"),
+            //           onPressed: () {
+            //             // Add your Add Contact action here
+            //           },
+            //           style: ElevatedButton.styleFrom(
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(10),
+            //             ),
+            //             padding: const EdgeInsets.symmetric(
+            //               vertical: 12,
+            //               horizontal: 12,
+            //             ),
+            //           ),
+            //         ),
+            //         ElevatedButton.icon(
+            //           icon: const Icon(Icons.account_circle),
+            //           label: const Text("Import Google"),
+            //           onPressed: () {
+            //             // Add your Import from Google action here
+            //           },
+            //           style: ElevatedButton.styleFrom(
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(10),
+            //             ),
+            //             padding: const EdgeInsets.symmetric(
+            //               vertical: 12,
+            //               horizontal: 12,
+            //             ),
+            //           ),
+            //         ),
+            //         ElevatedButton.icon(
+            //           icon: const Icon(Icons.phone_android),
+            //           label: const Text("Import Mobile"),
+            //           onPressed: () {
+            //             // Add your Import from Mobile action here
+            //           },
+            //           style: ElevatedButton.styleFrom(
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(10),
+            //             ),
+            //             padding: const EdgeInsets.symmetric(
+            //               vertical: 12,
+            //               horizontal: 12,
+            //             ),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // SizedBox(height: 1.hp),
 
-          // Search and Contact cards below
-          ContactsSearchAndFilters(),
-          Expanded(child: ContactCardPage()),
-        ],
+            // Search and Contact cards below
+            ContactsSearchAndFilters(),
+            Expanded(child: ContactCardPage()),
+          ],
+        ),
       ),
     );
   }

@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:eventjar/api/contact_api/config_status_api.dart';
 import 'package:eventjar/api/thank_you_message_api/thank_you_message_api.dart';
 import 'package:eventjar/controller/thank_you_message/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,11 +21,17 @@ class ThankYouMessageController extends GetxController {
   final contactEmailController = TextEditingController();
   final messageController = TextEditingController();
 
+  bool get canSendEmail => state.configStatus.value?.emailConfig ?? false;
+  bool get canSendWhatsApp => state.configStatus.value?.whatsappConfig ?? false;
+  bool get hasAnyMethodSelected =>
+      state.emailChecked.value || state.whatsappChecked.value;
+
   @override
   void onInit() {
     final args = Get.arguments;
     state.contact.value = args;
     initThankYouData(state.contact.value!.name, state.contact.value!.email);
+    getConfigDetails();
     super.onInit();
   }
 
@@ -67,6 +75,7 @@ class ThankYouMessageController extends GetxController {
       state.isLoading.value = true;
 
       final data = _buildThankYouMessageData();
+      LoggerService.loggerInstance.dynamic_d(data);
 
       final response = await ThankYouMessageApi.sendThankYouMessage(
         data: data,
@@ -100,8 +109,52 @@ class ThankYouMessageController extends GetxController {
     }
   }
 
+  Future<void> getConfigDetails() async {
+    try {
+      state.configLoading.value = true;
+
+      final response = await ConfigStatusApi.getConfigStatus();
+      state.configStatus.value = response;
+    } catch (err) {
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return;
+        }
+        ApiErrorHandler.handleError(err, "Failed to Get Config details");
+      } else {
+        AppSnackbar.error(
+          title: "Failed",
+          message: "Something went wrong. Please try again.",
+        );
+      }
+    } finally {
+      state.configLoading.value = false;
+    }
+  }
+
+  void toggleEmail() {
+    if (canSendEmail) {
+      state.emailChecked.value = !state.emailChecked.value;
+    }
+  }
+
+  void toggleWhatsApp() {
+    if (canSendWhatsApp) {
+      state.whatsappChecked.value = !state.whatsappChecked.value;
+    }
+  }
+
   void navigateToSignInPage() {
-    Get.toNamed(RouteName.signInPage);
+    Get.toNamed(RouteName.signInPage)?.then((result) async {
+      if (result == "logged_in") {
+        await getConfigDetails();
+      } else {
+        Get.back();
+      }
+    });
   }
 
   void resetForm() {

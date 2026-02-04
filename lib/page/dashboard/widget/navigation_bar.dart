@@ -144,7 +144,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     }
 
     final labelText = isLoggedIn && profileName != "User"
-        ? "Hi, $profileName"
+        ? profileName
         : "Account";
 
     return BottomNavigationBarItem(icon: iconWidget, label: labelText);
@@ -159,8 +159,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
         profileData['email']?.split('@').first ??
         "User";
 
-    if (name.length <= 4) return name;
-    return "${name.substring(0, 4)}....";
+    if (name.length <= 9) return name;
+    return "${name.substring(0, 6)}...";
   }
 
   Widget _buildInitialsAvatar({required String name}) {

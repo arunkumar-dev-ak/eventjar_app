@@ -3,23 +3,29 @@ import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/page/contact/radial_design/contact_card_header.dart';
+import 'package:eventjar/page/contact/radial_design/contact_meeting_widget.dart';
 import 'package:eventjar/page/contact/radial_design/expanded_content.dart';
 import 'package:eventjar/page/contact/radial_design/notes_section.dart';
 import 'package:eventjar/page/contact/radial_design/radial_design_func.dart';
 import 'package:flutter/material.dart';
 
 Widget radialDesignBuildAccordionCard({
+  required BuildContext context,
   required MobileContact contact,
   required List<PieChartModel> stages,
   required bool isSmallScreen,
   required int index,
   required bool isExpanded,
+  required bool isOverDue,
   required Function(int) onToggleExpand,
   required VoidCallback onCall,
+  required VoidCallback onMeetingClick,
 }) {
   // Map ContactStage to stageDefinitions
   final int activeStageIndex = _getStageIndexFromContact(contact.stage);
-  final Color stageColor = stageDefinitions[activeStageIndex].color;
+  final Color stageColor = isOverDue
+      ? Colors.red.shade200
+      : stageDefinitions[activeStageIndex].color;
   final expandedChartSize = isSmallScreen ? 200.0 : 240.0;
 
   return Container(
@@ -55,7 +61,7 @@ Widget radialDesignBuildAccordionCard({
       borderRadius: BorderRadius.circular(20),
       child: Column(
         children: [
-          //header
+          // Header
           ContactCardHeader(
             isSmallScreen: isSmallScreen,
             index: index,
@@ -63,9 +69,10 @@ Widget radialDesignBuildAccordionCard({
             contact: contact,
             stages: stages,
           ),
-          //body
+
+          // Body
           AnimatedCrossFade(
-            firstChild: SizedBox.shrink(),
+            firstChild: const SizedBox.shrink(),
             secondChild: buildExpandedContent(
               contact,
               stages,
@@ -77,8 +84,20 @@ Widget radialDesignBuildAccordionCard({
             crossFadeState: isExpanded
                 ? CrossFadeState.showSecond
                 : CrossFadeState.showFirst,
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
           ),
+
+          // Replace your Schedule Meeting section with:
+          // if (isExpanded)
+          //   ContactMeetingSection.buildDynamicMeetingSection(
+          //     contact,
+          //     context,
+          //     () {
+          //       onMeetingClick();
+          //     },
+          //   ),
+
+          // Notes section
           if (isExpanded && contact.notes != null && contact.notes!.isNotEmpty)
             buildNotesSection(contact.notes!, stageColor),
         ],

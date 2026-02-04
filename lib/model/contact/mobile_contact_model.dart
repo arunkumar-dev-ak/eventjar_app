@@ -69,6 +69,11 @@ class MobileContact {
   final DateTime updatedAt;
   final dynamic linkedUser;
   final dynamic event;
+  final bool meetingScheduled;
+  final bool meetingConfirmed;
+  final bool meetingCompleted;
+  final bool isOverdue;
+  final DateTime? lastMeetingDate;
 
   MobileContact({
     required this.id,
@@ -92,6 +97,11 @@ class MobileContact {
     required this.updatedAt,
     this.linkedUser,
     this.event,
+    required this.meetingScheduled,
+    required this.isOverdue,
+    required this.meetingConfirmed,
+    required this.meetingCompleted,
+    this.lastMeetingDate,
   });
 
   factory MobileContact.fromJson(Map<String, dynamic> json) {
@@ -124,6 +134,13 @@ class MobileContact {
         updatedAt: DateTime.parse(json['updatedAt']),
         linkedUser: json['linkedUser'],
         event: json['event'],
+        meetingScheduled: json['meetingScheduled'] ?? false,
+        isOverdue: json['isOverdue'] ?? false,
+        meetingConfirmed: json['meetingConfirmed'] ?? false,
+        meetingCompleted: json['meetingCompleted'] ?? false,
+        lastMeetingDate: json['lastMeetingDate'] != null
+            ? DateTime.parse(json['lastMeetingDate'])
+            : null,
       );
     } catch (e) {
       LoggerService.loggerInstance.e('Error parsing MobileContact: $e');
@@ -153,6 +170,11 @@ class MobileContact {
     'updatedAt': updatedAt.toIso8601String(),
     'linkedUser': linkedUser,
     'event': event,
+    'meetingScheduled': meetingScheduled,
+    'meetingConfirmed': meetingConfirmed,
+    'meetingCompleted': meetingCompleted,
+    'isOverdue': isOverdue,
+    'lastMeetingDate': lastMeetingDate?.toIso8601String(),
   };
 }
 

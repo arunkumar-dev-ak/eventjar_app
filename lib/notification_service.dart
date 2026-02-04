@@ -167,6 +167,7 @@ class NotificationService {
       await NotificationService._instance.setupFlutterNotifications();
       await NotificationService._instance.showNotification(message);
     } catch (e) {
+      LoggerService.loggerInstance.e("error while handling bg notification $e");
       // Silent fail in background
     }
   }

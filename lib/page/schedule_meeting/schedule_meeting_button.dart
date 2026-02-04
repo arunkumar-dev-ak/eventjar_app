@@ -10,51 +10,66 @@ class ScheduleMeetingActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey.shade400,
-                foregroundColor: Colors.black87,
-                padding: EdgeInsets.symmetric(vertical: 2.hp),
-                textStyle: TextStyle(fontSize: 9.sp),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 0,
-              ),
-              onPressed: controller.state.isLoading.value
-                  ? null
-                  : () => controller.resetForm(),
-              child: Text('Reset', style: TextStyle(fontSize: 9.sp)),
-            ),
-          ),
-          SizedBox(width: 2.wp),
-          Expanded(
-            child: Obx(
-              () => ElevatedButton(
+    return Obx(() {
+      final isLoading = controller.state.isLoading.value;
+      final configLoading = controller.state.configLoading.value;
+      final hasMethodsSelected = controller.hasAnyMethodSelected;
+
+      // ✅ Button disabled if: loading OR configLoading OR no methods selected
+      final isButtonEnabled =
+          !isLoading && !configLoading && hasMethodsSelected;
+
+      return SizedBox(
+        width: double.infinity,
+        child: Row(
+          children: [
+            // Reset Button
+            Expanded(
+              child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.grey.shade400,
+                  foregroundColor: Colors.black87,
                   padding: EdgeInsets.symmetric(vertical: 2.hp),
                   textStyle: TextStyle(fontSize: 9.sp),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  elevation: 2,
+                  elevation: 0,
                 ),
-                onPressed: () {
-                  if (controller.state.isLoading.value) {
-                    return;
-                  }
-                  if (controller.formKey.currentState?.validate() ?? false) {
-                    controller.scheduleMeeting(context);
-                  }
-                },
-                child: controller.state.isLoading.value
+                onPressed: (isLoading || configLoading)
+                    ? null
+                    : () => controller.resetForm(),
+                child: Text('Reset', style: TextStyle(fontSize: 9.sp)),
+              ),
+            ),
+            SizedBox(width: 2.wp),
+
+            // ✅ Schedule Button - DISABLED logic
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isButtonEnabled
+                      ? Colors.blue
+                      : Colors.grey.shade300,
+                  foregroundColor: isButtonEnabled
+                      ? Colors.white
+                      : Colors.grey.shade500,
+                  padding: EdgeInsets.symmetric(vertical: 2.hp),
+                  textStyle: TextStyle(fontSize: 9.sp),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: isButtonEnabled ? 2 : 0,
+                ),
+                onPressed: isButtonEnabled
+                    ? () {
+                        if (controller.formKey.currentState?.validate() ??
+                            false) {
+                          controller.scheduleMeeting(context);
+                        }
+                      }
+                    : null,
+                child: isLoading || configLoading
                     ? SizedBox(
                         height: 16,
                         width: 16,
@@ -66,14 +81,21 @@ class ScheduleMeetingActionButtons extends StatelessWidget {
                         ),
                       )
                     : Text(
-                        'Schedule Meeting',
-                        style: TextStyle(fontSize: 9.sp),
+                        configLoading
+                            ? 'Loading Config...'
+                            : 'Schedule Meeting',
+                        style: TextStyle(
+                          fontSize: 9.sp,
+                          fontWeight: isButtonEnabled
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                        ),
                       ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 }
