@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
@@ -752,9 +753,27 @@ class ScanCardController extends GetxController
     errorMessage.value = '';
   }
 
-  Future<void> navigateToAddContact() async {
+  Future<void> navigateToAddContact(BuildContext context) async {
     //print(cardInfo);
-    Get.toNamed(RouteName.addContactPage, arguments: cardInfo.value);
+    // Navigator.pop(context, "refresh");
+    Get.toNamed(RouteName.addContactPage, arguments: cardInfo.value)?.then((
+      result,
+    ) async {
+      if (result == "refresh") {
+        final statusCard = NetworkStatusCardData(
+          key: 'totalContacts',
+          label: 'Total Contacts',
+          enumKey: 'all',
+          icon: Icons.people,
+          color: Colors.blue,
+        );
+
+        Get.offAndToNamed(
+          RouteName.contactPage,
+          arguments: {'statusCard': statusCard},
+        );
+      }
+    });
   }
 
   @override

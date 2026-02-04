@@ -511,7 +511,7 @@ class ScanCard extends GetView<ScanCardController> {
                           icon: Icons.save_as,
                           label: 'Edit or Save',
                           onPressed: () {
-                            controller.navigateToAddContact();
+                            controller.navigateToAddContact(context);
                           },
                           isPrimary: true,
                           delay: 0,
