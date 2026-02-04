@@ -3,6 +3,7 @@ import 'package:eventjar/api/add_contact_api/add_contact_api.dart';
 import 'package:eventjar/controller/add_contact/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 
 import 'package:eventjar/model/contact/contact_model.dart';
@@ -104,7 +105,12 @@ class AddContactController extends GetxController {
     contactId = null; // Always new contact from NFC
     state.clearButtonTitle.value = "Reset";
     nameController.text = nfcContact.name;
-    phoneController.text = nfcContact.phone;
+    phoneController.text = nfcContact.phoneParsed?.phoneNumber ?? "";
+    final selectedCountryCode = nfcContact.phoneParsed?.countryCode ?? "+91";
+    final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
+    state.selectedCountry.value = countries.firstWhere(
+      (country) => country.fullCountryCode == cleanCountryCode,
+    );
     emailController.text = nfcContact.email;
     notesController.text = nfcContact.note;
 
@@ -232,7 +238,7 @@ class AddContactController extends GetxController {
     final fullPhoneNumber = '+$countryCode$localPhoneNumber';
 
     return {
-      'name': nameController.text.trim(),
+      'name': capitalize(nameController.text.trim()),
       'email': emailController.text.trim(),
       'phone': fullPhoneNumber,
       'stage': state.selectedStage.value['key'],

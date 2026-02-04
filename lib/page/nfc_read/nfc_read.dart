@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/nfc_read/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/nfc_read/nfc_read_bottom_control.dart';
 import 'package:eventjar/page/nfc_read/nfc_read_scanning_zone.dart';
 import 'package:flutter/material.dart';
@@ -58,17 +59,19 @@ class NfcReadPage extends GetView<NfcReadController> {
         ),
       ),
 
-      body: Column(
-        children: [
-          SizedBox(height: 2.hp),
-          _StatusBadge(),
-          // Main scanning area - takes more space
-          Expanded(flex: 3, child: NfcReadScanningZone()),
-          // Action container at bottom
-          NfcActionContainer(),
-          // Bottom controls
-          NfcReadBottomControls(),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: 2.hp),
+            _StatusBadge(),
+            // Main scanning area - takes more space
+            Expanded(flex: 3, child: NfcReadScanningZone()),
+            // Action container at bottom
+            NfcActionContainer(),
+            // Bottom controls
+            NfcReadBottomControls(),
+          ],
+        ),
       ),
     );
   }
@@ -80,6 +83,7 @@ class NfcActionContainer extends GetView<NfcReadController> {
   @override
   Widget build(BuildContext context) {
     final profile = controller.state.profile.value;
+    LoggerService.loggerInstance.dynamic_d(profile);
     final hasProfile = profile != null;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 2.hp),

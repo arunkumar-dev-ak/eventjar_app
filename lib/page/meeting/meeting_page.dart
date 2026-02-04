@@ -23,7 +23,6 @@ class MeetingPage extends GetView<MeetingController> {
         ),
         elevation: 0,
         actions: [
-          // ✅ Add Meeting Icon Button
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: GestureDetector(

@@ -2,6 +2,8 @@ import 'package:eventjar/controller/scheduler/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/scheduler/widget/schedule_contact_display.dart';
 import 'package:eventjar/page/scheduler/widget/schedule_form_element.dart';
+import 'package:eventjar/page/scheduler/widget/scheduler_contact_dropdown.dart';
+import 'package:eventjar/page/scheduler/widget/scheduler_duration_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -30,19 +32,17 @@ class SchedulerPage extends GetView<SchedulerController> {
             key: controller.formKey,
             child: Column(
               children: [
-                // ✅ Contact Display (Always shown)
                 Obx(() {
                   final isReschedule =
                       controller.state.selectedMeeting.value != null;
-                  return buildContactDisplayForSchedulePage(
-                    isReschedule
-                        ? controller.state.selectedMeeting.value!
-                        : null,
-                  );
+                  return isReschedule
+                      ? buildContactDisplayForSchedulePage(
+                          controller.state.selectedMeeting.value!,
+                        )
+                      : SchedulerContactDropdown();
                 }),
                 SizedBox(height: 2.hp),
 
-                // ✅ Editable: Date & Time (Always shown)
                 ScheduleFormElement(
                   controller: controller.state.dateTimeController,
                   label: 'Date & Time *',
@@ -57,7 +57,27 @@ class SchedulerPage extends GetView<SchedulerController> {
                 ),
                 SizedBox(height: 2.hp),
 
-                // 🔥 RESCHEDULE ONLY: Read-only tabs for other fields
+                Obx(() {
+                  if (controller.state.selectedMeeting.value != null) {
+                    return const SizedBox.shrink();
+                  }
+
+                  return Column(
+                    children: [
+                      SchedulerDurationDropdown(),
+                      SizedBox(height: 2.hp),
+
+                      ScheduleFormElement(
+                        controller: controller.state.notesController,
+                        label: 'Meeting Notes',
+                        maxLines: 4,
+                        minLines: 3,
+                      ),
+                      SizedBox(height: 2.hp),
+                    ],
+                  );
+                }),
+
                 Obx(() {
                   if (controller.state.selectedMeeting.value == null) {
                     return const SizedBox.shrink();
@@ -65,33 +85,27 @@ class SchedulerPage extends GetView<SchedulerController> {
 
                   return Column(
                     children: [
-                      // Duration Tab (Read-only) ✅ FIXED TYPE CASTING
                       _buildReadOnlyFieldTab(
                         label: 'Duration',
-                        value:
-                            '${controller.state.selectedMeeting.value!.duration ?? 'N/A'}',
+                        value: controller.state.selectedMeeting.value!.duration
+                            .toString(),
                         icon: Icons.timer_outlined,
                       ),
                       SizedBox(height: 2.hp),
-
-                      // Status Tab (Read-only) ✅ FIXED TYPE CASTING
                       _buildReadOnlyFieldTab(
                         label: 'Status',
-                        value:
-                            '${controller.state.selectedMeeting.value!.status ?? 'N/A'}',
+                        value: controller.state.selectedMeeting.value!.status,
                         icon: Icons.schedule_outlined,
                         color: _getStatusColor(
-                          controller.state.selectedMeeting.value!.status
-                              ?.toString(),
+                          controller.state.selectedMeeting.value!.status,
                         ),
                       ),
                       SizedBox(height: 2.hp),
-
-                      // Notes Tab (Read-only) ✅ FIXED TYPE CASTING
                       _buildReadOnlyFieldTab(
                         label: 'Notes',
                         value:
-                            '${controller.state.selectedMeeting.value!.notes ?? 'No notes added'}',
+                            controller.state.selectedMeeting.value!.notes ??
+                            'No notes added',
                         icon: Icons.notes_outlined,
                         maxLines: 3,
                       ),
@@ -198,7 +212,7 @@ class SchedulerPage extends GetView<SchedulerController> {
     );
   }
 
-  // 🔥 Read-only field tabs (like username display)
+  // 🔥 Read-only field tabs
   Widget _buildReadOnlyFieldTab({
     required String label,
     required String value,
@@ -264,7 +278,6 @@ class SchedulerPage extends GetView<SchedulerController> {
     );
   }
 
-  // 🔥 Status color helper ✅ FIXED TYPE SAFETY
   Color _getStatusColor(String? status) {
     final statusStr = status?.toUpperCase();
     switch (statusStr) {

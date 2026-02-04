@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/nfc_read/state.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/services/nfc_service.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,7 @@ class NfcReadController extends GetxController
   }
 
   Future<void> _loadData() async {
+    LoggerService.loggerInstance.dynamic_d("In _lodaDtaa");
     state.isLoading.value = true;
     try {
       _loadProfile();
@@ -74,12 +76,14 @@ class NfcReadController extends GetxController
   }
 
   Future<void> _loadProfile() async {
+    LoggerService.loggerInstance.dynamic_d("In _loadProfile");
     final profile = UserStore.to.profile;
     final nfcProfile = NfcContactModel(
       name: profile['name'],
-      phone: profile['phone'],
+      phoneParsed: profile['phoneParsed'],
       email: profile['email'],
     );
+    LoggerService.loggerInstance.dynamic_d(nfcProfile);
     state.profile.value = nfcProfile;
   }
 

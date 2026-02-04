@@ -1,17 +1,18 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:nfc_manager/ndef_record.dart';
 
 class NfcContactModel {
   final String name;
-  final String phone;
+  final PhoneParsed? phoneParsed;
   final String email;
   final String note;
 
   NfcContactModel({
     required this.name,
-    required this.phone,
+    required this.phoneParsed,
     this.email = '',
     this.note = '',
   });
@@ -22,8 +23,8 @@ class NfcContactModel {
     buffer.writeln('BEGIN:VCARD');
     buffer.writeln('VERSION:3.0');
     buffer.writeln('FN:$name');
-    if (phone.isNotEmpty) {
-      buffer.writeln('TEL:$phone');
+    if (phoneParsed != null) {
+      buffer.writeln('TEL:${phoneParsed?.toJson()}');
     }
     if (email.isNotEmpty) {
       buffer.writeln('EMAIL:$email');
@@ -77,7 +78,7 @@ class NfcContactModel {
 
     return NfcContactModel(
       name: name.isNotEmpty ? name : 'Unknown',
-      phone: phone,
+      phoneParsed: null,
       email: email,
       note: note,
     );
@@ -129,6 +130,6 @@ class NfcContactModel {
 
   @override
   String toString() {
-    return 'Contact(name: $name, phone: $phone, email: $email, note: $note)';
+    return 'Contact(name: $name, phoneParsed: ${phoneParsed?.toJson()}, email: $email, note: $note)';
   }
 }

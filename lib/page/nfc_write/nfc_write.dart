@@ -53,17 +53,19 @@ class NfcWritePage extends GetView<NfcWriteController> {
       ),
 
       backgroundColor: Colors.grey[50],
-      body: Column(
-        children: [
-          // Header
-          WriteHeader(),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header
+            WriteHeader(),
 
-          // Main scanning area (80% screen)
-          Expanded(child: NfcWriteScanningZone()),
+            // Main scanning area (80% screen)
+            Expanded(child: NfcWriteScanningZone()),
 
-          // Bottom controls
-          NfcWriteBottomControls(),
-        ],
+            // Bottom controls
+            NfcWriteBottomControls(),
+          ],
+        ),
       ),
     );
   }

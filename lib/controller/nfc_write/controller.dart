@@ -35,7 +35,7 @@ class NfcWriteController extends GetxController
     final profile = UserStore.to.profile;
     final nfcProfile = NfcContactModel(
       name: profile['name'],
-      phone: profile['phone'],
+      phoneParsed: profile['phoneParsed'],
       email: profile['email'],
     );
     state.profile.value = nfcProfile;

@@ -67,12 +67,12 @@ class NfcController extends GetxController
 
   Future<void> _loadProfile() async {
     final profile = UserStore.to.profile;
-    final nfcProfile = NfcContactModel(
-      name: profile['name'],
-      phone: profile['phone'],
-      email: profile['email'],
-    );
-    state.profile.value = nfcProfile;
+    // final nfcProfile = NfcContactModel(
+    //   name: profile['name'],
+    //   phone: profile['phone'],
+    //   email: profile['email'],
+    // );
+    // state.profile.value = nfcProfile;
   }
 
   void refreshProfile() {

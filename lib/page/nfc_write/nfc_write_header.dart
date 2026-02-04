@@ -97,18 +97,19 @@ class _ProfileInfo extends StatelessWidget {
                       color: Colors.grey[600],
                     ),
                     SizedBox(width: 1.wp),
-                    Expanded(
-                      child: Text(
-                        profile.phone,
-                        style: TextStyle(
-                          fontSize: 8.sp,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
+                    if (profile.phoneParsed != null)
+                      Expanded(
+                        child: Text(
+                          profile.phoneParsed?.fullNumber ?? "",
+                          style: TextStyle(
+                            fontSize: 8.sp,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
                   ],
                 ),
                 if (profile.email.isNotEmpty) ...[
