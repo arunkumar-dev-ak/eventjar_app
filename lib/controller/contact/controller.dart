@@ -389,6 +389,22 @@ class ContactController extends GetxController
     });
   }
 
+  void navigateToNfc() {
+    Get.toNamed(RouteName.nfcPage);
+  }
+
+  void navigateToReceive() {
+    Get.toNamed(RouteName.nfcReadPage);
+  }
+
+  void navigateToQrPage() {
+    Get.toNamed(RouteName.qrDashboardPage);
+  }
+
+  void navigateToScanPage() {
+    Get.toNamed(RouteName.scanCardPage);
+  }
+
   @override
   void onClose() {
     _debounceTimer?.cancel();

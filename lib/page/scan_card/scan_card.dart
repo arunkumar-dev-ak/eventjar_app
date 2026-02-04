@@ -22,10 +22,8 @@ class ScanCard extends GetView<ScanCardController> {
           ),
         ),
         leading: IconButton(
-          onPressed: () {
-            Get.back();
-          },
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.close_rounded, color: Colors.blueGrey),
+          onPressed: () => Get.back(),
         ),
       ),
       body: Stack(

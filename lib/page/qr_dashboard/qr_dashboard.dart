@@ -18,15 +18,15 @@ class QrCodePage extends GetView<QrDashboardController> {
         ),
         elevation: 0,
         title: Text("Share or Scan QR", style: TextStyle(color: Colors.black)),
-        actions: [
-          IconButton(
-            onPressed: () {
-              controller.navigateToAddContact();
-            },
-            icon: Icon(Icons.person_add, color: Colors.black),
-          ),
-          SizedBox(width: 2.wp),
-        ],
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {
+        //       controller.navigateToAddContact();
+        //     },
+        //     icon: Icon(Icons.person_add, color: Colors.black),
+        //   ),
+        //   SizedBox(width: 2.wp),
+        // ],
       ),
       backgroundColor: Colors.grey[50],
       body: SizedBox(
