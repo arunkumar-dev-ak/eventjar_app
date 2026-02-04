@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 
 import '../../global/app_snackbar.dart';
 import '../../global/store/user_store.dart';
+import '../../model/contact/mobile_contact_model.dart';
 import '../../model/contact/nfc_contact_model.dart';
 
 class NfcReadController extends GetxController
@@ -78,10 +79,19 @@ class NfcReadController extends GetxController
   Future<void> _loadProfile() async {
     LoggerService.loggerInstance.dynamic_d("In _loadProfile");
     final profile = UserStore.to.profile;
+
+    // Convert phoneParsed from Map to PhoneParsed object if it exists
+    PhoneParsed? phoneParsed;
+    if (profile['phoneParsed'] != null) {
+      phoneParsed = PhoneParsed.fromJson(
+        Map<String, dynamic>.from(profile['phoneParsed']),
+      );
+    }
+
     final nfcProfile = NfcContactModel(
-      name: profile['name'],
-      phoneParsed: profile['phoneParsed'],
-      email: profile['email'],
+      name: profile['name'] ?? '',
+      phoneParsed: phoneParsed,
+      email: profile['email'] ?? '',
     );
     LoggerService.loggerInstance.dynamic_d(nfcProfile);
     state.profile.value = nfcProfile;

@@ -138,7 +138,10 @@ class NfcIntentHandler with WidgetsBindingObserver {
 
       if (payload != null) {
         // Try to parse as vCard
+        debugPrint('NfcIntentHandler: Raw payload: $payload');
         final contact = NfcContactModel.fromVCard(payload);
+        debugPrint(
+            'NfcIntentHandler: Parsed contact: name=${contact?.name}, phone=${contact?.phoneParsed?.phoneNumber}, email=${contact?.email}');
         if (contact != null) {
           debugPrint('NfcIntentHandler: Navigating to add contact page');
           Get.toNamed(

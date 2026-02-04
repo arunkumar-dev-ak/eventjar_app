@@ -4,6 +4,7 @@ import 'package:eventjar/controller/nfc_write/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/model/contact/nfc_contact_model.dart';
 import 'package:eventjar/services/nfc_service.dart';
 import 'package:flutter/material.dart';
@@ -33,10 +34,19 @@ class NfcWriteController extends GetxController
 
   void loadData() {
     final profile = UserStore.to.profile;
+
+    // Convert phoneParsed from Map to PhoneParsed object if it exists
+    PhoneParsed? phoneParsed;
+    if (profile['phoneParsed'] != null) {
+      phoneParsed = PhoneParsed.fromJson(
+        Map<String, dynamic>.from(profile['phoneParsed']),
+      );
+    }
+
     final nfcProfile = NfcContactModel(
-      name: profile['name'],
-      phoneParsed: profile['phoneParsed'],
-      email: profile['email'],
+      name: profile['name'] ?? '',
+      phoneParsed: phoneParsed,
+      email: profile['email'] ?? '',
     );
     state.profile.value = nfcProfile;
   }

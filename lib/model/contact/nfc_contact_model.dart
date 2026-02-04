@@ -24,7 +24,8 @@ class NfcContactModel {
     buffer.writeln('VERSION:3.0');
     buffer.writeln('FN:$name');
     if (phoneParsed != null) {
-      buffer.writeln('TEL:${phoneParsed?.toJson()}');
+      // Write phone as JSON so we can parse it back with all details
+      buffer.writeln('TEL:${jsonEncode(phoneParsed?.toJson())}');
     }
     if (email.isNotEmpty) {
       buffer.writeln('EMAIL:$email');
@@ -76,12 +77,88 @@ class NfcContactModel {
       return null;
     }
 
+    // Parse phone into PhoneParsed object
+    PhoneParsed? phoneParsed;
+    if (phone.isNotEmpty) {
+      // Try to parse as JSON (our format) or Dart Map toString format (old format)
+      if (phone.startsWith('{')) {
+        try {
+          final phoneJson = jsonDecode(phone) as Map<String, dynamic>;
+          phoneParsed = PhoneParsed.fromJson(phoneJson);
+        } catch (_) {
+          // Try parsing old Dart Map toString format: {fullNumber: +91..., countryCode: +91, phoneNumber: ...}
+          phoneParsed = _parseDartMapFormat(phone);
+        }
+      } else {
+        // Plain phone number format
+        phoneParsed = _parsePhoneNumber(phone);
+      }
+    }
+
     return NfcContactModel(
       name: name.isNotEmpty ? name : 'Unknown',
-      phoneParsed: null,
+      phoneParsed: phoneParsed,
       email: email,
       note: note,
     );
+  }
+
+  /// Parse a plain phone number string into PhoneParsed
+  static PhoneParsed? _parsePhoneNumber(String phone) {
+    if (phone.isEmpty) return null;
+
+    String countryCode = '+91'; // Default
+    String phoneNumber = phone;
+
+    // If starts with +, extract country code
+    if (phone.startsWith('+')) {
+      // Common country code lengths: +1 (US), +91 (India), +44 (UK), etc.
+      // Try to extract 1-3 digit country code
+      final match = RegExp(r'^\+(\d{1,3})(.*)$').firstMatch(phone);
+      if (match != null) {
+        countryCode = '+${match.group(1)}';
+        phoneNumber = match.group(2)?.replaceAll(RegExp(r'\D'), '') ?? '';
+      }
+    } else {
+      phoneNumber = phone.replaceAll(RegExp(r'\D'), '');
+    }
+
+    if (phoneNumber.isEmpty) return null;
+
+    return PhoneParsed(
+      fullNumber: '$countryCode$phoneNumber',
+      countryCode: countryCode,
+      phoneNumber: phoneNumber,
+    );
+  }
+
+  /// Parse old Dart Map toString format: {fullNumber: +91..., countryCode: +91, phoneNumber: ...}
+  static PhoneParsed? _parseDartMapFormat(String mapString) {
+    try {
+      // Extract values using regex
+      final fullNumberMatch =
+          RegExp(r'fullNumber:\s*([^,}]+)').firstMatch(mapString);
+      final countryCodeMatch =
+          RegExp(r'countryCode:\s*([^,}]+)').firstMatch(mapString);
+      final phoneNumberMatch =
+          RegExp(r'phoneNumber:\s*([^,}]+)').firstMatch(mapString);
+
+      final fullNumber = fullNumberMatch?.group(1)?.trim() ?? '';
+      final countryCode = countryCodeMatch?.group(1)?.trim() ?? '+91';
+      final phoneNumber = phoneNumberMatch?.group(1)?.trim() ?? '';
+
+      if (phoneNumber.isEmpty && fullNumber.isEmpty) {
+        return null;
+      }
+
+      return PhoneParsed(
+        fullNumber: fullNumber.isNotEmpty ? fullNumber : '$countryCode$phoneNumber',
+        countryCode: countryCode,
+        phoneNumber: phoneNumber,
+      );
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Create NDEF record from contact
