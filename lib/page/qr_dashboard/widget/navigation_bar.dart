@@ -88,20 +88,28 @@ class QrDashboardBottomNavigation extends StatelessWidget {
         child: Ink(
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
-            gradient: gradient,
+            gradient: isSelected ? gradient : null,
+            color: isSelected ? null : Colors.grey.shade200,
             borderRadius: BorderRadius.circular(12),
+            border: isSelected
+                ? null
+                : Border.all(color: Colors.grey.shade300, width: 1),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: Colors.white, size: 20),
+              Icon(
+                icon,
+                color: isSelected ? Colors.white : Colors.grey.shade600,
+                size: 20,
+              ),
               SizedBox(width: 8),
               Text(
                 label,
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: isSelected ? Colors.white : Colors.grey.shade600,
                 ),
               ),
             ],
