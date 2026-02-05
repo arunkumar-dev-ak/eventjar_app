@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/nfc_read/state.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/services/nfc_service.dart';
 import 'package:flutter/material.dart';
@@ -184,7 +185,11 @@ class NfcReadController extends GetxController
     await Get.toNamed(
       RouteName.addContactPage,
       arguments: state.receivedProfile.value,
-    );
+    )?.then((result) {
+      if (result == "refresh") {
+        Navigator.pop(Get.context!, "refresh");
+      }
+    });
 
     // Small delay to ensure proper cleanup
     await Future.delayed(const Duration(milliseconds: 100));

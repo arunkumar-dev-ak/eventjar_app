@@ -47,24 +47,26 @@ class ContactPage extends GetView<ContactController> {
                 ),
                 const SizedBox(width: 6),
                 // Wrap count in a badge-like container
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: baseColor.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    count.toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                if (count != -1) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: baseColor.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      count.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
             centerTitle: false,
@@ -182,17 +184,17 @@ Widget _buildActionButton({
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
-          width: 42,
-          height: 42,
+          width: 33,
+          height: 33,
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.25),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.4),
-              width: 1.5,
+              width: 1.3,
             ),
           ),
-          child: Icon(icon, color: Colors.white, size: 22),
+          child: Icon(icon, color: Colors.white, size: 18),
         ),
       ),
     ),
@@ -336,7 +338,7 @@ Widget _buildMenuItem({
 
 int _getCountByKey(ContactAnalytics? analytics, String? key) {
   if (analytics == null || key == null) {
-    return 0;
+    return -1;
   }
 
   switch (key) {

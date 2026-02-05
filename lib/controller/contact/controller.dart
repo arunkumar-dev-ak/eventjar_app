@@ -390,19 +390,36 @@ class ContactController extends GetxController
   }
 
   void navigateToNfc() {
-    Get.toNamed(RouteName.nfcPage);
+    Get.toNamed(RouteName.nfcPage)?.then((result) async {
+      if (result == "refresh") {
+        await fetchContactsOnFirstLoad();
+      }
+    });
   }
 
   void navigateToReceive() {
-    Get.toNamed(RouteName.nfcReadPage);
+    Get.toNamed(RouteName.nfcReadPage)?.then((result) async {
+      if (result == "refresh") {
+        await fetchContactsOnFirstLoad();
+      }
+    });
   }
 
   void navigateToQrPage() {
-    Get.toNamed(RouteName.qrDashboardPage);
+    Get.toNamed(RouteName.qrDashboardPage)?.then((result) async {
+      LoggerService.loggerInstance.dynamic_d(result);
+      if (result == "refresh") {
+        await fetchContactsOnFirstLoad();
+      }
+    });
   }
 
   void navigateToScanPage() {
-    Get.toNamed(RouteName.scanCardPage);
+    Get.toNamed(RouteName.scanCardPage)?.then((result) async {
+      if (result == "refresh") {
+        await fetchContactsOnFirstLoad();
+      }
+    });
   }
 
   @override

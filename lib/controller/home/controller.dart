@@ -7,6 +7,7 @@ import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/helper/date_handler.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/model/home/home_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
@@ -234,23 +235,79 @@ class HomeController extends GetxController {
   }
 
   void navigateToAddContact() {
-    Get.toNamed(RouteName.addContactPage);
-  }
+    Get.toNamed(RouteName.addContactPage)?.then((result) {
+      if (result == "refresh") {
+        final statusCard = NetworkStatusCardData(
+          key: 'totalContacts',
+          label: 'Total Contacts',
+          enumKey: 'all',
+          icon: Icons.people,
+          color: Colors.blue,
+        );
 
-  void navigateToNfc() {
-    Get.toNamed(RouteName.nfcPage);
+        Get.toNamed(
+          RouteName.contactPage,
+          arguments: {'statusCard': statusCard},
+        );
+      }
+    });
   }
 
   void navigateToReceive() {
-    Get.toNamed(RouteName.nfcReadPage);
+    Get.toNamed(RouteName.nfcReadPage)?.then((result) {
+      if (result == "refresh") {
+        final statusCard = NetworkStatusCardData(
+          key: 'totalContacts',
+          label: 'Total Contacts',
+          enumKey: 'all',
+          icon: Icons.people,
+          color: Colors.blue,
+        );
+
+        Get.toNamed(
+          RouteName.contactPage,
+          arguments: {'statusCard': statusCard},
+        );
+      }
+    });
   }
 
   void navigateToQrPage() {
-    Get.toNamed(RouteName.qrDashboardPage);
+    Get.toNamed(RouteName.qrDashboardPage)?.then((result) {
+      if (result == "refresh") {
+        final statusCard = NetworkStatusCardData(
+          key: 'totalContacts',
+          label: 'Total Contacts',
+          enumKey: 'all',
+          icon: Icons.people,
+          color: Colors.blue,
+        );
+
+        Get.toNamed(
+          RouteName.contactPage,
+          arguments: {'statusCard': statusCard},
+        );
+      }
+    });
   }
 
   void navigateToScanPage() {
-    Get.toNamed(RouteName.scanCardPage);
+    Get.toNamed(RouteName.scanCardPage)?.then((result) {
+      if (result == "refresh") {
+        final statusCard = NetworkStatusCardData(
+          key: 'totalContacts',
+          label: 'Total Contacts',
+          enumKey: 'all',
+          icon: Icons.people,
+          color: Colors.blue,
+        );
+
+        Get.toNamed(
+          RouteName.contactPage,
+          arguments: {'statusCard': statusCard},
+        );
+      }
+    });
   }
 
   @override

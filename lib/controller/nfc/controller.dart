@@ -1,6 +1,8 @@
 import 'package:eventjar/controller/nfc/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/model/contact/nfc_contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/services/nfc_service.dart';
@@ -97,7 +99,25 @@ class NfcController extends GetxController
       showNfcErrorPrompt();
       return;
     }
-    Get.toNamed(RouteName.nfcReadPage);
+    Get.toNamed(RouteName.nfcReadPage)?.then((result) {
+      LoggerService.loggerInstance.dynamic_d(
+        "Result in  navigateToNfc $result",
+      );
+      if (result == "refresh") {
+        final statusCard = NetworkStatusCardData(
+          key: 'totalContacts',
+          label: 'Total Contacts',
+          enumKey: 'all',
+          icon: Icons.people,
+          color: Colors.blue,
+        );
+
+        Get.offAndToNamed(
+          RouteName.contactPage,
+          arguments: {'statusCard': statusCard},
+        );
+      }
+    });
   }
 
   void navigateToContacts() {

@@ -269,20 +269,20 @@ class AddContactController extends GetxController {
   Future<void> submitForm(BuildContext context) async {
     if (!formKey.currentState!.validate()) return;
     try {
-      // state.isLoading.value = true;
-      // final data = _gatherFormData();
+      state.isLoading.value = true;
+      final data = _gatherFormData();
 
-      // if (checkIsForUpdate()) {
-      //   if (contactId == null) {
-      //     throw Exception("Contact ID is required for update");
-      //   }
-      //   await AddContactApi.updateContact(data: data, id: contactId!);
-      // } else {
-      //   await AddContactApi.registerTicket(data: data);
-      // }
+      if (checkIsForUpdate()) {
+        if (contactId == null) {
+          throw Exception("Contact ID is required for update");
+        }
+        await AddContactApi.updateContact(data: data, id: contactId!);
+      } else {
+        await AddContactApi.registerTicket(data: data);
+      }
 
-      // clearForm();
-      // contactId = null;
+      clearForm();
+      contactId = null;
       Navigator.pop(context, "refresh");
     } catch (err) {
       if (err is DioException) {

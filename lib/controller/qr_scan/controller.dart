@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/qr_dashboard/controller.dart';
 import 'package:eventjar/controller/qr_scan/state.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/model/contact/qr_contact_model.dart';
 import 'package:eventjar/services/encryption_service.dart';
 import 'package:get/get.dart';
@@ -115,7 +116,6 @@ class QrScanScreenController extends GetxController
 
     if (jsonData != null) {
       final contact = QrContactModel.fromJson(jsonData);
-      LoggerService.loggerInstance.dynamic_d(contact.toJson());
 
       // Stop camera before navigating
       stopCamera();
@@ -123,9 +123,12 @@ class QrScanScreenController extends GetxController
       // Delay 1 second before navigating to add contact page
       Future.delayed(const Duration(seconds: 1), () {
         // Navigate and restart camera when returning
-        Get.toNamed(RouteName.addContactPage, arguments: contact)?.then((_) {
-          // Restart camera when user comes back
-          _restartCameraAfterNavigation();
+        Get.toNamed(RouteName.addContactPage, arguments: contact)?.then((
+          result,
+        ) {
+          if (result == "refresh") {
+            Navigator.pop(Get.context!, "refresh");
+          }
         });
       });
     } else {
