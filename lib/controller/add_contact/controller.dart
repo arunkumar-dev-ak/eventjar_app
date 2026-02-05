@@ -90,6 +90,7 @@ class AddContactController extends GetxController {
     final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
     state.selectedCountry.value = countries.firstWhere(
       (country) => country.fullCountryCode == cleanCountryCode,
+      orElse: () => countries.first,
     );
 
     emailController.text = qrInfo.email;
@@ -110,6 +111,7 @@ class AddContactController extends GetxController {
     final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
     state.selectedCountry.value = countries.firstWhere(
       (country) => country.fullCountryCode == cleanCountryCode,
+      orElse: () => countries.first,
     );
     emailController.text = nfcContact.email;
     notesController.text = nfcContact.note;
@@ -135,6 +137,7 @@ class AddContactController extends GetxController {
     final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
     state.selectedCountry.value = countries.firstWhere(
       (country) => country.fullCountryCode == cleanCountryCode,
+      orElse: () => countries.first,
     );
 
     final contactStageKey = contactStageToKey(contact.stage);

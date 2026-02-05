@@ -72,6 +72,7 @@ class BasicInfoFormController extends GetxController {
     final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
     state.selectedCountry.value = countries.firstWhere(
       (country) => country.fullCountryCode == cleanCountryCode,
+      orElse: () => countries.first,
     );
     mobileController.text = profile.phoneParsed?.phoneNumber ?? "";
   }

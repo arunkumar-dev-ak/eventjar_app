@@ -104,6 +104,7 @@ class BusinessInfoFormController extends GetxController {
     final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
     state.selectedCountry.value = countries.firstWhere(
       (country) => country.fullCountryCode == cleanCountryCode,
+      orElse: () => countries.first,
     );
     businessPhoneController.text =
         profile.extendedProfile?.businessPhoneParsed?.phoneNumber ?? "";
