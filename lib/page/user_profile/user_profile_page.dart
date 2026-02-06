@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
@@ -91,6 +93,8 @@ class UserProfilePage extends GetView<UserProfileController> {
                         },
                       ),
                       SizedBox(height: 2.hp),
+                      _buildNotificationsSection(),
+                      SizedBox(height: 2.hp),
                       _buildSection(
                         title: "Security & Sessions",
                         child: userProfileBuildSecurity(),
@@ -101,6 +105,99 @@ class UserProfilePage extends GetView<UserProfileController> {
                 ),
         );
       }),
+    );
+  }
+
+  Widget _buildNotificationsSection() {
+    return _buildSection(
+      title: "Notifications",
+      child: GestureDetector(
+        onTap: () {},
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.blue.shade50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.blue.shade100),
+          ),
+          child: Row(
+            children: [
+              // ✅ Shaking animated icon
+              AnimatedBuilder(
+                animation: controller.shakeAnimation,
+                builder: (context, child) {
+                  return Transform.translate(
+                    offset: Offset(controller.shakeAnimation.value * 13, 0),
+                    child: Container(
+                      padding: EdgeInsets.all(1.wp),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade200,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.notifications_outlined,
+                        color: Colors.blue.shade700,
+                        size: 20,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Click to Configure Notifications",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 10.sp,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      "Manage email, whatsapp notifications",
+                      style: TextStyle(fontSize: 8.sp, color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      isEditEnabled: false,
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            width: 33,
+            height: 33,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.4),
+                width: 1.3,
+              ),
+            ),
+            child: Icon(icon, color: Colors.white, size: 18),
+          ),
+        ),
+      ),
     );
   }
 

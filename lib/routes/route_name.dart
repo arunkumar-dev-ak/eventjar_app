@@ -46,6 +46,9 @@ class RouteName {
   static const summaryFormPage = '/summaryFormPage';
   static const socialFormPage = '/socialFormPage';
 
+  //Notification
+  static const notificationpage = '/notificationPage';
+
   //network page
   static const networkPage = '/networkPage';
   static const connectionPage = '/connectionPage';

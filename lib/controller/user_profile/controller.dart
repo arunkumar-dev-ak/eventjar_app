@@ -16,11 +16,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-class UserProfileController extends GetxController {
+class UserProfileController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   var appBarTitle = "EventJar";
   final state = UserProfileState();
   final formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
+
+  late AnimationController shakeController;
+  late Animation<double> shakeAnimation;
 
   RxBool get isLoggedIn => UserStore.to.isLoginReactive;
   RxMap<String, dynamic> get profile => UserStore.to.profile;
@@ -32,6 +36,17 @@ class UserProfileController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+
+    shakeController = AnimationController(
+      duration: Duration(milliseconds: 800),
+      vsync: this,
+    );
+
+    shakeAnimation = Tween<double>(begin: -0.08, end: 0.08).animate(
+      CurvedAnimation(parent: shakeController, curve: Curves.easeInOut),
+    );
+
+    shakeController.repeat(reverse: true);
   }
 
   void onTabOpen() async {
@@ -586,7 +601,7 @@ class UserProfileController extends GetxController {
 
   @override
   void onClose() {
-    // passwordController.dispose();
+    shakeController.dispose();
     super.onClose();
   }
 }
