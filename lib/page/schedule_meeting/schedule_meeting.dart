@@ -185,7 +185,9 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                   SizedBox(height: 4.hp),
 
                   // Action Buttons
-                  ScheduleMeetingActionButtons(controller: controller),
+                  SafeArea(
+                    child: ScheduleMeetingActionButtons(controller: controller),
+                  ),
                   SizedBox(height: 2.hp),
                 ],
               ),

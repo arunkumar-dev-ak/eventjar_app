@@ -183,7 +183,9 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                   SizedBox(height: 4.hp),
 
                   // Action Buttons
-                  ThankYouMessageActionButtons(controller: controller),
+                  SafeArea(
+                    child: ThankYouMessageActionButtons(controller: controller),
+                  ),
 
                   SizedBox(height: 2.hp),
                 ],
