@@ -136,15 +136,11 @@ class ThankYouMessageController extends GetxController {
   }
 
   void toggleEmail() {
-    if (canSendEmail) {
-      state.emailChecked.value = !state.emailChecked.value;
-    }
+    state.emailChecked.value = !state.emailChecked.value;
   }
 
   void toggleWhatsApp() {
-    if (canSendWhatsApp) {
-      state.whatsappChecked.value = !state.whatsappChecked.value;
-    }
+    state.whatsappChecked.value = !state.whatsappChecked.value;
   }
 
   void navigateToSignInPage() {
@@ -154,6 +150,12 @@ class ThankYouMessageController extends GetxController {
       } else {
         Get.back();
       }
+    });
+  }
+
+  void navigateToNotification() {
+    Get.toNamed(RouteName.notificationpage)?.then((result) async {
+      getConfigDetails();
     });
   }
 

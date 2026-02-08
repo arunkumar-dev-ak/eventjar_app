@@ -10,6 +10,6 @@ class ThankYouMessageState {
   Rxn<ConfigStatusResponse> configStatus = Rxn();
 
   // For Thank You message popup
-  var emailChecked = false.obs;
+  var emailChecked = true.obs;
   var whatsappChecked = false.obs;
 }

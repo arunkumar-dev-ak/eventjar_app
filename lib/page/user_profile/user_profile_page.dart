@@ -112,7 +112,9 @@ class UserProfilePage extends GetView<UserProfileController> {
     return _buildSection(
       title: "Notifications",
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          controller.navigateToConfigureNotification();
+        },
         child: Container(
           width: double.infinity,
           padding: EdgeInsets.all(16),

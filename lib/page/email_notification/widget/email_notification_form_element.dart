@@ -2,7 +2,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class ContactFormElement extends StatelessWidget {
+class EmailNotificationFormElement extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final TextInputType? keyboardType;
@@ -15,12 +15,12 @@ class ContactFormElement extends StatelessWidget {
   final TextStyle? labelStyle;
   final int? maxLength;
 
-  const ContactFormElement({
+  const EmailNotificationFormElement({
     required this.controller,
     required this.label,
     this.keyboardType,
     this.validator,
-    this.autovalidateMode, // ✅ ADDED
+    this.autovalidateMode,
     this.maxLines = 1,
     this.minLines,
     this.maxLength,
@@ -42,7 +42,7 @@ class ContactFormElement extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       validator: validator,
-      autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
+      autovalidateMode: autovalidateMode ?? AutovalidateMode.onUserInteraction,
       maxLines: maxLines,
       minLines: minLines,
       inputFormatters: formatters,

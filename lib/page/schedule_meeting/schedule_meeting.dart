@@ -95,21 +95,74 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                   ),
                   SizedBox(height: 1.5.hp),
 
+                  if (!controller.canSendEmail) ...[
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(top: 2.hp),
+                      padding: EdgeInsets.all(3.wp),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.orange.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: Colors.orange,
+                                size: 18,
+                              ),
+                              SizedBox(width: 2.wp),
+                              Text(
+                                "Automation Not Configured",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 9.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 1.hp),
+                          Text(
+                            "Notifications will not be sent automatically. "
+                            "You can still mark this as sent after manually sending the message via Email",
+                            style: TextStyle(
+                              fontSize: 8.sp,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                          SizedBox(height: 1.5.hp),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton.icon(
+                              onPressed: controller.navigateToNotification,
+                              icon: const Icon(Icons.settings, size: 16),
+                              label: const Text("Configure Notifications"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: 2.hp),
+                  ],
+
                   // ✅ Email Card with Config + Loading
                   Obx(
                     () => scheduleMeetingMessageBuildMethodCard(
-                      // Reuse the same widget!
                       title: 'Email',
                       icon: Icons.email_outlined,
                       isSelected: controller.state.meetingEmailChecked.value,
-                      isDisabled: !controller.canSendEmail,
                       isLoading: controller.state.configLoading.value,
                       badgeText: controller.canSendEmail
                           ? null
                           : 'Not Configured',
-                      onTap: controller.canSendEmail
-                          ? () => controller.toggleMeetingEmail()
-                          : null,
+                      onTap: () => controller.toggleMeetingEmail(),
                     ),
                   ),
 
@@ -121,14 +174,11 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                       title: 'WhatsApp',
                       icon: Icons.message_outlined,
                       isSelected: controller.state.meetingWhatsappChecked.value,
-                      isDisabled: !controller.canSendWhatsApp,
                       isLoading: controller.state.configLoading.value,
                       badgeText: controller.canSendWhatsApp
                           ? null
                           : 'Not Configured',
-                      onTap: controller.canSendWhatsApp
-                          ? () => controller.toggleMeetingWhatsApp()
-                          : null,
+                      onTap: () => controller.toggleMeetingWhatsApp(),
                     ),
                   ),
 

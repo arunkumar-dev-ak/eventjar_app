@@ -25,15 +25,11 @@ class ScheduleMeetingController extends GetxController {
       state.meetingEmailChecked.value || state.meetingWhatsappChecked.value;
 
   void toggleMeetingEmail() {
-    if (canSendEmail) {
-      state.meetingEmailChecked.value = !state.meetingEmailChecked.value;
-    }
+    state.meetingEmailChecked.value = !state.meetingEmailChecked.value;
   }
 
   void toggleMeetingWhatsApp() {
-    if (canSendWhatsApp) {
-      state.meetingWhatsappChecked.value = !state.meetingWhatsappChecked.value;
-    }
+    state.meetingWhatsappChecked.value = !state.meetingWhatsappChecked.value;
   }
 
   @override
@@ -190,6 +186,12 @@ class ScheduleMeetingController extends GetxController {
     } finally {
       state.configLoading.value = false;
     }
+  }
+
+  void navigateToNotification() {
+    Get.toNamed(RouteName.notificationpage)?.then((result) async {
+      getConfigDetails();
+    });
   }
 
   void navigateToSignInPage() {

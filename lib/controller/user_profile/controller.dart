@@ -538,6 +538,14 @@ class UserProfileController extends GetxController
     );
   }
 
+  void navigateToConfigureNotification() {
+    Get.toNamed(RouteName.notificationpage)?.then(
+      (val) => {
+        if (val == 'refresh') {onTabOpen()},
+      },
+    );
+  }
+
   /// Get social media links
   Map<String, String> get socialLinks {
     final extended = state.userProfile.value?.extendedProfile;
