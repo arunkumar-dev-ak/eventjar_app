@@ -108,6 +108,73 @@ class UserProfilePage extends GetView<UserProfileController> {
     );
   }
 
+  // Widget _buildNotificationsSection() {
+  //   return _buildSection(
+  //     title: "Notifications",
+  //     child: GestureDetector(
+  //       onTap: () {
+  //         controller.navigateToConfigureNotification();
+  //       },
+  //       child: Container(
+  //         width: double.infinity,
+  //         padding: EdgeInsets.all(16),
+  //         decoration: BoxDecoration(
+  //           color: Colors.blue.shade50,
+  //           borderRadius: BorderRadius.circular(12),
+  //           border: Border.all(color: Colors.blue.shade100),
+  //         ),
+  //         child: Row(
+  //           children: [
+  //             // ✅ Shaking animated icon
+  //             AnimatedBuilder(
+  //               animation: controller.shakeAnimation,
+  //               builder: (context, child) {
+  //                 return Transform.translate(
+  //                   offset: Offset(controller.shakeAnimation.value * 13, 0),
+  //                   child: Container(
+  //                     padding: EdgeInsets.all(1.wp),
+  //                     decoration: BoxDecoration(
+  //                       color: Colors.blue.shade200,
+  //                       borderRadius: BorderRadius.circular(10),
+  //                     ),
+  //                     child: Icon(
+  //                       Icons.notifications_outlined,
+  //                       color: Colors.blue.shade700,
+  //                       size: 20,
+  //                     ),
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //             SizedBox(width: 12),
+  //             Expanded(
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   Text(
+  //                     "Click to Configure Notifications",
+  //                     style: TextStyle(
+  //                       fontWeight: FontWeight.w600,
+  //                       fontSize: 10.sp,
+  //                       color: Colors.black87,
+  //                     ),
+  //                   ),
+  //                   SizedBox(height: 4),
+  //                   Text(
+  //                     "Manage email, whatsapp notifications",
+  //                     style: TextStyle(fontSize: 8.sp, color: Colors.grey[600]),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //     isEditEnabled: false,
+  //   );
+  // }
+
   Widget _buildNotificationsSection() {
     return _buildSection(
       title: "Notifications",
@@ -125,26 +192,18 @@ class UserProfilePage extends GetView<UserProfileController> {
           ),
           child: Row(
             children: [
-              // ✅ Shaking animated icon
-              AnimatedBuilder(
-                animation: controller.shakeAnimation,
-                builder: (context, child) {
-                  return Transform.translate(
-                    offset: Offset(controller.shakeAnimation.value * 13, 0),
-                    child: Container(
-                      padding: EdgeInsets.all(1.wp),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade200,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(
-                        Icons.notifications_outlined,
-                        color: Colors.blue.shade700,
-                        size: 20,
-                      ),
-                    ),
-                  );
-                },
+              // Static icon (animation removed)
+              Container(
+                padding: EdgeInsets.all(1.wp),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade200,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(
+                  Icons.notifications_outlined,
+                  color: Colors.blue.shade700,
+                  size: 20,
+                ),
               ),
               SizedBox(width: 12),
               Expanded(
@@ -161,7 +220,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      "Manage email, whatsapp notifications",
+                      "Manage email, WhatsApp notifications",
                       style: TextStyle(fontSize: 8.sp, color: Colors.grey[600]),
                     ),
                   ],

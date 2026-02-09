@@ -23,8 +23,8 @@ class UserProfileController extends GetxController
   final formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
 
-  late AnimationController shakeController;
-  late Animation<double> shakeAnimation;
+  // late AnimationController shakeController;
+  // late Animation<double> shakeAnimation;
 
   RxBool get isLoggedIn => UserStore.to.isLoginReactive;
   RxMap<String, dynamic> get profile => UserStore.to.profile;
@@ -37,16 +37,16 @@ class UserProfileController extends GetxController
   void onInit() async {
     super.onInit();
 
-    shakeController = AnimationController(
-      duration: Duration(milliseconds: 800),
-      vsync: this,
-    );
+    // shakeController = AnimationController(
+    //   duration: Duration(milliseconds: 800),
+    //   vsync: this,
+    // );
 
-    shakeAnimation = Tween<double>(begin: -0.08, end: 0.08).animate(
-      CurvedAnimation(parent: shakeController, curve: Curves.easeInOut),
-    );
+    // shakeAnimation = Tween<double>(begin: -0.08, end: 0.08).animate(
+    //   CurvedAnimation(parent: shakeController, curve: Curves.easeInOut),
+    // );
 
-    shakeController.repeat(reverse: true);
+    // shakeController.repeat(reverse: true);
   }
 
   void onTabOpen() async {
@@ -609,7 +609,7 @@ class UserProfileController extends GetxController
 
   @override
   void onClose() {
-    shakeController.dispose();
+    // shakeController.dispose();
     super.onClose();
   }
 }
