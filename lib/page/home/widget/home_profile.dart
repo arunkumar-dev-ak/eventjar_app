@@ -865,13 +865,14 @@ class HomeProfile extends GetView<HomeController> {
   }
 
   void _showPhoneOtpDialog(BuildContext context) async {
+    if (controller.state.isSendingOtp.value) return;
     final phone = controller.state.userProfile.value?.phone ?? '';
     controller.resetOtpState();
 
     // Send OTP first
-    await controller.sendPhoneOtp();
+    final success = await controller.sendPhoneOtp();
 
-    if (!context.mounted) return;
+    if (!success || !context.mounted) return;
 
     final pinController = TextEditingController();
     final focusNode = FocusNode();

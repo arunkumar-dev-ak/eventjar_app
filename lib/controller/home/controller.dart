@@ -450,14 +450,14 @@ class HomeController extends GetxController {
   /*----- Phone OTP Verification -----*/
   Timer? _resendTimer;
 
-  Future<void> sendPhoneOtp() async {
+  Future<bool> sendPhoneOtp() async {
     final phone = state.userProfile.value?.phone;
     if (phone == null || phone.isEmpty) {
       AppSnackbar.error(
         title: "Error",
         message: "No phone number found on your profile",
       );
-      return;
+      return false;
     }
 
     state.isSendingOtp.value = true;
@@ -465,12 +465,14 @@ class HomeController extends GetxController {
     try {
       await VerifyPhoneApi.sendOtp(phone);
       _startResendCooldown();
+      return true;
     } catch (err) {
       if (err is DioException) {
         ApiErrorHandler.handleError(err, "Failed to send OTP");
       } else {
         AppSnackbar.error(title: "Error", message: err.toString());
       }
+      return false;
     } finally {
       state.isSendingOtp.value = false;
     }

@@ -53,11 +53,12 @@ Widget userProfileBuildBasicInfo() {
             return Padding(
               padding: EdgeInsets.only(top: 0.5.hp),
               child: GestureDetector(
-                onTap: () =>
-                    _showEmailVerifyDialog(Get.context!, controller),
+                onTap: () => _showEmailVerifyDialog(Get.context!, controller),
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                      horizontal: 3.wp, vertical: 0.5.hp),
+                    horizontal: 3.wp,
+                    vertical: 0.5.hp,
+                  ),
                   decoration: BoxDecoration(
                     gradient: AppColors.buttonGradient,
                     borderRadius: BorderRadius.circular(8),
@@ -85,8 +86,9 @@ Widget userProfileBuildBasicInfo() {
             child: userProfilebuildInfoRow(
               icon: Icons.phone,
               label: "Mobile Number",
-              value:
-                  controller.phone.isEmpty ? "Not provided" : controller.phone,
+              value: controller.phone.isEmpty
+                  ? "Not provided"
+                  : controller.phone,
               iconColor: Colors.green,
             ),
           ),
@@ -117,25 +119,41 @@ Widget userProfileBuildBasicInfo() {
               );
             }
 
+            final isSending = controller.state.isSendingOtp.value;
             return Padding(
               padding: EdgeInsets.only(top: 0.5.hp),
               child: GestureDetector(
-                onTap: () => _showPhoneOtpDialog(Get.context!, controller),
+                onTap: isSending
+                    ? null
+                    : () => _showPhoneOtpDialog(Get.context!, controller),
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                      horizontal: 3.wp, vertical: 0.5.hp),
+                    horizontal: 3.wp,
+                    vertical: 0.5.hp,
+                  ),
                   decoration: BoxDecoration(
-                    gradient: AppColors.buttonGradient,
+                    gradient: isSending
+                        ? AppColors.disabledButtonGradient
+                        : AppColors.buttonGradient,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(
-                    'Verify',
-                    style: TextStyle(
-                      fontSize: 8.sp,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: isSending
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          'Verify',
+                          style: TextStyle(
+                            fontSize: 8.sp,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
               ),
             );
@@ -156,16 +174,20 @@ Widget userProfileBuildBasicInfo() {
 }
 
 void _showPhoneOtpDialog(
-    BuildContext context, UserProfileController controller) async {
-  final phone = controller.state.userProfile.value?.phone ??
+  BuildContext context,
+  UserProfileController controller,
+) async {
+  if (controller.state.isSendingOtp.value) return;
+  final phone =
+      controller.state.userProfile.value?.phone ??
       controller.state.userProfile.value?.phoneParsed?.fullNumber ??
       '';
   controller.resetOtpState();
 
   // Send OTP first
-  await controller.sendPhoneOtp();
+  final success = await controller.sendPhoneOtp();
 
-  if (!context.mounted) return;
+  if (!success || !context.mounted) return;
 
   final pinController = TextEditingController();
   final focusNode = FocusNode();
@@ -176,9 +198,7 @@ void _showPhoneOtpDialog(
     backgroundColor: Colors.transparent,
     builder: (BuildContext ctx) {
       return Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(ctx).viewInsets.bottom,
-        ),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
         child: Stack(
           alignment: Alignment.topCenter,
           children: [
@@ -308,14 +328,13 @@ void _showPhoneOtpDialog(
                           ),
                         ),
                         GestureDetector(
-                          onTap: cooldown > 0 ||
+                          onTap:
+                              cooldown > 0 ||
                                   controller.state.isSendingOtp.value
                               ? null
                               : () => controller.sendPhoneOtp(),
                           child: Text(
-                            cooldown > 0
-                                ? 'Resend in ${cooldown}s'
-                                : 'Resend',
+                            cooldown > 0 ? 'Resend in ${cooldown}s' : 'Resend',
                             style: TextStyle(
                               fontSize: 8.sp,
                               color: cooldown > 0
@@ -349,8 +368,8 @@ void _showPhoneOtpDialog(
                                         'Please enter the full 6-digit code';
                                     return;
                                   }
-                                  final success =
-                                      await controller.verifyPhoneOtp(otp);
+                                  final success = await controller
+                                      .verifyPhoneOtp(otp);
                                   if (success && ctx.mounted) {
                                     Navigator.of(ctx).pop();
                                   }
@@ -358,14 +377,14 @@ void _showPhoneOtpDialog(
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(14),
-                              gradient:
-                                  controller.state.isVerifyingOtp.value
-                                      ? AppColors.disabledButtonGradient
-                                      : AppColors.buttonGradient,
+                              gradient: controller.state.isVerifyingOtp.value
+                                  ? AppColors.disabledButtonGradient
+                                  : AppColors.buttonGradient,
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.gradientDarkEnd
-                                      .withValues(alpha: 0.3),
+                                  color: AppColors.gradientDarkEnd.withValues(
+                                    alpha: 0.3,
+                                  ),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),
@@ -427,7 +446,9 @@ void _showPhoneOtpDialog(
 }
 
 void _showEmailVerifyDialog(
-    BuildContext context, UserProfileController controller) async {
+  BuildContext context,
+  UserProfileController controller,
+) async {
   final email = controller.state.userProfile.value?.email ?? '';
 
   final success = await controller.sendEmailVerification();
