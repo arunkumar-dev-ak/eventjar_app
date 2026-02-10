@@ -1,5 +1,7 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:eventjar/controller/profile_form/basic_info/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/profile_form/basic_info/basic_info_form_element.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_intl_phone_field/country_picker_dialog.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:get/get.dart';
+import 'package:pinput/pinput.dart';
 
 class BasicInfoPage extends GetView<BasicInfoFormController> {
   const BasicInfoPage({super.key});
@@ -122,6 +125,85 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                     );
                   }),
 
+                  // // Phone verification status
+                  // Obx(() {
+                  //   final isVerified = controller.state.isPhoneVerified.value;
+                  //   final hasPhone =
+                  //       controller.state.currentPhone.value.isNotEmpty;
+                  //   if (!isVerified && !hasPhone) {
+                  //     return const SizedBox.shrink();
+                  //   }
+
+                  //   return Padding(
+                  //     padding: EdgeInsets.only(top: 0.8.hp),
+                  //     child: Row(
+                  //       children: [
+                  //         if (isVerified) ...[
+                  //           Icon(
+                  //             Icons.check_circle,
+                  //             color: Colors.green.shade600,
+                  //             size: 18,
+                  //           ),
+                  //           const SizedBox(width: 6),
+                  //           Text(
+                  //             'Phone number verified',
+                  //             style: TextStyle(
+                  //               color: Colors.green.shade600,
+                  //               fontSize: 8.sp,
+                  //               fontWeight: FontWeight.w600,
+                  //             ),
+                  //           ),
+                  //         ] else ...[
+                  //           Icon(
+                  //             Icons.info_outline,
+                  //             color: Colors.orange.shade700,
+                  //             size: 18,
+                  //           ),
+                  //           const SizedBox(width: 6),
+                  //           Expanded(
+                  //             child: Text(
+                  //               'Phone not verified',
+                  //               style: TextStyle(
+                  //                 color: Colors.orange.shade700,
+                  //                 fontSize: 8.sp,
+                  //                 fontWeight: FontWeight.w500,
+                  //               ),
+                  //             ),
+                  //           ),
+                  //           GestureDetector(
+                  //             onTap: () => _showPhoneOtpDialog(context),
+                  //             child: Container(
+                  //               padding: EdgeInsets.symmetric(
+                  //                 horizontal: 3.wp,
+                  //                 vertical: 0.6.hp,
+                  //               ),
+                  //               decoration: BoxDecoration(
+                  //                 gradient: AppColors.buttonGradient,
+                  //                 borderRadius: BorderRadius.circular(8),
+                  //                 boxShadow: [
+                  //                   BoxShadow(
+                  //                     color: AppColors.gradientDarkEnd
+                  //                         .withValues(alpha: 0.25),
+                  //                     blurRadius: 6,
+                  //                     offset: const Offset(0, 2),
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //               child: Text(
+                  //                 'Verify',
+                  //                 style: TextStyle(
+                  //                   color: Colors.white,
+                  //                   fontSize: 7.5.sp,
+                  //                   fontWeight: FontWeight.w700,
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ],
+                  //     ),
+                  //   );
+                  // }),
                   SizedBox(height: 2.hp),
 
                   // Professional Title
@@ -220,5 +302,277 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
         ),
       ),
     );
+  }
+
+  void _showPhoneOtpDialog(BuildContext context) async {
+    final phone = controller.state.currentPhone.value;
+    controller.resetOtpState();
+
+    await controller.sendPhoneOtp();
+
+    if (!context.mounted) return;
+
+    final pinController = TextEditingController();
+    final focusNode = FocusNode();
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext ctx) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom,
+          ),
+          child: Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 45),
+                padding: const EdgeInsets.only(
+                  top: 55,
+                  left: 24,
+                  right: 24,
+                  bottom: 24,
+                ),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(25),
+                    topRight: Radius.circular(25),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Verify Phone Number',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade900,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Enter the 6-digit code sent to\n$phone',
+                      style: TextStyle(
+                        fontSize: 9.sp,
+                        color: AppColors.placeHolderColor,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 28),
+
+                    Pinput(
+                      length: 6,
+                      controller: pinController,
+                      focusNode: focusNode,
+                      autofocus: true,
+                      keyboardType: TextInputType.number,
+                      defaultPinTheme: PinTheme(
+                        width: 48,
+                        height: 52,
+                        textStyle: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade900,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                      ),
+                      focusedPinTheme: PinTheme(
+                        width: 48,
+                        height: 52,
+                        textStyle: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade900,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: AppColors.gradientDarkStart,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      errorPinTheme: PinTheme(
+                        width: 48,
+                        height: 52,
+                        textStyle: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.red.shade300),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Error message
+                    Obx(() {
+                      final error = controller.state.otpError.value;
+                      if (error.isEmpty) return const SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          error,
+                          style: TextStyle(
+                            color: Colors.red.shade600,
+                            fontSize: 8.sp,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    }),
+
+                    const SizedBox(height: 12),
+
+                    // Resend OTP
+                    Obx(() {
+                      final cooldown = controller.state.resendCooldown.value;
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Didn't receive the code? ",
+                            style: TextStyle(
+                              fontSize: 8.sp,
+                              color: AppColors.placeHolderColor,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap:
+                                cooldown > 0 ||
+                                    controller.state.isSendingOtp.value
+                                ? null
+                                : () => controller.sendPhoneOtp(),
+                            child: Text(
+                              cooldown > 0
+                                  ? 'Resend in ${cooldown}s'
+                                  : 'Resend',
+                              style: TextStyle(
+                                fontSize: 8.sp,
+                                color: cooldown > 0
+                                    ? AppColors.placeHolderColor
+                                    : AppColors.gradientDarkStart,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+
+                    const SizedBox(height: 24),
+
+                    // Verify button
+                    Obx(
+                      () => SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(14),
+                            onTap: controller.state.isVerifyingOtp.value
+                                ? null
+                                : () async {
+                                    final otp = pinController.text.trim();
+                                    if (otp.length < 6) {
+                                      controller.state.otpError.value =
+                                          'Please enter the full 6-digit code';
+                                      return;
+                                    }
+                                    final success = await controller
+                                        .verifyPhoneOtp(otp);
+                                    if (success && ctx.mounted) {
+                                      Navigator.of(ctx).pop();
+                                      AppSnackbar.success(
+                                        title: "Verified",
+                                        message:
+                                            "Phone number verified successfully",
+                                      );
+                                    }
+                                  },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(14),
+                                gradient: controller.state.isVerifyingOtp.value
+                                    ? AppColors.disabledButtonGradient
+                                    : AppColors.buttonGradient,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.gradientDarkEnd.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: controller.state.isVerifyingOtp.value
+                                    ? const SizedBox(
+                                        width: 22,
+                                        height: 22,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2.5,
+                                        ),
+                                      )
+                                    : Text(
+                                        'Verify',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 11.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+
+              // Circle icon at top
+              Container(
+                width: 85,
+                height: 85,
+                decoration: BoxDecoration(
+                  gradient: AppColors.buttonGradient,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 4),
+                ),
+                child: const Icon(
+                  Icons.phone_android_rounded,
+                  color: Colors.white,
+                  size: 36,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ).then((_) {
+      pinController.dispose();
+      focusNode.dispose();
+    });
   }
 }

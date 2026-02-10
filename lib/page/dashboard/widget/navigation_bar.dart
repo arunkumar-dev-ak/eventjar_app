@@ -108,9 +108,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: selectedIndex
-                ? AppColors.gradientDarkStart
-                : Colors.transparent,
+            color: selectedIndex ? AppColors.gradientDarkStart : Colors.grey,
             width: 2,
           ),
         ),

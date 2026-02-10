@@ -108,8 +108,9 @@ class UserProfileApi {
   }
 
   static Future<bool> uploadAvatar(File file) async {
+    final ext = file.path.split('.').last.toLowerCase();
     final formData = FormData.fromMap({
-      'avatar': await MultipartFile.fromFile(file.path, filename: 'avatar.jpg'),
+      'avatar': await MultipartFile.fromFile(file.path, filename: 'avatar.$ext'),
     });
 
     try {

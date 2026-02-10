@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/home_api/home_api.dart';
 import 'package:eventjar/controller/home/state.dart';
@@ -13,9 +15,15 @@ import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../api/contact_analytics_api/contact_analytics_api.dart';
+import '../../api/user_profile_api/user_profile_api.dart';
+import '../../api/verify_api/email.dart';
+import '../../api/verify_api/phone.dart';
 
 class HomeController extends GetxController {
-  var appBarTitle = "EventJar";
+  var appBarTitle = "MyEventJar";
   final state = HomeState();
   final formKey = GlobalKey<FormState>();
   final logoPath = 'assets/app_icon/event_app_icon.png';
@@ -28,6 +36,67 @@ class HomeController extends GetxController {
   final _searchBarController = TextEditingController().obs;
 
   TextEditingController get searchBarController => _searchBarController.value;
+  //RxMap<String, dynamic> get profile => UserStore.to.profile;
+  RxBool get isLoggedIn => UserStore.to.isLoginReactive;
+
+  PageController scoreCardPageController = PageController();
+  int get scoreCardCurrentPage => state.scoreCardCurrentPage.value;
+
+  bool get isEmailVerified => state.userProfile.value?.isVerified ?? false;
+  bool get isPhoneVerified => state.userProfile.value?.phoneVerified ?? false;
+
+  bool get hasAddedContact => state.hasAddedContact.value;
+  bool get allStepsComplete =>
+      isEmailVerified && isPhoneVerified && hasAddedContact;
+
+  int get totalContacts => state.totalContacts.value;
+  bool get scoreCardExpanded => state.scoreCardExpanded.value;
+
+  int get currentTierIndex {
+    final contacts = totalContacts;
+    if (contacts <= 50) return 0;
+    if (contacts <= 250) return 1;
+    if (contacts <= 500) return 2;
+    return 3;
+  }
+
+  Timer? _autoScrollTimer;
+
+  int get verificationPageCount {
+    if (state.userProfile.value == null) return 0;
+    return 3; // Always 3: phone, email, contact (pending + completed)
+  }
+
+  void toggleScoreCard() {
+    state.scoreCardExpanded.value = !state.scoreCardExpanded.value;
+  }
+
+  void startVerificationAutoScroll() {
+    _stopVerificationAutoScroll();
+    final pageCount = verificationPageCount;
+    if (pageCount <= 1) return;
+
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!scoreCardPageController.hasClients) return;
+      final nextPage = (state.scoreCardCurrentPage.value + 1) % pageCount;
+      scoreCardPageController.animateToPage(
+        nextPage,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  void _stopVerificationAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = null;
+  }
+
+  void resetAutoScrollTimer() {
+    if (_autoScrollTimer != null) {
+      startVerificationAutoScroll();
+    }
+  }
 
   @override
   void onInit() {
@@ -56,9 +125,75 @@ class HomeController extends GetxController {
   //   }
   // }
 
-  void onTabOpen() {
+  Future<void> fetchContactAnalytics() async {
+    try {
+      final result = await ContactAnalyticsApi.getAnalytics(
+        '/contacts/analytics',
+      );
+      state.analytics.value = result;
+      state.totalContacts.value = result.total;
+      state.hasAddedContact.value = result.total > 0;
+    } catch (err) {
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          // Auth error handling example
+          UserStore.to.clearStore();
+          return;
+        }
+
+        ApiErrorHandler.handleError(err, "Failed to fetch analytics");
+      } else {
+        AppSnackbar.error(
+          title: "Failed",
+          message: "Something went wrong. Please try again.",
+        );
+      }
+    } finally {}
+  }
+
+  Future<void> fetchUserProfile() async {
+    try {
+      final response = await UserProfileApi.getUserProfile();
+      state.userProfile.value = response.data;
+      if (!allStepsComplete) {
+        startVerificationAutoScroll();
+      }
+    } catch (err) {
+      // LoggerService.loggerInstance.e(err);
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          await UserStore.to.clearStore();
+          return; // Stop further error handling
+        }
+
+        ApiErrorHandler.handleError(err, "Failed to load User Profile");
+      } else if (err is Exception) {
+        AppSnackbar.error(title: "Exception", message: err.toString());
+      } else {
+        AppSnackbar.error(
+          title: "Error",
+          message: "Something went wrong (${err.toString()})",
+        );
+      }
+    } finally {}
+  }
+
+  Future<void> onTabOpen() async {
+    LoggerService.loggerInstance.dynamic_d("in on tab open");
     state.isLoading.value = true;
-    fetchEvents();
+    try {
+      await Future.wait([
+        fetchEvents(),
+        fetchUserProfile(),
+        fetchContactAnalytics(),
+      ]);
+    } finally {
+      state.isLoading.value = false;
+    }
   }
 
   void _onScroll() {
@@ -125,7 +260,6 @@ class HomeController extends GetxController {
 
   Future<void> fetchEvents() async {
     try {
-      state.isLoading.value = true;
       EventResponse response = await HomeApi.getEventList(
         '/events?page=$_currentPage&limit=$_limit',
       );
@@ -142,9 +276,7 @@ class HomeController extends GetxController {
           message: "Something went wrong (${err.runtimeType})",
         );
       }
-    } finally {
-      state.isLoading.value = false;
-    }
+    } finally {}
   }
 
   Future<void> fetchEventsOnScroll() async {
@@ -310,8 +442,124 @@ class HomeController extends GetxController {
     });
   }
 
+  /*----- Phone OTP Verification -----*/
+  Timer? _resendTimer;
+
+  Future<void> sendPhoneOtp() async {
+    final phone = state.userProfile.value?.phone;
+    if (phone == null || phone.isEmpty) {
+      AppSnackbar.error(
+        title: "Error",
+        message: "No phone number found on your profile",
+      );
+      return;
+    }
+
+    state.isSendingOtp.value = true;
+    state.otpError.value = '';
+    try {
+      await VerifyPhoneApi.sendOtp(phone);
+      _startResendCooldown();
+    } catch (err) {
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Failed to send OTP");
+      } else {
+        AppSnackbar.error(title: "Error", message: err.toString());
+      }
+    } finally {
+      state.isSendingOtp.value = false;
+    }
+  }
+
+  Future<bool> verifyPhoneOtp(String otp) async {
+    final phone = state.userProfile.value?.phone;
+    if (phone == null || phone.isEmpty) return false;
+
+    state.isVerifyingOtp.value = true;
+    state.otpError.value = '';
+    try {
+      await VerifyPhoneApi.verifyOtp(phone, otp);
+      await fetchUserProfile();
+      return true;
+    } catch (err) {
+      if (err is DioException) {
+        final data = err.response?.data;
+        if (data is Map && data['message'] is String) {
+          state.otpError.value = data['message'];
+        } else if (data is String) {
+          state.otpError.value = data;
+        } else {
+          state.otpError.value = 'Verification failed. Please try again.';
+        }
+      } else {
+        state.otpError.value = err.toString();
+      }
+      return false;
+    } finally {
+      state.isVerifyingOtp.value = false;
+    }
+  }
+
+  void _startResendCooldown() {
+    state.resendCooldown.value = 30;
+    _resendTimer?.cancel();
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (state.resendCooldown.value <= 1) {
+        timer.cancel();
+        state.resendCooldown.value = 0;
+      } else {
+        state.resendCooldown.value--;
+      }
+    });
+  }
+
+  void resetOtpState() {
+    state.otpError.value = '';
+    state.isSendingOtp.value = false;
+    state.isVerifyingOtp.value = false;
+  }
+
+  /*----- Email Verification -----*/
+  final RxBool isSendingEmailVerification = false.obs;
+
+  Future<bool> sendEmailVerification() async {
+    isSendingEmailVerification.value = true;
+    try {
+      await VerifyEmailApi.resendVerify();
+      return true;
+    } catch (err) {
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Failed to send verification email");
+      } else {
+        AppSnackbar.error(
+          title: "Error",
+          message: "Something went wrong. Please try again.",
+        );
+      }
+      return false;
+    } finally {
+      isSendingEmailVerification.value = false;
+    }
+  }
+
+  void openEmailApp() async {
+    final Uri emailLaunchUri = Uri(scheme: 'mailto', path: '');
+    try {
+      if (await canLaunchUrl(emailLaunchUri)) {
+        await launchUrl(emailLaunchUri);
+      } else {
+        AppSnackbar.error(title: "Error", message: "No email app found.");
+      }
+    } catch (e) {
+      LoggerService.loggerInstance.e(e);
+      AppSnackbar.error(title: "Error", message: "Could not open email app.");
+    }
+  }
+
   @override
   void onClose() {
+    _stopVerificationAutoScroll();
+    _resendTimer?.cancel();
     homeScrollController.removeListener(_onScroll);
     homeScrollController.dispose();
     super.onClose();

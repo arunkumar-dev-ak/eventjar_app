@@ -22,7 +22,7 @@ class UserProfileHeader extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blue.shade50, Colors.white],
+            colors: [Colors.grey.shade50, Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -128,10 +128,10 @@ class UserProfileHeader extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.blue.shade200, width: 3),
+            border: Border.all(color: Colors.grey, width: 3),
             boxShadow: [
               BoxShadow(
-                color: Colors.blue.shade100,
+                color: Colors.grey,
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -144,14 +144,16 @@ class UserProfileHeader extends StatelessWidget {
             if (editing && file != null) {
               // Show selected image while editing
               return CircleAvatar(
-                radius: 50,
+                radius: 70,
+                backgroundColor: Colors.white,
                 backgroundImage: FileImage(file), // ← Use FileImage
               );
             } else if (controller.avatarUrl != null &&
                 controller.avatarUrl!.isNotEmpty) {
               // Show server avatar
               return CircleAvatar(
-                radius: 50,
+                radius: 70,
+                backgroundColor: Colors.white,
                 backgroundImage: NetworkImage(
                   getFileUrl(controller.avatarUrl!),
                 ),
@@ -160,7 +162,7 @@ class UserProfileHeader extends StatelessWidget {
               // Show initials fallback
               return CircleAvatar(
                 radius: 50,
-                backgroundColor: Colors.blue.shade100,
+                backgroundColor: Colors.grey,
                 child: Text(
                   initials,
                   style: TextStyle(

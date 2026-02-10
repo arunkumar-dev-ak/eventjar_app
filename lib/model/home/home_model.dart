@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:eventjar/model/meta/meta_model.dart';
 
 class EventResponse {
@@ -240,4 +242,21 @@ class EventCount {
   }
 
   Map<String, dynamic> toJson() => {'registrations': registrations};
+}
+
+
+class Medal {
+  final Color baseColor;
+  final Color highlightColor;
+  final Color shadowColor;
+  final bool enabled;
+  final String name;
+
+  const Medal({
+    required this.baseColor,
+    required this.highlightColor,
+    required this.shadowColor,
+    required this.enabled,
+    required this.name,
+  });
 }

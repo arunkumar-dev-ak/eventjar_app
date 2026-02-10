@@ -14,7 +14,7 @@ class UserStore extends GetxController {
   final _isLogin = false.obs;
   final _accessToken = "".obs;
   final _refreshToken = "".obs;
-  RxString _deviceId = ''.obs;
+  final RxString _deviceId = ''.obs;
   // final _profile = RxMap<String, dynamic>();
   final _profile = <String, dynamic>{}.obs;
 

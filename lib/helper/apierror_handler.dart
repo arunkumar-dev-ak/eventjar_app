@@ -27,7 +27,9 @@ class ApiErrorHandler {
     else {
       final data = err.response?.data;
 
-      if (data != null) {
+      if (data is String) {
+        errorMessage = data;
+      } else if (data is Map) {
         final message = data['message'];
 
         // Case 1: Simple string

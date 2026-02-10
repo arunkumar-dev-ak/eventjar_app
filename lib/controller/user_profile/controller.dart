@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:eventjar/model/auth/login_model.dart';
 import 'package:eventjar/model/user_profile/user_profile.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:path/path.dart' as path;
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/user_profile_api/user_profile_api.dart';
@@ -15,6 +16,13 @@ import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:typed_data';
+import 'dart:async';
+
+import '../../api/verify_api/phone.dart';
+
+import '../../global/image_process.dart';
 
 class UserProfileController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -32,6 +40,8 @@ class UserProfileController extends GetxController
   final passwordController = TextEditingController();
 
   final DashboardController dashboardController = Get.find();
+
+  bool isProcessing = false;
 
   @override
   void onInit() async {
@@ -288,7 +298,8 @@ class UserProfileController extends GetxController
               title: Text('Take Photo'),
               onTap: () {
                 Get.back();
-                _getImageFromCamera();
+                //_getImageFromCamera();
+                _pickImage(ImageSource.camera);
               },
             ),
             ListTile(
@@ -296,7 +307,8 @@ class UserProfileController extends GetxController
               title: Text('Choose from Gallery'),
               onTap: () {
                 Get.back();
-                _getImageFromGallery();
+                //_getImageFromGallery();
+                _pickImage(ImageSource.gallery);
               },
             ),
             SizedBox(height: 10),
@@ -310,32 +322,111 @@ class UserProfileController extends GetxController
     );
   }
 
-  Future<void> _getImageFromCamera() async {
+  Future<void> _pickImage(ImageSource source) async {
     try {
-      final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+      final XFile? pickedFile = await _picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 90,
+      );
+
       if (pickedFile != null) {
-        state.selectedAvatarFile.value = File(pickedFile.path);
+        // Crop the image
+        final croppedFile = await ImageCropper().cropImage(
+          sourcePath: pickedFile.path,
+          aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+          uiSettings: [
+            AndroidUiSettings(
+              toolbarTitle: 'Crop Profile Photo',
+              toolbarColor: const Color(0xFF1A73E8),
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.square,
+              lockAspectRatio: true,
+              hideBottomControls: false,
+              showCropGrid: true,
+            ),
+            IOSUiSettings(
+              title: 'Crop Profile Photo',
+              aspectRatioLockEnabled: true,
+              resetAspectRatioEnabled: false,
+            ),
+          ],
+        );
+
+        if (croppedFile == null) {
+          return; // User cancelled cropping
+        }
+
+        state.isProfileLoading.value = true;
         state.isEditingAvatar.value = true;
+
+        final bytes = await File(croppedFile.path).readAsBytes();
+
+        // Remove background using remove.bg API
+        final result = await ProfileImageProcessor.processFromBytes(bytes);
+
+        if (result.success && result.imageBytes != null) {
+          await _saveProcessedImage(result.imageBytes!);
+        } else {
+          // Fallback: use cropped image as-is if bg removal fails
+          state.selectedAvatarFile.value = File(croppedFile.path);
+          AppSnackbar.error(
+            title: 'Background removal failed',
+            message: result.errorMessage ?? 'Using original image',
+          );
+        }
+
+        state.isProfileLoading.value = false;
       }
     } catch (e) {
-      LoggerService.loggerInstance.e(e);
-      AppSnackbar.error(title: 'Error', message: 'Could not access camera');
+      isProcessing = false;
     }
   }
 
-  // 4. Pick from gallery
-  Future<void> _getImageFromGallery() async {
+  Future<void> _saveProcessedImage(Uint8List imageBytes) async {
     try {
-      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-      if (pickedFile != null) {
-        state.selectedAvatarFile.value = File(pickedFile.path);
-        state.isEditingAvatar.value = true;
-      }
+      final directory = await getApplicationDocumentsDirectory();
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final filePath = '${directory.path}/profile_image_$timestamp.png';
+      final file = File(filePath);
+      await file.writeAsBytes(imageBytes);
+      imageCache.clear();
+      imageCache.clearLiveImages();
+      state.selectedAvatarFile.value = File(filePath);
+      state.isEditingAvatar.value = true;
     } catch (e) {
-      LoggerService.loggerInstance.e(e);
-      AppSnackbar.error(title: 'Error', message: 'Could not access gallery');
+      debugPrint('Error saving processed image: $e');
     }
   }
+
+  // Future<void> _getImageFromCamera() async {
+  //   try {
+  //     final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+  //     if (pickedFile != null) {
+  //       state.selectedAvatarFile.value = File(pickedFile.path);
+  //       state.isEditingAvatar.value = true;
+  //     }
+  //   } catch (e) {
+  //     LoggerService.loggerInstance.e(e);
+  //     AppSnackbar.error(title: 'Error', message: 'Could not access camera');
+  //   }
+  // }
+
+  // // 4. Pick from gallery
+  // Future<void> _getImageFromGallery() async {
+  //   try {
+  //     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+  //     if (pickedFile != null) {
+  //       state.selectedAvatarFile.value = File(pickedFile.path);
+  //       print(state.selectedAvatarFile.value);
+  //       state.isEditingAvatar.value = true;
+  //     }
+  //   } catch (e) {
+  //     LoggerService.loggerInstance.e(e);
+  //     AppSnackbar.error(title: 'Error', message: 'Could not access gallery');
+  //   }
+  // }
 
   Future<void> uploadProfileAvatar() async {
     final file = state.selectedAvatarFile.value;
@@ -360,6 +451,8 @@ class UserProfileController extends GetxController
       // 2. Upload using API
       final bool newAvatarUrl = await UserProfileApi.uploadAvatar(file);
       if (newAvatarUrl == true) {
+        imageCache.clear();
+        imageCache.clearLiveImages();
         AppSnackbar.success(
           title: 'Success',
           message: 'Profile picture updated!',
@@ -470,6 +563,11 @@ class UserProfileController extends GetxController
   /// Check if user is verified
   bool get isVerified {
     return state.userProfile.value?.isVerified ?? false;
+  }
+
+  /// Check if phone is verified
+  bool get isPhoneVerified {
+    return state.userProfile.value?.phoneVerified ?? false;
   }
 
   void navigateToBasicInfoUpdate() {
@@ -607,8 +705,88 @@ class UserProfileController extends GetxController
     Get.toNamed(RouteName.forgotPasswordPage);
   }
 
+  /*----- Phone OTP Verification -----*/
+  Timer? _resendTimer;
+
+  Future<void> sendPhoneOtp() async {
+    final phone = state.userProfile.value?.phone ??
+        state.userProfile.value?.phoneParsed?.fullNumber;
+    if (phone == null || phone.isEmpty) {
+      AppSnackbar.error(
+        title: "Error",
+        message: "No phone number found on your profile",
+      );
+      return;
+    }
+
+    state.isSendingOtp.value = true;
+    state.otpError.value = '';
+    try {
+      await VerifyPhoneApi.sendOtp(phone);
+      _startResendCooldown();
+    } catch (err) {
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Failed to send OTP");
+      } else {
+        AppSnackbar.error(title: "Error", message: err.toString());
+      }
+    } finally {
+      state.isSendingOtp.value = false;
+    }
+  }
+
+  Future<bool> verifyPhoneOtp(String otp) async {
+    final phone = state.userProfile.value?.phone ??
+        state.userProfile.value?.phoneParsed?.fullNumber;
+    if (phone == null || phone.isEmpty) return false;
+
+    state.isVerifyingOtp.value = true;
+    state.otpError.value = '';
+    try {
+      await VerifyPhoneApi.verifyOtp(phone, otp);
+      await fetchUserProfile();
+      return true;
+    } catch (err) {
+      if (err is DioException) {
+        final data = err.response?.data;
+        if (data is Map && data['message'] is String) {
+          state.otpError.value = data['message'];
+        } else if (data is String) {
+          state.otpError.value = data;
+        } else {
+          state.otpError.value = 'Verification failed. Please try again.';
+        }
+      } else {
+        state.otpError.value = err.toString();
+      }
+      return false;
+    } finally {
+      state.isVerifyingOtp.value = false;
+    }
+  }
+
+  void _startResendCooldown() {
+    state.resendCooldown.value = 30;
+    _resendTimer?.cancel();
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (state.resendCooldown.value <= 1) {
+        timer.cancel();
+        state.resendCooldown.value = 0;
+      } else {
+        state.resendCooldown.value--;
+      }
+    });
+  }
+
+  void resetOtpState() {
+    state.otpError.value = '';
+    state.isSendingOtp.value = false;
+    state.isVerifyingOtp.value = false;
+  }
+
   @override
   void onClose() {
+    _resendTimer?.cancel();
     // shakeController.dispose();
     super.onClose();
   }

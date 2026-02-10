@@ -3,6 +3,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/home/widget/home_appbar.dart';
 import 'package:eventjar/page/home/widget/home_content.dart';
+import 'package:eventjar/page/home/widget/home_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,8 +17,8 @@ class HomePage extends GetView<HomeController> {
       decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
       child: SafeArea(
         child: RefreshIndicator(
-          onRefresh: () {
-            return controller.fetchEvents();
+          onRefresh: () async {
+            return controller.onTabOpen();
           },
           child: CustomScrollView(
             controller: controller.homeScrollController,
@@ -67,7 +68,12 @@ class HomePage extends GetView<HomeController> {
                     topRight: Radius.circular(20),
                   ),
                 ),
-                sliver: HomeContent(),
+                sliver: SliverMainAxisGroup(
+                  slivers: [
+                    SliverToBoxAdapter(child: HomeProfile()),
+                    HomeContent(),
+                  ],
+                ),
               ),
             ],
           ),
