@@ -11,11 +11,70 @@ Widget userProfileBuildBasicInfo() {
 
   return Column(
     children: [
-      userProfilebuildInfoRow(
-        icon: Icons.email,
-        label: "Email Address",
-        value: controller.email.isEmpty ? "N/A" : controller.email,
-        iconColor: Colors.red,
+      // Email row with verification status on the right
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: userProfilebuildInfoRow(
+              icon: Icons.email,
+              label: "Email Address",
+              value: controller.email.isEmpty ? "N/A" : controller.email,
+              iconColor: Colors.red,
+            ),
+          ),
+          Obx(() {
+            final isVerified = controller.isVerified;
+            final hasEmail = controller.email.isNotEmpty;
+
+            if (!hasEmail) return const SizedBox.shrink();
+
+            if (isVerified) {
+              return Padding(
+                padding: EdgeInsets.only(top: 0.5.hp),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.check_circle, color: Colors.green, size: 16),
+                    SizedBox(width: 1.wp),
+                    Text(
+                      'Verified',
+                      style: TextStyle(
+                        fontSize: 8.sp,
+                        color: Colors.green.shade700,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(top: 0.5.hp),
+              child: GestureDetector(
+                onTap: () =>
+                    _showEmailVerifyDialog(Get.context!, controller),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 3.wp, vertical: 0.5.hp),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.buttonGradient,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'Verify',
+                    style: TextStyle(
+                      fontSize: 8.sp,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
       ),
       SizedBox(height: 2.hp),
       // Phone row with verification status on the right
@@ -365,4 +424,99 @@ void _showPhoneOtpDialog(
     pinController.dispose();
     focusNode.dispose();
   });
+}
+
+void _showEmailVerifyDialog(
+    BuildContext context, UserProfileController controller) async {
+  final email = controller.state.userProfile.value?.email ?? '';
+
+  final success = await controller.sendEmailVerification();
+  if (!success || !context.mounted) return;
+
+  showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (BuildContext ctx) {
+      return Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            margin: const EdgeInsets.only(top: 50),
+            padding: const EdgeInsets.only(
+              top: 60,
+              left: 24,
+              right: 24,
+              bottom: 24,
+            ),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Check your email',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade900,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'A verification link has been sent to\n$email',
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: AppColors.placeHolderColor,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(ctx).pop();
+                    controller.openEmailApp();
+                  },
+                  child: Container(
+                    width: 90.wp,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16.0),
+                      gradient: AppColors.buttonGradient,
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Open Email',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: 90,
+            height: 90,
+            decoration: BoxDecoration(
+              gradient: AppColors.buttonGradient,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 4),
+            ),
+            child: const Icon(Icons.email, color: Colors.white, size: 40),
+          ),
+        ],
+      );
+    },
+  );
 }

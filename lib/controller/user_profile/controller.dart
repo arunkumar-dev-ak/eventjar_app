@@ -16,10 +16,12 @@ import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:typed_data';
 import 'dart:async';
 
+import '../../api/verify_api/email.dart';
 import '../../api/verify_api/phone.dart';
 
 import '../../global/image_process.dart';
@@ -782,6 +784,39 @@ class UserProfileController extends GetxController
     state.otpError.value = '';
     state.isSendingOtp.value = false;
     state.isVerifyingOtp.value = false;
+  }
+
+  /*----- Email Verification -----*/
+
+  Future<bool> sendEmailVerification() async {
+    try {
+      await VerifyEmailApi.resendVerify();
+      return true;
+    } catch (err) {
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Failed to send verification email");
+      } else {
+        AppSnackbar.error(
+          title: "Error",
+          message: "Something went wrong. Please try again.",
+        );
+      }
+      return false;
+    }
+  }
+
+  void openEmailApp() async {
+    final Uri emailLaunchUri = Uri(scheme: 'mailto', path: '');
+    try {
+      if (await canLaunchUrl(emailLaunchUri)) {
+        await launchUrl(emailLaunchUri);
+      } else {
+        AppSnackbar.error(title: "Error", message: "No email app found.");
+      }
+    } catch (e) {
+      LoggerService.loggerInstance.e(e);
+      AppSnackbar.error(title: "Error", message: "Could not open email app.");
+    }
   }
 
   @override

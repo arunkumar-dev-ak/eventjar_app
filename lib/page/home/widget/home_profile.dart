@@ -160,7 +160,7 @@ class HomeProfile extends GetView<HomeController> {
   Widget _buildSignInCard() {
     return GestureDetector(
       onTap: () {
-        // Get.toNamed(RouteName.signInPage);
+        Get.toNamed(RouteName.signInPage);
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.5.hp),
@@ -218,11 +218,11 @@ class HomeProfile extends GetView<HomeController> {
                 ],
               ),
             ),
-            // Icon(
-            //   Icons.arrow_forward_ios_rounded,
-            //   color: Colors.white,
-            //   size: 18,
-            // ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
           ],
         ),
       ),
@@ -793,7 +793,7 @@ class HomeProfile extends GetView<HomeController> {
     bool isCompleted = false,
   }) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 2.wp, vertical: 1.hp),
+      padding: EdgeInsets.symmetric(horizontal: 2.wp, vertical: 0.5.hp),
       child: Row(
         children: [
           Icon(icon, color: Colors.white, size: 20),

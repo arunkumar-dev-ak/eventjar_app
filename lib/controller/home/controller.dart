@@ -102,6 +102,11 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     homeScrollController.addListener(_onScroll);
+    ever(isLoggedIn, (bool loggedIn) {
+      if (loggedIn) {
+        onTabOpen();
+      }
+    });
     onTabOpen();
   }
 
