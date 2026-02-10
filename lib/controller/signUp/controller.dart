@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/api/sign_up_api/sign_up_api.dart';
 import 'package:eventjar/controller/signUp/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:flutter/material.dart';
@@ -57,24 +58,16 @@ class SignUpController extends GetxController {
         "mobile": mobileNumberController.text.trim(),
       };
 
-      final message = await SignUpApi.signUp(signUpData);
+      var response = await SignUpApi.signUp(signUpData);
 
-      AppSnackbar.success(title: "Sign Up Successful", message: message);
-
-      // Auto-login after signup
-      // var response = await SignInApi.signIn(
-      //   email: emailController.text.trim(),
-      //   password: passwordController.text.trim(),
-      // );
-
-      // await UserStor.to.handleSetLocalData(response);
-
-      // AppSnackbar.success(
-      //   title: "Login Successful",
-      //   message: "User Logged in successfully",
-      // );
-
-      navigateToBackPage(context);
+      // AppSnackbar.success(title: "Sign Up Successful", message: message);
+      await UserStore.to.handleSetLocalData(response);
+      AppSnackbar.success(
+        title: "Account Created",
+        message: "Your account has been created successfully.",
+      );
+      state.isLoading.value = false;
+      Navigator.pop(context, "logged_in");
     } catch (err) {
       state.isLoading.value = false;
       if (err is DioException) {

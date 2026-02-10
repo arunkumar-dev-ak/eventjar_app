@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/dio_client.dart';
+import 'package:eventjar/model/auth/login_model.dart';
 
 class SignUpApi {
   static final Dio _dio = DioClient().dio;
 
-  static Future<String> signUp(dynamic value) async {
+  static Future<LoginResponse> signUp(dynamic value) async {
     try {
       final response = await _dio.post(
         '/auth/register',
@@ -18,7 +19,7 @@ class SignUpApi {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return "Please use your credentials to sign in.";
+        return LoginResponse.fromJson(response.data);
       }
 
       throw DioException(

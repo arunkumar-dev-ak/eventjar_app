@@ -170,7 +170,11 @@ class SignInController extends GetxController {
 
   /*----- navigation ----*/
   void navigateToSignUp() {
-    Get.toNamed('/signUpPage');
+    Get.toNamed('/signUpPage')?.then((result) {
+      if (result == "logged_in") {
+        Navigator.pop(Get.context!, "logged_in");
+      }
+    });
   }
 
   void navigateToForgotPassword() {
