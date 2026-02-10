@@ -17,9 +17,10 @@ class HomeProfile extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Obx(() {
       final isLoggedIn = controller.isLoggedIn.value;
+      final isLoading = controller.state.isLoading.value;
       final profileData = controller.state.userProfile.value;
       if (!isLoggedIn) return _buildSignInCard();
-      if (profileData == null) {
+      if (isLoading || profileData == null) {
         return _buildShimmerProfile();
       }
       return Container(
@@ -106,6 +107,8 @@ class HomeProfile extends GetView<HomeController> {
                                         fontSize: 15.sp,
                                         fontWeight: FontWeight.bold,
                                       ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                     SizedBox(height: 1.hp),
                                     Text(
@@ -115,6 +118,8 @@ class HomeProfile extends GetView<HomeController> {
                                         fontSize: 10.sp,
                                         fontWeight: FontWeight.w500,
                                       ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                     SizedBox(height: 1.hp),
                                     Text(
@@ -154,7 +159,9 @@ class HomeProfile extends GetView<HomeController> {
 
   Widget _buildSignInCard() {
     return GestureDetector(
-      onTap: () => Get.toNamed(RouteName.signInPage),
+      onTap: () {
+        // Get.toNamed(RouteName.signInPage);
+      },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.5.hp),
         padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 2.hp),
@@ -193,7 +200,7 @@ class HomeProfile extends GetView<HomeController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Sign up or Log in to your account',
+                    'Sign up or Log in to a account',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 10.sp,
@@ -211,11 +218,11 @@ class HomeProfile extends GetView<HomeController> {
                 ],
               ),
             ),
-            Icon(
-              Icons.arrow_forward_ios_rounded,
-              color: Colors.white,
-              size: 18,
-            ),
+            // Icon(
+            //   Icons.arrow_forward_ios_rounded,
+            //   color: Colors.white,
+            //   size: 18,
+            // ),
           ],
         ),
       ),
@@ -789,8 +796,8 @@ class HomeProfile extends GetView<HomeController> {
       padding: EdgeInsets.symmetric(horizontal: 2.wp, vertical: 1.hp),
       child: Row(
         children: [
-          Icon(icon, color: Colors.white, size: 24),
-          SizedBox(width: 3.wp),
+          Icon(icon, color: Colors.white, size: 20),
+          SizedBox(width: 2.wp),
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -803,6 +810,8 @@ class HomeProfile extends GetView<HomeController> {
                     fontSize: 9.sp,
                     fontWeight: FontWeight.w700,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 2),
                 Text(
@@ -818,15 +827,15 @@ class HomeProfile extends GetView<HomeController> {
             ),
           ),
           if (isCompleted)
-            Icon(Icons.check_circle, color: Colors.greenAccent, size: 22),
+            Icon(Icons.check_circle, color: Colors.greenAccent, size: 20),
           if (!isCompleted && buttonLabel != null) ...[
-            SizedBox(width: 2.wp),
+            SizedBox(width: 1.5.wp),
             GestureDetector(
               onTap: onTap,
               child: Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: 3.wp,
-                  vertical: 0.8.hp,
+                  horizontal: 2.5.wp,
+                  vertical: 0.6.hp,
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white,
