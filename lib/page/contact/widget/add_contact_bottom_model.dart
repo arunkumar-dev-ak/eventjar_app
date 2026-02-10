@@ -1,0 +1,134 @@
+import 'package:eventjar/controller/contact/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:flutter/material.dart';
+
+void addContactBottomModel(BuildContext context, ContactController controller) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (context) => Container(
+      margin: EdgeInsets.all(4.wp),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            SizedBox(height: 2.hp),
+            _buildMenuItem(
+              icon: Icons.person_add_alt_1_rounded,
+              title: 'Add Contact',
+              subtitle: 'Add a new contact manually',
+              gradientColors: [Colors.blue.shade400, Colors.blue.shade600],
+              onTap: () {
+                Navigator.pop(context);
+                controller.navigateToAddContact();
+              },
+            ),
+            _divider(),
+            _buildMenuItem(
+              icon: Icons.nfc_rounded,
+              title: 'NFC',
+              subtitle: 'Scan NFC tag to add contact',
+              gradientColors: [Colors.green.shade400, Colors.green.shade600],
+              onTap: () {
+                Navigator.pop(context);
+                //controller.navigateToNfc();
+                controller.navigateToReceive();
+              },
+            ),
+            _divider(),
+            _buildMenuItem(
+              icon: Icons.qr_code_scanner_rounded,
+              title: 'QR Scanner',
+              subtitle: 'Scan QR code to add contact',
+              gradientColors: [Colors.purple.shade400, Colors.purple.shade600],
+              onTap: () {
+                Navigator.pop(context);
+                controller.navigateToQrPage();
+              },
+            ),
+            _divider(),
+            _buildMenuItem(
+              icon: Icons.document_scanner,
+              title: 'Scan Visiting card',
+              subtitle: 'Scan Visiting card to add contact',
+              gradientColors: [
+                Colors.orangeAccent.shade400,
+                Colors.orangeAccent.shade700,
+              ],
+              onTap: () {
+                Navigator.pop(context);
+                controller.navigateToScanPage();
+              },
+            ),
+            SizedBox(height: 3.hp),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _divider() {
+  return Divider(
+    height: 1,
+    indent: 20,
+    endIndent: 20,
+    color: Colors.grey.shade200,
+  );
+}
+
+Widget _buildMenuItem({
+  required IconData icon,
+  required String title,
+  required String subtitle,
+  required List<Color> gradientColors,
+  required VoidCallback onTap,
+}) {
+  return ListTile(
+    onTap: onTap,
+    contentPadding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 1.hp),
+    leading: Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: gradientColors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Icon(icon, color: Colors.white, size: 24),
+    ),
+    title: Text(
+      title,
+      style: TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: 10.sp,
+        color: Colors.grey.shade800,
+      ),
+    ),
+    subtitle: Text(
+      subtitle,
+      style: TextStyle(fontSize: 8.sp, color: Colors.grey.shade500),
+    ),
+    trailing: Icon(
+      Icons.arrow_forward_ios_rounded,
+      size: 16,
+      color: Colors.grey.shade400,
+    ),
+  );
+}

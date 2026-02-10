@@ -68,6 +68,7 @@ dependencies:
   google_mlkit_text_recognition: ^0.15.0
   flutter_intl_phone_field: ^0.0.7
   flutter_contacts: ^1.1.9+2
+  pinput: ^6.0.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

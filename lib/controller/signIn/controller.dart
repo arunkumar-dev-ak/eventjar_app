@@ -18,13 +18,9 @@ class SignInController extends GetxController {
   final isPasswordHidden = true.obs;
   bool get isLoading => state.isLoading.value;
 
-  final List<TextEditingController> otpControllers = List.generate(
-    6,
-    (_) => TextEditingController(),
-  );
-
   TextEditingController get emailController => _emailController.value;
   TextEditingController get passwordController => _passwordController.value;
+  final TextEditingController otpController = TextEditingController();
 
   void onInint() {
     super.onInit();
@@ -123,7 +119,8 @@ class SignInController extends GetxController {
       return;
     }
 
-    final otp = otpControllers.map((c) => c.text).join();
+    final otp = otpController.text;
+
     if (otp.length != 6) {
       AppSnackbar.warning(
         title: "Invalid Code",
@@ -163,13 +160,11 @@ class SignInController extends GetxController {
   }
 
   void clear2FaController() {
-    for (final c in otpControllers) {
-      c.clear();
-    }
+    otpController.clear();
   }
 
   void updateOtpValidity() {
-    final otp = otpControllers.map((c) => c.text).join();
+    final otp = otpController.text;
     state.isOtpValid.value = otp.length == 6;
   }
 
@@ -188,9 +183,7 @@ class SignInController extends GetxController {
 
   @override
   void onClose() {
-    for (final c in otpControllers) {
-      c.dispose();
-    }
+    otpController.dispose();
     super.onClose();
   }
 }

@@ -70,7 +70,8 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                   ),
                   SizedBox(height: 1.5.hp),
 
-                  if (!controller.canSendEmail) ...[
+                  if (!controller.canSendEmail ||
+                      !controller.canSendWhatsApp) ...[
                     Container(
                       width: double.infinity,
                       margin: EdgeInsets.only(top: 2.hp),
@@ -105,7 +106,7 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                           SizedBox(height: 1.hp),
                           Text(
                             "Notifications will not be sent automatically. "
-                            "You can still mark this as sent after manually sending the message via Email",
+                            "You can still mark this as sent after manually sending the message via the configured channels.",
                             style: TextStyle(
                               fontSize: 8.sp,
                               color: Colors.grey.shade700,
@@ -117,13 +118,22 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                             child: TextButton.icon(
                               onPressed: controller.navigateToNotification,
                               icon: const Icon(Icons.settings, size: 16),
-                              label: const Text("Configure Notifications"),
+                              label: Text(
+                                !controller.canSendEmail &&
+                                        !controller.canSendWhatsApp
+                                    ? "Configure Email & WhatsApp"
+                                    : !controller.canSendEmail
+                                    ? "Configure Email"
+                                    : "Configure WhatsApp",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
-
                     SizedBox(height: 2.hp),
                   ],
 

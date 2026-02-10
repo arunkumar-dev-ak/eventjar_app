@@ -31,7 +31,12 @@ class NotificationPage extends GetView<NotificationController> {
             return Expanded(
               child: controller.state.selectedTab.value == 0
                   ? EmailNotificationTab()
-                  : WhatsAppComingSoon(),
+                  : GestureDetector(
+                      onTap: () {
+                        Get.focusScope?.unfocus();
+                      },
+                      child: WhatsAppNotificationTab(),
+                    ),
             );
           }),
         ],

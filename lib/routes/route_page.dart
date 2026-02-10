@@ -162,6 +162,13 @@ class RoutePage {
       middlewares: [LoginMiddleware()],
     ),
 
+    GetPage(
+      name: RouteName.addContactPage,
+      page: () => AddContactPage(),
+      binding: AddContactBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+
     /*----- QR code page -----*/
     GetPage(
       name: RouteName.qrDashboardPage,

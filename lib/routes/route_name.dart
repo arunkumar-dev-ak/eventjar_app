@@ -21,6 +21,7 @@ class RouteName {
   static const addContactPage = '/addContact';
   static const contactPage = '/contactPage';
   static const contactListMeetingPage = '/contactListMeetingPage';
+  static const googleContactPage = '/googleContactPage';
 
   //qrCode page
   static const qrDashboardPage = '/qrDashboard';

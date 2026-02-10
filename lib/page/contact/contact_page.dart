@@ -4,6 +4,7 @@ import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/page/contact/contact_card_page.dart';
 import 'package:eventjar/page/contact/filter/contact_search_page.dart';
+import 'package:eventjar/page/contact/widget/add_contact_bottom_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -76,7 +77,7 @@ class ContactPage extends GetView<ContactController> {
                 children: [
                   _buildActionButton(
                     icon: Icons.add_rounded,
-                    onPressed: () => _showAddMenu(context, controller),
+                    onPressed: () => addContactBottomModel(context, controller),
                   ),
                   SizedBox(width: 3.wp),
                   _buildActionButton(
@@ -100,31 +101,16 @@ class ContactPage extends GetView<ContactController> {
 
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Buttons row: Add Contact, Import Google, Import Mobile
             // SingleChildScrollView(
             //   scrollDirection: Axis.horizontal,
             //   child: Padding(
-            //     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            //     padding: EdgeInsets.only(top: 8, bottom: 8, left: 14),
             //     child: Row(
-            //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //       mainAxisAlignment: MainAxisAlignment.start,
             //       children: [
-            //         ElevatedButton.icon(
-            //           icon: const Icon(Icons.person_add),
-            //           label: const Text("Add Contact"),
-            //           onPressed: () {
-            //             // Add your Add Contact action here
-            //           },
-            //           style: ElevatedButton.styleFrom(
-            //             shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(10),
-            //             ),
-            //             padding: const EdgeInsets.symmetric(
-            //               vertical: 12,
-            //               horizontal: 12,
-            //             ),
-            //           ),
-            //         ),
             //         ElevatedButton.icon(
             //           icon: const Icon(Icons.account_circle),
             //           label: const Text("Import Google"),
@@ -141,6 +127,7 @@ class ContactPage extends GetView<ContactController> {
             //             ),
             //           ),
             //         ),
+            //         SizedBox(width: 2.wp),
             //         ElevatedButton.icon(
             //           icon: const Icon(Icons.phone_android),
             //           label: const Text("Import Mobile"),
@@ -197,141 +184,6 @@ Widget _buildActionButton({
           child: Icon(icon, color: Colors.white, size: 18),
         ),
       ),
-    ),
-  );
-}
-
-void _showAddMenu(BuildContext context, ContactController controller) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.transparent,
-    builder: (context) => Container(
-      margin: EdgeInsets.all(4.wp),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 12),
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          SizedBox(height: 2.hp),
-          _buildMenuItem(
-            icon: Icons.person_add_alt_1_rounded,
-            title: 'Add Contact',
-            subtitle: 'Add a new contact manually',
-            gradientColors: [Colors.blue.shade400, Colors.blue.shade600],
-            onTap: () {
-              Navigator.pop(context);
-              controller.navigateToAddContact();
-            },
-          ),
-          Divider(
-            height: 1,
-            indent: 20,
-            endIndent: 20,
-            color: Colors.grey.shade200,
-          ),
-          _buildMenuItem(
-            icon: Icons.nfc_rounded,
-            title: 'NFC',
-            subtitle: 'Scan NFC tag to add contact',
-            gradientColors: [Colors.green.shade400, Colors.green.shade600],
-            onTap: () {
-              Navigator.pop(context);
-              //controller.navigateToNfc();
-              controller.navigateToReceive();
-            },
-          ),
-          Divider(
-            height: 1,
-            indent: 20,
-            endIndent: 20,
-            color: Colors.grey.shade200,
-          ),
-          _buildMenuItem(
-            icon: Icons.qr_code_scanner_rounded,
-            title: 'QR Scanner',
-            subtitle: 'Scan QR code to add contact',
-            gradientColors: [Colors.purple.shade400, Colors.purple.shade600],
-            onTap: () {
-              Navigator.pop(context);
-              controller.navigateToQrPage();
-            },
-          ),
-          Divider(
-            height: 1,
-            indent: 20,
-            endIndent: 20,
-            color: Colors.grey.shade200,
-          ),
-          _buildMenuItem(
-            icon: Icons.document_scanner,
-            title: 'Scan Visiting card',
-            subtitle: 'Scan Visiting card to add contact',
-            gradientColors: [
-              Colors.orangeAccent.shade400,
-              Colors.orangeAccent.shade700,
-            ],
-            onTap: () {
-              Navigator.pop(context);
-              controller.navigateToScanPage();
-            },
-          ),
-          SizedBox(height: 3.hp),
-        ],
-      ),
-    ),
-  );
-}
-
-Widget _buildMenuItem({
-  required IconData icon,
-  required String title,
-  required String subtitle,
-  required List<Color> gradientColors,
-  required VoidCallback onTap,
-}) {
-  return ListTile(
-    onTap: onTap,
-    contentPadding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 1.hp),
-    leading: Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: gradientColors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Icon(icon, color: Colors.white, size: 24),
-    ),
-    title: Text(
-      title,
-      style: TextStyle(
-        fontWeight: FontWeight.w600,
-        fontSize: 10.sp,
-        color: Colors.grey.shade800,
-      ),
-    ),
-    subtitle: Text(
-      subtitle,
-      style: TextStyle(fontSize: 8.sp, color: Colors.grey.shade500),
-    ),
-    trailing: Icon(
-      Icons.arrow_forward_ios_rounded,
-      size: 16,
-      color: Colors.grey.shade400,
     ),
   );
 }

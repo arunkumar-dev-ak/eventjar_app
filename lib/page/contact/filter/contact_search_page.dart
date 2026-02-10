@@ -66,7 +66,7 @@ class ContactsSearchAndFilters extends GetView<ContactController> {
                   ),
                 );
               }),
-              // SizedBox(width: 10),
+              SizedBox(width: 10),
               // Filter Icon
               // Material(
               //   color: Colors.white,

@@ -154,7 +154,18 @@ class ThankYouMessageController extends GetxController {
   }
 
   void navigateToNotification() {
-    Get.toNamed(RouteName.notificationpage)?.then((result) async {
+    String channelArg = "";
+
+    if (!canSendEmail && !canSendWhatsApp) {
+      channelArg = "both";
+    } else if (!canSendEmail) {
+      channelArg = "email";
+    } else if (!canSendWhatsApp) {
+      channelArg = "whatsapp";
+    }
+    Get.toNamed(RouteName.notificationpage, arguments: channelArg)?.then((
+      result,
+    ) async {
       getConfigDetails();
     });
   }

@@ -1,9 +1,10 @@
 import 'package:eventjar/controller/signIn/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:pinput/pinput.dart';
 
 void signInOpen2FAModal(
   BuildContext context, {
@@ -59,57 +60,55 @@ void signInOpen2FAModal(
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 30),
-
-                // 6 OTP Input Boxes
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(6, (index) {
-                    return SizedBox(
-                      width: 45,
-                      child: TextField(
-                        controller: controller.otpControllers[index],
-                        keyboardType: TextInputType.number,
-                        textAlign: TextAlign.center,
-                        maxLength: 1,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        decoration: InputDecoration(
-                          counterText: '',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: AppColors.gradientDarkStart,
-                              width: 2,
-                            ),
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey.shade50,
-                        ),
-                        onChanged: (value) {
-                          LoggerService.loggerInstance.dynamic_d(value);
-                          if (value.length == 1 && index < 5) {
-                            FocusScope.of(context).nextFocus();
-                          }
-                          controller.updateOtpValidity();
-                        },
+                Pinput(
+                  length: 6,
+                  controller: controller.otpController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  onChanged: (value) {
+                    controller.updateOtpValidity();
+                  },
+                  autofocus: true,
+                  onCompleted: (value) {
+                    controller.updateOtpValidity();
+                  },
+                  defaultPinTheme: PinTheme(
+                    width: 45,
+                    height: 55,
+                    textStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                  ),
+                  focusedPinTheme: PinTheme(
+                    width: 45,
+                    height: 55,
+                    textStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: AppColors.gradientDarkStart,
+                        width: 2,
                       ),
-                    );
-                  }),
+                    ),
+                  ),
                 ),
+
                 SizedBox(height: 10),
 
-                // Clear code button (one line)
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {
-                      controller.clear2FaController();
+                      controller.otpController.clear();
                       controller.updateOtpValidity();
                       FocusScope.of(context).unfocus();
                     },
