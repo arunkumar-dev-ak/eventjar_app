@@ -57,4 +57,6 @@ class RouteName {
   static const schedulerPage = '/schedulerPage';
   static const meetingPage = '/meetingPage';
   static const reminderPage = '/reminderPage';
+
+  static const categoriesPage = '/categoryPage';
 }

@@ -246,6 +246,13 @@ class HomeController extends GetxController {
     Get.toNamed(RouteName.eventInfoPage, parameters: {'eventId': event.id});
   }
 
+  void navigateToEventCategoryPage({String? category}) {
+    Get.toNamed(
+      RouteName.categoriesPage,
+      arguments: {'category': category},
+    );
+  }
+
   String getEndpoint() {
     if (state.meta.value == null) {
       return '/events?page=$_currentPage&limit=$_limit';

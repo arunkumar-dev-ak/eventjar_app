@@ -42,19 +42,7 @@ class EventInfoAppBar extends GetView<EventInfoController> {
           // Back
           GestureDetector(
             onTap: () => Get.back(),
-            child: Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Colors.white,
-                size: 18,
-              ),
-            ),
+            child: Icon(Icons.arrow_back, color: Colors.white),
           ),
           SizedBox(width: 3.wp),
 
@@ -64,7 +52,7 @@ class EventInfoAppBar extends GetView<EventInfoController> {
               'Event Info',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 11.sp,
+                fontSize: 13.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -221,8 +209,8 @@ $dateTimeLocation
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 42,
-        height: 42,
+        width: 38,
+        height: 38,
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(12),

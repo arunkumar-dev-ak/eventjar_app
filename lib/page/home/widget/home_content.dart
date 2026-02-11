@@ -1,12 +1,10 @@
 import 'package:eventjar/controller/home/controller.dart';
-import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/helper/event_share_helper.dart';
 
 import 'package:eventjar/page/home/widget/home_content_shimmer.dart';
 import 'package:eventjar/page/home/widget/home_content_utils.dart';
-import 'package:eventjar/page/home/widget/home_price_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -36,49 +34,137 @@ class HomeContent extends StatelessWidget {
       }
       return SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
-          if (index < controller.state.events.length) {
-            final event = controller.state.events[index];
+          // EVENT CATEGORIES title + category chips
+          if (index == 0) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 5.wp,
+                    vertical: 1.5.hp,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Event Categories',
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.blueGrey,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     // TODO: navigate to all categories
+                      //   },
+                      //   child: Text(
+                      //     'View All',
+                      //     style: TextStyle(
+                      //       fontSize: 10.sp,
+                      //       fontWeight: FontWeight.w600,
+                      //       color: const Color(0xFF1A73E8),
+                      //     ),
+                      //   ),
+                      // ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 4.hp,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(horizontal: 4.wp),
+                    children: [
+                      _buildCategoryChip('Networking', const Color(0xFF1A73E8)),
+                      _buildCategoryChip('Workshop', const Color(0xFF1A73E8)),
+                      _buildCategoryChip('Health', const Color(0xFF1A73E8)),
+                      _buildCategoryChip('Education', const Color(0xFF1A73E8)),
+                      _buildCategoryChip('View All', Colors.grey),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 1.hp),
+              ],
+            );
+          }
+
+          // EVENTS title + View All
+          if (index == 1) {
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 1.5.hp),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Events',
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blueGrey,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      controller.navigateToEventCategoryPage();
+                    },
+                    child: Text(
+                      'View All',
+                      style: TextStyle(
+                        fontSize: 8.sp,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF1A73E8),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final eventIndex = index - 2;
+          if (eventIndex < controller.state.events.length) {
+            final event = controller.state.events[eventIndex];
+            // Determine event type
+            final (
+              String typeLabel,
+              IconData typeIcon,
+              Color typeColor,
+            ) = event.isHybrid
+                ? ('Hybrid', Icons.swap_horiz, const Color(0xFFFF8F00))
+                : event.isVirtual
+                ? ('Online', Icons.videocam, const Color(0xFF1A73E8))
+                : ('Physical', Icons.location_on, const Color(0xFF4CAF50));
+
             return GestureDetector(
               onTap: () => controller.navigateToEventInfoPage(event),
               child: Container(
-                margin: EdgeInsets.symmetric(
-                  horizontal: 4.wp,
-                  vertical: 1.5.hp,
-                ),
+                margin: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.hp),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
+                  borderRadius: BorderRadius.circular(14),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.06),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                    BoxShadow(
-                      color: AppColors.gradientDarkStart.withValues(
-                        alpha: 0.04,
-                      ),
-                      blurRadius: 40,
-                      offset: const Offset(0, 16),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
+                clipBehavior: Clip.hardEdge,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Image with overlay elements
+                    // Event image with share button overlay
                     Stack(
                       children: [
                         Container(
-                          height: 180,
+                          height: 160,
                           width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(24),
-                            ),
-                            color: Colors.grey.shade100,
-                          ),
-                          clipBehavior: Clip.antiAlias,
+                          color: Colors.grey.shade100,
                           child:
                               (event.featuredImageUrl != null &&
                                   event.featuredImageUrl!.isNotEmpty)
@@ -91,6 +177,8 @@ class HomeContent extends StatelessWidget {
                                           ))
                                       ? event.featuredImageUrl!
                                       : getFileUrl(event.featuredImageUrl!),
+                                  width: double.infinity,
+                                  height: 160,
                                   fit: BoxFit.cover,
                                   loadingBuilder:
                                       (context, child, loadingProgress) {
@@ -105,56 +193,12 @@ class HomeContent extends StatelessWidget {
                                 )
                               : homeContentImageNotFound(),
                         ),
+                        // Share button — top right
                         Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          height: 60,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withValues(alpha: 0.8),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (event.category != null)
-                          Positioned(
-                            bottom: 1,
-                            left: 5,
-                            child: Container(
-                              margin: const EdgeInsets.only(bottom: 8),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.gradientDarkStart.withValues(
-                                  alpha: 0.9,
-                                ),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                event.category!.name,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 8.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-
-                        Positioned(
-                          top: 5,
-                          right: 5,
-                          child: IconButton(
-                            onPressed: () {
+                          top: 10,
+                          right: 10,
+                          child: GestureDetector(
+                            onTap: () {
                               ShareEventHelper.shareEvent(
                                 context: context,
                                 title: event.title,
@@ -169,158 +213,212 @@ class HomeContent extends StatelessWidget {
                                 city: event.city,
                               );
                             },
-                            icon: const Icon(Icons.share_rounded),
-                            color: Colors.white,
-                            iconSize: 18,
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.black.withValues(
-                                alpha: 0.55,
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.25),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
-                              shape: const CircleBorder(),
+                              child: Icon(
+                                Icons.share_rounded,
+                                size: 20,
+                                color: const Color(0xFF1A73E8),
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
 
-                    // Content section
+                    // Event title
                     Padding(
-                      padding: EdgeInsets.all(4.wp),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      padding: EdgeInsets.fromLTRB(3.wp, 1.5.hp, 3.wp, 0),
+                      child: Text(
+                        event.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+
+                    // Date/time (left) + Online & Paid badges (right)
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(3.wp, 1.2.hp, 3.wp, 0),
+                      child: Row(
                         children: [
-                          Text(
-                            event.title,
-                            style: TextStyle(
-                              color: Colors.grey.shade900,
-                              fontSize: 11.sp,
-                              fontWeight: FontWeight.w700,
-                              height: 1.3,
+                          // Date & time — left
+                          Icon(
+                            Icons.calendar_today,
+                            size: 11,
+                            color: const Color(0xFF1A73E8),
+                          ),
+                          SizedBox(width: 1.wp),
+                          Expanded(
+                            child: Text(
+                              controller.formatEventDateTimeForHome(
+                                event,
+                                context,
+                              ),
+                              style: TextStyle(
+                                fontSize: 7.5.sp,
+                                color: const Color(0xFF1A73E8),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
-                          SizedBox(height: 1.hp),
-
-                          // Description
-                          Text(
-                            event.description,
-                            style: TextStyle(
-                              color: Colors.grey.shade500,
-                              fontSize: 9.sp,
-                              height: 1.4,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          SizedBox(height: 1.5.hp),
-
-                          // Info row with icons
-                          Row(
-                            children: [
-                              // Location
-                              Expanded(
-                                child: _buildInfoItem(
-                                  icon: event.isVirtual
-                                      ? Icons.language_rounded
-                                      : Icons.location_on_rounded,
-                                  text: event.isVirtual
-                                      ? 'Virtual Event'
-                                      : (event.city?.isNotEmpty == true
-                                            ? event.city!
-                                            : 'Location TBA'),
-                                  iconColor: event.isVirtual
-                                      ? Colors.blue.shade400
-                                      : Colors.red.shade400,
-                                ),
-                              ),
-                              Container(
-                                width: 1,
-                                height: 24,
-                                color: Colors.grey.shade200,
-                              ),
-                              // Time
-                              Expanded(
-                                child: _buildInfoItem(
-                                  icon: Icons.access_time_rounded,
-                                  text: controller.formatEventDateTimeForHome(
-                                    event,
-                                    context,
-                                  ),
-                                  iconColor: Colors.orange.shade400,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 1.5.hp),
-
-                          // Divider
+                          SizedBox(width: 2.wp),
+                          // Event type badge — right
                           Container(
-                            height: 1,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 2.wp,
+                              vertical: 0.4.hp,
+                            ),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.grey.shade200,
-                                  Colors.grey.shade200,
-                                  Colors.transparent,
-                                ],
-                                stops: const [0.0, 0.2, 0.8, 1.0],
+                              color: typeColor.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(typeIcon, size: 11, color: typeColor),
+                                SizedBox(width: 0.8.wp),
+                                Text(
+                                  typeLabel,
+                                  style: TextStyle(
+                                    color: typeColor,
+                                    fontSize: 7.5.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 1.wp),
+                          // Free / Paid badge — right
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 2.wp,
+                              vertical: 0.4.hp,
+                            ),
+                            decoration: BoxDecoration(
+                              color: event.isPaid
+                                  ? const Color(
+                                      0xFFE65100,
+                                    ).withValues(alpha: 0.1)
+                                  : const Color(
+                                      0xFF388E3C,
+                                    ).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              event.isPaid ? 'Paid' : 'Free',
+                              style: TextStyle(
+                                color: event.isPaid
+                                    ? const Color(0xFFE65100)
+                                    : const Color(0xFF388E3C),
+                                fontSize: 7.5.sp,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
-                          SizedBox(height: 1.5.hp),
+                        ],
+                      ),
+                    ),
 
-                          // Organizer row
-                          Row(
-                            children: [
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  gradient: AppColors.buttonGradient,
-                                  borderRadius: BorderRadius.circular(10),
+                    // Venue (for physical / hybrid events)
+                    if (!event.isVirtual &&
+                        (event.city?.isNotEmpty == true ||
+                            event.venue?.isNotEmpty == true))
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(3.wp, 1.hp, 3.wp, 0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: 13,
+                              color: const Color(0xFFE65100),
+                            ),
+                            SizedBox(width: 1.wp),
+                            Expanded(
+                              child: Text(
+                                event.venue ?? event.city ?? '',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 8.5.sp,
+                                  color: const Color(0xFFE65100),
+                                  fontWeight: FontWeight.w500,
                                 ),
-                                child: Center(
-                                  child: Text(
-                                    event.organizer.name.isNotEmpty
-                                        ? event.organizer.name[0].toUpperCase()
-                                        : 'O',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 14,
-                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                    // Description
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(3.wp, 1.2.hp, 3.wp, 0),
+                      child: Text(
+                        event.description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 8.5.sp,
+                          color: Colors.grey[500],
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+
+                    // Organiser + arrow
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(3.wp, 1.2.hp, 3.wp, 1.5.hp),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Organized by',
+                                  style: TextStyle(
+                                    fontSize: 7.sp,
+                                    color: Colors.grey[500],
                                   ),
                                 ),
-                              ),
-                              SizedBox(width: 3.wp),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Organized by',
-                                      style: TextStyle(
-                                        color: Colors.grey.shade400,
-                                        fontSize: 8.sp,
-                                      ),
-                                    ),
-                                    Text(
-                                      event.organizer.name,
-                                      style: TextStyle(
-                                        color: Colors.grey.shade800,
-                                        fontSize: 9.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
+                                SizedBox(height: 0.3.hp),
+                                Text(
+                                  event.organizer.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 8.5.sp,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                              EventPriceBadge(isPaid: event.isPaid),
-                            ],
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(top: 1.hp),
+                            child: Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 14,
+                              color: Colors.grey[600],
+                            ),
                           ),
                         ],
                       ),
@@ -335,42 +433,34 @@ class HomeContent extends StatelessWidget {
                 ? const EventCardShimmer()
                 : const SizedBox();
           }
-        }, childCount: controller.state.events.length + 1),
+        }, childCount: controller.state.events.length + 3),
       );
     });
   }
 
-  Widget _buildInfoItem({
-    required IconData icon,
-    required String text,
-    required Color iconColor,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: iconColor, size: 16),
+  Widget _buildCategoryChip(String label, Color color) {
+    return GestureDetector(
+      onTap: () {
+        controller.navigateToEventCategoryPage(
+          category: label == 'View All' ? null : label,
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.only(right: 2.wp),
+        padding: EdgeInsets.symmetric(horizontal: 4.wp),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 8.sp,
+            fontWeight: FontWeight.w600,
+            color: color,
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: Colors.grey.shade700,
-                fontSize: 8.sp,
-                fontWeight: FontWeight.w500,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

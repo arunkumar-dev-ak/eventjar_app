@@ -36,8 +36,8 @@ class HomeProfile extends GetView<HomeController> {
               margin: EdgeInsets.only(
                 bottom:
                     controller.allStepsComplete && controller.scoreCardExpanded
-                    ? (72.0 + (4 * 52.0) + 1) - 72 + 30
-                    : 30,
+                    ? (9.hp + (4 * 6.5.hp) + 1) - 9.hp + 3.7.hp
+                    : 3.7.hp,
               ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
@@ -104,7 +104,7 @@ class HomeProfile extends GetView<HomeController> {
                                       profileData.name.toString().toUpperCase(),
                                       style: TextStyle(
                                         color: const Color(0xFF1A1A2E),
-                                        fontSize: 15.sp,
+                                        fontSize: 11.sp,
                                         fontWeight: FontWeight.bold,
                                       ),
                                       maxLines: 1,
@@ -115,7 +115,7 @@ class HomeProfile extends GetView<HomeController> {
                                       profileData.email,
                                       style: TextStyle(
                                         color: Colors.grey[700],
-                                        fontSize: 10.sp,
+                                        fontSize: 9.sp,
                                         fontWeight: FontWeight.w500,
                                       ),
                                       maxLines: 1,
@@ -126,7 +126,7 @@ class HomeProfile extends GetView<HomeController> {
                                       profileData.phone ?? "Yet to add",
                                       style: TextStyle(
                                         color: Colors.grey[600],
-                                        fontSize: 10.sp,
+                                        fontSize: 9.sp,
                                       ),
                                     ),
                                     //SizedBox(height: 1.hp),
@@ -148,7 +148,7 @@ class HomeProfile extends GetView<HomeController> {
             Positioned(
               left: 2.5.wp,
               right: 2.5.wp,
-              bottom: 6,
+              bottom: 0.7.hp,
               child: _buildNetworkingScoreCard(),
             ),
           ],
@@ -191,7 +191,7 @@ class HomeProfile extends GetView<HomeController> {
               child: Icon(
                 Icons.person_outline_rounded,
                 color: Colors.white,
-                size: 28,
+                size: 7.wp,
               ),
             ),
             SizedBox(width: 4.wp),
@@ -221,7 +221,7 @@ class HomeProfile extends GetView<HomeController> {
             Icon(
               Icons.arrow_forward_ios_rounded,
               color: Colors.white,
-              size: 18,
+              size: 4.5.wp,
             ),
           ],
         ),
@@ -265,7 +265,7 @@ class HomeProfile extends GetView<HomeController> {
                       children: [
                         Container(
                           width: 40.wp,
-                          height: 14,
+                          height: 1.7.hp,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(4),
@@ -274,7 +274,7 @@ class HomeProfile extends GetView<HomeController> {
                         SizedBox(height: 0.8.hp),
                         Container(
                           width: 30.wp,
-                          height: 10,
+                          height: 1.2.hp,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(4),
@@ -283,7 +283,7 @@ class HomeProfile extends GetView<HomeController> {
                         SizedBox(height: 0.6.hp),
                         Container(
                           width: 25.wp,
-                          height: 10,
+                          height: 1.2.hp,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(4),
@@ -296,8 +296,8 @@ class HomeProfile extends GetView<HomeController> {
                             (_) => Padding(
                               padding: EdgeInsets.only(right: 0.5.wp),
                               child: Container(
-                                width: 22,
-                                height: 22,
+                                width: 5.5.wp,
+                                height: 5.5.wp,
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   shape: BoxShape.circle,
@@ -315,7 +315,7 @@ class HomeProfile extends GetView<HomeController> {
             SizedBox(height: 0.5.hp),
             Container(
               width: double.infinity,
-              height: 72,
+              height: 9.hp,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -351,7 +351,7 @@ class HomeProfile extends GetView<HomeController> {
 
     return Container(
       width: double.infinity,
-      height: 72,
+      height: 9.hp,
       decoration: _scoreCardDecoration(),
       child: Column(
         children: [
@@ -368,16 +368,16 @@ class HomeProfile extends GetView<HomeController> {
                         }
                       : null,
                   child: Container(
-                    width: 28,
+                    width: 7.wp,
                     height: double.infinity,
                     alignment: Alignment.center,
                     child: currentPage > 0
                         ? Icon(
                             Icons.chevron_left,
                             color: Colors.white,
-                            size: 20,
+                            size: 5.wp,
                           )
-                        : SizedBox(width: 20),
+                        : SizedBox(width: 5.wp),
                   ),
                 ),
                 Expanded(
@@ -400,16 +400,16 @@ class HomeProfile extends GetView<HomeController> {
                         }
                       : null,
                   child: Container(
-                    width: 28,
+                    width: 7.wp,
                     height: double.infinity,
                     alignment: Alignment.center,
                     child: currentPage < totalPages - 1
                         ? Icon(
                             Icons.chevron_right,
                             color: Colors.white,
-                            size: 20,
+                            size: 5.wp,
                           )
-                        : SizedBox(width: 20),
+                        : SizedBox(width: 5.wp),
                   ),
                 ),
               ],
@@ -417,16 +417,16 @@ class HomeProfile extends GetView<HomeController> {
           ),
           if (totalPages > 1)
             Padding(
-              padding: EdgeInsets.only(bottom: 6),
+              padding: EdgeInsets.only(bottom: 0.7.hp),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
                   totalPages,
                   (i) => AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    margin: EdgeInsets.symmetric(horizontal: 3),
-                    width: i == currentPage ? 16 : 6,
-                    height: 6,
+                    margin: EdgeInsets.symmetric(horizontal: 0.8.wp),
+                    width: i == currentPage ? 4.wp : 1.5.wp,
+                    height: 0.7.hp,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(3),
                       color: i == currentPage
@@ -527,30 +527,52 @@ class HomeProfile extends GetView<HomeController> {
       range: '0 - 50',
       min: 0,
       max: 50,
-      color: Color(0xFFB8860B),
+      colorLight: Color(0xFFD4915E), // Bronze Light
+      colorDark: Color(0xFF8B5A2B), // Bronze Dark
     ),
     (
       name: 'Connector',
       range: '51 - 250',
       min: 51,
       max: 250,
-      color: Color(0xFFDAA520),
+      colorLight: Color(0xFFE5E4E2), // silver Light
+      colorDark: Color.fromARGB(255, 101, 101, 101), // silver Dark
     ),
     (
       name: 'Networker',
       range: '251 - 500',
       min: 251,
       max: 500,
-      color: Color(0xFFC49000),
+      colorLight: Color(0xFFFFE066), // Gold Light
+      colorDark: Color(0xFFB8860B), // Gold Dark
     ),
     (
       name: 'Champion',
-      range: '500+',
+      range: '501+',
       min: 501,
       max: 999999,
-      color: Color(0xFFB8860B),
+      colorLight: Color.fromARGB(255, 232, 170, 242), // Pinkish lavender shine
+      colorDark: Color(0xFF7B1FA2), // Rich royal purple
     ),
   ];
+
+  Widget _buildTrophyIcon({
+    required Color colorLight,
+    required Color colorDark,
+    required double size,
+  }) {
+    return ShaderMask(
+      blendMode: BlendMode.srcIn,
+      shaderCallback: (Rect bounds) {
+        return LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [colorLight, colorDark],
+        ).createShader(bounds);
+      },
+      child: Icon(Icons.emoji_events, size: size, color: Colors.white),
+    );
+  }
 
   Widget _buildNetworkScoreCard() {
     final isExpanded = controller.scoreCardExpanded;
@@ -558,7 +580,7 @@ class HomeProfile extends GetView<HomeController> {
     final tier = _trophyTiers[tierIndex];
     final contacts = controller.totalContacts;
 
-    final textColor = isExpanded ? const Color(0xFF0D47A1) : Colors.white;
+    final textColor = Colors.white;
 
     return GestureDetector(
       onTap: controller.toggleScoreCard,
@@ -566,7 +588,7 @@ class HomeProfile extends GetView<HomeController> {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         width: double.infinity,
-        height: isExpanded ? 72.0 + (_trophyTiers.length * 52.0) + 1 : 72,
+        height: isExpanded ? 9.hp + (_trophyTiers.length * 6.5.hp) + 1 : 9.hp,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(14),
@@ -575,9 +597,9 @@ class HomeProfile extends GetView<HomeController> {
           gradient: LinearGradient(
             colors: isExpanded
                 ? const [
-                    Color(0xFF90CAF9),
-                    Color(0xFF64B5F6),
-                    Color(0xFF42A5F5),
+                    Color(0xFF0D47A1),
+                    Color(0xFF1565C0),
+                    Color(0xFF1E88E5),
                   ]
                 : const [
                     Color(0xFF1565C0),
@@ -609,7 +631,7 @@ class HomeProfile extends GetView<HomeController> {
             children: [
               // Header (always visible)
               SizedBox(
-                height: 72,
+                height: 9.hp,
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 4.wp,
@@ -617,7 +639,11 @@ class HomeProfile extends GetView<HomeController> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.emoji_events, color: tier.color, size: 28),
+                      _buildTrophyIcon(
+                        colorLight: tier.colorLight,
+                        colorDark: tier.colorDark,
+                        size: 9.5.wp,
+                      ),
                       SizedBox(width: 3.wp),
                       Expanded(
                         child: Column(
@@ -649,7 +675,7 @@ class HomeProfile extends GetView<HomeController> {
                         child: Icon(
                           Icons.keyboard_arrow_down,
                           color: textColor,
-                          size: 22,
+                          size: 5.5.wp,
                         ),
                       ),
                     ],
@@ -669,26 +695,26 @@ class HomeProfile extends GetView<HomeController> {
                 final isLocked = i > tierIndex;
 
                 final tierTextColor = isLocked
-                    ? const Color(0xFF0D47A1).withValues(alpha: 0.35)
-                    : const Color(0xFF0D47A1);
+                    ? Colors.white.withValues(alpha: 0.35)
+                    : Colors.white;
                 final subTextColor = isLocked
-                    ? const Color(0xFF0D47A1).withValues(alpha: 0.25)
-                    : const Color(0xFF0D47A1).withValues(alpha: 0.6);
+                    ? Colors.white.withValues(alpha: 0.25)
+                    : Colors.white.withValues(alpha: 0.7);
 
                 return Container(
-                  height: 52,
+                  height: 6.5.hp,
                   padding: EdgeInsets.symmetric(horizontal: 4.wp),
                   decoration: isCurrentTier
                       ? BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.35),
+                          color: Colors.white.withValues(alpha: 0.1),
                         )
                       : null,
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.emoji_events,
-                        color: isLocked ? Colors.grey[400] : t.color,
-                        size: 24,
+                      _buildTrophyIcon(
+                        colorLight: t.colorLight,
+                        colorDark: t.colorDark,
+                        size: 7.5.wp,
                       ),
                       SizedBox(width: 3.wp),
                       Expanded(
@@ -718,8 +744,8 @@ class HomeProfile extends GetView<HomeController> {
                       if (isCompleted)
                         Icon(
                           Icons.check_circle,
-                          color: const Color(0xFF2E7D32),
-                          size: 20,
+                          color: const Color(0xFF69F0AE),
+                          size: 5.wp,
                         ),
                       if (isCurrentTier)
                         Container(
@@ -728,7 +754,7 @@ class HomeProfile extends GetView<HomeController> {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1565C0),
+                            color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -743,8 +769,8 @@ class HomeProfile extends GetView<HomeController> {
                       if (isLocked)
                         Icon(
                           Icons.lock_outline,
-                          color: Colors.grey[400],
-                          size: 18,
+                          color: Colors.white.withValues(alpha: 0.3),
+                          size: 4.5.wp,
                         ),
                     ],
                   ),
@@ -796,7 +822,7 @@ class HomeProfile extends GetView<HomeController> {
       padding: EdgeInsets.symmetric(horizontal: 2.wp, vertical: 0.5.hp),
       child: Row(
         children: [
-          Icon(icon, color: Colors.white, size: 20),
+          Icon(icon, color: Colors.white, size: 5.wp),
           SizedBox(width: 2.wp),
           Expanded(
             child: Column(
@@ -827,7 +853,7 @@ class HomeProfile extends GetView<HomeController> {
             ),
           ),
           if (isCompleted)
-            Icon(Icons.check_circle, color: Colors.greenAccent, size: 20),
+            Icon(Icons.check_circle, color: Colors.greenAccent, size: 5.wp),
           if (!isCompleted && buttonLabel != null) ...[
             SizedBox(width: 1.5.wp),
             GestureDetector(
@@ -890,12 +916,12 @@ class HomeProfile extends GetView<HomeController> {
             alignment: Alignment.topCenter,
             children: [
               Container(
-                margin: const EdgeInsets.only(top: 45),
-                padding: const EdgeInsets.only(
-                  top: 55,
-                  left: 24,
-                  right: 24,
-                  bottom: 24,
+                margin: EdgeInsets.only(top: 5.5.hp),
+                padding: EdgeInsets.only(
+                  top: 7.hp,
+                  left: 6.wp,
+                  right: 6.wp,
+                  bottom: 3.hp,
                 ),
                 decoration: const BoxDecoration(
                   color: Colors.white,
@@ -916,7 +942,7 @@ class HomeProfile extends GetView<HomeController> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 1.hp),
                     Text(
                       'Enter the 6-digit code sent to\n$phone',
                       style: TextStyle(
@@ -925,7 +951,7 @@ class HomeProfile extends GetView<HomeController> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 28),
+                    SizedBox(height: 3.5.hp),
 
                     // Pinput OTP field
                     Pinput(
@@ -935,10 +961,10 @@ class HomeProfile extends GetView<HomeController> {
                       autofocus: true,
                       keyboardType: TextInputType.number,
                       defaultPinTheme: PinTheme(
-                        width: 48,
-                        height: 52,
+                        width: 12.wp,
+                        height: 6.5.hp,
                         textStyle: TextStyle(
-                          fontSize: 18,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.grey.shade900,
                         ),
@@ -949,10 +975,10 @@ class HomeProfile extends GetView<HomeController> {
                         ),
                       ),
                       focusedPinTheme: PinTheme(
-                        width: 48,
-                        height: 52,
+                        width: 12.wp,
+                        height: 6.5.hp,
                         textStyle: TextStyle(
-                          fontSize: 18,
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.grey.shade900,
                         ),
@@ -966,10 +992,10 @@ class HomeProfile extends GetView<HomeController> {
                         ),
                       ),
                       errorPinTheme: PinTheme(
-                        width: 48,
-                        height: 52,
-                        textStyle: const TextStyle(
-                          fontSize: 18,
+                        width: 12.wp,
+                        height: 6.5.hp,
+                        textStyle: TextStyle(
+                          fontSize: 12.sp,
                           fontWeight: FontWeight.bold,
                           color: Colors.red,
                         ),
@@ -980,14 +1006,14 @@ class HomeProfile extends GetView<HomeController> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 1.hp),
 
                     // Error message
                     Obx(() {
                       final error = controller.state.otpError.value;
                       if (error.isEmpty) return const SizedBox.shrink();
                       return Padding(
-                        padding: const EdgeInsets.only(top: 4),
+                        padding: EdgeInsets.only(top: 0.5.hp),
                         child: Text(
                           error,
                           style: TextStyle(
@@ -999,7 +1025,7 @@ class HomeProfile extends GetView<HomeController> {
                       );
                     }),
 
-                    const SizedBox(height: 12),
+                    SizedBox(height: 1.5.hp),
 
                     // Resend OTP
                     Obx(() {
@@ -1037,13 +1063,13 @@ class HomeProfile extends GetView<HomeController> {
                       );
                     }),
 
-                    const SizedBox(height: 24),
+                    SizedBox(height: 3.hp),
 
                     // Verify button
                     Obx(
                       () => SizedBox(
                         width: double.infinity,
-                        height: 52,
+                        height: 6.5.hp,
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
@@ -1081,10 +1107,10 @@ class HomeProfile extends GetView<HomeController> {
                               ),
                               child: Center(
                                 child: controller.state.isVerifyingOtp.value
-                                    ? const SizedBox(
-                                        width: 22,
-                                        height: 22,
-                                        child: CircularProgressIndicator(
+                                    ? SizedBox(
+                                        width: 5.5.wp,
+                                        height: 5.5.wp,
+                                        child: const CircularProgressIndicator(
                                           color: Colors.white,
                                           strokeWidth: 2.5,
                                         ),
@@ -1104,24 +1130,24 @@ class HomeProfile extends GetView<HomeController> {
                       ),
                     ),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: 2.hp),
                   ],
                 ),
               ),
 
               // Circle icon at top
               Container(
-                width: 85,
-                height: 85,
+                width: 22.wp,
+                height: 22.wp,
                 decoration: BoxDecoration(
                   gradient: AppColors.buttonGradient,
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.white, width: 4),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.phone_android_rounded,
                   color: Colors.white,
-                  size: 36,
+                  size: 9.wp,
                 ),
               ),
             ],
@@ -1149,12 +1175,12 @@ class HomeProfile extends GetView<HomeController> {
           alignment: Alignment.topCenter,
           children: [
             Container(
-              margin: const EdgeInsets.only(top: 50),
-              padding: const EdgeInsets.only(
-                top: 60,
-                left: 24,
-                right: 24,
-                bottom: 24,
+              margin: EdgeInsets.only(top: 6.hp),
+              padding: EdgeInsets.only(
+                top: 7.5.hp,
+                left: 6.wp,
+                right: 6.wp,
+                bottom: 3.hp,
               ),
               decoration: const BoxDecoration(
                 color: Colors.white,
@@ -1175,7 +1201,7 @@ class HomeProfile extends GetView<HomeController> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 1.2.hp),
                   Text(
                     'A verification link has been sent to\n$email',
                     style: TextStyle(
@@ -1184,7 +1210,7 @@ class HomeProfile extends GetView<HomeController> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 2.5.hp),
                   InkWell(
                     onTap: () {
                       Navigator.of(ctx).pop();
@@ -1192,7 +1218,7 @@ class HomeProfile extends GetView<HomeController> {
                     },
                     child: Container(
                       width: 90.wp,
-                      height: 60,
+                      height: 7.5.hp,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16.0),
                         gradient: AppColors.buttonGradient,
@@ -1213,14 +1239,14 @@ class HomeProfile extends GetView<HomeController> {
               ),
             ),
             Container(
-              width: 90,
-              height: 90,
+              width: 24.wp,
+              height: 24.wp,
               decoration: BoxDecoration(
                 gradient: AppColors.buttonGradient,
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 4),
               ),
-              child: const Icon(Icons.email, color: Colors.white, size: 40),
+              child: Icon(Icons.email, color: Colors.white, size: 10.wp),
             ),
           ],
         );
@@ -1285,8 +1311,8 @@ class HomeProfile extends GetView<HomeController> {
         GestureDetector(
           onTap: () {},
           child: Container(
-            width: 18,
-            height: 18,
+            width: 4.5.wp,
+            height: 4.5.wp,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.white,
@@ -1299,7 +1325,7 @@ class HomeProfile extends GetView<HomeController> {
                 ),
               ],
             ),
-            child: Icon(Icons.add, size: 11, color: const Color(0xFF1A73E8)),
+            child: Icon(Icons.add, size: 3.wp, color: const Color(0xFF1A73E8)),
           ),
         ),
       ],
@@ -1307,7 +1333,7 @@ class HomeProfile extends GetView<HomeController> {
   }
 
   Widget _buildMedalBadge(Medal medal) {
-    const double size = 22;
+    final double size = 5.5.wp;
 
     if (!medal.enabled) {
       return Icon(Icons.military_tech, size: size, color: Colors.grey[400]);

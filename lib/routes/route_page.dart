@@ -60,7 +60,9 @@ import 'package:eventjar/routes/route_auth.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:get/get.dart';
 
+import '../controller/categories_event/binding.dart';
 import '../controller/scan_card/binding.dart';
+import '../page/category_events/event_list.dart';
 import '../page/scan_card/scan_card.dart';
 
 class RoutePage {
@@ -281,6 +283,12 @@ class RoutePage {
       page: () => SocialFormPage(),
       binding: SocialBinding(),
       middlewares: [LoginMiddleware()],
+    ),
+
+    GetPage(
+      name: RouteName.categoriesPage,
+      page: () => CategoriesScreen(),
+      binding: CategoriesEventBinding(),
     ),
   ];
 }
