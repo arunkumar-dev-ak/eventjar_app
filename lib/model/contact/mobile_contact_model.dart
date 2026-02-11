@@ -72,6 +72,7 @@ class MobileContact {
   final bool meetingScheduled;
   final bool meetingConfirmed;
   final bool meetingCompleted;
+  final bool isEventJarUser;
   final bool isOverdue;
   final DateTime? lastMeetingDate;
 
@@ -101,6 +102,7 @@ class MobileContact {
     required this.isOverdue,
     required this.meetingConfirmed,
     required this.meetingCompleted,
+    required this.isEventJarUser,
     this.lastMeetingDate,
   });
 
@@ -138,6 +140,7 @@ class MobileContact {
         isOverdue: json['isOverdue'] ?? false,
         meetingConfirmed: json['meetingConfirmed'] ?? false,
         meetingCompleted: json['meetingCompleted'] ?? false,
+        isEventJarUser: json['isEventJarUser'] ?? false,
         lastMeetingDate: json['lastMeetingDate'] != null
             ? DateTime.parse(json['lastMeetingDate'])
             : null,
@@ -174,6 +177,7 @@ class MobileContact {
     'meetingConfirmed': meetingConfirmed,
     'meetingCompleted': meetingCompleted,
     'isOverdue': isOverdue,
+    'isEventJarUser': isEventJarUser,
     'lastMeetingDate': lastMeetingDate?.toIso8601String(),
   };
 }

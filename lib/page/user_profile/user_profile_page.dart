@@ -220,7 +220,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      "Manage email, WhatsApp notifications",
+                      "Manage Email, WhatsApp notifications",
                       style: TextStyle(fontSize: 8.sp, color: Colors.grey[600]),
                     ),
                   ],

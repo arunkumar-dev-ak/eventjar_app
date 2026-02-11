@@ -344,7 +344,8 @@ class ContactController extends GetxController
     LoggerService.loggerInstance.dynamic_d(contact);
     Get.toNamed(RouteName.addContactPage, arguments: contact)?.then(
       (result) async => {
-        if (result == 'refresh') {await fetchContactsOnFirstLoad()},
+        if (result == 'refresh')
+          {state.expandedIndex.value = 0, await fetchContactsOnFirstLoad()},
       },
     );
   }

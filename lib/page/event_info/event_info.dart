@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/event_info/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/customized_upgrader/custom_upgrade_alert.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/event_info/tabs/agenda/agenda_page.dart';
 import 'package:eventjar/page/event_info/tabs/connection/connection_page.dart';

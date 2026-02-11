@@ -3,6 +3,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/page/contact/radial_design/circular_pie_chart_painter.dart';
+import 'package:eventjar/page/contact/radial_design/invite_to_eventjar.dart';
 import 'package:eventjar/page/contact/radial_design/radial_design_func.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,6 +31,7 @@ class ContactCardHeader extends StatelessWidget {
     final int activeStageIndex = getStageIndexFromContact(contact.stage);
     final Color stageColor = stageDefinitions[activeStageIndex].color;
     final List<String> tags = contact.tags;
+    final onEventJar = contact.isEventJarUser;
 
     final collapsedChartSize = isSmallScreen ? 50.0 : 60.0;
     return Material(
@@ -75,7 +77,22 @@ class ContactCardHeader extends StatelessWidget {
                           contact.phone ?? 'No phone',
                         ),
                       SizedBox(height: 12),
-                      _buildStageBadge(stageColor, contact.stage.index),
+                      // _buildStageBadge(stageColor, contact.stage.index),
+                      Row(
+                        children: [
+                          _buildStageBadge(stageColor, contact.stage.index),
+                          SizedBox(width: 2.wp),
+
+                          Flexible(
+                            child: EventJarInviteBadge(
+                              onEventJar: onEventJar,
+                              phone: contact.phone,
+                              name: contact.name,
+                              parentContext: context,
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -173,6 +190,26 @@ class ContactCardHeader extends StatelessWidget {
                                   ],
                                 ),
                               ),
+                              if (!contact.isEventJarUser)
+                                PopupMenuItem(
+                                  value: ContactCardAction.inviteToEventJar,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.person_add,
+                                        color: Colors.blue,
+                                        size: 18,
+                                      ),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        'Invite to EventJar',
+                                        style: TextStyle(
+                                          color: Colors.grey.shade800,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               PopupMenuItem(
                                 value: ContactCardAction.addToPhone,
                                 child: Row(
@@ -393,7 +430,7 @@ Widget _buildNameWithCallButton({
 //stage badge
 Widget _buildStageBadge(Color stageColor, int activeStageIndex) {
   return Container(
-    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+    padding: EdgeInsets.symmetric(horizontal: 2.5.wp, vertical: 0.6.hp),
     decoration: BoxDecoration(
       color: stageColor.withValues(alpha: 0.15),
       borderRadius: BorderRadius.circular(12),
@@ -403,11 +440,11 @@ Widget _buildStageBadge(Color stageColor, int activeStageIndex) {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(Icons.circle, size: 10, color: stageColor),
-        SizedBox(width: 6),
+        SizedBox(width: 1.wp),
         Text(
           stageDefinitions[activeStageIndex].name,
           style: TextStyle(
-            fontSize: 11,
+            fontSize: 6.5.sp,
             fontWeight: FontWeight.w700,
             color: stageColor,
           ),

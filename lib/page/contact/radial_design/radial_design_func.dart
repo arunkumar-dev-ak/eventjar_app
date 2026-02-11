@@ -1,14 +1,23 @@
 import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/global/app_toast.dart';
+import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/page/contact/radial_design/contact_card_popup.dart';
+import 'package:eventjar/page/contact/radial_design/invite_to_eventjar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
-enum ContactCardAction { edit, delete, call, mail, addToPhone }
+enum ContactCardAction {
+  edit,
+  delete,
+  call,
+  mail,
+  addToPhone,
+  inviteToEventJar,
+}
 
 int getStageIndexFromContact(ContactStage stage) {
   switch (stage) {
@@ -90,6 +99,16 @@ void handleContactCardAction(
         controller.launchPhoneCall(contact.phone!);
       }
       break;
+
+    case ContactCardAction.inviteToEventJar:
+      final invitedUserName = UserStore.to.profile['name'] ?? "Someone";
+      inviteToEventJarOnWhatsApp(
+        phone: contact.phone,
+        name: contact.name,
+        invitedUserName: invitedUserName,
+        context: context,
+      );
+      break;
   }
 }
 
@@ -107,10 +126,23 @@ Future<void> _addContactToPhone(
 
     LoggerService.loggerInstance.dynamic_d('Contacts permission granted');
 
+    final tags = contact.tags;
+
     // 📱 Create device contact
+    final String tagsText = (tags.isNotEmpty)
+        ? tags.join(', ')
+        : 'Saved from EventJar';
+
+    // Add max 2 tags to name
+    String displayName = contact.name;
+    if (tags.isNotEmpty) {
+      final twoTags = tags.take(2).join(', ');
+      displayName = '${contact.name} ($twoTags)';
+    }
+
     final newContact = Contact()
-      ..name.first = contact.name
-      ..notes = [Note('Saved from EventJar')];
+      ..name.first = displayName
+      ..notes = [Note(tagsText)];
 
     // 📞 Phone
     if (contact.phoneParsed != null &&

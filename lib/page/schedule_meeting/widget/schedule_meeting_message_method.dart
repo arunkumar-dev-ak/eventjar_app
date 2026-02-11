@@ -80,7 +80,7 @@ Widget scheduleMeetingMessageBuildMethodCard({
                         ),
                       ),
 
-                      if (!isLoading && badgeText != null) ...[
+                      if (!isLoading) ...[
                         SizedBox(height: 0.5.hp),
                         Container(
                           padding: const EdgeInsets.symmetric(
@@ -88,19 +88,23 @@ Widget scheduleMeetingMessageBuildMethodCard({
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.orange.withValues(alpha: 0.1),
+                            color: badgeText == null
+                                ? Colors.green.withValues(alpha: 0.1)
+                                : Colors.orange.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            badgeText,
+                            badgeText ?? 'Automation Enabled',
                             style: TextStyle(
                               fontSize: 7.sp,
-                              color: Colors.orange[700],
+                              color: badgeText == null
+                                  ? Colors.green[700]
+                                  : Colors.orange[700],
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
-                      ] else if (isLoading) ...[
+                      ] else ...[
                         SizedBox(height: 0.5.hp),
                         Container(
                           padding: const EdgeInsets.symmetric(

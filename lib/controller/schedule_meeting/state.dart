@@ -12,6 +12,6 @@ class ScheduleMeetingState {
 
   var meetingDate = DateTime.now().obs;
   var meetingTime = TimeOfDay.now().obs;
-  var meetingEmailChecked = false.obs;
+  var meetingEmailChecked = true.obs;
   var meetingWhatsappChecked = false.obs;
 }
