@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/global/store/user_store.dart';
@@ -8,6 +10,10 @@ class DioClient {
   static final DioClient _instance = DioClient._internal();
   factory DioClient() => _instance;
   late Dio dio;
+
+  // Prevents concurrent token refresh attempts
+  bool _isRefreshing = false;
+  Completer<String?>? _refreshCompleter;
 
   DioClient._internal() {
     dio = Dio(
@@ -72,41 +78,67 @@ class DioClient {
               return handler.next(e);
             }
 
-            try {
-              // ✅ Refresh token call
-              final refreshResponse = await dio.post(
-                '/auth/refresh-token',
-                options: Options(
-                  headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Client-Platform': 'mobile',
-                    'X-Device-Id': UserStore.to.deviceId,
-                    'X-Client-Type': 'mobile',
-                  },
-                ),
-                data: {'refreshToken': refreshToken},
+            String? newAccessToken;
+
+            if (_isRefreshing) {
+              // Another request is already refreshing — wait for it
+              LoggerService.loggerInstance.dynamic_d(
+                'Waiting for ongoing token refresh...',
               );
+              newAccessToken = await _refreshCompleter?.future;
+            } else {
+              // First 401 — perform the refresh
+              _isRefreshing = true;
+              _refreshCompleter = Completer<String?>();
 
-              if (refreshResponse.statusCode == 200 ||
-                  refreshResponse.statusCode == 201) {
-                final loginResponse = RefreshTokenResponse.fromJson(
-                  refreshResponse.data,
+              try {
+                final refreshResponse = await dio.post(
+                  '/auth/refresh-token',
+                  options: Options(
+                    headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded',
+                      'X-Client-Platform': 'mobile',
+                      'X-Device-Id': UserStore.to.deviceId,
+                      'X-Client-Type': 'mobile',
+                    },
+                  ),
+                  data: {'refreshToken': refreshToken},
                 );
 
-                LoggerService.loggerInstance.dynamic_d(
-                  'handling set local data',
+                if (refreshResponse.statusCode == 200 ||
+                    refreshResponse.statusCode == 201) {
+                  final loginResponse = RefreshTokenResponse.fromJson(
+                    refreshResponse.data,
+                  );
+
+                  LoggerService.loggerInstance.dynamic_d(
+                    'handling set local data',
+                  );
+
+                  await UserStore.to.handleSetLocalDataForRefreshToken(
+                    loginResponse,
+                  );
+
+                  newAccessToken = loginResponse.accessToken;
+
+                  LoggerService.loggerInstance.dynamic_d(
+                    'newAccessToken is $newAccessToken',
+                  );
+                }
+                _refreshCompleter!.complete(newAccessToken);
+              } catch (refreshError) {
+                LoggerService.loggerInstance.e(
+                  'Token refresh failed: $refreshError',
                 );
+                _refreshCompleter!.complete(null);
+              } finally {
+                _isRefreshing = false;
+              }
+            }
 
-                await UserStore.to.handleSetLocalDataForRefreshToken(
-                  loginResponse,
-                );
-
-                final newAccessToken = loginResponse.accessToken;
-
-                LoggerService.loggerInstance.dynamic_d(
-                  'newAccessToken is $newAccessToken',
-                );
-
+            // Retry the original request with the new token
+            if (newAccessToken != null) {
+              try {
                 final options = e.requestOptions.copyWith(
                   headers: {
                     ...e.requestOptions.headers,
@@ -125,11 +157,14 @@ class DioClient {
                 );
 
                 return handler.resolve(response);
+              } catch (retryError) {
+                LoggerService.loggerInstance.e(
+                  'Retry after refresh failed: $retryError',
+                );
+                if (retryError is DioException) {
+                  return handler.next(retryError);
+                }
               }
-            } catch (refreshError) {
-              LoggerService.loggerInstance.e(
-                'Token refresh failed: $refreshError',
-              );
             }
           }
 

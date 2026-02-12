@@ -141,21 +141,14 @@ class HomeController extends GetxController {
     } catch (err) {
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
-
         if (statusCode == 401) {
-          // Auth error handling example
           UserStore.to.clearStore();
           return;
         }
-
-        ApiErrorHandler.handleError(err, "Failed to fetch analytics");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
       }
-    } finally {}
+      // Rethrow so onTabOpen can handle retry
+      rethrow;
+    }
   }
 
   Future<void> fetchUserProfile() async {
@@ -166,39 +159,50 @@ class HomeController extends GetxController {
         startVerificationAutoScroll();
       }
     } catch (err) {
-      // LoggerService.loggerInstance.e(err);
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
-
         if (statusCode == 401) {
           await UserStore.to.clearStore();
-          return; // Stop further error handling
+          return;
         }
-
-        ApiErrorHandler.handleError(err, "Failed to load User Profile");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.toString()})",
-        );
       }
-    } finally {}
+      rethrow;
+    }
   }
 
-  Future<void> onTabOpen() async {
+  Future<void> onTabOpen({int retryCount = 0}) async {
     LoggerService.loggerInstance.dynamic_d("in on tab open");
     state.isLoading.value = true;
     try {
+      // Events don't need auth — fetch independently
+      // Profile & analytics need auth — run sequentially to avoid token race
       await Future.wait([
         fetchEvents(),
-        fetchUserProfile(),
-        fetchContactAnalytics(),
+        _fetchAuthenticatedData(),
       ]);
+    } catch (err) {
+      LoggerService.loggerInstance.e('onTabOpen error: $err');
+
+      // Retry once on server errors (5xx, timeout, connection)
+      // Keep isLoading true so shimmer stays visible during retry
+      if (retryCount < 1) {
+        await Future.delayed(const Duration(seconds: 2));
+        return onTabOpen(retryCount: retryCount + 1);
+      }
+
+      // After retry exhausted, show error
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Failed to load data");
+      }
     } finally {
       state.isLoading.value = false;
     }
+  }
+
+  Future<void> _fetchAuthenticatedData() async {
+    if (!UserStore.to.isLogin) return;
+    await fetchUserProfile();
+    await fetchContactAnalytics();
   }
 
   void _onScroll() {
@@ -247,10 +251,7 @@ class HomeController extends GetxController {
   }
 
   void navigateToEventCategoryPage({String? category}) {
-    Get.toNamed(
-      RouteName.categoriesPage,
-      arguments: {'category': category},
-    );
+    Get.toNamed(RouteName.categoriesPage, arguments: {'category': category});
   }
 
   String getEndpoint() {
@@ -279,16 +280,14 @@ class HomeController extends GetxController {
       state.meta.value = response.meta;
     } catch (err) {
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Failed to load Events");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.runtimeType})",
-        );
+        final statusCode = err.response?.statusCode;
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          return;
+        }
       }
-    } finally {}
+      rethrow;
+    }
   }
 
   Future<void> fetchEventsOnScroll() async {
