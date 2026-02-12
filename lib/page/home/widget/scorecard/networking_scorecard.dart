@@ -61,11 +61,22 @@ Widget buildNetworkScoreCard() {
                 ),
                 child: Row(
                   children: [
+                    // _buildTrophyIcon(
+                    //   colorLight: tier.colorLight,
+                    //   colorDark: tier.colorDark,
+                    //   size: 9.5.wp,
+                    // ),
                     _buildTrophyIcon(
+                      assetPath: tier.assetPath,
                       colorLight: tier.colorLight,
                       colorDark: tier.colorDark,
-                      size: 9.5.wp,
+                      size: tierIndex == 0
+                          ? 10.5.wp
+                          : tierIndex == 3
+                          ? 12.5.wp
+                          : 13.wp,
                     ),
+
                     SizedBox(width: 3.wp),
                     Expanded(
                       child: Column(
@@ -131,11 +142,23 @@ Widget buildNetworkScoreCard() {
                     : null,
                 child: Row(
                   children: [
-                    _buildTrophyIcon(
-                      colorLight: t.colorLight,
-                      colorDark: t.colorDark,
-                      size: 7.5.wp,
+                    // _buildTrophyIcon(
+                    //   colorLight: t.colorLight,
+                    //   colorDark: t.colorDark,
+                    //   size: 7.5.wp,
+                    // ),
+                    SizedBox(
+                      width: 11.wp,
+                      child: Center(
+                        child: _buildTrophyIcon(
+                          assetPath: t.assetPath,
+                          colorLight: t.colorLight,
+                          colorDark: t.colorDark,
+                          size: 7.5.wp + (i * 1.0.wp),
+                        ),
+                      ),
                     ),
+
                     SizedBox(width: 3.wp),
                     Expanded(
                       child: Column(
@@ -203,46 +226,114 @@ Widget buildNetworkScoreCard() {
   );
 }
 
+// const _trophyTiers = [
+//   (
+//     name: 'Starter',
+//     range: '0 - 50',
+//     min: 0,
+//     max: 50,
+//     colorLight: Color(0xFFD4915E), // Bronze Light
+//     colorDark: Color(0xFF8B5A2B), // Bronze Dark
+//   ),
+//   (
+//     name: 'Connector',
+//     range: '51 - 250',
+//     min: 51,
+//     max: 250,
+//     colorLight: Color(0xFFE5E4E2), // silver Light
+//     colorDark: Color.fromARGB(255, 101, 101, 101), // silver Dark
+//   ),
+//   (
+//     name: 'Networker',
+//     range: '251 - 500',
+//     min: 251,
+//     max: 500,
+//     colorLight: Color(0xFFFFE066), // Gold Light
+//     colorDark: Color(0xFFB8860B), // Gold Dark
+//   ),
+//   (
+//     name: 'Champion',
+//     range: '501+',
+//     min: 501,
+//     max: 999999,
+//     colorLight: Color.fromARGB(255, 232, 170, 242), // Pinkish lavender shine
+//     colorDark: Color(0xFF7B1FA2), // Rich royal purple
+//   ),
+// ];
+
 const _trophyTiers = [
   (
     name: 'Starter',
     range: '0 - 50',
     min: 0,
     max: 50,
-    colorLight: Color(0xFFD4915E), // Bronze Light
-    colorDark: Color(0xFF8B5A2B), // Bronze Dark
+    assetPath: 'assets/stage_icon/stage1.png',
+    colorLight: Color(0xFFD4915E),
+    colorDark: Color(0xFF8B5A2B),
   ),
   (
     name: 'Connector',
     range: '51 - 250',
     min: 51,
     max: 250,
-    colorLight: Color(0xFFE5E4E2), // silver Light
-    colorDark: Color.fromARGB(255, 101, 101, 101), // silver Dark
+    assetPath: 'assets/stage_icon/stage2.png',
+    colorLight: Color(0xFFE5E4E2),
+    colorDark: Color(0xFF656565),
   ),
   (
     name: 'Networker',
     range: '251 - 500',
     min: 251,
     max: 500,
-    colorLight: Color(0xFFFFE066), // Gold Light
-    colorDark: Color(0xFFB8860B), // Gold Dark
+    assetPath: 'assets/stage_icon/stage3.png',
+    colorLight: Color(0xFFFFE066),
+    colorDark: Color(0xFFB8860B),
   ),
   (
     name: 'Champion',
     range: '501+',
     min: 501,
     max: 999999,
-    colorLight: Color.fromARGB(255, 232, 170, 242), // Pinkish lavender shine
-    colorDark: Color(0xFF7B1FA2), // Rich royal purple
+    assetPath: 'assets/stage_icon/stage4.png',
+    colorLight: Color(0xFFE8AAF2),
+    colorDark: Color(0xFF7B1FA2),
   ),
 ];
 
+// Widget _buildTrophyIcon({
+//   required Color colorLight,
+//   required Color colorDark,
+//   required double size,
+// }) {
+//   return ShaderMask(
+//     blendMode: BlendMode.srcIn,
+//     shaderCallback: (Rect bounds) {
+//       return LinearGradient(
+//         begin: Alignment.topCenter,
+//         end: Alignment.bottomCenter,
+//         colors: [colorLight, colorDark],
+//       ).createShader(bounds);
+//     },
+//     child: Icon(Icons.emoji_events, size: size, color: Colors.white),
+//   );
+// }
+
 Widget _buildTrophyIcon({
+  required String assetPath,
   required Color colorLight,
   required Color colorDark,
   required double size,
 }) {
+  if (assetPath.contains('stage4.png')) {
+    return Image.asset(
+      assetPath,
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
+
+  // For other stages apply gradient color
   return ShaderMask(
     blendMode: BlendMode.srcIn,
     shaderCallback: (Rect bounds) {
@@ -252,6 +343,12 @@ Widget _buildTrophyIcon({
         colors: [colorLight, colorDark],
       ).createShader(bounds);
     },
-    child: Icon(Icons.emoji_events, size: size, color: Colors.white),
+    child: Image.asset(
+      assetPath,
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+      color: Colors.white,
+    ),
   );
 }
