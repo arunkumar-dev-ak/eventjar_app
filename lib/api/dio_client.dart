@@ -168,12 +168,14 @@ class DioClient {
             }
           }
 
-          if (e.response?.statusCode == 500 ||
-              e.response?.statusCode == 503 ||
-              e.response?.statusCode == 502) {
-            LoggerService.loggerInstance.e(
-              "🛑 Server Error: ${e.response?.statusCode}",
-            );
+          final statusCode = e.response?.statusCode;
+          if (statusCode == 500 ||
+              statusCode == 502 ||
+              statusCode == 503 ||
+              statusCode == 521 ||
+              statusCode == 522 ||
+              statusCode == 524) {
+            LoggerService.loggerInstance.e("🛑 Server Error: $statusCode");
 
             return handler.reject(
               DioException(
@@ -181,7 +183,7 @@ class DioClient {
                 error: 'Server Error. Please try again later.',
                 type: DioExceptionType.badResponse,
                 response: e.response,
-                message: 'Server Error (${e.response?.statusCode})',
+                message: 'Server Error ($statusCode)',
               ),
             );
           }

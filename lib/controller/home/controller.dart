@@ -176,21 +176,24 @@ class HomeController extends GetxController {
     try {
       // Events don't need auth — fetch independently
       // Profile & analytics need auth — run sequentially to avoid token race
-      await Future.wait([
-        fetchEvents(),
-        _fetchAuthenticatedData(),
-      ]);
+      await Future.wait([fetchEvents(), _fetchAuthenticatedData()]);
     } catch (err) {
       LoggerService.loggerInstance.e('onTabOpen error: $err');
 
-      // Retry once on server errors (5xx, timeout, connection)
-      // Keep isLoading true so shimmer stays visible during retry
-      if (retryCount < 1) {
+      // Only retry on transient network errors (timeout, connection),
+      // NOT on server errors (5xx) — those won't resolve in 2 seconds
+      final isTransient =
+          err is DioException &&
+          (err.type == DioExceptionType.connectionTimeout ||
+              err.type == DioExceptionType.sendTimeout ||
+              err.type == DioExceptionType.receiveTimeout ||
+              err.type == DioExceptionType.connectionError);
+
+      if (isTransient && retryCount < 1) {
         await Future.delayed(const Duration(seconds: 2));
         return onTabOpen(retryCount: retryCount + 1);
       }
 
-      // After retry exhausted, show error
       if (err is DioException) {
         ApiErrorHandler.handleError(err, "Failed to load data");
       }
@@ -201,8 +204,31 @@ class HomeController extends GetxController {
 
   Future<void> _fetchAuthenticatedData() async {
     if (!UserStore.to.isLogin) return;
-    await fetchUserProfile();
-    await fetchContactAnalytics();
+
+    // Run sequentially to avoid token refresh race condition,
+    // but don't let one failure block the other
+    Object? firstError;
+
+    try {
+      await fetchUserProfile();
+    } catch (e) {
+      firstError = e;
+    }
+
+    // Skip analytics if profile fetch triggered logout (401 with expired refresh)
+    if (!UserStore.to.isLogin) {
+      if (firstError != null) throw firstError;
+      return;
+    }
+
+    try {
+      await fetchContactAnalytics();
+    } catch (e) {
+      if (firstError != null) throw firstError;
+      rethrow;
+    }
+
+    if (firstError != null) throw firstError;
   }
 
   void _onScroll() {
@@ -279,13 +305,6 @@ class HomeController extends GetxController {
       state.events.value = response.data;
       state.meta.value = response.meta;
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-        if (statusCode == 401) {
-          UserStore.to.clearStore();
-          return;
-        }
-      }
       rethrow;
     }
   }
