@@ -17,9 +17,9 @@ class HomePage extends GetView<HomeController> {
     return CustomUpgradeAlert(
       upgrader: Upgrader(
         // messages: MyEventJarUpgradeMessages(),
-        debugLogging: true,
-        // durationUntilAlertAgain: const Duration(days: 2),
-        durationUntilAlertAgain: const Duration(seconds: 60),
+        // debugLogging: true,
+        durationUntilAlertAgain: const Duration(days: 2),
+        // durationUntilAlertAgain: const Duration(seconds: 60),
       ),
       child: Container(
         width: 100.wp,

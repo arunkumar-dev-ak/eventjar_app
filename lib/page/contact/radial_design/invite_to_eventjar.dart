@@ -88,7 +88,7 @@ You're Invited to Join EventJar!
 
 Hi $name,
 
-$invitedUserName has invited you to join EventJar, the premier platform for event management and professional networking.
+$invitedUserName has invited you to join EventJar, the premier platform for Contact management and professional networking.
 
 Why join EventJar?
 • Discover and attend amazing events in your area

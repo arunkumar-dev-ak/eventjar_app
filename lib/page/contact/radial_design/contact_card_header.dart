@@ -43,285 +43,332 @@ class ContactCardHeader extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: EdgeInsets.all(16),
-          child: Row(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Small Pie Chart
-              if (!isExpanded) _buildSmallChart(stages, collapsedChartSize),
+              Row(
+                children: [
+                  // Small Pie Chart
+                  if (!isExpanded) _buildSmallChart(stages, collapsedChartSize),
 
-              if (!isExpanded) SizedBox(width: 3.wp),
+                  if (!isExpanded) SizedBox(width: 3.wp),
 
-              // Contact Info - Collapsed view
-              if (!isExpanded)
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildNameWithCallButton(
-                        name: contact.name,
-                        contact: contact,
-                        isOverDue: contact.isOverdue,
-                        isExpanded: isExpanded,
-                        controller: controller,
-                        nameFontWeight: FontWeight.bold,
-                      ),
-                      SizedBox(height: 3),
-                      _buildInfoRow(
-                        Icons.email_outlined,
-                        Colors.grey.shade600,
-                        contact.email,
-                      ),
-                      if (contact.phone != null)
-                        _buildInfoRow(
-                          Icons.phone_outlined,
-                          Colors.grey.shade600,
-                          contact.phone ?? 'No phone',
-                        ),
-                      SizedBox(height: 12),
-                      // _buildStageBadge(stageColor, contact.stage.index),
-                      Row(
-                        children: [
-                          _buildStageBadge(stageColor, contact.stage.index),
-                          SizedBox(width: 2.wp),
-
-                          Flexible(
-                            child: EventJarInviteBadge(
-                              onEventJar: onEventJar,
-                              phone: contact.phone,
-                              name: contact.name,
-                              parentContext: context,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-              // Expanded Header (Current → Next Stage)
-              if (isExpanded)
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+                  // Contact Info - Collapsed view
+                  if (!isExpanded)
+                    Expanded(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Name
-                                Text(
-                                  contact.name,
-                                  style: TextStyle(
-                                    fontSize: 10.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-
-                                // Email
-                                _buildInfoRow(
-                                  Icons.email_outlined,
-                                  Colors.grey.shade600,
-                                  contact.email,
-                                ),
-
-                                // Phone
-                                if (contact.phone != null)
-                                  _buildInfoRow(
-                                    Icons.phone_rounded,
-                                    Colors.grey.shade600,
-                                    contact.phone!,
-                                  ),
-                              ],
-                            ),
+                          _buildNameWithCallButton(
+                            name: contact.name,
+                            contact: contact,
+                            isOverDue: contact.isOverdue,
+                            isExpanded: isExpanded,
+                            controller: controller,
+                            nameFontWeight: FontWeight.bold,
                           ),
-                          SizedBox(width: 2.wp),
-                          PopupMenuButton<ContactCardAction>(
-                            icon: Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade200,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.more_vert,
-                                size: 18,
-                                color: Colors.black,
-                              ),
+                          SizedBox(height: 3),
+                          _buildInfoRow(
+                            Icons.email_outlined,
+                            Colors.grey.shade600,
+                            contact.email,
+                          ),
+                          if (contact.phone != null)
+                            _buildInfoRow(
+                              Icons.phone_outlined,
+                              Colors.grey.shade600,
+                              contact.phone ?? 'No phone',
                             ),
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: ContactCardAction.mail,
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.email,
-                                      color: Colors.blue,
-                                      size: 18,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Send Mail',
-                                      style: TextStyle(
-                                        color: Colors.grey.shade800,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: ContactCardAction.call,
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.phone,
-                                      color: Colors.green,
-                                      size: 18,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Call',
-                                      style: TextStyle(
-                                        color: Colors.grey.shade800,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              if (!contact.isEventJarUser)
-                                PopupMenuItem(
-                                  value: ContactCardAction.inviteToEventJar,
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.person_add,
-                                        color: Colors.blue,
-                                        size: 18,
-                                      ),
-                                      SizedBox(width: 8),
-                                      Text(
-                                        'Invite to EventJar',
-                                        style: TextStyle(
-                                          color: Colors.grey.shade800,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              PopupMenuItem(
-                                value: ContactCardAction.addToPhone,
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.contacts,
-                                      color: Colors.purple,
-                                      size: 18,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Add to Phone',
-                                      style: TextStyle(
-                                        color: Colors.grey.shade800,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: ContactCardAction.edit,
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.edit,
-                                      color: Colors.blue,
-                                      size: 18,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Edit Contact',
-                                      style: TextStyle(
-                                        color: Colors.grey.shade800,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              PopupMenuItem(
-                                value: ContactCardAction.delete,
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.delete_outline,
-                                      color: Colors.red,
-                                      size: 18,
-                                    ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Delete Contact',
-                                      style: TextStyle(
-                                        color: Colors.grey.shade800,
-                                      ),
-                                    ),
-                                  ],
+                          SizedBox(height: 12),
+                          // _buildStageBadge(stageColor, contact.stage.index),
+                          Row(
+                            children: [
+                              _buildStageBadge(stageColor, contact.stage.index),
+                              SizedBox(width: 2.wp),
+
+                              Flexible(
+                                child: EventJarInviteBadge(
+                                  onEventJar: onEventJar,
+                                  phone: contact.phone,
+                                  name: contact.name,
+                                  parentContext: context,
                                 ),
                               ),
                             ],
-                            onSelected: (action) => {
-                              handleContactCardAction(
-                                context,
-                                action,
-                                contact,
-                                controller,
-                              ),
-                            },
                           ),
                         ],
                       ),
+                    ),
 
-                      if (contact.tags.isNotEmpty)
-                        Container(
-                          margin: EdgeInsets.only(top: 1.hp),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: contact.tags.map((tag) {
-                                return Padding(
-                                  padding: EdgeInsets.only(right: 1.wp),
-                                  child: Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 3.wp,
-                                      vertical: 0.5.hp,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue.shade50,
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                        color: Colors.blue.shade200,
-                                        width: 1,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      tag,
+                  // Expanded Header (Current → Next Stage)
+                  if (isExpanded)
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Name
+                                    Text(
+                                      contact.name,
                                       style: TextStyle(
-                                        fontSize: 6.5.sp,
-                                        color: Colors.blue.shade700,
-                                        fontWeight: FontWeight.w600,
+                                        fontSize: 10.sp,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
                                       ),
+                                    ),
+
+                                    // Email
+                                    _buildInfoRow(
+                                      Icons.email_outlined,
+                                      Colors.grey.shade600,
+                                      contact.email,
+                                    ),
+
+                                    // Phone
+                                    if (contact.phone != null)
+                                      _buildInfoRow(
+                                        Icons.phone_rounded,
+                                        Colors.grey.shade600,
+                                        contact.phone!,
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(width: 2.wp),
+                              PopupMenuButton<ContactCardAction>(
+                                icon: Container(
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade200,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.more_vert,
+                                    size: 18,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    value: ContactCardAction.mail,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.email,
+                                          color: Colors.blue,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Send Mail',
+                                          style: TextStyle(
+                                            color: Colors.grey.shade800,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                );
-                              }).toList(),
+                                  PopupMenuItem(
+                                    value: ContactCardAction.call,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.phone,
+                                          color: Colors.green,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Call',
+                                          style: TextStyle(
+                                            color: Colors.grey.shade800,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (!contact.isEventJarUser)
+                                    PopupMenuItem(
+                                      value: ContactCardAction.inviteToEventJar,
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.person_add,
+                                            color: Colors.blue,
+                                            size: 18,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            'Invite to EventJar',
+                                            style: TextStyle(
+                                              color: Colors.grey.shade800,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  PopupMenuItem(
+                                    value: ContactCardAction.addToPhone,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.contacts,
+                                          color: Colors.purple,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Add to Phone',
+                                          style: TextStyle(
+                                            color: Colors.grey.shade800,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: ContactCardAction.edit,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.edit,
+                                          color: Colors.blue,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Edit Contact',
+                                          style: TextStyle(
+                                            color: Colors.grey.shade800,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: ContactCardAction.delete,
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.delete_outline,
+                                          color: Colors.red,
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'Delete Contact',
+                                          style: TextStyle(
+                                            color: Colors.grey.shade800,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                                onSelected: (action) => {
+                                  handleContactCardAction(
+                                    context,
+                                    action,
+                                    contact,
+                                    controller,
+                                  ),
+                                },
+                              ),
+                            ],
+                          ),
+
+                          if (contact.tags.isNotEmpty)
+                            Container(
+                              margin: EdgeInsets.only(top: 1.hp),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: contact.tags.map((tag) {
+                                    return Padding(
+                                      padding: EdgeInsets.only(right: 1.wp),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 3.wp,
+                                          vertical: 0.5.hp,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue.shade50,
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.blue.shade200,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          tag,
+                                          style: TextStyle(
+                                            fontSize: 6.5.sp,
+                                            color: Colors.blue.shade700,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ),
+
+                          SizedBox(height: 1.hp),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+              if (!isExpanded && contact.tags.isNotEmpty) ...[
+                SizedBox(height: 1.hp),
+                Container(
+                  margin: EdgeInsets.only(top: 1.hp),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: contact.tags.map((tag) {
+                        return Padding(
+                          padding: EdgeInsets.only(right: 1.wp),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 3.wp,
+                              vertical: 0.5.hp,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.shade50,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.blue.shade200,
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              tag,
+                              style: TextStyle(
+                                fontSize: 6.5.sp,
+                                color: Colors.blue.shade700,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                        ),
-
-                      SizedBox(height: 1.hp),
-                    ],
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
+              ],
             ],
           ),
         ),
