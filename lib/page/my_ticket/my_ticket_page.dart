@@ -43,28 +43,31 @@ class MyTicketPage extends GetView<MyTicketController> {
         return RefreshIndicator(
           onRefresh: controller.refreshTickets,
           child: ListView.builder(
+            controller: controller.scrollController,
             padding: EdgeInsets.all(4.wp),
             itemCount: controller.state.tickets.length + 1,
             itemBuilder: (context, index) {
-              // Show loading indicator at bottom when loading more
-              if (index == controller.state.tickets.length) {
-                if (controller.state.isLoadingMore.value) {
-                  return Padding(
-                    padding: EdgeInsets.all(4.wp),
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-
-                // Load more when reaching end
-                if (controller.state.pagination.value?.hasNextPage ?? false) {
-                  controller.loadMoreTickets();
-                }
-
-                return SizedBox.shrink();
+              if (index < controller.state.tickets.length) {
+                final ticket = controller.state.tickets[index];
+                return myTicketBuildTicketCard(ticket, context);
               }
 
-              final ticket = controller.state.tickets[index];
-              return myTicketBuildTicketCard(ticket, context);
+              // Pagination loader
+              final hasNext =
+                  controller.state.pagination.value?.hasNextPage ?? false;
+
+              if (hasNext) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 2.hp),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.gradientDarkStart,
+                    ),
+                  ),
+                );
+              }
+
+              return const SizedBox();
             },
           ),
         );

@@ -4,6 +4,7 @@ import 'package:eventjar/api/thank_you_message_api/thank_you_message_api.dart';
 import 'package:eventjar/controller/thank_you_message/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
@@ -39,7 +40,7 @@ class ThankYouMessageController extends GetxController {
     contactNameController.text = name;
     contactEmailController.text = email;
     messageController.text =
-        'Hi $name,\n\nThank you for connecting with us! We\'re excited to work together and will be in touch soon to discuss next steps.\n\nBest regards,\nYour Team';
+        'Hi $name,\n\nThank you for connecting with us! We\'re excited to work together and will be in touch soon to discuss next steps.\n\nBest regards,\n${capitalize(UserStore.to.profile['name'] ?? "Your Team")}';
   }
 
   Map<String, dynamic> _buildThankYouMessageData() {

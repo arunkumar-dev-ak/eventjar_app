@@ -10,10 +10,8 @@ import 'package:get/get.dart';
 
 import '../../global/app_colors.dart';
 
-class CategoriesScreen extends StatelessWidget {
-  CategoriesScreen({super.key});
-
-  final CategoriesEventController controller = Get.find();
+class CategoriesScreen extends GetView<CategoriesEventController> {
+  const CategoriesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

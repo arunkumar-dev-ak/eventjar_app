@@ -239,7 +239,7 @@ class SplashScreenPage extends GetView<SplashScreenController> {
         SizedBox(width: 2.wp),
         GradientText(
           textSize: 20.sp,
-          content: "EventJar",
+          content: "MyEventJar",
           gradientStart: AppColors.gradientDarkStart,
           gradientEnd: AppColors.gradientDarkEnd,
           fontWeight: FontWeight.bold,

@@ -5,7 +5,9 @@ import 'package:eventjar/controller/my_ticket/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MyTicketController extends GetxController {
@@ -15,18 +17,42 @@ class MyTicketController extends GetxController {
 
   final int itemsPerPage = 10;
 
+  // ✅ ADD scroll controller
+  final ScrollController scrollController = ScrollController();
+
   @override
   void onInit() {
     super.onInit();
+    scrollController.addListener(_onScroll);
   }
 
   void onTabOpen() {
     fetchMyTickets();
   }
 
+  // ✅ SCROLL LISTENER (auto pagination trigger)
+  void _onScroll() {
+    if (!scrollController.hasClients) return;
+
+    final maxScroll = scrollController.position.maxScrollExtent;
+    final currentScroll = scrollController.position.pixels;
+
+    const double prefetchThreshold = 200;
+
+    if (maxScroll - currentScroll <= prefetchThreshold) {
+      if (state.pagination.value != null &&
+          state.pagination.value!.hasNextPage &&
+          !state.isLoadingMore.value &&
+          !state.isLoading.value) {
+        loadMoreTickets();
+      }
+    }
+  }
+
   Future<void> fetchMyTickets() async {
     try {
       state.isLoading.value = true;
+      state.currentPage.value = 1;
 
       final response = await MyTicketsApi.getMyRegistrations(
         page: state.currentPage.value,
@@ -37,13 +63,14 @@ class MyTicketController extends GetxController {
       state.pagination.value = response.data.pagination;
     } catch (err) {
       state.tickets.value = [];
+
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
 
         if (statusCode == 401) {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return; // Stop further error handling
+          return;
         }
 
         ApiErrorHandler.handleError(err, "Failed to load tickets");
@@ -68,6 +95,7 @@ class MyTicketController extends GetxController {
     }
 
     try {
+      LoggerService.loggerInstance.dynamic_d("Loading more tickets");
       state.isLoadingMore.value = true;
       state.currentPage.value++;
 
@@ -123,5 +151,13 @@ class MyTicketController extends GetxController {
     } else {
       state.expandedTickets.add(ticketId);
     }
+  }
+
+  // ✅ CLEANUP
+  @override
+  void onClose() {
+    // scrollController.removeListener(_onScroll);
+    // scrollController.dispose();
+    super.onClose();
   }
 }

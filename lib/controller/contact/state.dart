@@ -8,6 +8,9 @@ class ContactState {
   final RxBool isLoading = false.obs;
   final RxString searchQuery = ''.obs;
 
+  final RxBool isSavingContact = false.obs;
+  Rxn<MobileContact> savingContact = Rxn();
+
   final RxBool isSearching = false.obs;
   final RxBool isFetching = false.obs;
   final RxBool isFetchingWhileScrolling = false.obs;

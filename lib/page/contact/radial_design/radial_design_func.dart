@@ -6,6 +6,7 @@ import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/page/contact/radial_design/contact_card_popup.dart';
+import 'package:eventjar/page/contact/radial_design/contact_card_saving.dart';
 import 'package:eventjar/page/contact/radial_design/invite_to_eventjar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -74,7 +75,7 @@ void handleContactCardAction(
       break;
 
     case ContactCardAction.addToPhone:
-      _addContactToPhone(context, contact);
+      contactCardAddContactToPhone(context, contact);
       break;
 
     case ContactCardAction.delete:
@@ -112,85 +113,169 @@ void handleContactCardAction(
   }
 }
 
-Future<void> _addContactToPhone(
-  BuildContext context,
-  MobileContact contact,
-) async {
-  try {
-    // 🔐 Permission
-    final granted = await FlutterContacts.requestPermission();
-    if (!granted) {
-      AppToast.warning('Contacts permission required to save contact');
-      return;
-    }
+// Future<void> _addContactToPhone(
+//   BuildContext context,
+//   MobileContact contact,
+// ) async {
+//   try {
+//     // 🔐 Permission
+//     final granted = await FlutterContacts.requestPermission();
+//     if (!granted) {
+//       AppToast.warning('Contacts permission required to save contact');
+//       return;
+//     }
 
-    LoggerService.loggerInstance.dynamic_d('Contacts permission granted');
+//     // ⏳ SHOW LOADING
+//     if (context.mounted) showLoadingSnackBar(context);
 
-    final tags = contact.tags;
+//     // final alreadyExists = await contactAlreadyExists(contact);
+//     // if (alreadyExists) {
+//     //   if (context.mounted) {
+//     //     hideSnackBar(context);
 
-    // 📱 Create device contact
-    final String tagsText = (tags.isNotEmpty)
-        ? tags.join(', ')
-        : 'Saved from EventJar';
+//     //     ScaffoldMessenger.of(context).showSnackBar(
+//     //       const SnackBar(
+//     //         content: Text('Contact already exists in phone 📱'),
+//     //         backgroundColor: Colors.orange,
+//     //         behavior: SnackBarBehavior.floating,
+//     //       ),
+//     //     );
+//     //   }
+//     //   return;
+//     // }
 
-    // Add max 2 tags to name
-    String displayName = contact.name;
-    if (tags.isNotEmpty) {
-      final twoTags = tags.take(2).join(', ');
-      displayName = '${contact.name} ($twoTags)';
-    }
+//     // final tags = contact.tags;
 
-    final newContact = Contact()
-      ..name.first = displayName
-      ..notes = [Note(tagsText)];
+//     // final String tagsText = (tags.isNotEmpty)
+//     //     ? tags.join(', ')
+//     //     : 'Saved from EventJar';
 
-    // 📞 Phone
-    if (contact.phoneParsed != null &&
-        contact.phoneParsed!.fullNumber.isNotEmpty) {
-      newContact.phones = [Phone(contact.phoneParsed!.fullNumber)];
-    } else if (contact.phone != null && contact.phone!.isNotEmpty) {
-      newContact.phones = [Phone(contact.phone!)];
-    }
+//     // String displayName = contact.name;
+//     // if (tags.isNotEmpty) {
+//     //   final twoTags = tags.take(2).join(', ');
+//     //   displayName = '${contact.name} ($twoTags)';
+//     // }
 
-    // 📧 Email
-    if (contact.email.isNotEmpty) {
-      newContact.emails = [Email(contact.email)];
-    }
+//     // final newContact = Contact()
+//     //   ..name.first = displayName
+//     //   ..notes = [Note(tagsText)];
 
-    // 🏢 Company & Job Title
-    if (contact.company != null || contact.position != null) {
-      newContact.organizations = [
-        Organization(
-          company: contact.company ?? '',
-          title: contact.position ?? '',
-        ),
-      ];
-    }
+//     // if (contact.phoneParsed != null &&
+//     //     contact.phoneParsed!.fullNumber.isNotEmpty) {
+//     //   newContact.phones = [Phone(contact.phoneParsed!.fullNumber)];
+//     // } else if (contact.phone != null && contact.phone!.isNotEmpty) {
+//     //   newContact.phones = [Phone(contact.phone!)];
+//     // }
 
-    // 💾 Save contact
-    await FlutterContacts.insertContact(newContact);
+//     // if (contact.email.isNotEmpty) {
+//     //   newContact.emails = [Email(contact.email)];
+//     // }
 
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${contact.name} added to phone contacts ✅'),
-          backgroundColor: Colors.green,
-          duration: const Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-  } catch (e, s) {
-    LoggerService.loggerInstance.dynamic_d('$e\n$s');
+//     // if (contact.company != null || contact.position != null) {
+//     //   newContact.organizations = [
+//     //     Organization(
+//     //       company: contact.company ?? '',
+//     //       title: contact.position ?? '',
+//     //     ),
+//     //   ];
+//     // }
 
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to save contact. Please try again.'),
-          backgroundColor: Colors.red,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-  }
-}
+//     // await FlutterContacts.insertContact(newContact);
+
+//     // if (context.mounted) {
+//     //   hideSnackBar(context);
+
+//     //   ScaffoldMessenger.of(context).showSnackBar(
+//     //     SnackBar(
+//     //       content: Text('${contact.name} added to phone contacts ✅'),
+//     //       backgroundColor: Colors.green,
+//     //       behavior: SnackBarBehavior.floating,
+//     //     ),
+//     //   );
+//     // }
+//   } catch (e, s) {
+//     LoggerService.loggerInstance.dynamic_d('$e\n$s');
+
+//     if (context.mounted) {
+//       hideSnackBar(context);
+
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(
+//           content: Text('Failed to save contact. Please try again.'),
+//           backgroundColor: Colors.red,
+//           behavior: SnackBarBehavior.floating,
+//         ),
+//       );
+//     }
+//   }
+// }
+
+// Future<bool> contactAlreadyExists(MobileContact contact) async {
+//   final fullNumber = contact.phoneParsed?.fullNumber;
+
+//   if (fullNumber == null || fullNumber.isEmpty) {
+//     return false;
+//   }
+
+//   String normalize(String number) {
+//     return number.replaceAll(RegExp(r'\D'), '');
+//   }
+
+//   final newNumber = normalize(fullNumber);
+
+//   final contacts = await FlutterContacts.getContacts(withProperties: true);
+
+//   for (final c in contacts) {
+//     for (final p in c.phones) {
+//       final existing = normalize(p.number);
+
+//       if (existing == newNumber) {
+//         return true;
+//       }
+//     }
+//   }
+
+//   return false;
+// }
+
+// void showLoadingSnackBar(BuildContext context) {
+//   ScaffoldMessenger.of(context).showSnackBar(
+//     SnackBar(
+//       duration: const Duration(days: 1),
+//       behavior: SnackBarBehavior.floating,
+//       backgroundColor: Colors.blueGrey.shade900, // 🎨 Background color
+//       elevation: 6,
+//       shape: RoundedRectangleBorder(
+//         borderRadius: BorderRadius.circular(16), // rounded corners
+//       ),
+//       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+//       content: Row(
+//         children: const [
+//           SizedBox(
+//             height: 20,
+//             width: 20,
+//             child: CircularProgressIndicator(
+//               strokeWidth: 2.5,
+//               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+//             ),
+//           ),
+//           SizedBox(width: 14),
+//           Expanded(
+//             child: Text(
+//               'Saving contact...',
+//               style: TextStyle(
+//                 fontSize: 15,
+//                 fontWeight: FontWeight.w500,
+//                 color: Colors.white,
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     ),
+//   );
+// }
+
+// void hideSnackBar(BuildContext context) {
+//   ScaffoldMessenger.of(context).hideCurrentSnackBar();
+// }

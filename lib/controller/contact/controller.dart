@@ -424,6 +424,12 @@ class ContactController extends GetxController
   }
 
   @override
+  void dispose() {
+    ScaffoldMessenger.of(Get.context!).hideCurrentSnackBar();
+    super.dispose();
+  }
+
+  @override
   void onClose() {
     _debounceTimer?.cancel();
     contactScrollController.removeListener(_onScrollListener);

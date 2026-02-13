@@ -3,6 +3,7 @@ import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/page/contact/radial_design/contact_card_header.dart';
+import 'package:eventjar/page/contact/radial_design/contact_meeting_widget.dart';
 import 'package:eventjar/page/contact/radial_design/expanded_content.dart';
 import 'package:eventjar/page/contact/radial_design/notes_section.dart';
 import 'package:eventjar/page/contact/radial_design/radial_design_func.dart';
@@ -87,14 +88,14 @@ Widget radialDesignBuildAccordionCard({
           ),
 
           // Replace your Schedule Meeting section with:
-          // if (isExpanded)
-          //   ContactMeetingSection.buildDynamicMeetingSection(
-          //     contact,
-          //     context,
-          //     () {
-          //       onMeetingClick();
-          //     },
-          //   ),
+          if (isExpanded)
+            ContactMeetingSection.buildDynamicMeetingSection(
+              contact,
+              context,
+              () {
+                onMeetingClick();
+              },
+            ),
 
           // Notes section
           if (isExpanded && contact.notes != null && contact.notes!.isNotEmpty)

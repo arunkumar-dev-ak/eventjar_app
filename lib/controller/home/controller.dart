@@ -205,8 +205,6 @@ class HomeController extends GetxController {
   Future<void> _fetchAuthenticatedData() async {
     if (!UserStore.to.isLogin) return;
 
-    // Run sequentially to avoid token refresh race condition,
-    // but don't let one failure block the other
     Object? firstError;
 
     try {
@@ -215,7 +213,6 @@ class HomeController extends GetxController {
       firstError = e;
     }
 
-    // Skip analytics if profile fetch triggered logout (401 with expired refresh)
     if (!UserStore.to.isLogin) {
       if (firstError != null) throw firstError;
       return;

@@ -55,6 +55,7 @@ class MobileContact {
   final String? user1Id;
   final String? user2Id;
   final Map<String, dynamic>? customAttributes;
+  final ActiveMeeting? activeMeeting;
   final PhoneParsed? phoneParsed;
   final String? company;
   final String? position;
@@ -97,6 +98,7 @@ class MobileContact {
     required this.createdAt,
     required this.updatedAt,
     this.linkedUser,
+    this.activeMeeting,
     this.event,
     required this.meetingScheduled,
     required this.isOverdue,
@@ -144,6 +146,9 @@ class MobileContact {
         lastMeetingDate: json['lastMeetingDate'] != null
             ? DateTime.parse(json['lastMeetingDate'])
             : null,
+        activeMeeting: json['activeMeeting'] != null
+            ? ActiveMeeting.fromJson(json['activeMeeting'])
+            : null,
       );
     } catch (e) {
       LoggerService.loggerInstance.e('Error parsing MobileContact: $e');
@@ -174,6 +179,7 @@ class MobileContact {
     'linkedUser': linkedUser,
     'event': event,
     'meetingScheduled': meetingScheduled,
+    'activeMeeting': activeMeeting?.toJson(),
     'meetingConfirmed': meetingConfirmed,
     'meetingCompleted': meetingCompleted,
     'isOverdue': isOverdue,
@@ -253,5 +259,64 @@ class Pagination {
     'totalPages': totalPages,
     'hasNext': hasNext,
     'hasPrevious': hasPrevious,
+  };
+}
+
+class ActiveMeeting {
+  final String id;
+  final DateTime scheduledAt;
+  final String? meetingTime;
+  final int duration;
+  final String? method;
+  final String status;
+  final String? notes;
+  final DateTime? completedAt;
+  final DateTime? cancelledAt;
+
+  ActiveMeeting({
+    required this.id,
+    required this.scheduledAt,
+    required this.duration,
+    required this.status,
+    this.meetingTime,
+    this.method,
+    this.notes,
+    this.completedAt,
+    this.cancelledAt,
+  });
+
+  factory ActiveMeeting.fromJson(Map<String, dynamic> json) {
+    try {
+      return ActiveMeeting(
+        id: json['id'],
+        scheduledAt: DateTime.parse(json['scheduledAt']),
+        meetingTime: json['meetingTime'],
+        duration: json['duration'] ?? 60,
+        method: json['method'],
+        status: json['status'],
+        notes: json['notes'],
+        completedAt: json['completedAt'] != null
+            ? DateTime.parse(json['completedAt'])
+            : null,
+        cancelledAt: json['cancelledAt'] != null
+            ? DateTime.parse(json['cancelledAt'])
+            : null,
+      );
+    } catch (e) {
+      LoggerService.loggerInstance.e('Error parsing ActiveMeeting: $e');
+      rethrow;
+    }
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'scheduledAt': scheduledAt.toIso8601String(),
+    'meetingTime': meetingTime,
+    'duration': duration,
+    'method': method,
+    'status': status,
+    'notes': notes,
+    'completedAt': completedAt?.toIso8601String(),
+    'cancelledAt': cancelledAt?.toIso8601String(),
   };
 }
