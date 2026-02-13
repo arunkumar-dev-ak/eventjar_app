@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../model/card_info.dart';
+import '../../model/contact/mobile_contact_model.dart';
 import '../../routes/route_name.dart';
 import 'state.dart';
 
@@ -173,8 +174,10 @@ class ScanCardController extends GetxController
     // Extract email - any text containing @ is email
     info.email = _extractEmail(text);
 
-    // Extract phone number
-    info.phone = _extractPhone(text);
+    // Extract phone number with country code
+    final phoneParsed = _extractPhoneParsed(text);
+    info.phoneParsed = phoneParsed;
+    info.phone = phoneParsed?.phoneNumber;
 
     // Extract name - usually in top portion of card
     info.name = _extractName(text, info.email, info.phone);
@@ -250,13 +253,15 @@ class ScanCardController extends GetxController
     return trimmed.length == 1 && RegExp(r'^[A-Z]$').hasMatch(trimmed);
   }
 
-  String? _extractPhone(String text) {
+  PhoneParsed? _extractPhoneParsed(String text) {
     // Search line by line for phone numbers
     // Prefer mobile numbers (starting with 6-9) over landline/STD (starting with 0)
     final lines = text.split('\n');
 
-    String? firstMobile;
-    String? firstLandline;
+    String? firstMobileRaw; // Raw match (with country code)
+    String? firstMobileLocal; // After removing country code
+    String? firstLandlineRaw;
+    String? firstLandlineLocal;
 
     for (final line in lines) {
       final trimmedLine = line.trim();
@@ -273,21 +278,23 @@ class ScanCardController extends GetxController
 
       final matches = phoneRegex.allMatches(trimmedLine);
       for (final match in matches) {
-        String phone = match.group(0) ?? '';
-        phone = phone.trim();
+        String rawPhone = match.group(0)?.trim() ?? '';
 
         // Check if it's an international number (starts with +)
-        final isInternational = phone.startsWith('+');
+        final isInternational = rawPhone.startsWith('+');
 
-        // Remove all country codes (+91, +94, +33, etc.)
-        phone = _removeCountryCode(phone);
+        // Remove country code to get local number
+        String localPhone = _removeCountryCode(rawPhone);
 
         // Count actual digits
-        final digitsOnly = phone.replaceAll(RegExp(r'[^\d]'), '');
+        final digitsOnly = localPhone.replaceAll(RegExp(r'[^\d]'), '');
 
         // For international numbers, accept if it has 7+ digits (after removing country code)
         if (isInternational && digitsOnly.length >= 7) {
-          firstMobile ??= phone;
+          if (firstMobileRaw == null) {
+            firstMobileRaw = rawPhone;
+            firstMobileLocal = localPhone;
+          }
           continue;
         }
 
@@ -295,32 +302,56 @@ class ScanCardController extends GetxController
         if (digitsOnly.length > 12) {
           // Try to find a mobile number (starting with 6-9) in the merged digits
           final mobilePhone = _findMobileInMerged(digitsOnly);
-          if (mobilePhone != null && firstMobile == null) {
-            firstMobile = _formatPhone(mobilePhone);
+          if (mobilePhone != null && firstMobileRaw == null) {
+            firstMobileRaw = rawPhone;
+            firstMobileLocal = _formatPhone(mobilePhone);
           }
         } else if (digitsOnly.length >= 10) {
           // Check if it's a mobile (starts with 6-9) or landline (starts with 0)
           if (RegExp(r'^[6-9]').hasMatch(digitsOnly)) {
             // Mobile number - preferred
-            firstMobile ??= phone;
+            if (firstMobileRaw == null) {
+              firstMobileRaw = rawPhone;
+              firstMobileLocal = localPhone;
+            }
           } else {
             // Landline/STD number (starts with 0 or area code)
-            firstLandline ??= phone;
+            if (firstLandlineRaw == null) {
+              firstLandlineRaw = rawPhone;
+              firstLandlineLocal = localPhone;
+            }
           }
         }
       }
     }
 
-    // Return mobile number if found, otherwise landline
-    // Remove all spaces, dashes, parentheses, and dots from the final number
-    // But keep the + for international numbers
-    final result = firstMobile ?? firstLandline;
-    if (result != null) {
-      // Remove all formatting characters except +
-      String cleaned = result.replaceAll(RegExp(r'[\s\-\(\)\.]'), '');
-      return cleaned;
+    // Pick mobile over landline
+    final rawResult = firstMobileRaw ?? firstLandlineRaw;
+    final localResult = firstMobileLocal ?? firstLandlineLocal;
+    if (rawResult == null || localResult == null) return null;
+
+    // Clean the local number
+    final cleanLocal = localResult.replaceAll(RegExp(r'[\s\-\(\)\.]'), '');
+
+    // Extract country code from raw match
+    final countryCode = _extractCountryCode(rawResult);
+
+    return PhoneParsed(
+      fullNumber: '$countryCode$cleanLocal',
+      countryCode: countryCode,
+      phoneNumber: cleanLocal,
+    );
+  }
+
+  /// Extract country code from a raw phone string, defaults to +91
+  String _extractCountryCode(String rawPhone) {
+    if (rawPhone.startsWith('+')) {
+      final match = RegExp(r'^\+(\d{1,4})').firstMatch(rawPhone);
+      if (match != null) {
+        return '+${match.group(1)}';
+      }
     }
-    return null;
+    return '+91'; // Default
   }
 
   String? _findMobileInMerged(String digits) {

@@ -500,7 +500,7 @@ class ScanCard extends GetView<ScanCardController> {
                           _buildInfoRow(
                             Icons.phone_outlined,
                             'Phone',
-                            info.phone!,
+                            info.phoneParsed?.fullNumber ?? info.phone!,
                             2,
                           ),
                         SizedBox(height: 2.hp),

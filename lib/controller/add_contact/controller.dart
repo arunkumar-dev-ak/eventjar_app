@@ -65,14 +65,22 @@ class AddContactController extends GetxController {
   }
 
   void handleVisitingCardContact(VisitingCardInfo cardInfo) {
-    contactId = null; // Always new contact from NFC
+    contactId = null; // Always new contact from card scan
     state.clearButtonTitle.value = "Reset";
 
     nameController.text = cardInfo.name ?? "";
-    phoneController.text = cardInfo.phone ?? "";
+    phoneController.text = cardInfo.phoneParsed?.phoneNumber ?? cardInfo.phone ?? "";
     emailController.text = cardInfo.email ?? "";
 
-    // Set default stage for NFC contacts
+    // Set country code from parsed phone (same as NFC/QR flow)
+    final selectedCountryCode = cardInfo.phoneParsed?.countryCode ?? "+91";
+    final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
+    state.selectedCountry.value = countries.firstWhere(
+      (country) => country.fullCountryCode == cleanCountryCode,
+      orElse: () => countries.first,
+    );
+
+    // Set default stage for scanned card contacts
     state.selectedStage.value = {'key': 'new', 'value': 'New Contact'};
 
     state.selectedTagsMap.clear();
