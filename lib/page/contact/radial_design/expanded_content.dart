@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/contact/controller.dart';
+import 'package:eventjar/global/app_toast.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
@@ -45,7 +46,18 @@ Widget buildExpandedContent(
               // Center Button
               if (contact.stage.index < 4) // Not qualified
                 GestureDetector(
-                  onTap: () => _showTransitionDialog(contact: contact),
+                  onTap: () {
+                    final bool hasActiveMeeting = contact.activeMeeting != null;
+                    final bool canMoveNext =
+                        contact.stage.index < 4 && !hasActiveMeeting;
+                    if (!canMoveNext) {
+                      AppToast.warning(
+                        'Complete meeting to move to next stage',
+                      );
+                      return;
+                    }
+                    _showTransitionDialog(contact: contact);
+                  },
                   child: Container(
                     width: adjustedChartSize * 0.38,
                     height: adjustedChartSize * 0.38,

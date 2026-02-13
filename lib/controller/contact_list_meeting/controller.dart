@@ -6,7 +6,6 @@ import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
-import 'package:eventjar/model/contact-list-meeting/network_meeting.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,45 +24,56 @@ class ContactListMeetingController extends GetxController {
     final mobileContact = Get.arguments as MobileContact?;
     if (mobileContact != null) {
       state.mobileContact.value = mobileContact;
-      await _fetchMeetings(mobileContact.id);
+      _fetchMeetings();
     }
   }
 
-  Future<void> _fetchMeetings(String contactId) async {
-    try {
-      state.isShimmerLoading.value = true;
-      state.isLoading.value = true;
+  void _fetchMeetings() {
+    // try {
+    //   state.isShimmerLoading.value = true;
+    //   state.isLoading.value = true;
 
-      String endpoint;
+    //   String endpoint;
 
-      bool isCompleted = state.mobileContact.value?.meetingCompleted ?? false;
-      bool isConfirmed = state.mobileContact.value?.meetingConfirmed ?? false;
-      bool isScheduled = state.mobileContact.value?.meetingScheduled ?? false;
+    //   bool isCompleted = state.mobileContact.value?.meetingCompleted ?? false;
+    //   bool isConfirmed = state.mobileContact.value?.meetingConfirmed ?? false;
+    //   bool isScheduled = state.mobileContact.value?.meetingScheduled ?? false;
 
-      if (isCompleted || !isScheduled) {
-        state.currentMeeting.value = null;
-      } else {
-        final status = isConfirmed ? 'CONFIRMED' : 'SCHEDULED';
+    //   if (isCompleted || !isScheduled) {
+    //     state.currentMeeting.value = null;
+    //   } else {
+    //     final status = isConfirmed ? 'CONFIRMED' : 'SCHEDULED';
 
-        endpoint = '/network-meetings?contactId=$contactId&status=$status';
-        LoggerService.loggerInstance.dynamic_d(endpoint);
-        NetworkMeetingsListResponse response =
-            await ContactListMeetingApi.getNetworkMeeting(endpoint);
-        state.currentMeeting.value = response.meetings.first;
-        LoggerService.loggerInstance.dynamic_d(
-          state.currentMeeting.value?.toJson(),
-        );
-        _updateButtonType();
-      }
-    } catch (e) {
-      debugPrint('Error fetching meetings: $e');
-      if (e is DioException) {
-        Get.snackbar('Error', 'Failed to load meetings');
-      }
-    } finally {
-      state.isShimmerLoading.value = false;
-      state.isLoading.value = false;
+    //     endpoint = '/network-meetings?contactId=$contactId&status=$status';
+    //     LoggerService.loggerInstance.dynamic_d(endpoint);
+    //     NetworkMeetingsListResponse response =
+    //         await ContactListMeetingApi.getNetworkMeeting(endpoint);
+    //     state.currentMeeting.value = response.meetings.first;
+    //     LoggerService.loggerInstance.dynamic_d(
+    //       state.currentMeeting.value?.toJson(),
+    //     );
+    //     _updateButtonType();
+    //   }
+    // } catch (e) {
+    //   debugPrint('Error fetching meetings: $e');
+    //   if (e is DioException) {
+    //     Get.snackbar('Error', 'Failed to load meetings');
+    //   }
+    // } finally {
+    //   state.isShimmerLoading.value = false;
+    //   state.isLoading.value = false;
+    // }
+    // LoggerService.loggerInstance.dynamic_d(state.mobileContact)
+    bool isCompleted =
+        state.mobileContact.value?.activeMeeting?.completedAt != null;
+
+    if (isCompleted) {
+      state.currentMeeting.value = null;
+    } else {
+      state.currentMeeting.value = state.mobileContact.value!.activeMeeting!;
     }
+
+    _updateButtonType();
   }
 
   void _updateButtonType() {
@@ -91,7 +101,7 @@ class ContactListMeetingController extends GetxController {
         title: 'Meeting Completed!',
         message: 'This meeting has been marked as accepted successfully.',
       );
-      Get.back();
+      Navigator.pop(Get.context!, "refresh");
     } catch (err) {
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
@@ -117,8 +127,13 @@ class ContactListMeetingController extends GetxController {
   }
 
   Future<void> onRescheduleMeeting() async {
-    // Navigate to reschedule page
-    // Get.toNamed('/reschedule-meeting', arguments: state.currentMeeting.value);
+    Get.toNamed(
+      '/reschedule-meeting',
+      arguments: {
+        'contact': state.mobileContact.value,
+        'networkMeeting': state.currentMeeting.value,
+      },
+    );
   }
 
   Future<void> onCompleteMeeting(String meetingId) async {
@@ -129,7 +144,7 @@ class ContactListMeetingController extends GetxController {
         title: 'Meeting Completed!',
         message: 'This meeting has been marked as completed successfully.',
       );
-      Get.back(result: "refresh");
+      Navigator.pop(Get.context!, "refresh");
     } catch (err) {
       if (err is DioException) {
         final statusCode = err.response?.statusCode;

@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/contact/controller.dart';
+import 'package:eventjar/global/app_toast.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:flutter/material.dart';
@@ -67,42 +68,86 @@ class NextStageActionButton extends GetView<ContactController> {
 
   @override
   Widget build(BuildContext context) {
+    final bool hasActiveMeeting = contact.activeMeeting != null;
+
     return GestureDetector(
-      onTap: _handleTap,
+      onTap: () {
+        if (hasActiveMeeting) {
+          AppToast.warning('Complete meeting to move to next stage');
+          return;
+        }
+
+        _handleTap();
+      },
       child: AnimatedBuilder(
         animation: controller.heartbeatController,
         builder: (context, child) {
           return Transform.scale(
-            scale: controller.pulseAnimation.value,
-            child: Material(
-              elevation: 4 * controller.glowAnimation.value,
-              shadowColor: _color.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  gradient: RadialGradient(
-                    colors: [
-                      _color.withValues(alpha: 0.8),
-                      _color.withValues(alpha: 0.4),
+            scale: hasActiveMeeting ? 1 : controller.pulseAnimation.value,
+            child: Opacity(
+              opacity: hasActiveMeeting ? 0.5 : 1,
+              child: Material(
+                elevation: hasActiveMeeting
+                    ? 2
+                    : 4 * controller.glowAnimation.value,
+                shadowColor: _color.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      colors: hasActiveMeeting
+                          ? [Colors.grey.shade400, Colors.grey.shade300]
+                          : [
+                              _color.withValues(alpha: 0.8),
+                              _color.withValues(alpha: 0.4),
+                            ],
+                    ),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: hasActiveMeeting
+                          ? Colors.grey
+                          : _color.withValues(alpha: 1.0),
+                      width: 2.5,
+                    ),
+                    boxShadow: hasActiveMeeting
+                        ? []
+                        : [
+                            BoxShadow(
+                              color: _color.withValues(
+                                alpha: controller.glowAnimation.value,
+                              ),
+                              blurRadius: 20,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Icon(_icon, size: 20, color: Colors.white),
+
+                      // 🔒 Lock icon overlay
+                      if (hasActiveMeeting)
+                        Positioned(
+                          bottom: -2,
+                          right: -2,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.lock,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                     ],
                   ),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: _color.withValues(alpha: 1.0),
-                    width: 2.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: _color.withValues(
-                        alpha: controller.glowAnimation.value,
-                      ),
-                      blurRadius: 20,
-                      spreadRadius: 2,
-                    ),
-                  ],
                 ),
-                child: Icon(_icon, size: 20, color: Colors.white),
               ),
             ),
           );

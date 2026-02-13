@@ -1,7 +1,7 @@
 import 'package:eventjar/controller/contact_list_meeting/controller.dart';
 import 'package:eventjar/controller/contact_list_meeting/state.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/page/contact_list_meeting/widget/contact_list_meeting_shimmer.dart';
+import 'package:eventjar/global/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -27,9 +27,9 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
           shadowColor: Colors.black.withValues(alpha: 0.1),
         ),
         body: Obx(() {
-          if (controller.state.isShimmerLoading.value) {
-            return const ContactListShimmerLoading();
-          }
+          // if (controller.state.isShimmerLoading.value) {
+          //   return const ContactListShimmerLoading();
+          // }
 
           if (controller.state.currentMeeting.value == null) {
             return const Center(child: Text('No meetings found'));
@@ -125,6 +125,8 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
   }
 
   Widget _buildMeetingDetailsCard() {
+    final meeting = controller.state.currentMeeting.value;
+    final method = meeting?.method;
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(2.wp),
@@ -155,7 +157,9 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
           _buildDetailRow(
             Icons.email,
             'Method',
-            controller.state.currentMeeting.value?.method ?? '',
+            method == 'both'
+                ? 'Email, Whatsapp'
+                : (method != null ? capitalize(method) : ''),
           ),
           if (controller.state.currentMeeting.value?.notes != null) ...[
             SizedBox(height: 2.hp),
@@ -286,35 +290,35 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
         const SizedBox(height: 12),
 
         // Secondary Button (Reschedule) - Only for SCHEDULED
-        Obx(
-          () =>
-              controller.state.primaryButtonType.value ==
-                  MeetingButtonType.accept
-              ? SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: OutlinedButton(
-                    onPressed: controller.state.isLoading.value
-                        ? null
-                        : controller.onRescheduleMeeting,
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Colors.grey[400]!, width: 1.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      'Reschedule',
-                      style: TextStyle(
-                        color: Colors.grey[700],
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ),
+        // Obx(
+        //   () =>
+        //       controller.state.primaryButtonType.value ==
+        //           MeetingButtonType.accept
+        //       ? SizedBox(
+        //           width: double.infinity,
+        //           height: 56,
+        //           child: OutlinedButton(
+        //             onPressed: controller.state.isLoading.value
+        //                 ? null
+        //                 : controller.onRescheduleMeeting,
+        //             style: OutlinedButton.styleFrom(
+        //               side: BorderSide(color: Colors.grey[400]!, width: 1.5),
+        //               shape: RoundedRectangleBorder(
+        //                 borderRadius: BorderRadius.circular(12),
+        //               ),
+        //             ),
+        //             child: Text(
+        //               'Reschedule',
+        //               style: TextStyle(
+        //                 color: Colors.grey[700],
+        //                 fontWeight: FontWeight.w600,
+        //                 fontSize: 16,
+        //               ),
+        //             ),
+        //           ),
+        //         )
+        //       : const SizedBox.shrink(),
+        // ),
       ],
     );
   }
