@@ -131,13 +131,40 @@ class ContactCardHeader extends StatelessWidget {
                                       contact.email,
                                     ),
 
-                                    // Phone
-                                    if (contact.phone != null)
-                                      _buildInfoRow(
-                                        Icons.phone_rounded,
-                                        Colors.grey.shade600,
-                                        contact.phone!,
+                                    // Phone + Invite OR Only Invite
+                                    if (contact.phone != null) ...[
+                                      SizedBox(height: 0.5.hp),
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          _buildInfoRowCompact(
+                                            Icons.phone_rounded,
+                                            Colors.grey.shade600,
+                                            contact.phone!,
+                                          ),
+                                          SizedBox(width: 3.wp),
+                                          EventJarInviteBadge(
+                                            onEventJar: onEventJar,
+                                            phone: contact.phone,
+                                            name: contact.name,
+                                            parentContext: context,
+                                          ),
+                                        ],
                                       ),
+                                      SizedBox(height: 0.3.hp),
+                                    ] else ...[
+                                      SizedBox(height: 0.5.hp),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: EventJarInviteBadge(
+                                          onEventJar: onEventJar,
+                                          phone: null,
+                                          name: contact.name,
+                                          parentContext: context,
+                                        ),
+                                      ),
+                                      SizedBox(height: 0.3.hp),
+                                    ],
                                   ],
                                 ),
                               ),
@@ -206,7 +233,7 @@ class ContactCardHeader extends StatelessWidget {
                                           ),
                                           SizedBox(width: 8),
                                           Text(
-                                            'Invite to EventJar',
+                                            'Invite to MyEventJar',
                                             style: TextStyle(
                                               color: Colors.grey.shade800,
                                             ),
@@ -399,6 +426,25 @@ Widget _buildInfoRow(IconData icon, Color iconColor, String value) {
         ),
       ],
     ),
+  );
+}
+
+Widget _buildInfoRowCompact(IconData icon, Color iconColor, String value) {
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(icon, size: 14, color: iconColor),
+      SizedBox(width: 6),
+      Text(
+        value,
+        style: TextStyle(
+          fontSize: 8.sp,
+          color: Colors.grey.shade700,
+          fontWeight: FontWeight.w500,
+        ),
+        overflow: TextOverflow.ellipsis,
+      ),
+    ],
   );
 }
 

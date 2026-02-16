@@ -56,7 +56,7 @@ class EventJarInviteBadge extends StatelessWidget {
 
             Flexible(
               child: Text(
-                onEventJar ? 'On EventJar' : 'Invite to EventJar',
+                onEventJar ? 'On EventJar' : 'Invite to MyEventJar',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -84,21 +84,24 @@ void inviteToEventJarOnWhatsApp({
 
   final String message =
       '''
-You're Invited to Join EventJar!
+✨ You're Invited to Join *MyEventJar*!
 
-Hi $name,
+Hi *$name*,
 
-$invitedUserName has invited you to join EventJar, the premier platform for Contact management and professional networking.
+*$invitedUserName* has invited you to experience *MyEventJar* — a powerful platform built for smart event discovery and meaningful professional networking.
 
-Why join EventJar?
-• Discover and attend amazing events in your area
-• Connect with like-minded professionals
-• Organize and promote your own events
-• Build meaningful business relationships
-• Access exclusive networking opportunities
+With MyEventJar, you can:
 
-Join now:
-https://myeventjar.com/signup
+• Discover high-quality events tailored to your interests  
+• Connect with professionals, founders, and industry leaders  
+• Host and promote your own events effortlessly  
+• Build genuine business relationships that matter  
+• Unlock exclusive networking opportunities  
+
+🚀 Take your networking to the next level.
+
+Get started now:
+https://myeventjar.com/getapp
 ''';
 
   WhatsAppHelper.sendWhatsAppMessageWithText(
