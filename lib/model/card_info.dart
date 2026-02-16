@@ -21,4 +21,12 @@ class VisitingCardInfo {
 
   // Check if we have contact info (email or phone)
   bool get hasContactInfo => email != null || phone != null;
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'email': email,
+    'phone': phone,
+    'phoneParsed': phoneParsed?.toJson(),
+    'rawText': rawText,
+  };
 }
