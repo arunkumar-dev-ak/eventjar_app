@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import '../../model/card_info.dart';
 import '../../model/contact/mobile_contact_model.dart';
 import '../../routes/route_name.dart';
@@ -43,6 +43,9 @@ class ScanCardController extends GetxController
   void onInit() {
     super.onInit();
 
+    // Initialize flutter_libphonenumber
+    _initPhoneNumberLibrary();
+
     _scanLineController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
@@ -66,6 +69,14 @@ class ScanCardController extends GetxController
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _fadeController!, curve: Curves.easeOut));
+  }
+
+  Future<void> _initPhoneNumberLibrary() async {
+    try {
+      await init();
+    } catch (e) {
+      // Handle initialization error silently
+    }
   }
 
   Future<void> pickImageFromCamera() async {
@@ -123,7 +134,7 @@ class ScanCardController extends GetxController
         return;
       }
 
-      final info = _extractCardInfo(extractedText);
+      final info = await _extractCardInfo(extractedText);
 
       // Check if any useful data was extracted
       if (!info.hasData) {
@@ -168,14 +179,14 @@ class ScanCardController extends GetxController
     return false;
   }
 
-  VisitingCardInfo _extractCardInfo(String text) {
+  Future<VisitingCardInfo> _extractCardInfo(String text) async {
     final info = VisitingCardInfo(rawText: text);
 
     // Extract email - any text containing @ is email
     info.email = _extractEmail(text);
 
     // Extract phone number with country code
-    final phoneParsed = _extractPhoneParsed(text);
+    final phoneParsed = await _extractPhoneParsed(text);
     info.phoneParsed = phoneParsed;
     info.phone = phoneParsed?.phoneNumber;
 
@@ -253,15 +264,50 @@ class ScanCardController extends GetxController
     return trimmed.length == 1 && RegExp(r'^[A-Z]$').hasMatch(trimmed);
   }
 
-  PhoneParsed? _extractPhoneParsed(String text) {
-    // Search line by line for phone numbers
-    // Prefer mobile numbers (starting with 6-9) over landline/STD (starting with 0)
-    final lines = text.split('\n');
+  Future<PhoneParsed?> _extractPhoneParsed(String text) async {
+    // Extract all potential phone number strings from text
+    final potentialNumbers = _extractPotentialNumbers(text);
 
-    String? firstMobileRaw; // Raw match (with country code)
-    String? firstMobileLocal; // After removing country code
-    String? firstLandlineRaw;
-    String? firstLandlineLocal;
+    if (potentialNumbers.isEmpty) {
+      return null;
+    }
+
+    // List of regions to try in order of priority
+    final regionsToTry = [
+      'IN',
+      'US',
+      'GB',
+      'AE',
+      'AU',
+      'CA',
+      'SG',
+      'MY',
+      'PK',
+      'BD',
+    ];
+
+    // Try each potential number with the plugin
+    for (final number in potentialNumbers) {
+      // First try with the plugin
+      final parsedPhone = await _parsePhoneWithLibrary(number, regionsToTry);
+      if (parsedPhone != null) {
+        return parsedPhone;
+      }
+
+      // If plugin fails, try fallback parsing
+      final fallbackPhone = _fallbackPhoneParsing(number);
+      if (fallbackPhone != null) {
+        return fallbackPhone;
+      }
+    }
+
+    return null;
+  }
+
+  List<String> _extractPotentialNumbers(String text) {
+    final List<String> potentialNumbers = [];
+    final Set<String> addedNumbers = {}; // Track to avoid duplicates
+    final lines = text.split('\n');
 
     for (final line in lines) {
       final trimmedLine = line.trim();
@@ -269,137 +315,277 @@ class ScanCardController extends GetxController
       // Skip empty lines
       if (trimmedLine.isEmpty) continue;
 
-      // Skip lines that are clearly not phone numbers
-      if (trimmedLine.contains('@')) continue;
-      if (trimmedLine.contains('www')) continue;
+      // Skip lines with email or website
+      if (trimmedLine.contains('@') ||
+          trimmedLine.toLowerCase().contains('www') ||
+          trimmedLine.toLowerCase().contains('http')) {
+        continue;
+      }
 
-      // Look for phone pattern in this line (supports international format with +)
-      final phoneRegex = RegExp(r'[\+]?[\d][\d\s\-\(\)\.]{7,}');
+      // Extract all digit sequences with common phone number separators
+      // Pattern 1: International format with + or 00
+      final internationalMatches = RegExp(
+        r'(?:\+|00)\s*\d{1,4}[\s\-\(\)\.]*\d[\d\s\-\(\)\.]{6,}',
+      ).allMatches(trimmedLine);
 
-      final matches = phoneRegex.allMatches(trimmedLine);
-      for (final match in matches) {
-        String rawPhone = match.group(0)?.trim() ?? '';
+      for (final match in internationalMatches) {
+        String potentialNumber = match.group(0)?.trim() ?? '';
+        final digitCount = potentialNumber
+            .replaceAll(RegExp(r'[^\d]'), '')
+            .length;
 
-        // Check if it's an international number (starts with +)
-        final isInternational = rawPhone.startsWith('+');
-
-        // Remove country code to get local number
-        String localPhone = _removeCountryCode(rawPhone);
-
-        // Count actual digits
-        final digitsOnly = localPhone.replaceAll(RegExp(r'[^\d]'), '');
-
-        // For international numbers, accept if it has 7+ digits (after removing country code)
-        if (isInternational && digitsOnly.length >= 7) {
-          if (firstMobileRaw == null) {
-            firstMobileRaw = rawPhone;
-            firstMobileLocal = localPhone;
-          }
-          continue;
-        }
-
-        // Check if this is a merged number (more than 12 digits)
-        if (digitsOnly.length > 12) {
-          // Try to find a mobile number (starting with 6-9) in the merged digits
-          final mobilePhone = _findMobileInMerged(digitsOnly);
-          if (mobilePhone != null && firstMobileRaw == null) {
-            firstMobileRaw = rawPhone;
-            firstMobileLocal = _formatPhone(mobilePhone);
-          }
-        } else if (digitsOnly.length >= 10) {
-          // Check if it's a mobile (starts with 6-9) or landline (starts with 0)
-          if (RegExp(r'^[6-9]').hasMatch(digitsOnly)) {
-            // Mobile number - preferred
-            if (firstMobileRaw == null) {
-              firstMobileRaw = rawPhone;
-              firstMobileLocal = localPhone;
-            }
-          } else {
-            // Landline/STD number (starts with 0 or area code)
-            if (firstLandlineRaw == null) {
-              firstLandlineRaw = rawPhone;
-              firstLandlineLocal = localPhone;
-            }
+        if (digitCount >= 7 && digitCount <= 15) {
+          final digitsOnly = potentialNumber.replaceAll(RegExp(r'[^\d+]'), '');
+          if (!addedNumbers.contains(digitsOnly)) {
+            potentialNumbers.add(potentialNumber);
+            addedNumbers.add(digitsOnly);
           }
         }
       }
-    }
 
-    // Pick mobile over landline
-    final rawResult = firstMobileRaw ?? firstLandlineRaw;
-    final localResult = firstMobileLocal ?? firstLandlineLocal;
-    if (rawResult == null || localResult == null) return null;
+      // Pattern 2: Phone numbers starting with digits (10 digit mobile, etc.)
+      final localMatches = RegExp(
+        r'\b\d[\d\s\-\(\)\.]{6,}\b',
+      ).allMatches(trimmedLine);
 
-    // Clean the local number
-    final cleanLocal = localResult.replaceAll(RegExp(r'[\s\-\(\)\.]'), '');
+      for (final match in localMatches) {
+        String potentialNumber = match.group(0)?.trim() ?? '';
+        final digitCount = potentialNumber
+            .replaceAll(RegExp(r'[^\d]'), '')
+            .length;
 
-    // Extract country code from raw match
-    final countryCode = _extractCountryCode(rawResult);
+        // Accept 7-15 digits
+        if (digitCount >= 7 && digitCount <= 15) {
+          final digitsOnly = potentialNumber.replaceAll(RegExp(r'[^\d]'), '');
+          if (!addedNumbers.contains(digitsOnly)) {
+            potentialNumbers.add(potentialNumber);
+            addedNumbers.add(digitsOnly);
+          }
+        }
+      }
 
-    return PhoneParsed(
-      fullNumber: '$countryCode$cleanLocal',
-      countryCode: countryCode,
-      phoneNumber: cleanLocal,
-    );
-  }
+      // Pattern 3: Digits with spaces/dashes (like "98765 43210" or "9876-543-210")
+      final spacedMatches = RegExp(
+        r'\d{4,5}[\s\-\.]+\d{4,6}',
+      ).allMatches(trimmedLine);
 
-  /// Extract country code from a raw phone string, defaults to +91
-  String _extractCountryCode(String rawPhone) {
-    if (rawPhone.startsWith('+')) {
-      final match = RegExp(r'^\+(\d{1,4})').firstMatch(rawPhone);
-      if (match != null) {
-        return '+${match.group(1)}';
+      for (final match in spacedMatches) {
+        String potentialNumber = match.group(0)?.trim() ?? '';
+        final digitCount = potentialNumber
+            .replaceAll(RegExp(r'[^\d]'), '')
+            .length;
+
+        if (digitCount >= 7 && digitCount <= 15) {
+          final digitsOnly = potentialNumber.replaceAll(RegExp(r'[^\d]'), '');
+          if (!addedNumbers.contains(digitsOnly)) {
+            potentialNumbers.add(potentialNumber);
+            addedNumbers.add(digitsOnly);
+          }
+        }
       }
     }
-    return '+91'; // Default
+
+    return potentialNumbers;
   }
 
-  String? _findMobileInMerged(String digits) {
-    // Find a 10-digit mobile number (starting with 6-9) in merged digits
-    for (int i = 0; i <= digits.length - 10; i++) {
-      final candidate = digits.substring(i, i + 10);
-      if (RegExp(r'^[6-9]').hasMatch(candidate)) {
-        return candidate;
+  Future<PhoneParsed?> _parsePhoneWithLibrary(
+    String phoneNumber,
+    List<String> regionsToTry,
+  ) async {
+    // Clean the phone number but keep + for international format
+    String cleaned = phoneNumber.trim();
+
+    // Try parsing with each region using flutter_libphonenumber
+    for (final region in regionsToTry) {
+      try {
+        // Use the plugin to parse and format the phone number
+        final formattedData = await parse(cleaned, region: region);
+
+        if (formattedData != null) {
+          final String? e164 = formattedData['e164'];
+          final String? national = formattedData['national'];
+
+          // Check if parsing was successful and we have E.164 format
+          if (e164 != null && e164.isNotEmpty && e164.startsWith('+')) {
+            // Extract country code and national number from E.164 format
+            final countryCode = _extractCountryCodeFromE164(e164);
+            final nationalNumber = e164.substring(countryCode.length);
+
+            // More lenient validation - accept if we have any reasonable length
+            if (nationalNumber.isNotEmpty && nationalNumber.length >= 6) {
+              return PhoneParsed(
+                fullNumber: e164,
+                countryCode: countryCode,
+                phoneNumber: nationalNumber,
+              );
+            }
+          }
+
+          // Fallback: if E.164 failed but we have national format
+          if (national != null && national.isNotEmpty) {
+            final digitsOnly = national.replaceAll(RegExp(r'[^\d]'), '');
+            if (digitsOnly.length >= 7) {
+              // Use the region's country code
+              String countryCode = _getCountryCodeForRegion(region);
+              return PhoneParsed(
+                fullNumber: '$countryCode$digitsOnly',
+                countryCode: countryCode,
+                phoneNumber: digitsOnly,
+              );
+            }
+          }
+        }
+      } catch (e) {
+        // Try next region if parsing fails
+        continue;
       }
     }
+
     return null;
   }
 
-  String _removeCountryCode(String phone) {
-    // Remove leading/trailing spaces
-    String cleaned = phone.trim();
-
-    // Remove any country code starting with + (handles all international codes)
-    // Patterns: +91, +1, +94, +33, +971, +1-242, + 91, etc.
-    if (cleaned.startsWith('+')) {
-      // Remove + and any following digits (with optional spaces/dashes between)
-      // This handles: +91, +1, +94 12, +971-4, + 91, +1 (555), etc.
-      cleaned = cleaned.replaceFirst(RegExp(r'^\+[\s\-]?\d{1,4}[\s\-]?'), '');
-    }
-
-    // Remove 00 prefix (international dialing prefix used in some countries)
-    if (cleaned.startsWith('00')) {
-      // Remove 00 and country code (1-4 digits)
-      cleaned = cleaned.replaceFirst(RegExp(r'^00\d{1,4}[\s\-]?'), '');
-    }
-
-    // Remove 91 at the start if followed by a 10-digit number (Indian without +)
-    final digitsOnly = cleaned.replaceAll(RegExp(r'[^\d]'), '');
-    if (cleaned.startsWith('91') && digitsOnly.length == 12) {
-      cleaned = cleaned.replaceFirst(RegExp(r'^91[\s\-]?'), '');
-    }
-
-    // Remove 0 prefix (trunk prefix used in many countries)
-    if (cleaned.startsWith('0')) {
-      cleaned = cleaned.substring(1);
-    }
-
-    return cleaned.trim();
+  String _getCountryCodeForRegion(String region) {
+    // Map common region codes to country codes
+    final regionToCountryCode = {
+      'IN': '+91',
+      'US': '+1',
+      'CA': '+1',
+      'GB': '+44',
+      'AE': '+971',
+      'AU': '+61',
+      'SG': '+65',
+      'MY': '+60',
+      'PK': '+92',
+      'BD': '+880',
+    };
+    return regionToCountryCode[region] ?? '+91';
   }
 
-  String _formatPhone(String digits) {
-    // Return digits only without any spaces
-    return digits.replaceAll(RegExp(r'\s+'), '');
+  String _extractCountryCodeFromE164(String e164) {
+    // E.164 format: +[country code][national number]
+    // Country codes can be 1-4 digits
+    if (!e164.startsWith('+')) return '+91'; // Default fallback
+
+    // Try to match common country codes
+    final commonCodes = [
+      '+1',
+      '+91',
+      '+44',
+      '+971',
+      '+61',
+      '+86',
+      '+33',
+      '+81',
+    ];
+    for (final code in commonCodes) {
+      if (e164.startsWith(code)) {
+        return code;
+      }
+    }
+
+    // Extract first 1-4 digits after +
+    final match = RegExp(r'^\+(\d{1,4})').firstMatch(e164);
+    if (match != null) {
+      return '+${match.group(1)}';
+    }
+
+    return '+91'; // Default fallback
+  }
+
+  PhoneParsed? _fallbackPhoneParsing(String phoneNumber) {
+    // Clean the phone number - keep only digits and +
+    String cleaned = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+
+    if (cleaned.isEmpty) return null;
+
+    String countryCode = '+91'; // Default to India
+    String nationalNumber = cleaned;
+
+    // Check for international format with +
+    if (cleaned.startsWith('+')) {
+      // Try to identify country code
+      if (cleaned.startsWith('+91') && cleaned.length >= 12) {
+        // Indian number: +91XXXXXXXXXX (12-13 digits)
+        countryCode = '+91';
+        nationalNumber = cleaned.substring(3);
+      } else if (cleaned.startsWith('+1') && cleaned.length >= 11) {
+        // US/Canada: +1XXXXXXXXXX (11 digits)
+        countryCode = '+1';
+        nationalNumber = cleaned.substring(2);
+      } else if (cleaned.startsWith('+44') && cleaned.length >= 12) {
+        // UK: +44XXXXXXXXXX
+        countryCode = '+44';
+        nationalNumber = cleaned.substring(3);
+      } else if (cleaned.startsWith('+971') && cleaned.length >= 12) {
+        // UAE: +971XXXXXXXXX
+        countryCode = '+971';
+        nationalNumber = cleaned.substring(4);
+      } else if (cleaned.startsWith('+61') && cleaned.length >= 11) {
+        // Australia: +61XXXXXXXXX
+        countryCode = '+61';
+        nationalNumber = cleaned.substring(3);
+      } else {
+        // Generic extraction for other codes
+        final match = RegExp(r'^\+(\d{1,4})').firstMatch(cleaned);
+        if (match != null) {
+          countryCode = '+${match.group(1)}';
+          nationalNumber = cleaned.substring(countryCode.length);
+        }
+      }
+    } else if (cleaned.startsWith('00')) {
+      // International format without + (00XXXXXXXXXXX)
+      if (cleaned.startsWith('0091') && cleaned.length >= 14) {
+        countryCode = '+91';
+        nationalNumber = cleaned.substring(4);
+      } else {
+        final match = RegExp(r'^00(\d{1,4})').firstMatch(cleaned);
+        if (match != null) {
+          countryCode = '+${match.group(1)}';
+          nationalNumber = cleaned.substring(2 + match.group(1)!.length);
+        }
+      }
+    } else if (cleaned.startsWith('91') && cleaned.length == 12) {
+      // Indian number without + (91XXXXXXXXXX)
+      countryCode = '+91';
+      nationalNumber = cleaned.substring(2);
+    } else if (cleaned.startsWith('0') && cleaned.length >= 10) {
+      // Number with trunk prefix (0XXXXXXXXXX)
+      nationalNumber = cleaned.substring(1);
+    } else if (cleaned.length >= 10) {
+      // Direct national number (XXXXXXXXXX)
+      nationalNumber = cleaned;
+    } else {
+      // Too short to be valid
+      return null;
+    }
+
+    // Validate national number length
+    final digitsOnly = nationalNumber.replaceAll(RegExp(r'[^\d]'), '');
+
+    // Accept numbers with 7-15 digits (more lenient)
+    if (digitsOnly.length < 7 || digitsOnly.length > 15) {
+      return null;
+    }
+
+    // For Indian numbers, prefer mobile numbers (starting with 6-9)
+    // but accept landlines too
+    if (countryCode == '+91' && digitsOnly.length == 10) {
+      // Valid Indian number
+      return PhoneParsed(
+        fullNumber: '$countryCode$digitsOnly',
+        countryCode: countryCode,
+        phoneNumber: digitsOnly,
+      );
+    } else if (digitsOnly.length >= 7) {
+      // Valid number for other countries
+      return PhoneParsed(
+        fullNumber: '$countryCode$digitsOnly',
+        countryCode: countryCode,
+        phoneNumber: digitsOnly,
+      );
+    }
+
+    return null;
   }
 
   String? _extractName(String text, String? email, String? phone) {
