@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:eventjar/model/auth/login_model.dart';
 import 'package:eventjar/model/user_profile/user_profile.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as path;
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/user_profile_api/user_profile_api.dart';
@@ -48,7 +49,7 @@ class UserProfileController extends GetxController
   @override
   void onInit() async {
     super.onInit();
-
+    loadAppInfo();
     // shakeController = AnimationController(
     //   duration: Duration(milliseconds: 800),
     //   vsync: this,
@@ -59,6 +60,11 @@ class UserProfileController extends GetxController
     // );
 
     // shakeController.repeat(reverse: true);
+  }
+
+  Future<void> loadAppInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    state.appVersion.value = '${info.version} (${info.buildNumber})';
   }
 
   void onTabOpen() async {
@@ -711,7 +717,8 @@ class UserProfileController extends GetxController
   Timer? _resendTimer;
 
   Future<bool> sendPhoneOtp() async {
-    final phone = state.userProfile.value?.phone ??
+    final phone =
+        state.userProfile.value?.phone ??
         state.userProfile.value?.phoneParsed?.fullNumber;
     if (phone == null || phone.isEmpty) {
       AppSnackbar.error(
@@ -740,7 +747,8 @@ class UserProfileController extends GetxController
   }
 
   Future<bool> verifyPhoneOtp(String otp) async {
-    final phone = state.userProfile.value?.phone ??
+    final phone =
+        state.userProfile.value?.phone ??
         state.userProfile.value?.phoneParsed?.fullNumber;
     if (phone == null || phone.isEmpty) return false;
 

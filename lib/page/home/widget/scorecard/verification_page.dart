@@ -16,12 +16,23 @@ List<Widget> scorecardBuildVerificationPages() {
   // Phone verification
   if (!profile.phoneVerified) {
     pending.add(
-      _buildActionPage(
-        icon: Icons.phone_outlined,
-        title: 'Verify number',
-        subtitle: 'Confirm your phone number',
-        buttonLabel: 'Verify',
-        onTap: () => _showPhoneOtpDialog(Get.context!),
+      Obx(
+        () => _buildActionPage(
+          icon: Icons.phone_outlined,
+          title: 'Verify number',
+          subtitle: 'Confirm your phone number',
+          buttonLabel: 'Verify',
+          isLoading: controller.state.isSendingOtp.value,
+          onTap: controller.state.isSendingOtp.value
+              ? null
+              : () async {
+                  if (controller.state.isSendingOtp.value) return;
+                  final success = await controller.sendPhoneOtp();
+                  if (success) {
+                    _showPhoneOtpDialog(Get.context!);
+                  }
+                },
+        ),
       ),
     );
   } else {
@@ -87,6 +98,7 @@ Widget _buildActionPage({
   required IconData icon,
   required String title,
   required String subtitle,
+  bool isLoading = false,
   String? buttonLabel,
   VoidCallback? onTap,
   bool isCompleted = false,
@@ -130,29 +142,32 @@ Widget _buildActionPage({
         if (!isCompleted && buttonLabel != null) ...[
           SizedBox(width: 1.5.wp),
           GestureDetector(
-            onTap: onTap,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 2.5.wp,
-                vertical: 0.6.hp,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
+            onTap: isLoading ? null : onTap,
+            child: Opacity(
+              opacity: isLoading ? 0.6 : 1, // 👈 disabled feel
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 2.5.wp,
+                  vertical: 0.6.hp,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  isLoading ? 'Verifying...' : buttonLabel,
+                  style: TextStyle(
+                    color: const Color(0xFF1565C0),
+                    fontSize: isLoading ? 6.sp : 7.5.sp,
+                    fontWeight: FontWeight.w700,
                   ),
-                ],
-              ),
-              child: Text(
-                buttonLabel,
-                style: TextStyle(
-                  color: const Color(0xFF1565C0),
-                  fontSize: 7.5.sp,
-                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
@@ -165,14 +180,10 @@ Widget _buildActionPage({
 
 void _showPhoneOtpDialog(BuildContext context) async {
   final HomeController controller = Get.find<HomeController>();
-  if (controller.state.isSendingOtp.value) return;
   final phone = controller.state.userProfile.value?.phone ?? '';
   controller.resetOtpState();
 
-  // Send OTP first
-  final success = await controller.sendPhoneOtp();
-
-  if (!success || !context.mounted) return;
+  if (!context.mounted) return;
 
   final pinController = TextEditingController();
   final focusNode = FocusNode();

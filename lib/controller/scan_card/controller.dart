@@ -282,8 +282,12 @@ class ScanCardController extends GetxController
       'CA',
       'SG',
       'MY',
-      'PK',
-      'BD',
+      'NZ',
+      'ZA',
+      'PH',
+      'TH',
+      'ID',
+      'VN',
     ];
 
     // Try each potential number with the plugin

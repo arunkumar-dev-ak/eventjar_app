@@ -8,6 +8,7 @@ class UserProfileState {
   final RxBool isLoading = false.obs;
   final RxBool isDeleteLoading = false.obs;
   final RxBool isProfileLoading = false.obs;
+  final appVersion = ''.obs;
 
   final Rx<UserProfile?> userProfile = Rx<UserProfile?>(null);
   final Rx<DeleteRequestResponse?> deleteAccountResponse =
