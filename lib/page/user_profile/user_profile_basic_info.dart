@@ -1,10 +1,41 @@
+import 'dart:async';
+
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/user_profile/user_profile_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
+import 'package:smart_auth/smart_auth.dart';
+
+class _SmsRetrieverImpl extends SmsRetriever {
+  _SmsRetrieverImpl(this._smartAuth);
+  final SmartAuth _smartAuth;
+
+  @override
+  bool get listenForMultipleSms => false;
+
+  @override
+  Future<String?> getSmsCode() async {
+    final res = await _smartAuth.getSmsWithUserConsentApi();
+    if (!res.hasData) return null;
+
+    final code = res.requireData.code;
+    if (code != null && code.length == 6) return code;
+
+    // Fallback: parse 6-digit OTP from full message text
+    final sms = res.requireData.sms;
+    final match = RegExp(r'\b\d{6}\b').firstMatch(sms);
+    return match?.group(0);
+  }
+
+  @override
+  Future<void> dispose() async {
+    _smartAuth.removeUserConsentApiListener();
+  }
+}
 
 Widget userProfileBuildBasicInfo() {
   final controller = Get.find<UserProfileController>();
@@ -184,6 +215,11 @@ void _showPhoneOtpDialog(
       '';
   controller.resetOtpState();
 
+  // Snapshot clipboard BEFORE sending OTP so we don't miss an OTP
+  // that lands in clipboard during the sendPhoneOtp network call
+  final initialClipboard =
+      (await Clipboard.getData('text/plain'))?.text ?? '';
+
   // Send OTP first
   final success = await controller.sendPhoneOtp();
 
@@ -191,6 +227,23 @@ void _showPhoneOtpDialog(
 
   final pinController = TextEditingController();
   final focusNode = FocusNode();
+  final smsRetriever = _SmsRetrieverImpl(SmartAuth.instance);
+  Timer? clipboardTimer;
+
+  clipboardTimer = Timer.periodic(const Duration(milliseconds: 800), (_) async {
+    if (pinController.text.length == 6) {
+      clipboardTimer?.cancel();
+      return;
+    }
+    final clip =
+        (await Clipboard.getData('text/plain'))?.text?.trim() ?? '';
+    if (clip.isEmpty || clip == initialClipboard) return;
+    final match = RegExp(r'\b\d{6}\b').firstMatch(clip);
+    if (match != null) {
+      pinController.text = match.group(0)!;
+      clipboardTimer?.cancel();
+    }
+  });
 
   showModalBottomSheet<void>(
     context: context,
@@ -247,6 +300,7 @@ void _showPhoneOtpDialog(
                     focusNode: focusNode,
                     autofocus: true,
                     keyboardType: TextInputType.number,
+                    smsRetriever: smsRetriever,
                     defaultPinTheme: PinTheme(
                       width: 48,
                       height: 52,
@@ -440,6 +494,8 @@ void _showPhoneOtpDialog(
       );
     },
   ).then((_) {
+    clipboardTimer?.cancel();
+    smsRetriever.dispose();
     pinController.dispose();
     focusNode.dispose();
   });

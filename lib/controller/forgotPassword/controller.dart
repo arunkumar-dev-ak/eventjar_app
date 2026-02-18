@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/forgot_password_api/forgot_password_api.dart';
 import 'package:eventjar/controller/forgotPassword/state.dart';
@@ -78,18 +80,35 @@ class ForgotPasswordController extends GetxController {
   }
 
   void openEmailApp() async {
-    final Uri emailLaunchUri = Uri(
-      scheme: 'mailto',
-      path: '', // leave empty to open email app
-    );
-
     try {
-      if (await canLaunchUrl(emailLaunchUri)) {
-        // Use default launch mode for mailto
-        await launchUrl(emailLaunchUri);
+      if (Platform.isIOS) {
+        for (final uri in [
+          Uri.parse('googlegmail://'),
+          Uri.parse('ms-outlook://'),
+          Uri.parse('message://'),
+        ]) {
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+            return;
+          }
+        }
       } else {
-        Get.snackbar('Error', 'No email app found.');
+        final androidApps = [
+          'intent://#Intent;package=com.google.android.gm;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;end',
+          'intent://#Intent;package=com.microsoft.office.outlook;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;end',
+          'intent://#Intent;package=com.samsung.android.email.provider;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;end',
+        ];
+        for (final intentStr in androidApps) {
+          try {
+            await launchUrl(
+              Uri.parse(intentStr),
+              mode: LaunchMode.externalApplication,
+            );
+            return;
+          } catch (_) {}
+        }
       }
+      Get.snackbar('Error', 'No email app found.');
     } catch (e) {
       LoggerService.loggerInstance.e(e);
       Get.snackbar('Error', 'Could not open email app.');

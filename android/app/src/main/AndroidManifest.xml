@@ -90,5 +90,9 @@
         <intent>
             <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
+        <!-- Required to launch email apps by package name on Android 11+ -->
+        <package android:name="com.google.android.gm" />
+        <package android:name="com.microsoft.office.outlook" />
+        <package android:name="com.samsung.android.email.provider" />
     </queries>
 </manifest>

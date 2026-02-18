@@ -272,23 +272,7 @@ class ScanCardController extends GetxController
       return null;
     }
 
-    // List of regions to try in order of priority
-    final regionsToTry = [
-      'IN',
-      'US',
-      'GB',
-      'AE',
-      'AU',
-      'CA',
-      'SG',
-      'MY',
-      'NZ',
-      'ZA',
-      'PH',
-      'TH',
-      'ID',
-      'VN',
-    ];
+    final regionsToTry = ScanCardState.fallbackRegions;
 
     // Try each potential number with the plugin
     for (final number in potentialNumbers) {
@@ -396,51 +380,65 @@ class ScanCardController extends GetxController
     String phoneNumber,
     List<String> regionsToTry,
   ) async {
-    // Clean the phone number but keep + for international format
-    String cleaned = phoneNumber.trim();
+    final String cleaned = phoneNumber.trim();
 
-    // Try parsing with each region using flutter_libphonenumber
-    for (final region in regionsToTry) {
+    // For numbers that already carry a country code (+XX or 00XX),
+    // detect the exact region from the dial code so we never call the
+    // plugin with the wrong region and get garbage back.
+    List<String> regions;
+    if (cleaned.startsWith('+') || cleaned.startsWith('00')) {
+      final plusForm = cleaned.startsWith('00')
+          ? '+${cleaned.substring(2)}'
+          : cleaned;
+      final detected = _regionFromDialCode(plusForm);
+      if (detected != null) {
+        // Only try the correct region for this number
+        regions = [detected];
+      } else {
+        regions = regionsToTry;
+      }
+    } else {
+      // No country code — try all regions in priority order
+      regions = regionsToTry;
+    }
+
+    for (final region in regions) {
       try {
-        // Use the plugin to parse and format the phone number
-        final formattedData = await parse(cleaned, region: region);
+        // flutter_libphonenumber parse() returns:
+        //   'country_code' → dial code digits, e.g. "60" for Malaysia
+        //   'e164'         → "+60166980607"
+        //   'national'     → "016-698 0607"
+        //   'type'         → "mobile" / "fixed_line" / etc.
+        final result = await parse(cleaned, region: region);
 
-        if (formattedData != null) {
-          final String? e164 = formattedData['e164'];
-          final String? national = formattedData['national'];
+        final rawCountryCode = result['country_code']?.toString();
+        final e164 = result['e164']?.toString();
 
-          // Check if parsing was successful and we have E.164 format
-          if (e164 != null && e164.isNotEmpty && e164.startsWith('+')) {
-            // Extract country code and national number from E.164 format
-            final countryCode = _extractCountryCodeFromE164(e164);
-            final nationalNumber = e164.substring(countryCode.length);
+        if (rawCountryCode == null || rawCountryCode.isEmpty) continue;
 
-            // More lenient validation - accept if we have any reasonable length
-            if (nationalNumber.isNotEmpty && nationalNumber.length >= 6) {
-              return PhoneParsed(
-                fullNumber: e164,
-                countryCode: countryCode,
-                phoneNumber: nationalNumber,
-              );
-            }
-          }
+        // Country codes are always 1–3 digits (e.g. 1, 60, 880).
+        // Anything longer means the plugin parsed with the wrong region.
+        if (rawCountryCode.length > 3) continue;
 
-          // Fallback: if E.164 failed but we have national format
-          if (national != null && national.isNotEmpty) {
-            final digitsOnly = national.replaceAll(RegExp(r'[^\d]'), '');
-            if (digitsOnly.length >= 7) {
-              // Use the region's country code
-              String countryCode = _getCountryCodeForRegion(region);
-              return PhoneParsed(
-                fullNumber: '$countryCode$digitsOnly',
-                countryCode: countryCode,
-                phoneNumber: digitsOnly,
-              );
-            }
-          }
-        }
-      } catch (e) {
-        // Try next region if parsing fails
+        // e164 must be present and valid
+        if (e164 == null || e164.isEmpty || !e164.startsWith('+')) continue;
+
+        final countryCode = '+$rawCountryCode'; // "+60"
+
+        // Derive national number from e164, NOT from 'national' field.
+        // The 'national' field includes the local trunk prefix 0
+        // e.g. "016-698 0607" → "0166980607" (wrong leading 0).
+        // e164 "+60166980607" → strip "+60" → "166980607" ✅
+        final nationalDigits = e164.substring(countryCode.length);
+
+        if (nationalDigits.isEmpty || nationalDigits.length < 6) continue;
+
+        return PhoneParsed(
+          fullNumber: e164,
+          countryCode: countryCode,
+          phoneNumber: nationalDigits,
+        );
+      } catch (_) {
         continue;
       }
     }
@@ -448,52 +446,21 @@ class ScanCardController extends GetxController
     return null;
   }
 
-  String _getCountryCodeForRegion(String region) {
-    // Map common region codes to country codes
-    final regionToCountryCode = {
-      'IN': '+91',
-      'US': '+1',
-      'CA': '+1',
-      'GB': '+44',
-      'AE': '+971',
-      'AU': '+61',
-      'SG': '+65',
-      'MY': '+60',
-      'PK': '+92',
-      'BD': '+880',
-    };
-    return regionToCountryCode[region] ?? '+91';
+  /// Returns the ISO region for a number that starts with +.
+  String? _regionFromDialCode(String plusNumber) {
+    for (final entry in ScanCardState.dialCodeToRegion.entries) {
+      if (plusNumber.startsWith(entry.key)) return entry.value;
+    }
+    return null;
   }
 
-  String _extractCountryCodeFromE164(String e164) {
-    // E.164 format: +[country code][national number]
-    // Country codes can be 1-4 digits
-    if (!e164.startsWith('+')) return '+91'; // Default fallback
-
-    // Try to match common country codes
-    final commonCodes = [
-      '+1',
-      '+91',
-      '+44',
-      '+971',
-      '+61',
-      '+86',
-      '+33',
-      '+81',
-    ];
-    for (final code in commonCodes) {
-      if (e164.startsWith(code)) {
-        return code;
-      }
+  /// Returns the matching dial-code prefix for a number that starts with +.
+  /// e.g. "+60166980607" → "+60"
+  String? _dialCodeFrom(String plusNumber) {
+    for (final code in ScanCardState.dialCodeToRegion.keys) {
+      if (plusNumber.startsWith(code)) return code;
     }
-
-    // Extract first 1-4 digits after +
-    final match = RegExp(r'^\+(\d{1,4})').firstMatch(e164);
-    if (match != null) {
-      return '+${match.group(1)}';
-    }
-
-    return '+91'; // Default fallback
+    return null;
   }
 
   PhoneParsed? _fallbackPhoneParsing(String phoneNumber) {
@@ -505,91 +472,34 @@ class ScanCardController extends GetxController
     String countryCode = '+91'; // Default to India
     String nationalNumber = cleaned;
 
-    // Check for international format with +
     if (cleaned.startsWith('+')) {
-      // Try to identify country code
-      if (cleaned.startsWith('+91') && cleaned.length >= 12) {
-        // Indian number: +91XXXXXXXXXX (12-13 digits)
-        countryCode = '+91';
-        nationalNumber = cleaned.substring(3);
-      } else if (cleaned.startsWith('+1') && cleaned.length >= 11) {
-        // US/Canada: +1XXXXXXXXXX (11 digits)
-        countryCode = '+1';
-        nationalNumber = cleaned.substring(2);
-      } else if (cleaned.startsWith('+44') && cleaned.length >= 12) {
-        // UK: +44XXXXXXXXXX
-        countryCode = '+44';
-        nationalNumber = cleaned.substring(3);
-      } else if (cleaned.startsWith('+971') && cleaned.length >= 12) {
-        // UAE: +971XXXXXXXXX
-        countryCode = '+971';
-        nationalNumber = cleaned.substring(4);
-      } else if (cleaned.startsWith('+61') && cleaned.length >= 11) {
-        // Australia: +61XXXXXXXXX
-        countryCode = '+61';
-        nationalNumber = cleaned.substring(3);
-      } else {
-        // Generic extraction for other codes
-        final match = RegExp(r'^\+(\d{1,4})').firstMatch(cleaned);
-        if (match != null) {
-          countryCode = '+${match.group(1)}';
-          nationalNumber = cleaned.substring(countryCode.length);
-        }
+      final code = _dialCodeFrom(cleaned);
+      if (code != null) {
+        countryCode = code;
+        nationalNumber = cleaned.substring(code.length);
       }
     } else if (cleaned.startsWith('00')) {
-      // International format without + (00XXXXXXXXXXX)
-      if (cleaned.startsWith('0091') && cleaned.length >= 14) {
-        countryCode = '+91';
-        nationalNumber = cleaned.substring(4);
-      } else {
-        final match = RegExp(r'^00(\d{1,4})').firstMatch(cleaned);
-        if (match != null) {
-          countryCode = '+${match.group(1)}';
-          nationalNumber = cleaned.substring(2 + match.group(1)!.length);
-        }
+      final withPlus = '+${cleaned.substring(2)}';
+      final code = _dialCodeFrom(withPlus);
+      if (code != null) {
+        countryCode = code;
+        nationalNumber = withPlus.substring(code.length);
       }
     } else if (cleaned.startsWith('91') && cleaned.length == 12) {
-      // Indian number without + (91XXXXXXXXXX)
       countryCode = '+91';
       nationalNumber = cleaned.substring(2);
     } else if (cleaned.startsWith('0') && cleaned.length >= 10) {
-      // Number with trunk prefix (0XXXXXXXXXX)
       nationalNumber = cleaned.substring(1);
-    } else if (cleaned.length >= 10) {
-      // Direct national number (XXXXXXXXXX)
-      nationalNumber = cleaned;
-    } else {
-      // Too short to be valid
-      return null;
     }
 
-    // Validate national number length
     final digitsOnly = nationalNumber.replaceAll(RegExp(r'[^\d]'), '');
+    if (digitsOnly.length < 6 || digitsOnly.length > 15) return null;
 
-    // Accept numbers with 7-15 digits (more lenient)
-    if (digitsOnly.length < 7 || digitsOnly.length > 15) {
-      return null;
-    }
-
-    // For Indian numbers, prefer mobile numbers (starting with 6-9)
-    // but accept landlines too
-    if (countryCode == '+91' && digitsOnly.length == 10) {
-      // Valid Indian number
-      return PhoneParsed(
-        fullNumber: '$countryCode$digitsOnly',
-        countryCode: countryCode,
-        phoneNumber: digitsOnly,
-      );
-    } else if (digitsOnly.length >= 7) {
-      // Valid number for other countries
-      return PhoneParsed(
-        fullNumber: '$countryCode$digitsOnly',
-        countryCode: countryCode,
-        phoneNumber: digitsOnly,
-      );
-    }
-
-    return null;
+    return PhoneParsed(
+      fullNumber: '$countryCode$digitsOnly',
+      countryCode: countryCode,
+      phoneNumber: digitsOnly,
+    );
   }
 
   String? _extractName(String text, String? email, String? phone) {
@@ -722,216 +632,12 @@ class ScanCardController extends GetxController
 
   bool _isCommonBusinessTerm(String text) {
     final lowerText = text.toLowerCase();
-    final businessTerms = [
-      'address',
-      'street',
-      'road',
-      'city',
-      'state',
-      'zip',
-      'phone',
-      'tel',
-      'fax',
-      'email',
-      'website',
-      'www',
-      'http',
-      'pvt',
-      'ltd',
-      'inc',
-      'llc',
-      'corp',
-      'private',
-      'limited',
-      'floor',
-      'building',
-      'office',
-      'tower',
-      'plaza',
-      'complex',
-      'nagar',
-      'colony',
-      'sector',
-      'phase',
-      'block',
-      'survey',
-      'services',
-      'solutions',
-      'mapping',
-      'civil',
-      'infra',
-      'gis',
-      'remote',
-      'sensing',
-      'drone',
-      'lidar',
-      'dgps',
-      'station',
-      'end-to-end',
-      'land',
-      'total',
-      'technologies',
-      'technology',
-      'systems',
-      'system',
-      'consulting',
-      'enterprises',
-      'industries',
-      'group',
-      'company',
-      'works',
-      'agency',
-      'studio',
-      'labs',
-      'lab',
-      'digital',
-      'media',
-      'creative',
-      'designs',
-      'construction',
-      'builders',
-      'realty',
-      'properties',
-      'estates',
-      'trading',
-      'exports',
-      'imports',
-      'logistics',
-      'transport',
-      'motors',
-      'auto',
-      'electronics',
-      'electrical',
-      'pharma',
-      'healthcare',
-      'medical',
-      'dental',
-      'clinic',
-      'hospital',
-      'foods',
-      'beverages',
-      'textiles',
-      'garments',
-      'jewellers',
-      'jewellery',
-      'furniture',
-      'interiors',
-      'interior',
-      'exterior',
-      'architects',
-      'engineering',
-      'manufacturers',
-      'distributors',
-      'retailers',
-      'wholesale',
-      'designing',
-      'desinging',
-      'design',
-      'visualization',
-      'visualizations',
-      '3d',
-      'planning',
-      'supervising',
-      'supervision',
-      'renovation',
-      'decorat',
-      'modular',
-      'kitchen',
-      'wardrobe',
-      'cupboard',
-      'false ceiling',
-      'painting',
-      'plumbing',
-      'carpentry',
-      'flooring',
-      'tiling',
-      'contractor',
-      'contracting',
-      'institute',
-      'institution',
-      'academy',
-      'school',
-      'college',
-      'university',
-      'training',
-      'tally',
-      'online',
-      'coaching',
-      'tuition',
-      'classes',
-      'centre',
-      'center',
-    ];
-    return businessTerms.any((term) => lowerText.contains(term));
+    return ScanCardState.businessTerms.any((term) => lowerText.contains(term));
   }
 
   bool _isDesignation(String text) {
     final lowerText = text.toLowerCase();
-    final designations = [
-      'manager',
-      'director',
-      'ceo',
-      'cto',
-      'cfo',
-      'coo',
-      'president',
-      'vice president',
-      'vp',
-      'head',
-      'lead',
-      'senior',
-      'junior',
-      'executive',
-      'officer',
-      'engineer',
-      'developer',
-      'designer',
-      'analyst',
-      'consultant',
-      'architect',
-      'specialist',
-      'coordinator',
-      'administrator',
-      'assistant',
-      'associate',
-      'supervisor',
-      'founder',
-      'co-founder',
-      'partner',
-      'proprietor',
-      'owner',
-      'chairman',
-      'managing',
-      'general',
-      'regional',
-      'national',
-      'global',
-      'chief',
-      'principal',
-      'sales',
-      'marketing',
-      'finance',
-      'operations',
-      'technical',
-      'software',
-      'hardware',
-      'business',
-      'product',
-      'project',
-      'program',
-      'account',
-      'customer',
-      'client',
-      'support',
-      'service',
-      'secretary',
-      'clerk',
-      'trainee',
-      'intern',
-      'member',
-      'team',
-    ];
-    return designations.any((term) => lowerText.contains(term));
+    return ScanCardState.designations.any((term) => lowerText.contains(term));
   }
 
   bool _looksLikeName(String text) {

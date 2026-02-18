@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:eventjar/controller/profile_form/basic_info/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
@@ -11,6 +13,34 @@ import 'package:flutter_intl_phone_field/country_picker_dialog.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
+import 'package:smart_auth/smart_auth.dart';
+
+class _SmsRetrieverImpl extends SmsRetriever {
+  _SmsRetrieverImpl(this._smartAuth);
+  final SmartAuth _smartAuth;
+
+  @override
+  bool get listenForMultipleSms => false;
+
+  @override
+  Future<String?> getSmsCode() async {
+    final res = await _smartAuth.getSmsWithUserConsentApi();
+    if (!res.hasData) return null;
+
+    final code = res.requireData.code;
+    if (code != null && code.length == 6) return code;
+
+    // Fallback: parse 6-digit OTP from full message text
+    final sms = res.requireData.sms;
+    final match = RegExp(r'\b\d{6}\b').firstMatch(sms);
+    return match?.group(0);
+  }
+
+  @override
+  Future<void> dispose() async {
+    _smartAuth.removeUserConsentApiListener();
+  }
+}
 
 class BasicInfoPage extends GetView<BasicInfoFormController> {
   const BasicInfoPage({super.key});
@@ -308,12 +338,34 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
     final phone = controller.state.currentPhone.value;
     controller.resetOtpState();
 
+    // Snapshot clipboard BEFORE sending OTP so any OTP copied during
+    // the network call is detected as a new clipboard change
+    final initialClipboard =
+        (await Clipboard.getData('text/plain'))?.text ?? '';
+
     await controller.sendPhoneOtp();
 
     if (!context.mounted) return;
 
     final pinController = TextEditingController();
     final focusNode = FocusNode();
+    final smsRetriever = _SmsRetrieverImpl(SmartAuth.instance);
+    Timer? clipboardTimer;
+
+    clipboardTimer = Timer.periodic(const Duration(milliseconds: 800), (_) async {
+      if (pinController.text.length == 6) {
+        clipboardTimer?.cancel();
+        return;
+      }
+      final clip =
+          (await Clipboard.getData('text/plain'))?.text?.trim() ?? '';
+      if (clip.isEmpty || clip == initialClipboard) return;
+      final match = RegExp(r'\b\d{6}\b').firstMatch(clip);
+      if (match != null) {
+        pinController.text = match.group(0)!;
+        clipboardTimer?.cancel();
+      }
+    });
 
     showModalBottomSheet<void>(
       context: context,
@@ -371,6 +423,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                       focusNode: focusNode,
                       autofocus: true,
                       keyboardType: TextInputType.number,
+                      smsRetriever: smsRetriever,
                       defaultPinTheme: PinTheme(
                         width: 48,
                         height: 52,
@@ -571,6 +624,8 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
         );
       },
     ).then((_) {
+      clipboardTimer?.cancel();
+      smsRetriever.dispose();
       pinController.dispose();
       focusNode.dispose();
     });
