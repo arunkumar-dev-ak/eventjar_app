@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:eventjar/model/contact/qr_contact_model.dart';
 import 'package:flutter_intl_phone_field/countries.dart';
 import 'package:get/get.dart';
@@ -5,6 +7,10 @@ import 'package:get/get.dart';
 class AddContactState {
   final RxBool isLoading = false.obs;
   final RxBool isDropDownLoading = false.obs;
+  Rx<File?> selectedImage = Rx<File?>(null);
+  RxBool addWithImage = true.obs;
+  RxBool hideToogle = false.obs;
+  Rxn<String> existingImageUrl = Rxn();
 
   Rx<Country> selectedCountry = countries
       .firstWhere((country) => country.code == 'IN')

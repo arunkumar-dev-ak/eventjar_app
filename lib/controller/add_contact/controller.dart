@@ -1,4 +1,8 @@
-import 'package:dio/dio.dart';
+import 'dart:io';
+
+import 'package:dio/dio.dart' as dio;
+import 'package:eventjar/logger_service.dart';
+import 'package:get/get.dart';
 import 'package:eventjar/api/add_contact_api/add_contact_api.dart';
 import 'package:eventjar/controller/add_contact/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
@@ -13,7 +17,6 @@ import 'package:eventjar/model/contact/nfc_contact_model.dart';
 import 'package:eventjar/model/contact/qr_contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/widgets.dart';
-import 'package:get/get.dart';
 import 'package:flutter_intl_phone_field/countries.dart';
 import '../../model/card_info.dart';
 
@@ -46,7 +49,20 @@ class AddContactController extends GetxController {
   void onInit() {
     final args = Get.arguments;
     // Handle NfcContactModel from NFC read
-    if (args is NfcContactModel) {
+    if (args is Map) {
+      final VisitingCardInfo? cardInfo = args["cardInfo"];
+      final File? imageFile = args["imageFile"];
+
+      if (cardInfo != null) {
+        appBarTitle = "Add Card Contact";
+        handleVisitingCardContact(cardInfo);
+      }
+
+      if (imageFile != null) {
+        state.selectedImage.value = imageFile;
+        setSelectedImage(imageFile);
+      }
+    } else if (args is NfcContactModel) {
       appBarTitle = "Add NFC Contact";
       handleNfcContact(args);
     } else if (args is VisitingCardInfo) {
@@ -64,12 +80,26 @@ class AddContactController extends GetxController {
     super.onInit();
   }
 
+  void setSelectedImage(File file) {
+    final fileSize = file.lengthSync();
+
+    const maxSize = 5 * 1024 * 1024;
+
+    LoggerService.loggerInstance.dynamic_d('$fileSize, $maxSize');
+
+    if (fileSize > maxSize) {
+      state.addWithImage.value = false;
+      state.hideToogle.value = true;
+    }
+  }
+
   void handleVisitingCardContact(VisitingCardInfo cardInfo) {
     contactId = null; // Always new contact from card scan
     state.clearButtonTitle.value = "Reset";
 
     nameController.text = cardInfo.name ?? "";
-    phoneController.text = cardInfo.phoneParsed?.phoneNumber ?? cardInfo.phone ?? "";
+    phoneController.text =
+        cardInfo.phoneParsed?.phoneNumber ?? cardInfo.phone ?? "";
     emailController.text = cardInfo.email ?? "";
 
     // Set country code from parsed phone (same as NFC/QR flow)
@@ -135,6 +165,10 @@ class AddContactController extends GetxController {
     contactId = contact.id;
     state.clearButtonTitle.value = "Reset";
 
+    if (contact.visitingCardUrl != null) {
+      state.existingImageUrl.value = contact.visitingCardUrl;
+    }
+
     nameController.text = contact.name;
     emailController.text = contact.email;
     //phoneController
@@ -176,7 +210,7 @@ class AddContactController extends GetxController {
       state.availableTags.value = result.map((tag) => tag.name).toList();
       state.filteredTags.value = state.availableTags;
     } catch (err) {
-      if (err is DioException) {
+      if (err is dio.DioException) {
         final statusCode = err.response?.statusCode;
 
         if (statusCode == 401) {
@@ -277,32 +311,81 @@ class AddContactController extends GetxController {
     update();
   }
 
+  // Future<void> submitForm(BuildContext context) async {
+  //   if (!formKey.currentState!.validate()) return;
+  //   try {
+  //     state.isLoading.value = true;
+  //     final data = _gatherFormData();
+
+  //     if (checkIsForUpdate()) {
+  //       if (contactId == null) {
+  //         throw Exception("Contact ID is required for update");
+  //       }
+  //       await AddContactApi.updateContact(data: data, id: contactId!);
+  //     } else {
+  //       await AddContactApi.registerTicket(data: data);
+  //     }
+
+  //     clearForm();
+  //     contactId = null;
+  //     Navigator.pop(context, "refresh");
+  //   } catch (err) {
+  //     if (err is DioException) {
+  //       final statusCode = err.response?.statusCode;
+  //       if (statusCode == 401) {
+  //         UserStore.to.clearStore();
+  //         navigateToSignInPage();
+  //         return;
+  //       }
+  //       ApiErrorHandler.handleError(err, "Failed to add/update contact");
+  //     } else {
+  //       AppSnackbar.error(
+  //         title: "Failed",
+  //         message: "Something went wrong. Please try again.",
+  //       );
+  //     }
+  //   } finally {
+  //     state.isLoading.value = false;
+  //   }
+  // }
+
   Future<void> submitForm(BuildContext context) async {
     if (!formKey.currentState!.validate()) return;
+
     try {
       state.isLoading.value = true;
+
       final data = _gatherFormData();
+      final imageFile = state.selectedImage.value;
 
       if (checkIsForUpdate()) {
-        if (contactId == null) {
-          throw Exception("Contact ID is required for update");
-        }
         await AddContactApi.updateContact(data: data, id: contactId!);
       } else {
-        await AddContactApi.registerTicket(data: data);
+        // 🔥 If toggle ON + image exists → multipart
+        if (state.addWithImage.value && imageFile != null) {
+          await AddContactApi.createContactWithCard(
+            data: data,
+            imageFile: imageFile,
+          );
+        } else {
+          // 🔥 Normal x-www-form-urlencoded
+          await AddContactApi.addContact(data: data);
+        }
       }
 
       clearForm();
       contactId = null;
       Navigator.pop(context, "refresh");
     } catch (err) {
-      if (err is DioException) {
+      if (err is dio.DioException) {
         final statusCode = err.response?.statusCode;
+
         if (statusCode == 401) {
           UserStore.to.clearStore();
           navigateToSignInPage();
           return;
         }
+
         ApiErrorHandler.handleError(err, "Failed to add/update contact");
       } else {
         AppSnackbar.error(
@@ -331,24 +414,16 @@ class AddContactController extends GetxController {
     Get.toNamed(RouteName.signInPage);
   }
 
-  // void addTag(String tag) {
-  //   final lowerTag = tag.trim().toLowerCase();
-  //   if (lowerTag.isEmpty) return;
-
-  //   final exists = state.selectedTags.any((t) => t.toLowerCase() == lowerTag);
-
-  //   if (!exists) {
-  //     state.selectedTags.add(tag.trim());
-  //   }
-  // }
-
-  // void toggleTagSelection(String tag) {
-  //   if (state.selectedTags.contains(tag)) {
-  //     state.selectedTags.remove(tag);
-  //   } else {
-  //     state.selectedTags.add(tag);
-  //   }
-  // }
+  void navigateToImageViewer() {
+    Get.toNamed(
+      RouteName.imageViewerPage,
+      arguments: {
+        "file": state.selectedImage.value,
+        "header": nameController.text.trim(),
+        "fileUrl": state.existingImageUrl.value,
+      },
+    );
+  }
 
   String contactStageToKey(ContactStage stage) {
     switch (stage) {

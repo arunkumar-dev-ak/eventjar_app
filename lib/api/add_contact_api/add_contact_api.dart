@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/global/app_snackbar.dart';
@@ -8,7 +11,7 @@ import 'package:eventjar/model/contact/contact_tag_model.dart'
 class AddContactApi {
   static final Dio _dio = DioClient().dio;
 
-  static Future<void> registerTicket({dynamic data}) async {
+  static Future<void> addContact({dynamic data}) async {
     try {
       final response = await _dio.post('/contacts', data: data);
 
@@ -19,6 +22,43 @@ class AddContactApi {
         );
         return;
       }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<void> createContactWithCard({
+    required Map<String, dynamic> data,
+    required File imageFile,
+  }) async {
+    try {
+      final formData = FormData();
+
+      // Add normal fields
+      data.forEach((key, value) {
+        if (value == null) return;
+
+        if (value is List) {
+          for (var item in value) {
+            formData.fields.add(MapEntry('$key[]', item.toString()));
+          }
+        } else {
+          formData.fields.add(MapEntry(key, value.toString()));
+        }
+      });
+
+      // Add file
+      formData.files.add(
+        MapEntry(
+          'visitingCard',
+          await MultipartFile.fromFile(
+            imageFile.path,
+            filename: imageFile.path.split('/').last,
+          ),
+        ),
+      );
+
+      await _dio.post('/contacts/with-card', data: formData);
     } catch (e) {
       rethrow;
     }

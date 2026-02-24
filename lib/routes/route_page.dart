@@ -7,6 +7,7 @@ import 'package:eventjar/controller/dashboard/binding.dart';
 import 'package:eventjar/controller/email_notification/binding.dart';
 import 'package:eventjar/controller/event_info/binding.dart';
 import 'package:eventjar/controller/forgotPassword/binding.dart';
+import 'package:eventjar/controller/image_viewer/binding.dart';
 import 'package:eventjar/controller/meeting/binding.dart';
 import 'package:eventjar/controller/nfc/binding.dart';
 import 'package:eventjar/controller/nfc_read/binding.dart';
@@ -36,6 +37,7 @@ import 'package:eventjar/page/dashboard/dashboard_page.dart';
 import 'package:eventjar/page/email_notification/email_notification_page.dart';
 import 'package:eventjar/page/event_info/event_info.dart';
 import 'package:eventjar/page/forgot_password/forgot_password.dart';
+import 'package:eventjar/page/image_viewer/image_viewer.dart';
 import 'package:eventjar/page/meeting/meeting_page.dart';
 import 'package:eventjar/page/nfc/nfc_page.dart';
 import 'package:eventjar/page/nfc_read/nfc_read.dart';
@@ -148,6 +150,12 @@ class RoutePage {
       name: RouteName.contactPage,
       page: () => ContactPage(),
       binding: ContactBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.imageViewerPage,
+      page: () => ImageViewerPage(),
+      binding: ImageViewerBinding(),
       middlewares: [LoginMiddleware()],
     ),
     GetPage(

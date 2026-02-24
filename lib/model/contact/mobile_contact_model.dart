@@ -53,6 +53,7 @@ class MobileContact {
   final String email;
   final String? phone;
   final String? user1Id;
+  final String? visitingCardUrl;
   final String? user2Id;
   final Map<String, dynamic>? customAttributes;
   final ActiveMeeting? activeMeeting;
@@ -91,6 +92,7 @@ class MobileContact {
     this.industry,
     required this.stage,
     required this.tags,
+    this.visitingCardUrl,
     this.notes,
     this.source,
     required this.status,
@@ -116,6 +118,7 @@ class MobileContact {
         email: json['email'],
         phone: json['phone'],
         user1Id: json['user1Id'],
+        visitingCardUrl: json['visitingCardUrl'],
         customAttributes: json['customAttributes'] != null
             ? Map<String, dynamic>.from(json['customAttributes'])
             : null,
@@ -164,6 +167,7 @@ class MobileContact {
     'user1Id': user1Id,
     'user2Id': user2Id,
     'customAttributes': customAttributes,
+    'visitingCardUrl': visitingCardUrl,
     'phoneParsed': phoneParsed?.toJson(),
     'company': company,
     'position': position,

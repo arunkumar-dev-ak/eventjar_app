@@ -19,6 +19,7 @@ class RouteName {
 
   //contact page
   static const addContactPage = '/addContact';
+  static const imageViewerPage = '/imageViewer';
   static const contactPage = '/contactPage';
   static const contactListMeetingPage = '/contactListMeetingPage';
   static const googleContactPage = '/googleContactPage';

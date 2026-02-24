@@ -13,11 +13,9 @@ class ScheduleMeetingActionButtons extends StatelessWidget {
     return Obx(() {
       final isLoading = controller.state.isLoading.value;
       final configLoading = controller.state.configLoading.value;
-      final hasMethodsSelected = controller.hasAnyMethodSelected;
 
       // ✅ Button disabled if: loading OR configLoading OR no methods selected
-      final isButtonEnabled =
-          !isLoading && !configLoading && hasMethodsSelected;
+      final isButtonEnabled = !isLoading && !configLoading;
 
       return SizedBox(
         width: double.infinity,

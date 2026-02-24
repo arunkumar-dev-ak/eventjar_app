@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:eventjar/controller/add_contact/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/add_contact/add_contact_form_element.dart';
+import 'package:eventjar/page/add_contact/add_contact_header_widgets.dart';
 import 'package:eventjar/page/add_contact/add_contact_multi_tag.dart';
 import 'package:eventjar/page/add_contact/add_contact_stage_dropdown.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +38,10 @@ class AddContactPage extends GetView<AddContactController> {
             key: controller.formKey,
             child: Column(
               children: [
+                AddContactImagePreview(),
+
+                AddContactImageToggle(),
+                SizedBox(height: 2.hp),
                 // Name ✅ Auto-validation
                 ContactFormElement(
                   controller: controller.nameController,
@@ -137,85 +145,87 @@ class AddContactPage extends GetView<AddContactController> {
                 SizedBox(height: 3.hp),
 
                 // Submit
-                Row(
-                  children: [
-                    Expanded(
-                      child: Obx(
-                        () => OutlinedButton(
-                          onPressed: controller.state.isLoading.value
-                              ? null
-                              : controller.clearForm,
-                          style: OutlinedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 6.wp,
-                              vertical: 1.8.hp,
+                SafeArea(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Obx(
+                          () => OutlinedButton(
+                            onPressed: controller.state.isLoading.value
+                                ? null
+                                : controller.clearForm,
+                            style: OutlinedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 6.wp,
+                                vertical: 1.8.hp,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              side: BorderSide(
+                                color: Colors.blue.shade700,
+                                width: 2,
+                              ),
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.blue.shade700,
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            side: BorderSide(
-                              color: Colors.blue.shade700,
-                              width: 2,
-                            ),
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.blue.shade700,
-                          ),
-                          child: Text(
-                            controller.state.clearButtonTitle.value,
-                            style: TextStyle(
-                              fontSize: 8.sp,
-                              fontWeight: FontWeight.w600,
+                            child: Text(
+                              controller.state.clearButtonTitle.value,
+                              style: TextStyle(
+                                fontSize: 8.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 3.wp),
+                      SizedBox(width: 3.wp),
 
-                    // Submit Button
-                    Expanded(
-                      child: Obx(
-                        () => ElevatedButton(
-                          onPressed: () {
-                            if (controller.state.isLoading.value) return;
-                            if (controller.formKey.currentState?.validate() ??
-                                false) {
-                              Get.focusScope?.unfocus();
-                              controller.submitForm(context);
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 6.wp,
-                              vertical: 1.8.hp,
+                      // Submit Button
+                      Expanded(
+                        child: Obx(
+                          () => ElevatedButton(
+                            onPressed: () {
+                              if (controller.state.isLoading.value) return;
+                              if (controller.formKey.currentState?.validate() ??
+                                  false) {
+                                Get.focusScope?.unfocus();
+                                controller.submitForm(context);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 6.wp,
+                                vertical: 1.8.hp,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              backgroundColor: Colors.blue.shade700,
+                              foregroundColor: Colors.white,
+                              elevation: 5,
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            backgroundColor: Colors.blue.shade700,
-                            foregroundColor: Colors.white,
-                            elevation: 5,
+                            child: controller.state.isLoading.value
+                                ? SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Text(
+                                    controller.appBarTitle,
+                                    style: TextStyle(
+                                      fontSize: 8.sp,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
                           ),
-                          child: controller.state.isLoading.value
-                              ? SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(
-                                  controller.appBarTitle,
-                                  style: TextStyle(
-                                    fontSize: 8.sp,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -223,5 +233,13 @@ class AddContactPage extends GetView<AddContactController> {
         ),
       ),
     );
+  }
+
+  Future<Size> _getImageSize(File file) async {
+    final decodedImage = await decodeImageFromList(await file.readAsBytes());
+    LoggerService.loggerInstance.dynamic_d(
+      Size(decodedImage.width.toDouble(), decodedImage.height.toDouble()),
+    );
+    return Size(decodedImage.width.toDouble(), decodedImage.height.toDouble());
   }
 }

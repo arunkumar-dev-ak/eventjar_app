@@ -681,9 +681,10 @@ class ScanCardController extends GetxController
   }
 
   Future<void> navigateToAddContact(BuildContext context) async {
-    Get.toNamed(RouteName.addContactPage, arguments: cardInfo.value)?.then((
-      result,
-    ) async {
+    Get.toNamed(
+      RouteName.addContactPage,
+      arguments: {"cardInfo": cardInfo.value, "imageFile": selectedImage.value},
+    )?.then((result) async {
       if (result == "refresh") {
         Navigator.pop(Get.context!, "refresh");
       }

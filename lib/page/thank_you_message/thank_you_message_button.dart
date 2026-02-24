@@ -39,10 +39,8 @@ class ThankYouMessageActionButtons extends StatelessWidget {
           Expanded(
             child: Obx(() {
               final isLoading = controller.state.isLoading.value;
-              final hasMethodsSelected =
-                  controller.state.emailChecked.value ||
-                  controller.state.whatsappChecked.value;
-              final isButtonEnabled = !isLoading && hasMethodsSelected;
+              final configLoading = controller.state.configLoading.value;
+              final isButtonEnabled = !isLoading && !configLoading;
 
               return ElevatedButton(
                 style: ElevatedButton.styleFrom(

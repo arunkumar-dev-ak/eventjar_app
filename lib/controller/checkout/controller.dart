@@ -134,6 +134,41 @@ class CheckoutController extends GetxController {
   }
 
   /*----- Checkout -----*/
+  Future<void> checkBadgeValidation() async {
+    final eventInfo = state.eventInfo.value;
+    if (eventInfo == null) return;
+
+    try {
+      state.isCheckingBadge.value = true;
+
+      final response = await CheckoutApi.validateBadge(eventId: eventInfo.id);
+
+      state.badgeValidationResponse.value = response;
+
+      LoggerService.loggerInstance.dynamic_d(
+        "Badge validation result: ${response.toJson()}",
+      );
+    } catch (err) {
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return;
+        }
+
+        ApiErrorHandler.handleError(err, "Badge Validation Failed");
+      } else {
+        AppSnackbar.error(
+          title: "Badge Validation Failed",
+          message: "Something went wrong",
+        );
+      }
+    } finally {
+      state.isCheckingBadge.value = false;
+    }
+  }
 
   Future<void> proceedToCheckout() async {
     if (state.cartLines.isEmpty) {
