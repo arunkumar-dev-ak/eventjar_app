@@ -79,18 +79,19 @@ class CheckoutController extends GetxController {
     _fetchEventInfo();
   }
 
-  void _fetchEventInfo() {
+  void _fetchEventInfo() async {
     // Get the eventInfo passed from navigation
     final eventInfoArg = Get.arguments;
 
     if (eventInfoArg != null && eventInfoArg is Rxn<EventInfo>) {
       final eventData = eventInfoArg.value;
       state.eventInfo.value = eventData;
-      // if (state.eventInfo.value != null) {
-      //   state.selectedTicketTier.value =
-      //       state.eventInfo.value!.ticketTiers.first;
-      //   checkEligibility(state.eventInfo.value!.ticketTiers.first);
-      // }
+      if (state.eventInfo.value != null) {
+        await checkBadgeValidation();
+        //   state.selectedTicketTier.value =
+        //       state.eventInfo.value!.ticketTiers.first;
+        //   checkEligibility(state.eventInfo.value!.ticketTiers.first);
+      }
     }
   }
 
@@ -383,6 +384,37 @@ class CheckoutController extends GetxController {
       'promoCodeId': promo?.promoCodeId,
       // 'isOneMeeting': eventInfo.isOneMeetingEnabled,
     };
+  }
+
+  bool isAdditionButtonDisabled(TicketTier ticket, RxInt quantity) {
+    final event = state.eventInfo.value;
+    if (event == null) return true;
+
+    final isOneMeeting = event.isOneMeetingEnabled == true;
+    final allowMultiple = event.allowMultipleTickets == true;
+    final maxTickets = event.maxTicketsPerUser;
+
+    final totalSelected = state.cartLines.fold<int>(
+      0,
+      (sum, line) => sum + line.quantity.value,
+    );
+
+    // 1️⃣ One meeting → only 1 ticket total
+    if (isOneMeeting && totalSelected >= 1) {
+      return true;
+    }
+
+    // 2️⃣ Multiple tickets not allowed
+    if (!allowMultiple && totalSelected >= 1) {
+      return true;
+    }
+
+    // 3️⃣ Max tickets per user restriction
+    if (totalSelected >= maxTickets) {
+      return true;
+    }
+
+    return false;
   }
 
   /*----- Razorpay -----*/

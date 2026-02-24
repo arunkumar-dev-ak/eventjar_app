@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 
 class CheckoutState {
   Rxn<EventInfo> eventInfo = Rxn<EventInfo>();
+  RxBool isPromoExpanded = false.obs;
 
   final RxList<CartLine> cartLines = <CartLine>[].obs;
   RxBool isPromoLoading = false.obs;

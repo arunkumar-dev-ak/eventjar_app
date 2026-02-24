@@ -15,6 +15,7 @@ class CheckoutTicketSelectedList extends GetView<CheckoutController> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 2.hp),
           Text(
             "Selected Tickets",
             style: TextStyle(
@@ -23,7 +24,6 @@ class CheckoutTicketSelectedList extends GetView<CheckoutController> {
               color: Colors.green.shade800,
             ),
           ),
-          SizedBox(height: 1.5.hp),
           ...cartLines.map(
             (line) => _buildSelectedTicketLine(line.ticket, line.quantity),
           ),
@@ -39,8 +39,12 @@ Widget _buildSelectedTicketLine(TicketTier ticket, RxInt quantity) {
   final price = double.tryParse(ticket.price) ?? 0.0;
   final lineTotal = price * quantity.value;
 
+  final isAddDisabled =
+      controller.isAdditionButtonDisabled(ticket, quantity) ||
+      quantity.value >= remaining;
+
   return Container(
-    margin: EdgeInsets.only(bottom: 2.hp),
+    margin: EdgeInsets.only(top: 1.5.hp),
     padding: EdgeInsets.all(3.wp),
     decoration: BoxDecoration(
       color: Colors.green.shade50,
@@ -123,12 +127,10 @@ Widget _buildSelectedTicketLine(TicketTier ticket, RxInt quantity) {
             ),
             _buildQuantityButton(
               Icons.add,
-              quantity.value < remaining
-                  ? () => controller.addOrIncreaseTicket(ticket)
-                  : null,
-              quantity.value < remaining
-                  ? Colors.green.shade500
-                  : Colors.grey.shade400,
+              isAddDisabled
+                  ? null
+                  : () => controller.addOrIncreaseTicket(ticket),
+              isAddDisabled ? Colors.grey.shade400 : Colors.green.shade500,
             ),
           ],
         ),

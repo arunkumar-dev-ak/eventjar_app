@@ -50,6 +50,8 @@ class EventInfoHeader extends StatelessWidget {
     EventInfo eventInfo,
     List<Media> mediaImages,
   ) {
+    final int attending = eventInfo.currentAttendees;
+    final int total = eventInfo.maxAttendees;
     return Container(
       width: double.infinity,
       height: 28.hp,
@@ -188,15 +190,17 @@ class EventInfoHeader extends StatelessWidget {
                 children: [
                   _buildImageStat(
                     icon: Icons.people_alt_rounded,
-                    label: '${eventInfo.currentAttendees} Attending',
+                    label: total > 0
+                        ? '$attending / $total Attending'
+                        : '$attending Attending • Unlimited',
                   ),
-                  SizedBox(width: 3.wp),
-                  _buildImageStat(
-                    icon: Icons.event_seat_rounded,
-                    label: eventInfo.maxAttendees > 0
-                        ? '${eventInfo.maxAttendees} Seats'
-                        : 'Unlimited',
-                  ),
+                  // SizedBox(width: 3.wp),
+                  // _buildImageStat(
+                  //   icon: Icons.event_seat_rounded,
+                  //   label: eventInfo.maxAttendees > 0
+                  //       ? '${eventInfo.maxAttendees} Seats'
+                  //       : 'Unlimited',
+                  // ),
                 ],
               ),
             ),

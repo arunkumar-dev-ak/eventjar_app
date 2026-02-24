@@ -16,7 +16,6 @@ class CheckoutPromoCodeSection extends GetView<CheckoutController> {
       final bool hasError = promo != null && promo.valid == false;
 
       return Container(
-        margin: EdgeInsets.only(top: 2.hp),
         padding: EdgeInsets.all(3.wp),
         decoration: BoxDecoration(
           color: Colors.green.shade50,
