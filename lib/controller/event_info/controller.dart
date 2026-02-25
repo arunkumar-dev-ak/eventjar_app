@@ -16,6 +16,7 @@ import 'package:eventjar/page/event_info/tabs/location/location_page.dart';
 import 'package:eventjar/page/event_info/tabs/organizer/organizer_page.dart';
 import 'package:eventjar/page/event_info/tabs/overview/overview_page.dart';
 import 'package:eventjar/page/event_info/tabs/reviews/review_page.dart';
+import 'package:eventjar/page/event_info/widget/view_ticket_bottom_model_sheet.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -252,12 +253,23 @@ class EventInfoController extends GetxController
     final bool isRegistered = userTicketStatus?.isRegistered == true;
 
     if (isRegistered) {
-      final dashboardController = Get.find<DashboardController>();
-      dashboardController.popAndMoveToTicketPage();
+      // final dashboardController = Get.find<DashboardController>();
+      // dashboardController.popAndMoveToTicketPage();
+      _openTicketSheet();
       return;
     }
 
     Get.toNamed(RouteName.checkoutPage, arguments: state.eventInfo);
+  }
+
+  void _openTicketSheet() {
+    showModalBottomSheet(
+      context: Get.context!,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      // builder: (_) => const ViewTicketBottomSheet(),
+      builder: (_) => const EventInfoTicketSheet(),
+    );
   }
 
   void selectRequestTab(int index) {

@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/event_info/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/event_info/widget/event_info_back_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,6 +31,7 @@ class EventInfoBookButton extends StatelessWidget {
 
     return Obx(() {
       final eventInfo = controller.state.eventInfo.value;
+      // LoggerService.loggerInstance.dynamic_d(eventInfo?.toJson());
       final isRegistered = eventInfo?.userTicketStatus?.isRegistered == true;
       final isLoggedIn = controller.isLoggedIn.value;
 

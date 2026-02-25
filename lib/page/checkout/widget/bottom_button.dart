@@ -29,8 +29,6 @@ class CheckoutBottomBar extends GetView<CheckoutController> {
         buttonText = "Verifying Badge...";
       } else if (!hasTicket) {
         buttonText = "Select Ticket to Continue";
-      } else if (!isEligible) {
-        buttonText = "Badge Not Eligible";
       } else if (isLoading) {
         buttonText = total == 0 ? "Booking..." : "Processing...";
       } else {
