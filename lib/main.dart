@@ -1,6 +1,6 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:eventjar/global/global_values.dart';
-import 'package:eventjar/notification_service.dart';
+import 'package:eventjar/notification/notification_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/routes/route_page.dart';
 import 'package:eventjar/services/nfc_intent_handler.dart';

@@ -1,3 +1,4 @@
+import 'package:eventjar/notification/utils/notification_utils.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -17,7 +18,10 @@ class NotificationService {
   static const String storageFcmToken = "myEventJar_fcmToken";
 
   Future<void> init() async {
-    // 🔥 1. Background handler FIRST (iOS safe)
+    /*-----
+    Type: Background
+    When: App is in background or terminated
+    ----*/
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     // 🔥 2. OLD .then() pattern - iOS SAFE (waits for Firebase)
@@ -51,7 +55,7 @@ class NotificationService {
 
     const InitializationSettings initSettings = InitializationSettings(
       android: androidSettings,
-      iOS: iosSettings, // ✅ iOS SETTINGS REQUIRED
+      iOS: iosSettings,
     );
 
     // 🔥 5. Initialize local notifications
@@ -111,7 +115,51 @@ class NotificationService {
     _isFlutterLocalNotificationsInitialized = true;
   }
 
+  void _setupMessageHandlers() {
+    /*-----
+    Type: Foreground Message
+    When: App is open and visible
+    Triggered: When FCM message is received while app is in foreground
+    Note: OS will NOT automatically show notification, so we show it manually
+    ----*/
+    FirebaseMessaging.onMessage.listen(showNotification);
+
+    /*-----
+    Type: Notification Tap (Background State)
+    When: App is in background (minimized) AND user taps the notification
+    Triggered: When notification opens the app from background
+    ----*/
+    FirebaseMessaging.onMessageOpenedApp.listen(
+      _handleBackgroundMessageNotificationTap,
+    );
+
+    /*-----
+    Type: Notification Tap (Terminated State)
+    When: App is completely closed AND user taps the notification
+    Triggered: When app launches from terminated state via notification
+    ----*/
+    _firebaseMessaging.getInitialMessage().then((initialMessage) {
+      if (initialMessage != null) {
+        _handleBackgroundMessageNotificationTap(initialMessage);
+      }
+    });
+
+    /*-----
+    Type: Token Refresh
+    When: FCM registration token changes
+    ----*/
+    _firebaseMessaging.onTokenRefresh.listen((newToken) {
+      StorageService.to.setString(storageFcmToken, newToken);
+      LoggerService.loggerInstance.d("🔄 Token refreshed: $newToken");
+    });
+  }
+
+  /*----- message showing -----*/
+  //handling message when the app is in opened state
   Future<void> showNotification(RemoteMessage message) async {
+    LoggerService.loggerInstance.dynamic_d(
+      '${message.data}, ${message.notification?.body},  ${message.notification?.title}',
+    );
     try {
       final title =
           message.data["title"] ??
@@ -121,7 +169,9 @@ class NotificationService {
           message.data["body"] ??
           message.notification?.body ??
           'You have new activity';
-      final senderId = message.data['senderId'] ?? 'unknown';
+      final contactId = message.data['senderId'];
+
+      final senderId = message.data['senderId'];
       final notificationId = senderId.hashCode;
 
       const AndroidNotificationDetails androidDetails =
@@ -157,6 +207,7 @@ class NotificationService {
     }
   }
 
+  //handling message when the app is in bg or terminated state
   @pragma('vm:entry-point')
   static Future<void> _firebaseMessagingBackgroundHandler(
     RemoteMessage message,
@@ -172,40 +223,18 @@ class NotificationService {
     }
   }
 
-  void _setupMessageHandlers() {
-    // Foreground
-    FirebaseMessaging.onMessage.listen(showNotification);
-
-    // App opened from background
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundMessage);
-
-    // App launched from terminated state
-    _firebaseMessaging.getInitialMessage().then((initialMessage) {
-      if (initialMessage != null) {
-        _handleBackgroundMessage(initialMessage);
-      }
-    });
-
-    // Token refresh
-    _firebaseMessaging.onTokenRefresh.listen((newToken) {
-      StorageService.to.setString(storageFcmToken, newToken);
-      LoggerService.loggerInstance.d("🔄 Token refreshed: $newToken");
-    });
-  }
-
-  void _handleBackgroundMessage(RemoteMessage message) {
+  void _handleBackgroundMessageNotificationTap(RemoteMessage message) {
     LoggerService.loggerInstance.d("📱 App opened from notification");
-    if (message.data['type'] == 'contact') {
-      final senderId = message.data['senderId'];
-      LoggerService.loggerInstance.d("📨 Navigate to contact: $senderId");
-      // Navigate to contact screen
-      // Get.toNamed('/contact', arguments: senderId);
+    final type = message.data['type'];
+    if (type != null) {
+      navigateBasedOnNotificationType(type);
     }
   }
 
   void _handleNotificationTap(String payload) {
     // Handle notification tap navigation
     LoggerService.loggerInstance.d("🔔 Handling tap: $payload");
+    navigateBasedOnNotificationType(payload);
   }
 
   // Manual token refresh

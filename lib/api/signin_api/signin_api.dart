@@ -20,16 +20,13 @@ class SignInApi {
     required String email,
     required String password,
   }) async {
-    // final token = await StorageService.to.getString(storageFcmToken);
-    // LoggerService.loggerInstance.dynamic_d(token);
+    final token = await StorageService.to.getString(storageFcmToken);
+    LoggerService.loggerInstance.dynamic_d(token);
     try {
       final devicePlatform = getDevicePlatform();
       final response = await _dio.post(
         '/auth/login',
-        data: {
-          'email': email, 'password': password,
-          // 'fcmToken': token
-        },
+        data: {'email': email, 'password': password, 'fcmToken': token},
         options: Options(
           headers: {
             'X-Client-Platform': 'mobile',

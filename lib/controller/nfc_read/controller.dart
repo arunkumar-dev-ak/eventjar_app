@@ -1,6 +1,5 @@
 import 'package:eventjar/controller/nfc_read/state.dart';
 import 'package:eventjar/logger_service.dart';
-import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/services/nfc_service.dart';
 import 'package:flutter/material.dart';
