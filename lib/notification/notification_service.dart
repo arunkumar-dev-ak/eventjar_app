@@ -1,3 +1,4 @@
+import 'package:eventjar/notification/utils/notification_message_handling.dart';
 import 'package:eventjar/notification/utils/notification_utils.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -80,7 +81,7 @@ class NotificationService {
 
   void onSelectNotification(NotificationResponse response) {
     LoggerService.loggerInstance.dynamic_d(
-      "🔔 Notification tapped: ${response.payload}",
+      "🔔 Notification tapped: payload: ${response.payload}, body: ${response.data} ",
     );
 
     // Handle navigation based on payload
@@ -161,22 +162,24 @@ class NotificationService {
       '${message.data}, ${message.notification?.body},  ${message.notification?.title}',
     );
     try {
-      final title =
-          message.data["title"] ??
-          message.notification?.title ??
-          'New Notification';
-      final body =
-          message.data["body"] ??
-          message.notification?.body ??
-          'You have new activity';
-      final contactId = message.data['senderId'];
+      final contactId = message.data['contactId'];
+      final meetingId = message.data['meetingId'];
+      final ticketId = message.data['ticketId'];
+      final connectionId = message.data['connectionId'];
+      final eventId = message.data['eventId'];
 
-      final senderId = message.data['senderId'];
-      final notificationId = senderId.hashCode;
+      final String primaryId =
+          contactId ??
+          meetingId ??
+          ticketId ??
+          connectionId ??
+          eventId ??
+          "unknown";
+      final int notificationId = primaryId.hashCode;
 
       const AndroidNotificationDetails androidDetails =
           AndroidNotificationDetails(
-            'contact_channel', // Changed from chat_channel
+            'contact_channel',
             'Contact Notifications',
             channelDescription: 'Notifications for contact management',
             importance: Importance.max,
@@ -195,12 +198,14 @@ class NotificationService {
         iOS: iosDetails, // ✅ iOS details
       );
 
+      final content = buildContactNotification(message);
+
       await flutterLocalNotificationsPlugin.show(
         notificationId,
-        title,
-        body,
+        content.title,
+        content.body,
         platformDetails,
-        payload: senderId,
+        payload: message.data['type'],
       );
     } catch (e) {
       LoggerService.loggerInstance.e("Notification show error: $e");

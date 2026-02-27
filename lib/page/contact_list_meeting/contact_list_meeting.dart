@@ -290,35 +290,35 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
         const SizedBox(height: 12),
 
         // Secondary Button (Reschedule) - Only for SCHEDULED
-        // Obx(
-        //   () =>
-        //       controller.state.primaryButtonType.value ==
-        //           MeetingButtonType.accept
-        //       ? SizedBox(
-        //           width: double.infinity,
-        //           height: 56,
-        //           child: OutlinedButton(
-        //             onPressed: controller.state.isLoading.value
-        //                 ? null
-        //                 : controller.onRescheduleMeeting,
-        //             style: OutlinedButton.styleFrom(
-        //               side: BorderSide(color: Colors.grey[400]!, width: 1.5),
-        //               shape: RoundedRectangleBorder(
-        //                 borderRadius: BorderRadius.circular(12),
-        //               ),
-        //             ),
-        //             child: Text(
-        //               'Reschedule',
-        //               style: TextStyle(
-        //                 color: Colors.grey[700],
-        //                 fontWeight: FontWeight.w600,
-        //                 fontSize: 16,
-        //               ),
-        //             ),
-        //           ),
-        //         )
-        //       : const SizedBox.shrink(),
-        // ),
+        Obx(
+          () =>
+              controller.state.primaryButtonType.value ==
+                  MeetingButtonType.accept
+              ? SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: OutlinedButton(
+                    onPressed: controller.state.isLoading.value
+                        ? null
+                        : controller.onRescheduleMeeting,
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Colors.grey[400]!, width: 1.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'Reschedule',
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ),
       ],
     );
   }

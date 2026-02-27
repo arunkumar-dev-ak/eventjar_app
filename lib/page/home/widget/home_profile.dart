@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/home/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/page/home/widget/scorecard/networking_scorecard.dart';
 import 'package:eventjar/page/home/widget/scorecard/verification_scorecard.dart';
 import 'package:eventjar/routes/route_name.dart';
@@ -88,7 +89,7 @@ class HomeProfile extends GetView<HomeController> {
                                         fit: BoxFit.fill,
                                       )
                                     : Image.network(
-                                        profileData.avatarUrl!,
+                                        getFileUrl(profileData.avatarUrl!),
                                         width: 30.wp,
                                         height: 30.wp,
                                         fit: BoxFit.cover,

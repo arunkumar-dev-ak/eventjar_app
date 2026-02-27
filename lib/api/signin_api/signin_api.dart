@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/dio_client.dart';
+import 'package:eventjar/global/device_helper.dart';
 import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/auth/login_model.dart';
@@ -21,7 +21,9 @@ class SignInApi {
     required String password,
   }) async {
     final token = await StorageService.to.getString(storageFcmToken);
+    final deviceName = await getDeviceModel();
     LoggerService.loggerInstance.dynamic_d(token);
+    LoggerService.loggerInstance.dynamic_d(deviceName);
     try {
       final devicePlatform = getDevicePlatform();
       final response = await _dio.post(
@@ -32,6 +34,7 @@ class SignInApi {
             'X-Client-Platform': 'mobile',
             'Content-Type': 'application/json',
             'X-Device-Platform': devicePlatform,
+            'User-Agent': deviceName,
           },
         ),
       );

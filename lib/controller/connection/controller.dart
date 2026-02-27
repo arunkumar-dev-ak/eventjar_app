@@ -19,6 +19,15 @@ class ConnectionController extends GetxController {
   @override
   void onInit() async {
     // await UserStore.to.deleteAccessToken();
+
+    final args = Get.arguments;
+
+    if (args != null) {
+      if (args['openTab'] != null) {
+        state.selectedTab.value = args['openTab'];
+      }
+    }
+
     onOpen();
     super.onInit();
     sentScrollController.addListener(_onSentScroll);

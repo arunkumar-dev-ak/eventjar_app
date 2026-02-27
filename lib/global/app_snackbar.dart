@@ -58,6 +58,9 @@ class AppSnackbar {
     String? title, // ✅ Optional title
     required String message,
   }) {
+    if (Get.isSnackbarOpen) {
+      Get.closeCurrentSnackbar();
+    }
     _show(
       title: title,
       message: message,

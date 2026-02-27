@@ -16,9 +16,17 @@ class DashboardController extends GetxController {
   RxBool get isLoggedIn => UserStore.to.isLoginReactive;
   RxMap<String, dynamic> get profile => UserStore.to.profile;
 
-  void onInint() {
-    state.selectedIndex.value = 0;
+  @override
+  void onInit() {
     super.onInit();
+
+    final args = Get.arguments;
+
+    if (args != null && args is Map<String, dynamic>) {
+      _handleNotificationNavigation(args);
+    } else {
+      state.selectedIndex.value = 0;
+    }
   }
 
   bool shouldExit() {
@@ -71,6 +79,39 @@ class DashboardController extends GetxController {
         } else if (index == 3) {
           Get.find<MyTicketController>().onTabOpen();
         }
+      }
+    });
+  }
+
+  /*----- Notification Handling  -----*/
+  void _handleNotificationNavigation(Map<String, dynamic> args) {
+    final initialTab = args["initialTab"];
+
+    if (initialTab != null) {
+      changeTab(initialTab);
+    }
+
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (args["openSubPage"] == "contact") {
+        Get.toNamed(RouteName.contactPage)?.then((_) {
+          state.selectedIndex.value = 0;
+        });
+      }
+
+      if (args["openSubPage"] == "meeting") {
+        Get.toNamed(RouteName.meetingPage)?.then((_) {
+          state.selectedIndex.value = 0;
+        });
+      }
+
+      if (args["openSubPage"] == "connection") {
+        final tab = args["connectionTab"] ?? 0;
+        Get.toNamed(
+          RouteName.connectionPage,
+          arguments: {"openTab": tab},
+        )?.then((_) {
+          state.selectedIndex.value = 0;
+        });
       }
     });
   }

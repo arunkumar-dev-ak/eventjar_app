@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:uuid/uuid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,4 +23,18 @@ class DeviceIdHelper {
     await prefs.setString(_deviceIdKey, deviceId);
     return deviceId;
   }
+}
+
+Future<String> getDeviceModel() async {
+  final deviceInfo = DeviceInfoPlugin();
+
+  if (Platform.isAndroid) {
+    final androidInfo = await deviceInfo.androidInfo;
+    return '${androidInfo.model} (Android)';
+  } else if (Platform.isIOS) {
+    final iosInfo = await deviceInfo.iosInfo;
+    return '${iosInfo.utsname.machine} (IOS)';
+  }
+
+  return 'MyEventJar Mobile App';
 }

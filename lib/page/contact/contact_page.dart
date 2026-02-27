@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
+import 'package:eventjar/model/meta/meta_model.dart';
 import 'package:eventjar/page/contact/contact_card_page.dart';
 import 'package:eventjar/page/contact/filter/contact_search_page.dart';
 import 'package:eventjar/page/contact/widget/add_contact_bottom_model.dart';
@@ -31,7 +32,7 @@ class ContactPage extends GetView<ContactController> {
           );
 
           final count = _getCountByKey(
-            controller.state.analytics.value,
+            controller.state.meta.value,
             selected?.key,
           );
 
@@ -248,29 +249,12 @@ Widget _buildActionButton({
   );
 }
 
-int _getCountByKey(ContactAnalytics? analytics, String? key) {
-  if (analytics == null || key == null) {
+int _getCountByKey(Meta? meta, String? key) {
+  if (meta == null || key == null) {
     return -1;
   }
 
-  switch (key) {
-    case 'new':
-      return analytics.newCount;
-    case 'followup24h':
-      return analytics.followup24h;
-    case 'followup7d':
-      return analytics.followup7d;
-    case 'followup30d':
-      return analytics.followup30d;
-    case 'qualified':
-      return analytics.qualified;
-    case 'overdue':
-      return analytics.overdue;
-    case 'totalContacts':
-      return analytics.total;
-    default:
-      return 0;
-  }
+  return meta.total;
 }
 
 String formatCount(int count) {

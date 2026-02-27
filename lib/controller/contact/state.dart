@@ -17,7 +17,6 @@ class ContactState {
 
   RxBool showFilterRow = false.obs;
   Rx<NetworkStatusCardData?> selectedTab = Rx<NetworkStatusCardData?>(null);
-  Rx<ContactAnalytics?> analytics = Rx<ContactAnalytics?>(null);
 
   RxList<MobileContact> contacts = <MobileContact>[].obs;
 

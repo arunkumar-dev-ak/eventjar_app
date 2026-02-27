@@ -14,6 +14,7 @@ class Global {
     // );
     await Get.putAsync<StorageService>(() => StorageService().init());
     Get.put<UserStore>(UserStore());
+    // Get.put<ToastController>(ToastController());
   }
 }
 

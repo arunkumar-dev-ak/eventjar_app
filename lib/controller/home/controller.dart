@@ -7,6 +7,7 @@ import 'package:eventjar/controller/home/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/palette_generator.dart';
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/global/toast/toast_controller.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/helper/date_handler.dart';
 import 'package:eventjar/logger_service.dart';
@@ -24,6 +25,8 @@ import '../../api/verify_api/email.dart';
 import '../../api/verify_api/phone.dart';
 
 class HomeController extends GetxController {
+  // final ToastController toastController = Get.find();
+
   var appBarTitle = "MyEventJar";
   final state = HomeState();
   final formKey = GlobalKey<FormState>();
@@ -33,6 +36,16 @@ class HomeController extends GetxController {
   final int _limit = 10;
 
   bool get isLoading => state.isLoading.value;
+
+  // void testFunction() {
+  //   for (int i = 0; i < 1; i++) {
+  //     toastController.error(
+  //       title: "Success",
+  //       message:
+  //           "Configure Authorization: For most AWS services, you need to sign your request with AWS Signature Version 4. Go to the Authorization tab, select AWS Signature from the Type dropdown, and enter your AWS AccessKey and SecretKey. For enhanced security, use Postman's built-in Postman Vault or environment variables to store sensitive credentials.",
+  //     );
+  //   }
+  // }
 
   final _searchBarController = TextEditingController().obs;
 

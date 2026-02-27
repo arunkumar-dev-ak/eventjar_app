@@ -55,4 +55,24 @@ class ContactListMeetingApi {
       rethrow;
     }
   }
+
+  static Future<bool> rescheduleMeeting({
+    required String id,
+    required Map<String, dynamic> dto,
+  }) async {
+    try {
+      final response = await _dio.patch(
+        '/network-meetings/$id/reschedule',
+        data: dto,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+
+      throw Exception('Failed to reschedule meeting');
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

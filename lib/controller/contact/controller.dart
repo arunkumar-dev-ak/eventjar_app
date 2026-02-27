@@ -36,13 +36,9 @@ class ContactController extends GetxController
     final args = Get.arguments;
     if (args != null && args is Map) {
       final statusCard = args['statusCard'] as NetworkStatusCardData?;
-      final analytics = args['analytics'] as ContactAnalytics?;
 
       if (statusCard != null) {
         state.selectedTab.value = statusCard;
-      }
-      if (analytics != null) {
-        state.analytics.value = analytics;
       }
     }
 

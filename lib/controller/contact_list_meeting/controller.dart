@@ -6,12 +6,15 @@ import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
+import 'package:eventjar/page/contact_list_meeting/widget/reschedule_meeting_conatct_list.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ContactListMeetingController extends GetxController {
   final state = ContactListMeetingState();
+  TextEditingController meetingDateController = TextEditingController();
+  TextEditingController meetingTimeController = TextEditingController();
 
   @override
   void onInit() {
@@ -126,16 +129,135 @@ class ContactListMeetingController extends GetxController {
     }
   }
 
-  Future<void> onRescheduleMeeting() async {
-    Get.toNamed(
-      '/reschedule-meeting',
-      arguments: {
-        'contact': state.mobileContact.value,
-        'networkMeeting': state.currentMeeting.value,
-      },
-    );
+  /*----- Reschedule Meeting -----*/
+  void updateMeetingDate(DateTime dateTime) {
+    state.meetingDate.value = dateTime;
+    meetingDateController.text =
+        '${dateTime.day.toString().padLeft(2, '0')}-'
+        '${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}';
   }
 
+  void updateMeetingTime(TimeOfDay time) {
+    state.meetingTime.value = time;
+    meetingTimeController.text = time.format(Get.context!);
+  }
+
+  Future<void> pickMeetingDate() async {
+    final picked = await showDatePicker(
+      context: Get.context!,
+      initialDate: state.meetingDate.value,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null) {
+      updateMeetingDate(picked);
+    }
+  }
+
+  Future<void> pickMeetingTime() async {
+    final picked = await showTimePicker(
+      context: Get.context!,
+      initialTime: state.meetingTime.value,
+    );
+
+    if (picked != null) {
+      updateMeetingTime(picked);
+    }
+  }
+
+  Map<String, dynamic> _buildMeetingDto() {
+    final date = state.meetingDate.value;
+    final time = state.meetingTime.value;
+
+    final scheduledAt = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
+
+    final meetingTimeFormatted =
+        '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+
+    return {
+      'scheduledAt': scheduledAt.toIso8601String(),
+      'meetingTime': meetingTimeFormatted,
+    };
+  }
+
+  Future<void> rescheduleMeeting({
+    required BuildContext context,
+    required String meetingId,
+  }) async {
+    try {
+      state.isRescheduling.value = true;
+
+      final dto = _buildMeetingDto();
+
+      await ContactListMeetingApi.rescheduleMeeting(id: meetingId, dto: dto);
+      AppSnackbar.success(
+        title: "Success",
+        message: "Meeting rescheduled successfully",
+      );
+
+      Navigator.pop(Get.context!);
+      Navigator.pop(Get.context!, "refresh");
+    } catch (err) {
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return;
+        }
+
+        ApiErrorHandler.handleError(err, "Failed to change Status");
+      } else if (err is Exception) {
+        AppSnackbar.error(title: "Exception", message: err.toString());
+      } else {
+        AppSnackbar.error(
+          title: "Error",
+          message: "Failed to reschedule meeting",
+        );
+      }
+    } finally {
+      state.isRescheduling.value = false;
+    }
+  }
+
+  void onRescheduleMeeting() async {
+    final meeting = state.currentMeeting.value;
+    if (meeting == null) return;
+
+    // Pre-fill existing values
+    updateMeetingDate(meeting.scheduledAt);
+    final timeParts = meeting.meetingTime?.split(":");
+    if (timeParts != null) {
+      updateMeetingTime(
+        TimeOfDay(
+          hour: int.parse(timeParts[0]),
+          minute: int.parse(timeParts[1]),
+        ),
+      );
+    }
+
+    final result = await Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: RescheduleMeetingContactList(meetingId: meeting.id),
+      ),
+      barrierDismissible: false,
+    );
+
+    if (result == true) {
+      Navigator.pop(Get.context!, "refresh");
+    }
+  }
+
+  /*-----Complete Meeting -----*/
   Future<void> onCompleteMeeting(String meetingId) async {
     state.isLoading.value = true;
     try {
