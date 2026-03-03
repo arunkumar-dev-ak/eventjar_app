@@ -187,10 +187,7 @@ class ContactListMeetingController extends GetxController {
     };
   }
 
-  Future<void> rescheduleMeeting({
-    required BuildContext context,
-    required String meetingId,
-  }) async {
+  Future<bool> rescheduleMeeting({required String meetingId}) async {
     try {
       state.isRescheduling.value = true;
 
@@ -202,8 +199,7 @@ class ContactListMeetingController extends GetxController {
         message: "Meeting rescheduled successfully",
       );
 
-      Navigator.pop(Get.context!);
-      Navigator.pop(Get.context!, "refresh");
+      return true;
     } catch (err) {
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
@@ -211,17 +207,20 @@ class ContactListMeetingController extends GetxController {
         if (statusCode == 401) {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
+          return false;
         }
 
         ApiErrorHandler.handleError(err, "Failed to change Status");
+        return false;
       } else if (err is Exception) {
         AppSnackbar.error(title: "Exception", message: err.toString());
+        return false;
       } else {
         AppSnackbar.error(
           title: "Error",
           message: "Failed to reschedule meeting",
         );
+        return false;
       }
     } finally {
       state.isRescheduling.value = false;
@@ -245,11 +244,8 @@ class ContactListMeetingController extends GetxController {
     }
 
     final result = await Get.dialog(
-      Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: RescheduleMeetingContactList(meetingId: meeting.id),
-      ),
-      barrierDismissible: false,
+      RescheduleMeetingContactList(meetingId: meeting.id),
+      // barrierDismissible: false,
     );
 
     if (result == true) {
