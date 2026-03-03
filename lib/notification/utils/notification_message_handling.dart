@@ -15,7 +15,7 @@ class NotificationContent {
   });
 }
 
-NotificationContent buildContactNotification(RemoteMessage message) {
+NotificationContent buildNotificationContent(RemoteMessage message) {
   final String type = message.data['type'] ?? '';
   final String contactName = message.data['contactName'] ?? '';
   final String? stage = message.data['stage'];

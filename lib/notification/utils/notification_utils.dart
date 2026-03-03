@@ -6,36 +6,54 @@ void navigateBasedOnNotificationType(String type) {
   Map<String, dynamic> args = {};
 
   switch (type) {
-    /// CONTACT
+    /// CONTACT (Login Required)
     case "CONTACT_LIST":
     case "CONTACT_LIST_MEETING_SCHEDULED":
     case "CONTACT_LIST_MEETING_RESCHEDULED":
     case "CONTACT_LIST_MEETING_ACCEPTED":
     case "CONTACT_LIST_MEETING_COMPLETED":
-      args = {"initialTab": 1, "openSubPage": "contact"};
+      args = {
+        "initialTab": 1,
+        "openSubPage": "contact",
+        "isLoginRequired": true,
+      };
       break;
 
-    /// MEETING
+    /// MEETING (Login Required)
     case "MEETING_SCHEDULED":
     case "MEETING_COMPLETED":
     case "MEETING_ACCEPTED":
     case "MEETING_RESCHEDULED":
-      args = {"initialTab": 1, "openSubPage": "meeting"};
+      args = {
+        "initialTab": 1,
+        "openSubPage": "meeting",
+        "isLoginRequired": true,
+      };
       break;
 
-    /// CONNECTION
+    /// CONNECTION (Login Required)
     case "CONNECTION_RECEIVED":
-      args = {"initialTab": 1, "openSubPage": "connection", "connectionTab": 1};
+      args = {
+        "initialTab": 1,
+        "openSubPage": "connection",
+        "connectionTab": 1,
+        "isLoginRequired": true,
+      };
       break;
 
     case "CONNECTION_REJECTED":
     case "CONNECTION_ACCEPTED":
-      args = {"initialTab": 1, "openSubPage": "connection", "connectionTab": 0};
+      args = {
+        "initialTab": 1,
+        "openSubPage": "connection",
+        "connectionTab": 0,
+        "isLoginRequired": true,
+      };
       break;
 
-    /// TICKET
+    /// TICKET (Login Required)
     case "ATTENDEE_TICKET_CONFIRMED":
-      args = {"initialTab": 3};
+      args = {"initialTab": 3, "isLoginRequired": true};
       break;
 
     default:

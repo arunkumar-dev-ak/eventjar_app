@@ -97,7 +97,7 @@ class SignInController extends GetxController {
       navigateToBackPage(context);
     } catch (err) {
       state.isLoading.value = false;
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
         ApiErrorHandler.handleError(err, "Login Error");
       } else {

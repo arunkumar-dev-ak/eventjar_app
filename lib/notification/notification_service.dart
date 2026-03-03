@@ -6,6 +6,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:eventjar/logger_service.dart'; // Adjust import
 import 'package:eventjar/storage/storage_service.dart'; // Adjust import
 
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  try {
+    await Firebase.initializeApp();
+    await NotificationService._instance.setupFlutterNotifications();
+    await NotificationService._instance.showNotification(message);
+  } catch (e) {
+    LoggerService.loggerInstance.e("error while handling bg notification $e");
+  }
+}
+
+@pragma('vm:entry-point')
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
   factory NotificationService() => _instance;
@@ -157,34 +169,96 @@ class NotificationService {
 
   /*----- message showing -----*/
   //handling message when the app is in opened state
+  // Future<void> showNotification(RemoteMessage message) async {
+  //   LoggerService.loggerInstance.dynamic_d(
+  //     '${message.data}, ${message.notification?.body},  ${message.notification?.title}',
+  //   );
+  //   try {
+  //     final contactId = message.data['contactId'];
+  //     final meetingId = message.data['meetingId'];
+  //     final ticketId = message.data['ticketId'];
+  //     final connectionId = message.data['connectionId'];
+  //     final eventId = message.data['eventId'];
+
+  //     final String primaryId =
+  //         contactId ??
+  //         meetingId ??
+  //         ticketId ??
+  //         connectionId ??
+  //         eventId ??
+  //         "unknown";
+  //     final int notificationId = primaryId.hashCode;
+
+  //     const AndroidNotificationDetails androidDetails =
+  //         AndroidNotificationDetails(
+  //           'contact_channel',
+  //           'Contact Notifications',
+  //           channelDescription: 'Notifications for contact management',
+  //           importance: Importance.max,
+  //           priority: Priority.high,
+  //           styleInformation: BigTextStyleInformation(''),
+  //         );
+
+  //     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+  //       presentAlert: true,
+  //       presentBadge: true,
+  //       presentSound: true,
+  //     );
+
+  //     const NotificationDetails platformDetails = NotificationDetails(
+  //       android: androidDetails,
+  //       iOS: iosDetails, // ✅ iOS details
+  //     );
+
+  //     final content = buildContactNotification(message);
+
+  //     await flutterLocalNotificationsPlugin.show(
+  //       notificationId,
+  //       content.title,
+  //       content.body,
+  //       platformDetails,
+  //       payload: message.data['type'],
+  //     );
+  //   } catch (e) {
+  //     LoggerService.loggerInstance.e("Notification show error: $e");
+  //   }
+  // }
+
   Future<void> showNotification(RemoteMessage message) async {
-    LoggerService.loggerInstance.dynamic_d(
-      '${message.data}, ${message.notification?.body},  ${message.notification?.title}',
-    );
     try {
-      final contactId = message.data['contactId'];
-      final meetingId = message.data['meetingId'];
-      final ticketId = message.data['ticketId'];
+      LoggerService.loggerInstance.dynamic_d(
+        '${message.data}, ${message.notification?.body},  ${message.notification?.title}',
+      );
+      final String type = message.data['type'] ?? '';
+
+      // ✅ Only allow these 4 types
+      const allowedTypes = [
+        "CONNECTION_RECEIVED",
+        "CONNECTION_REJECTED",
+        "CONNECTION_ACCEPTED",
+        "ATTENDEE_TICKET_CONFIRMED",
+      ];
+
+      if (!allowedTypes.contains(type)) {
+        LoggerService.loggerInstance.d("Notification ignored for type: $type");
+        return; // 🚀 Do NOT show notification
+      }
+
       final connectionId = message.data['connectionId'];
+      final ticketId = message.data['ticketId'];
       final eventId = message.data['eventId'];
 
-      final String primaryId =
-          contactId ??
-          meetingId ??
-          ticketId ??
-          connectionId ??
-          eventId ??
-          "unknown";
+      final String primaryId = connectionId ?? ticketId ?? eventId ?? "unknown";
+
       final int notificationId = primaryId.hashCode;
 
       const AndroidNotificationDetails androidDetails =
           AndroidNotificationDetails(
-            'contact_channel',
-            'Contact Notifications',
-            channelDescription: 'Notifications for contact management',
+            'eventjar_channel',
+            'EventJar Notifications',
+            channelDescription: 'Important notifications',
             importance: Importance.max,
             priority: Priority.high,
-            styleInformation: BigTextStyleInformation(''),
           );
 
       const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
@@ -195,38 +269,38 @@ class NotificationService {
 
       const NotificationDetails platformDetails = NotificationDetails(
         android: androidDetails,
-        iOS: iosDetails, // ✅ iOS details
+        iOS: iosDetails,
       );
 
-      final content = buildContactNotification(message);
+      final content = buildNotificationContent(message);
 
       await flutterLocalNotificationsPlugin.show(
         notificationId,
         content.title,
         content.body,
         platformDetails,
-        payload: message.data['type'],
+        payload: type,
       );
     } catch (e) {
       LoggerService.loggerInstance.e("Notification show error: $e");
     }
   }
 
-  //handling message when the app is in bg or terminated state
-  @pragma('vm:entry-point')
-  static Future<void> _firebaseMessagingBackgroundHandler(
-    RemoteMessage message,
-  ) async {
-    try {
-      // 🔥 iOS: Firebase might not be initialized in background
-      await Firebase.initializeApp();
-      await NotificationService._instance.setupFlutterNotifications();
-      await NotificationService._instance.showNotification(message);
-    } catch (e) {
-      LoggerService.loggerInstance.e("error while handling bg notification $e");
-      // Silent fail in background
-    }
-  }
+  // //handling message when the app is in bg or terminated state
+  // @pragma('vm:entry-point')
+  // static Future<void> _firebaseMessagingBackgroundHandler(
+  //   RemoteMessage message,
+  // ) async {
+  //   try {
+  //     // 🔥 iOS: Firebase might not be initialized in background
+  //     await Firebase.initializeApp();
+  //     await NotificationService._instance.setupFlutterNotifications();
+  //     await NotificationService._instance.showNotification(message);
+  //   } catch (e) {
+  //     LoggerService.loggerInstance.e("error while handling bg notification $e");
+  //     // Silent fail in background
+  //   }
+  // }
 
   void _handleBackgroundMessageNotificationTap(RemoteMessage message) {
     LoggerService.loggerInstance.d("📱 App opened from notification");

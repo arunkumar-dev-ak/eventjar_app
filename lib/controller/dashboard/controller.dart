@@ -84,35 +84,52 @@ class DashboardController extends GetxController {
   }
 
   /*----- Notification Handling  -----*/
-  void _handleNotificationNavigation(Map<String, dynamic> args) {
-    final initialTab = args["initialTab"];
-
-    if (initialTab != null) {
-      changeTab(initialTab);
+  void _triggerTabController(int index) {
+    if (index == 1) {
+      Get.find<NetworkScreenController>().onTabOpen();
+    } else if (index == 2) {
+      Get.find<UserProfileController>().onTabOpen();
+    } else if (index == 3) {
+      Get.find<MyTicketController>().onTabOpen();
     }
+  }
 
-    Future.delayed(const Duration(milliseconds: 200), () {
-      if (args["openSubPage"] == "contact") {
-        Get.toNamed(RouteName.contactPage)?.then((_) {
-          state.selectedIndex.value = 0;
-        });
-      }
+  Future<void> _handleNotificationNavigation(Map<String, dynamic> args) async {
+    final initialTab = args["initialTab"];
+    final isLoginRequired = args["isLoginRequired"] == true;
 
-      if (args["openSubPage"] == "meeting") {
-        Get.toNamed(RouteName.meetingPage)?.then((_) {
-          state.selectedIndex.value = 0;
-        });
-      }
+    if (((isLoginRequired && isLoggedIn.value) || !isLoginRequired) &&
+        initialTab != null) {
+      state.selectedIndex.value = initialTab;
 
-      if (args["openSubPage"] == "connection") {
-        final tab = args["connectionTab"] ?? 0;
-        Get.toNamed(
-          RouteName.connectionPage,
-          arguments: {"openTab": tab},
-        )?.then((_) {
-          state.selectedIndex.value = 0;
-        });
-      }
-    });
+      //small delay
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      // open Notification page
+      await _openSubPage(args);
+    }
+  }
+
+  Future<void> _openSubPage(Map<String, dynamic> args) async {
+    final subPage = args["openSubPage"];
+
+    if (subPage == "contact") {
+      await Get.toNamed(
+        RouteName.contactPage,
+      )?.then((_) => {_triggerTabController(state.selectedIndex.value)});
+    } else if (subPage == "meeting") {
+      await Get.toNamed(
+        RouteName.meetingPage,
+      )?.then((_) => {_triggerTabController(state.selectedIndex.value)});
+    } else if (subPage == "connection") {
+      final tab = args["connectionTab"] ?? 0;
+
+      await Get.toNamed(
+        RouteName.connectionPage,
+        arguments: {"openTab": tab},
+      )?.then((_) => {_triggerTabController(state.selectedIndex.value)});
+    } else {
+      _triggerTabController(state.selectedIndex.value);
+    }
   }
 }
