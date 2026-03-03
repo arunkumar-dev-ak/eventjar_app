@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:eventjar/controller/nfc_read/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/logger_service.dart';
@@ -29,10 +31,10 @@ class NfcReadPage extends GetView<NfcReadController> {
               Icons.nfc,
               size: 22,
               color: Colors.blue.shade700,
-            ), // Blue for Read
+            ),
             SizedBox(width: 8),
             Text(
-              'Read Card', // Read Card title
+              'Read Card',
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 11.sp,
@@ -43,7 +45,7 @@ class NfcReadPage extends GetView<NfcReadController> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.close_rounded, color: Colors.blueGrey),
-          onPressed: () => Get.back(),
+          onPressed: controller.cancel,
         ),
         elevation: 4,
         backgroundColor: Colors.transparent,
@@ -58,17 +60,13 @@ class NfcReadPage extends GetView<NfcReadController> {
           ),
         ),
       ),
-
       body: SafeArea(
         child: Column(
           children: [
             SizedBox(height: 2.hp),
             _StatusBadge(),
-            // Main scanning area - takes more space
             Expanded(flex: 3, child: NfcReadScanningZone()),
-            // Action container at bottom
             NfcActionContainer(),
-            // Bottom controls
             NfcReadBottomControls(),
           ],
         ),
@@ -85,17 +83,23 @@ class NfcActionContainer extends GetView<NfcReadController> {
     final profile = controller.state.profile.value;
     LoggerService.loggerInstance.dynamic_d(profile);
     final hasProfile = profile != null;
+    final isIos = Platform.isIOS;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 2.hp),
       child: NfcActionCard(
-        title: 'Write Contact',
-        subtitle: hasProfile
-            ? 'Write your contact to NFC card'
-            : 'Set up your profile to write contact',
-        icon: Icons.nfc,
-        gradientColors: const [Color(0xFF4CAF50), Color(0xFF2E7D32)],
-        enabled: hasProfile,
-        onTap: hasProfile ? controller.navigateToWrite : () {},
+        title: isIos ? 'Write Not Available on iOS' : 'Write Contact',
+        subtitle: isIos
+            ? 'NFC card writing is not supported on iOS. Use an Android device.'
+            : hasProfile
+                ? 'Write your contact to NFC card'
+                : 'Set up your profile to write contact',
+        icon: isIos ? Icons.phone_android : Icons.nfc,
+        gradientColors: isIos
+            ? const [Color(0xFF9E9E9E), Color(0xFF616161)]
+            : const [Color(0xFF4CAF50), Color(0xFF2E7D32)],
+        enabled: !isIos && hasProfile,
+        onTap: isIos ? () {} : hasProfile ? controller.navigateToWrite : () {},
       ),
     );
   }

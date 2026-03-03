@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:eventjar/controller/nfc_write/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
@@ -11,55 +13,33 @@ class NfcWriteBottomControls extends StatelessWidget {
     final controller = Get.find<NfcWriteController>();
 
     return Obx(() {
-      return Container(
-        padding: EdgeInsets.all(20),
-        child: Row(
-          children: [
-            Expanded(
-              child: ElevatedButton(
-                onPressed: controller.cancel,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey.shade100,
-                  foregroundColor: Colors.grey[700],
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text('Cancel'),
+      final hasError = controller.state.errorMessage.value != null;
+
+      if (hasError) {
+        final isIos = Platform.isIOS;
+        return Container(
+          padding: EdgeInsets.all(20),
+          child: ElevatedButton(
+            onPressed: isIos ? Get.back : controller.resetAndScan,
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  isIos ? Colors.blueGrey : Colors.green.shade600,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(vertical: 16),
+              minimumSize: const Size(double.infinity, 0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
-            SizedBox(width: 4.wp),
-            Expanded(
-              child: ElevatedButton(
-                onPressed: controller.resetAndScan,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green.shade600,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 2,
-                ),
-                child: controller.state.isSharing.value
-                    ? SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation(Colors.white),
-                        ),
-                      )
-                    : Text(
-                        'Scan',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-              ),
+            child: Text(
+              isIos ? 'Go Back' : 'Try Again',
+              style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold),
             ),
-          ],
-        ),
-      );
+          ),
+        );
+      }
+
+      return const SizedBox.shrink();
     });
   }
 }

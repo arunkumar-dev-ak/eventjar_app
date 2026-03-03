@@ -9,6 +9,7 @@ class NfcReadState {
   final isProcessing = false.obs;
   final isSaving = false.obs;
   final isSaved = false.obs;
+  final scanComplete = false.obs;
   final receivedProfile = Rxn<NfcContactModel>();
   final errorMessage = Rxn<String>();
 

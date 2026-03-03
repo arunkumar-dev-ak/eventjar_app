@@ -102,9 +102,12 @@ class NfcWriteController extends GetxController
     }
   }
 
-  void resetAndScan() {
+  Future<void> resetAndScan() async {
     state.shareSuccess.value = false;
     state.errorMessage.value = null;
+    // Stop any stale session and let the NFC stack fully reset
+    await _nfcService.stopSession();
+    await Future.delayed(const Duration(milliseconds: 400));
     startSharing();
   }
 

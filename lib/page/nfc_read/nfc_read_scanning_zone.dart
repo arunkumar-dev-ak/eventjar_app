@@ -21,6 +21,11 @@ class NfcReadScanningZone extends GetView<NfcReadController> {
           return _ProcessingView();
         }
 
+        // Scan complete state - returned from add contact page
+        if (controller.state.scanComplete.value) {
+          return _ScanCompleteView();
+        }
+
         // Scanning state
         return Container(
           width: 100.wp,
@@ -103,6 +108,56 @@ class NfcReadScanningZone extends GetView<NfcReadController> {
           ),
         );
       }),
+    );
+  }
+}
+
+class _ScanCompleteView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 100.wp,
+      padding: EdgeInsets.all(5.wp),
+      decoration: BoxDecoration(
+        gradient: RadialGradient(
+          colors: [Colors.green.withValues(alpha: 0.08), Colors.transparent],
+          center: Alignment.center,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Colors.green.withValues(alpha: 0.3),
+          width: 2,
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.green.shade600,
+            ),
+            child: Icon(Icons.check_rounded, color: Colors.white, size: 44),
+          ),
+          SizedBox(height: 3.hp),
+          Text(
+            'Card Scanned!',
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.green.shade800,
+            ),
+          ),
+          SizedBox(height: 1.hp),
+          Text(
+            'Tap "Scan Another Card" to scan again',
+            style: TextStyle(fontSize: 8.sp, color: Colors.grey[600]),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

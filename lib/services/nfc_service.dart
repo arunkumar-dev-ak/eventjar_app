@@ -13,6 +13,7 @@ class NfcService {
   NfcService._internal();
 
   bool _isSessionActive = false;
+  bool _cancelRequested = false;
 
   /// Check if NFC is available on this device
   Future<bool> isNfcAvailable() async {
@@ -42,20 +43,36 @@ class NfcService {
     }
   }
 
+  bool _isUserCancellation(String message) {
+    final lower = message.toLowerCase();
+    return lower.contains('invalidated by user') ||
+        lower.contains('user cancel') ||
+        lower.contains('session cancelled');
+  }
+
   /// Start NFC session to read contacts
   /// Returns the contact when an NFC tag is read, or null if parsing fails
   Future<void> startReadSession({
     required Function(NfcContactModel contact) onContactReceived,
     required Function(String error) onError,
     Function()? onSessionStarted,
+    Function()? onUserCancelled,
   }) async {
     if (_isSessionActive) {
       await stopSession();
     }
 
+    _cancelRequested = false;
+
     try {
       _isSessionActive = true;
       onSessionStarted?.call();
+
+      // Guard: if stopSession() was called before startSession fires, bail out
+      if (_cancelRequested) {
+        _isSessionActive = false;
+        return;
+      }
 
       await NfcManager.instance.startSession(
         pollingOptions: {
@@ -86,8 +103,15 @@ class NfcService {
           }
         },
         onSessionErrorIos: (error) async {
+          try {
+            await NfcManager.instance.stopSession();
+          } catch (_) {}
           _isSessionActive = false;
-          onError(error.message);
+          if (_isUserCancellation(error.message)) {
+            onUserCancelled?.call();
+          } else {
+            onError(error.message);
+          }
         },
       );
     } catch (e) {
@@ -155,6 +179,9 @@ class NfcService {
           }
         },
         onSessionErrorIos: (error) async {
+          try {
+            await NfcManager.instance.stopSession();
+          } catch (_) {}
           _isSessionActive = false;
           onError(error.message);
         },
@@ -167,12 +194,12 @@ class NfcService {
 
   /// Stop active NFC session
   Future<void> stopSession() async {
-    if (_isSessionActive) {
-      try {
-        await NfcManager.instance.stopSession();
-      } catch (e) {
-        debugPrint('Error stopping NFC session: $e');
-      }
+    _cancelRequested = true;
+    try {
+      await NfcManager.instance.stopSession();
+    } catch (e) {
+      debugPrint('Error stopping NFC session: $e');
+    } finally {
       _isSessionActive = false;
     }
   }

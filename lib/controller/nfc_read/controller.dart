@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:eventjar/controller/nfc_read/state.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
@@ -14,6 +16,8 @@ class NfcReadController extends GetxController
     with GetSingleTickerProviderStateMixin, WidgetsBindingObserver {
   var state = NfcReadState();
   final NfcService _nfcService = NfcService();
+  bool _isActive = true;
+  bool _isClosing = false;
 
   late AnimationController animationController;
 
@@ -34,7 +38,9 @@ class NfcReadController extends GetxController
   }
 
   Future<void> _checkAndStartScanning() async {
+    if (!_isActive) return;
     await _checkNfcStatus();
+    if (!_isActive) return;
     if (state.nfcStatus.value == NfcStatus.available) {
       if (!state.isScanning.value) {
         startScanning();
@@ -113,6 +119,7 @@ class NfcReadController extends GetxController
   }
 
   Future<void> startScanning() async {
+    if (!_isActive) return;
     if (state.nfcStatus.value != NfcStatus.available) {
       showNfcErrorPrompt();
       return;
@@ -135,18 +142,36 @@ class NfcReadController extends GetxController
       onSessionStarted: () {
         state.isScanning.value = true;
       },
+      onUserCancelled: () {
+        state.isScanning.value = false;
+        Get.back();
+      },
     );
   }
 
-  void resetAndScan() {
+  Future<void> resetAndScan() async {
+    if (!_isActive) return;
     state.receivedProfile.value = null;
     state.errorMessage.value = null;
     state.isSaved.value = false;
     state.isSaving.value = false;
+    state.scanComplete.value = false;
+    // Stop any stale session and let the NFC stack fully reset
+    await _nfcService.stopSession();
+    await Future.delayed(const Duration(milliseconds: 600));
     startScanning();
   }
 
   Future<void> navigateToWrite() async {
+    if (Platform.isIOS) {
+      AppSnackbar.warning(
+        title: 'Not Supported on iOS',
+        message:
+            'Writing to NFC cards is not supported on iOS. Use an Android device to write contacts.',
+      );
+      return;
+    }
+
     if (state.nfcStatus.value != NfcStatus.available) {
       showNfcErrorPrompt();
       return;
@@ -190,15 +215,17 @@ class NfcReadController extends GetxController
       }
     });
 
-    // Small delay to ensure proper cleanup
-    await Future.delayed(const Duration(milliseconds: 100));
-
-    // When returning from AddContactPage, restart scanning
-    resetAndScan();
+    // Show scan complete state — user taps "Scan Another Card" to scan again
+    if (_isActive) {
+      state.scanComplete.value = true;
+    }
   }
 
-  void cancel() {
-    _nfcService.stopSession();
+  Future<void> cancel() async {
+    if (_isClosing) return;
+    _isClosing = true;
+    _isActive = false;
+    await _nfcService.stopSession();
     Get.back();
   }
 
@@ -208,6 +235,7 @@ class NfcReadController extends GetxController
 
   @override
   void onClose() {
+    _isActive = false;
     WidgetsBinding.instance.removeObserver(this);
     animationController.dispose();
     _nfcService.stopSession();
