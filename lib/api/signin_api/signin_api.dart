@@ -22,8 +22,10 @@ class SignInApi {
   }) async {
     final token = await StorageService.to.getString(storageFcmToken);
     final deviceName = await getDeviceModel();
-    LoggerService.loggerInstance.dynamic_d(token);
-    LoggerService.loggerInstance.dynamic_d(deviceName);
+    LoggerService.loggerInstance.dynamic_d("--------Token------- is $token");
+    LoggerService.loggerInstance.dynamic_d(
+      "--------Device Name  ------- is $deviceName",
+    );
     try {
       final devicePlatform = getDevicePlatform();
       final response = await _dio.post(

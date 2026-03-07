@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:eventjar/notification/utils/notification_message_handling.dart';
 import 'package:eventjar/notification/utils/notification_utils.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -30,6 +32,57 @@ class NotificationService {
   static bool _isFlutterLocalNotificationsInitialized = false;
   static const String storageFcmToken = "myEventJar_fcmToken";
 
+  // Future<void> init() async {
+  //   /*-----
+  //   Type: Background
+  //   When: App is in background or terminated
+  //   ----*/
+  //   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  //   // 🔥 2. OLD .then() pattern - iOS SAFE (waits for Firebase)
+  //   _firebaseMessaging
+  //       .getToken()
+  //       .then((token) {
+  //         if (token != null) {
+  //           StorageService.to.setString(storageFcmToken, token);
+  //           LoggerService.loggerInstance.dynamic_d("🔥 FCM Token: $token");
+  //         } else {
+  //           LoggerService.loggerInstance.dynamic_d("❌ Failed to get FCM Token");
+  //         }
+  //       })
+  //       .catchError((error) {
+  //         LoggerService.loggerInstance.dynamic_d("❌ FCM Token Error: $error");
+  //       });
+
+  //   // 🔥 3. Request permissions
+  //   await _requestPermission();
+
+  //   // 🔥 4. iOS + Android settings (iOS CRITICAL)
+  //   const AndroidInitializationSettings androidSettings =
+  //       AndroidInitializationSettings('@mipmap/ic_launcher'); // or 'logo'
+
+  //   const DarwinInitializationSettings iosSettings =
+  //       DarwinInitializationSettings(
+  //         requestAlertPermission: true,
+  //         requestBadgePermission: true,
+  //         requestSoundPermission: true,
+  //       );
+
+  //   const InitializationSettings initSettings = InitializationSettings(
+  //     android: androidSettings,
+  //     iOS: iosSettings,
+  //   );
+
+  //   // 🔥 5. Initialize local notifications
+  //   await flutterLocalNotificationsPlugin.initialize(
+  //     initSettings,
+  //     onDidReceiveNotificationResponse: onSelectNotification,
+  //   );
+
+  //   // 🔥 6. Setup handlers
+  //   _setupMessageHandlers();
+  // }
+
   Future<void> init() async {
     /*-----
     Type: Background
@@ -37,27 +90,37 @@ class NotificationService {
     ----*/
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    // 🔥 2. OLD .then() pattern - iOS SAFE (waits for Firebase)
-    _firebaseMessaging
-        .getToken()
-        .then((token) {
-          if (token != null) {
-            StorageService.to.setString(storageFcmToken, token);
-            LoggerService.loggerInstance.dynamic_d("🔥 FCM Token: $token");
-          } else {
-            LoggerService.loggerInstance.dynamic_d("❌ Failed to get FCM Token");
-          }
-        })
-        .catchError((error) {
-          LoggerService.loggerInstance.dynamic_d("❌ FCM Token Error: $error");
-        });
-
-    // 🔥 3. Request permissions
+    // 🔥 1. Request permissions FIRST (required before getting token)
     await _requestPermission();
 
-    // 🔥 4. iOS + Android settings (iOS CRITICAL)
+    // 🔥 2. Get FCM Token (iOS safe with APNs check)
+    if (Platform.isIOS) {
+      String? apnsToken = await _firebaseMessaging.getAPNSToken();
+
+      if (apnsToken != null) {
+        // APNs ready → get FCM token immediately
+        await _getFCMToken();
+      } else {
+        // APNs not ready yet → wait and retry
+        await Future<void>.delayed(const Duration(seconds: 3));
+        apnsToken = await _firebaseMessaging.getAPNSToken();
+
+        if (apnsToken != null) {
+          await _getFCMToken();
+        } else {
+          LoggerService.loggerInstance.dynamic_d(
+            "❌ APNs token still null after retry",
+          );
+        }
+      }
+    } else {
+      // Android → directly get FCM token
+      await _getFCMToken();
+    }
+
+    // 🔥 3. iOS + Android local notification settings
     const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher'); // or 'logo'
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const DarwinInitializationSettings iosSettings =
         DarwinInitializationSettings(
@@ -71,14 +134,28 @@ class NotificationService {
       iOS: iosSettings,
     );
 
-    // 🔥 5. Initialize local notifications
+    // 🔥 4. Initialize local notifications
     await flutterLocalNotificationsPlugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: onSelectNotification,
     );
 
-    // 🔥 6. Setup handlers
+    // 🔥 5. Setup foreground/background/terminated handlers
     _setupMessageHandlers();
+  }
+
+  Future<void> _getFCMToken() async {
+    try {
+      String? token = await _firebaseMessaging.getToken();
+      if (token != null) {
+        StorageService.to.setString(storageFcmToken, token);
+        LoggerService.loggerInstance.dynamic_d("🔥 FCM Token: $token");
+      } else {
+        LoggerService.loggerInstance.dynamic_d("❌ FCM Token null");
+      }
+    } catch (e) {
+      LoggerService.loggerInstance.dynamic_d("❌ FCM Token Error: $e");
+    }
   }
 
   // 🔥 iOS Legacy support (< iOS 10)

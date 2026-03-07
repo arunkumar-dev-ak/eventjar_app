@@ -30,6 +30,32 @@ class MyTicketController extends GetxController {
     fetchMyTickets();
   }
 
+  final searchController = TextEditingController();
+
+  void onSearch(String value) {
+    state.searchQuery.value = value;
+    // fetchTickets();
+  }
+
+  void changeTab(int index) {
+    state.selectedTab.value = index;
+    // fetchTickets();
+  }
+
+  void openDateFilter() async {
+    final picked = await showDatePicker(
+      context: Get.context!,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2035),
+      initialDate: DateTime.now(),
+    );
+
+    if (picked != null) {
+      state.selectedDate.value = picked;
+      // fetchTickets();
+    }
+  }
+
   // ✅ SCROLL LISTENER (auto pagination trigger)
   void _onScroll() {
     if (!scrollController.hasClients) return;
