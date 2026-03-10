@@ -124,26 +124,6 @@ class HomeController extends GetxController {
     onTabOpen();
   }
 
-  // void debugScrollPositions() {
-  //   final positions = homeScrollController.positions;
-  //   print('🔍 ScrollController Positions (${positions.length}):');
-
-  //   for (int i = 0; i < positions.length; i++) {
-  //     final position = positions.elementAt(i);
-  //     print('  📍 Position $i:');
-  //     print('    - context: ${position.context}');
-  //     print('    - minScrollExtent: ${position.minScrollExtent}');
-  //     print('    - maxScrollExtent: ${position.maxScrollExtent}');
-  //     print('    - pixels: ${position.pixels}');
-  //     print('    - viewportDimension: ${position.viewportDimension}');
-  //     print('    - widget type: ${position.context.runtimeType}');
-  //   }
-
-  //   if (positions.isEmpty) {
-  //     print('  ❌ NO ScrollPositions attached!');
-  //   }
-  // }
-
   Future<void> fetchContactAnalytics() async {
     try {
       final result = await ContactAnalyticsApi.getAnalytics(

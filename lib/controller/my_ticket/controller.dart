@@ -2,10 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/api/my_ticket_api/my_ticket_api.dart';
 import 'package:eventjar/controller/dashboard/controller.dart';
 import 'package:eventjar/controller/my_ticket/state.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
-import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/page/my_ticket/widget/my_ticketdate_range_picker_widget.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,46 +19,96 @@ class MyTicketController extends GetxController {
 
   final int itemsPerPage = 10;
 
-  // ✅ ADD scroll controller
+  bool get hasNext => state.pagination.value?.paging.links.next != null;
+
+  // scroll controller
   final ScrollController scrollController = ScrollController();
+  final searchController = TextEditingController();
+
+  Worker? _searchWorker;
+  Worker? _dateWorker;
 
   @override
   void onInit() {
     super.onInit();
     scrollController.addListener(_onScroll);
+    _initWorkers();
+  }
+
+  void _initWorkers() {
+    _searchWorker = debounce(
+      state.searchQuery,
+      (_) => fetchMyTickets(),
+      time: const Duration(milliseconds: 500),
+    );
+
+    _dateWorker = ever(state.selectedDateRange, (_) => fetchMyTickets());
   }
 
   void onTabOpen() {
     fetchMyTickets();
   }
 
-  final searchController = TextEditingController();
+  String getDisplayText() {
+    if (state.selectedDateRange.value == null) return 'All Time';
+
+    final start = _formatDate(state.selectedDateRange.value!.start);
+    final end = _formatDate(state.selectedDateRange.value!.end);
+    return '$start - $end';
+  }
+
+  String _formatDate(DateTime date) {
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    final monthName = months[date.month - 1];
+    return '$monthName ${date.day}, ${date.year}';
+  }
 
   void onSearch(String value) {
     state.searchQuery.value = value;
-    // fetchTickets();
+  }
+
+  void toggleFilters() {
+    state.showFilters.value = !state.showFilters.value;
   }
 
   void changeTab(int index) {
+    if (state.selectedTab.value == index) return;
+
+    // Dispose workers to prevent auto-fetch on reset
+    _searchWorker?.dispose();
+    _dateWorker?.dispose();
+
+    searchController.clear();
+    state.searchQuery.value = '';
+    state.selectedDateRange.value = null;
     state.selectedTab.value = index;
-    // fetchTickets();
+
+    fetchMyTickets();
+    _initWorkers();
   }
 
-  void openDateFilter() async {
-    final picked = await showDatePicker(
-      context: Get.context!,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2035),
-      initialDate: DateTime.now(),
+  Future<void> pickDateRange() async {
+    final range = await MyTicketDateRangePickerWidget.show(
+      initialRange: state.selectedDateRange.value,
+      selectedTab: state.selectedTab.value,
     );
 
-    if (picked != null) {
-      state.selectedDate.value = picked;
-      // fetchTickets();
-    }
+    state.selectedDateRange.value = range;
   }
 
-  // ✅ SCROLL LISTENER (auto pagination trigger)
   void _onScroll() {
     if (!scrollController.hasClients) return;
 
@@ -67,7 +119,7 @@ class MyTicketController extends GetxController {
 
     if (maxScroll - currentScroll <= prefetchThreshold) {
       if (state.pagination.value != null &&
-          state.pagination.value!.hasNextPage &&
+          state.pagination.value?.paging.links.next != null &&
           !state.isLoadingMore.value &&
           !state.isLoading.value) {
         loadMoreTickets();
@@ -75,18 +127,48 @@ class MyTicketController extends GetxController {
     }
   }
 
+  /*----- Api Calls -----*/
+  String _buildUrl() {
+    String url = "/mobile/tickets/my-registrations";
+    List<String> queryParams = [];
+
+    if (state.searchQuery.value.isNotEmpty) {
+      queryParams.add("eventName=${state.searchQuery.value}");
+    }
+
+    if (state.selectedDateRange.value != null) {
+      final dateRange = state.selectedDateRange.value!;
+      final fromDateUtc = dateRange.start.toUtc();
+      var toDateUtc = dateRange.end.toUtc();
+
+      if (fromDateUtc.isAtSameMomentAs(toDateUtc)) {
+        toDateUtc = toDateUtc.add(
+          const Duration(hours: 23, minutes: 59, seconds: 59),
+        );
+      }
+
+      queryParams.add("eventStartDate=${fromDateUtc.toIso8601String()}");
+      queryParams.add("eventEndDate=${toDateUtc.toIso8601String()}");
+    }
+
+    queryParams.add("limit=$itemsPerPage");
+    queryParams.add("offset=0");
+
+    if (queryParams.isNotEmpty) {
+      url += "?${queryParams.join("&")}";
+    }
+    return url;
+  }
+
   Future<void> fetchMyTickets() async {
     try {
       state.isLoading.value = true;
-      state.currentPage.value = 1;
 
-      final response = await MyTicketsApi.getMyRegistrations(
-        page: state.currentPage.value,
-        limit: itemsPerPage,
-      );
+      final url = _buildUrl();
+      final response = await MyTicketsApi.getMyTickets(url);
 
-      state.tickets.value = response.data.registrations;
-      state.pagination.value = response.data.pagination;
+      state.tickets.value = response.data;
+      state.pagination.value = response.meta;
     } catch (err) {
       state.tickets.value = [];
 
@@ -114,27 +196,21 @@ class MyTicketController extends GetxController {
   }
 
   Future<void> loadMoreTickets() async {
-    if (state.pagination.value == null ||
-        !state.pagination.value!.hasNextPage ||
-        state.isLoadingMore.value) {
+    final nextUrl = state.pagination.value?.paging.links.next;
+
+    if (nextUrl == null || state.isLoadingMore.value) {
       return;
     }
 
     try {
-      LoggerService.loggerInstance.dynamic_d("Loading more tickets");
       state.isLoadingMore.value = true;
-      state.currentPage.value++;
 
-      final response = await MyTicketsApi.getMyRegistrations(
-        page: state.currentPage.value,
-        limit: itemsPerPage,
-      );
+      final url = '${backendBaseUrl()}$nextUrl';
+      final response = await MyTicketsApi.getMyTickets(url);
 
-      state.tickets.addAll(response.data.registrations);
-      state.pagination.value = response.data.pagination;
+      state.tickets.addAll(response.data);
+      state.pagination.value = response.meta;
     } catch (err) {
-      state.currentPage.value--;
-
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
 
@@ -157,7 +233,8 @@ class MyTicketController extends GetxController {
   }
 
   Future<void> refreshTickets() async {
-    state.currentPage.value = 1;
+    state.searchQuery.value = "";
+    state.selectedDateRange.value = null;
     await fetchMyTickets();
   }
 
@@ -182,8 +259,8 @@ class MyTicketController extends GetxController {
   // ✅ CLEANUP
   @override
   void onClose() {
-    // scrollController.removeListener(_onScroll);
-    // scrollController.dispose();
+    _searchWorker?.dispose();
+    _dateWorker?.dispose();
     super.onClose();
   }
 }

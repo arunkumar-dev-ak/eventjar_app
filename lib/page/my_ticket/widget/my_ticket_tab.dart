@@ -10,33 +10,34 @@ class MyTicketTabs extends GetView<MyTicketController> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 4.wp),
+      padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.hp),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          /// Tabs
-          Obx(() {
-            return Row(
-              children: [
-                MyTicketTab(
-                  label: "Upcoming",
-                  selected: controller.state.selectedTab.value == 0,
-                  onTap: () => controller.changeTab(0),
-                ),
-                SizedBox(width: 2.wp),
-                MyTicketTab(
-                  label: "Completed",
-                  selected: controller.state.selectedTab.value == 1,
-                  onTap: () => controller.changeTab(1),
-                ),
-              ],
-            );
-          }),
+          /* Tabs */
+          Expanded(
+            child: Obx(() {
+              return Row(
+                children: [
+                  MyTicketTab(
+                    label: 'Upcoming',
+                    selected: controller.state.selectedTab.value == 0,
+                    onTap: () => controller.changeTab(0),
+                  ),
+                  SizedBox(width: 3.wp),
+                  MyTicketTab(
+                    label: 'Completed',
+                    selected: controller.state.selectedTab.value == 1,
+                    onTap: () => controller.changeTab(1),
+                  ),
+                ],
+              );
+            }),
+          ),
 
-          /// Date Filter
+          /* Filter Icon */
           IconButton(
-            icon: const Icon(Icons.calendar_month),
-            onPressed: controller.openDateFilter,
+            icon: const Icon(Icons.filter_alt_outlined),
+            onPressed: controller.toggleFilters,
           ),
         ],
       ),
@@ -61,31 +62,73 @@ class MyTicketTab extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        duration: const Duration(milliseconds: 160),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2.5.sp),
         decoration: BoxDecoration(
           gradient: selected
               ? LinearGradient(
                   colors: [
                     AppColors.gradientDarkStart,
-                    AppColors.gradientDarkStart.withValues(alpha: 0.8),
+                    AppColors.gradientDarkStart.withValues(alpha: 0.75),
                   ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 )
-              : LinearGradient(colors: [Colors.white, Colors.grey.shade100]),
+              : LinearGradient(
+                  colors: [
+                    Colors.white.withValues(alpha: 0.7),
+                    Colors.grey.shade100.withValues(alpha: 0.9),
+                  ],
+                ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selected
-                ? AppColors.gradientDarkStart
+                ? AppColors.gradientDarkStart.withValues(alpha: 0.2)
                 : Colors.grey.shade300,
+            width: 1.2,
           ),
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: AppColors.gradientDarkStart.withValues(alpha: 0.25),
+                    blurRadius: 10,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 3),
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 8.5.sp,
-            fontWeight: FontWeight.w600,
-            color: selected ? Colors.white : AppColors.gradientDarkStart,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                color: selected
+                    ? Colors.white
+                    : AppColors.gradientDarkStart.withValues(alpha: 0.75),
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                fontSize: 8.5.sp,
+                shadows: selected
+                    ? [
+                        Shadow(
+                          color: AppColors.gradientDarkStart.withValues(
+                            alpha: 0.3,
+                          ),
+                          blurRadius: 2,
+                          offset: const Offset(0, 1),
+                        ),
+                      ]
+                    : null,
+              ),
+            ),
+          ],
         ),
       ),
     );

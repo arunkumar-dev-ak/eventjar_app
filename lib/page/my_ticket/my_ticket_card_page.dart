@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
   final isActive = ticket.status.toLowerCase() == "active" ? true : false;
-  final isFree = ticket.ticketTier?.price.toString() == '0' ? true : false;
+  final isFree = ticket.ticketTierDetail.price.toString() == '0' ? true : false;
 
   return Container(
     margin: EdgeInsets.only(bottom: 3.hp),
@@ -49,7 +49,7 @@ Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
             children: [
               // Event Title
               Text(
-                ticket.event.title,
+                ticket.ticketEventDetail.title,
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
@@ -64,13 +64,11 @@ Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
                 runSpacing: 1.hp,
                 children: [
                   // Ticket Tier Badge
-                  if (ticket.ticketTier != null) ...[
-                    myTicketBuildBadge(
-                      ticket.ticketTier!.name,
-                      isFree ? Colors.green.shade600 : Colors.blue.shade600,
-                      isFree ? Colors.green.shade50 : Colors.blue.shade50,
-                    ),
-                  ],
+                  myTicketBuildBadge(
+                    ticket.ticketTierDetail.name,
+                    isFree ? Colors.green.shade600 : Colors.blue.shade600,
+                    isFree ? Colors.green.shade50 : Colors.blue.shade50,
+                  ),
 
                   // Quantity Badge
                   myTicketBuildBadge(
@@ -80,13 +78,13 @@ Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
                   ),
 
                   // Total/Free Badge
-                  if (ticket.ticketTier != null) ...[
-                    myTicketBuildBadge(
-                      isFree ? 'FREE' : 'Total: ₹${ticket.ticketTier!.price}',
-                      isFree ? Colors.green.shade700 : Colors.purple.shade700,
-                      isFree ? Colors.green.shade100 : Colors.purple.shade100,
-                    ),
-                  ],
+                  myTicketBuildBadge(
+                    isFree
+                        ? 'FREE'
+                        : 'Total: ₹${ticket.ticketTierDetail!.price}',
+                    isFree ? Colors.green.shade700 : Colors.purple.shade700,
+                    isFree ? Colors.green.shade100 : Colors.purple.shade100,
+                  ),
 
                   // Status Badge
                   // _buildBadge(
@@ -110,7 +108,7 @@ Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
               myTicketBuildInfoRow(
                 Icons.location_on,
                 'Venue',
-                '${ticket.event.venue}${ticket.event.address.isNotEmpty ? ', ${ticket.event.address}' : ''}',
+                '${ticket.ticketEventDetail.venue}${ticket.ticketEventDetail.address.isNotEmpty ? ', ${ticket.ticketEventDetail.address}' : ''}',
                 Colors.red.shade400,
               ),
               SizedBox(height: 1.5.hp),
@@ -119,7 +117,7 @@ Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
               myTicketBuildInfoRow(
                 Icons.calendar_today,
                 'Event Date',
-                formatDate(ticket.event.startDate),
+                formatDate(ticket.ticketEventDetail.startDate),
                 Colors.blue.shade400,
               ),
               SizedBox(height: 1.5.hp),
@@ -129,7 +127,10 @@ Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
                 Icons.access_time,
                 'Time',
                 // '${formatTimeFromDateTime(ticket.event.startDate, context)} - ${formatTimeFromDateTime(ticket.event.endDate, context)}',
-                '${formatTimeFromDateTime(ticket.event.startDate, context)}',
+                formatTimeFromDateTime(
+                  ticket.ticketEventDetail.startDate,
+                  context,
+                ),
                 Colors.orange.shade400,
               ),
 
