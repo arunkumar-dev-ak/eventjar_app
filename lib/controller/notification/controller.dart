@@ -17,6 +17,7 @@ class NotificationController extends GetxController {
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     super.onInit();
     final args = Get.arguments;
 

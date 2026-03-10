@@ -23,6 +23,7 @@ class NfcReadController extends GetxController
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     super.onInit();
     WidgetsBinding.instance.addObserver(this);
     _initAnimations();

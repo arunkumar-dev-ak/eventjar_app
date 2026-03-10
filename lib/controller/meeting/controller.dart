@@ -19,6 +19,7 @@ class MeetingController extends GetxController {
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     super.onInit();
     debounceWorker = everAll([state.selectedStatus, state.selectedDateRange], (
       _,

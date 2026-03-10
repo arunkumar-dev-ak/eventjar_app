@@ -24,6 +24,7 @@ class QualifyLeadController extends GetxController {
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     final args = Get.arguments;
     state.contact.value = args;
     super.onInit();

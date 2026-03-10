@@ -29,6 +29,7 @@ class SignUpController extends GetxController {
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     super.onInit();
   }
 

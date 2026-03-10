@@ -7,7 +7,7 @@ import 'package:eventjar/controller/home/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/palette_generator.dart';
 import 'package:eventjar/global/store/user_store.dart';
-import 'package:eventjar/global/toast/toast_controller.dart';
+// import 'package:eventjar/global/toast/toast_controller.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/helper/date_handler.dart';
 import 'package:eventjar/logger_service.dart';
@@ -38,9 +38,9 @@ class HomeController extends GetxController {
   bool get isLoading => state.isLoading.value;
 
   // void testFunction() {
-  //   for (int i = 0; i < 1; i++) {
+  //   for (int i = 0; i < 10; i++) {
   //     toastController.error(
-  //       title: "Success",
+  //       title: "Error $i",
   //       message:
   //           "Configure Authorization: For most AWS services, you need to sign your request with AWS Signature Version 4. Go to the Authorization tab, select AWS Signature from the Type dropdown, and enter your AWS AccessKey and SecretKey. For enhanced security, use Postman's built-in Postman Vault or environment variables to store sensitive credentials.",
   //     );
@@ -165,7 +165,7 @@ class HomeController extends GetxController {
   }
 
   Future<void> onTabOpen({int retryCount = 0}) async {
-    LoggerService.loggerInstance.dynamic_d("in on tab open");
+    UserStore.cancelAllRequests();
     state.isLoading.value = true;
     try {
       // Events don't need auth — fetch independently

@@ -23,6 +23,7 @@ class SignInController extends GetxController {
   final TextEditingController otpController = TextEditingController();
 
   void onInint() {
+    UserStore.cancelAllRequests();
     super.onInit();
   }
 

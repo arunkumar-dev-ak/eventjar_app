@@ -48,6 +48,7 @@ class UserProfileController extends GetxController
 
   @override
   void onInit() async {
+    UserStore.cancelAllRequests();
     super.onInit();
     loadAppInfo();
     // shakeController = AnimationController(
@@ -68,6 +69,7 @@ class UserProfileController extends GetxController
   }
 
   void onTabOpen() async {
+    UserStore.cancelAllRequests();
     state.isLoading.value = true;
     await fetchUserProfile();
     if (isLoggedIn.value == true) {

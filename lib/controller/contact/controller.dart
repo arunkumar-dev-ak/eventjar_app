@@ -33,6 +33,7 @@ class ContactController extends GetxController
 
   @override
   void onInit() async {
+    UserStore.cancelAllRequests();
     final args = Get.arguments;
     if (args != null && args is Map) {
       final statusCard = args['statusCard'] as NetworkStatusCardData?;

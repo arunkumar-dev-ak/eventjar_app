@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:eventjar/global/device_helper.dart';
 import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/logger_service.dart';
@@ -10,6 +11,7 @@ import 'package:get/get.dart';
 
 class UserStore extends GetxController {
   static UserStore get to => Get.find<UserStore>();
+  static CancelToken cancelToken = CancelToken();
 
   final _isLogin = false.obs;
   final _accessToken = "".obs;
@@ -24,6 +26,7 @@ class UserStore extends GetxController {
   String get refreshToken => _refreshToken.value;
   String get deviceId => _deviceId.value;
   RxMap<String, dynamic> get profile => _profile;
+  static CancelToken get token => cancelToken;
 
   // String get name {
   //   final String firstName = capitalize(
@@ -127,5 +130,11 @@ class UserStore extends GetxController {
     _isLogin.value = false;
     _accessToken.value = '';
     _refreshToken.value = '';
+  }
+
+  static void cancelAllRequests() {
+    cancelToken.cancel("Cancelled due to new request flow");
+
+    cancelToken = CancelToken(); // new token
   }
 }

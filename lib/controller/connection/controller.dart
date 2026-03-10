@@ -18,6 +18,7 @@ class ConnectionController extends GetxController {
 
   @override
   void onInit() async {
+    UserStore.cancelAllRequests();
     // await UserStore.to.deleteAccessToken();
 
     final args = Get.arguments;

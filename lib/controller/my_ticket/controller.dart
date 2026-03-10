@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/api/my_ticket_api/my_ticket_api.dart';
 import 'package:eventjar/controller/dashboard/controller.dart';
 import 'package:eventjar/controller/my_ticket/state.dart';
-import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/global/store/user_store.dart';
@@ -46,6 +45,7 @@ class MyTicketController extends GetxController {
   }
 
   void onTabOpen() {
+    UserStore.cancelAllRequests();
     fetchMyTickets();
   }
 

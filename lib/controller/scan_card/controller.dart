@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:eventjar/global/store/user_store.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
@@ -41,6 +42,7 @@ class ScanCardController extends GetxController
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     super.onInit();
 
     // Initialize flutter_libphonenumber

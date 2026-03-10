@@ -77,6 +77,7 @@ class NetworkingFormController extends GetxController {
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     final args = Get.arguments;
     UserProfile? profile;
 

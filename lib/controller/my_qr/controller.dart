@@ -25,6 +25,7 @@ class MyQrScreenController extends GetxController
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     _initAnimations();
     onTabOpen();
     super.onInit();

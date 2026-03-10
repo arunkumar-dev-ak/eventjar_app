@@ -47,6 +47,7 @@ class AddContactController extends GetxController {
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     final args = Get.arguments;
     // Handle NfcContactModel from NFC read
     if (args is Map) {

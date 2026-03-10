@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/qr_dashboard/controller.dart';
 import 'package:eventjar/controller/qr_scan/state.dart';
+import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/model/contact/qr_contact_model.dart';
@@ -23,6 +24,7 @@ class QrScanScreenController extends GetxController
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     super.onInit();
   }
 

@@ -19,6 +19,7 @@ class NfcWriteController extends GetxController
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     super.onInit();
     _initAnimations();
     loadData();

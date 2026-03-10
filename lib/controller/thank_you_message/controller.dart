@@ -29,6 +29,7 @@ class ThankYouMessageController extends GetxController {
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     final args = Get.arguments;
     state.contact.value = args;
     initThankYouData(state.contact.value!.name, state.contact.value!.email);

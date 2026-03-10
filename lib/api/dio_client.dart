@@ -37,12 +37,18 @@ class DioClient {
           if (token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
+          options.cancelToken = UserStore.token;
 
           return handler.next(options);
         },
 
         // ✅ TOKEN REFRESH LOGIC
         onError: (DioException e, ErrorInterceptorHandler handler) async {
+          if (CancelToken.isCancel(e)) {
+            LoggerService.loggerInstance.dynamic_d("Request cancelled");
+            return;
+          }
+
           if (e.requestOptions.path == '/auth/refresh-token') {
             return handler.next(e);
           }

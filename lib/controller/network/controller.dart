@@ -26,6 +26,7 @@ class NetworkScreenController extends GetxController
   }
 
   void onTabOpen() {
+    UserStore.cancelAllRequests();
     fetchContactAnalytics();
   }
 

@@ -26,6 +26,7 @@ class SchedulerController extends GetxController {
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     super.onInit();
     final ContactMeeting? meeting = Get.arguments;
     if (meeting != null) {

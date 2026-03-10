@@ -26,6 +26,7 @@ class EmailNotificationController extends GetxController {
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     super.onInit();
 
     final provider = Get.arguments as EmailProvider;

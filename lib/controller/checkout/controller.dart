@@ -51,6 +51,7 @@ class CheckoutController extends GetxController {
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     // LoggerService.loggerInstance.dynamic_d("In oninit");
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onSuccess);

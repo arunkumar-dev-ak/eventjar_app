@@ -16,6 +16,7 @@ class ContactAnalyticsController extends GetxController {
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     onOpen();
     super.onInit();
   }

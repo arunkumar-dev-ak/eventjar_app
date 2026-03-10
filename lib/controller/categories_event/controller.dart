@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/api/home_api/home_api.dart';
 import 'package:eventjar/controller/categories_event/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/helper/date_handler.dart';
 import 'package:eventjar/logger_service.dart';
@@ -24,6 +25,7 @@ class CategoriesEventController extends GetxController {
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     super.onInit();
     scrollController.addListener(_onScroll);
 

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/api/forgot_password_api/forgot_password_api.dart';
 import 'package:eventjar/controller/forgotPassword/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class ForgotPasswordController extends GetxController {
 
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     Future.delayed(Duration.zero, () {
       emailFocusNode.requestFocus();
     });

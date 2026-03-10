@@ -68,6 +68,7 @@ class EventInfoController extends GetxController
 
   @override
   void onInit() async {
+    UserStore.cancelAllRequests();
     eventId = Get.parameters['eventId'] ?? '';
 
     // LoggerService.loggerInstance.dynamic_d(eventId);
