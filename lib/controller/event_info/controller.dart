@@ -69,9 +69,13 @@ class EventInfoController extends GetxController
   @override
   void onInit() async {
     UserStore.cancelAllRequests();
+    final args = Get.arguments;
+    if (args is Map && args['ticketId'] != null) {
+      state.ticketId.value = args['ticketId'];
+    } else {
+      state.ticketId.value = null;
+    }
     eventId = Get.parameters['eventId'] ?? '';
-
-    // LoggerService.loggerInstance.dynamic_d(eventId);
 
     _createTabController(tabCount);
 
@@ -79,7 +83,11 @@ class EventInfoController extends GetxController
       _rebuildTabControllerIfNeeded();
     });
 
-    await fetchEventInfo();
+    if (state.ticketId.value != null) {
+      await fetchEventByTicketId(state.ticketId.value!);
+    } else {
+      await fetchEventInfo();
+    }
     super.onInit();
   }
 
@@ -121,10 +129,24 @@ class EventInfoController extends GetxController
   }
 
   Future<void> fetchAllAttendeeData() async {
+    final finalEventId = state.eventInfo.value?.id ?? eventId;
     await Future.wait([
-      fetchEventAttendeeList(eventId),
-      fetchEventAttendeeRequestList(eventId),
+      fetchEventAttendeeList(finalEventId),
+      fetchEventAttendeeRequestList(finalEventId),
     ]);
+  }
+
+  Future<void> fetchEventByTicketId(String ticketId) async {
+    try {
+      state.isLoading.value = true;
+      final response = await EventInfoApi.getEventByTicketId(ticketId);
+      state.eventInfo.value = response.event;
+    } catch (e) {
+      LoggerService.loggerInstance.e('Failed to load event info by ticket: $e');
+      AppSnackbar.error(title: "Error fetching event", message: e.toString());
+    } finally {
+      state.isLoading.value = false;
+    }
   }
 
   Future<void> fetchEventInfo() async {

@@ -21,7 +21,8 @@ class MyTicketController extends GetxController {
   bool get hasNext => state.pagination.value?.paging.links.next != null;
 
   // scroll controller
-  final ScrollController scrollController = ScrollController();
+  final upcomingScrollController = ScrollController();
+  final completedScrollController = ScrollController();
   final searchController = TextEditingController();
 
   Worker? _searchWorker;
@@ -30,7 +31,8 @@ class MyTicketController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    scrollController.addListener(_onScroll);
+    upcomingScrollController.addListener(_onUpcomingScroll);
+    completedScrollController.addListener(_onCompletedScroll);
     _initWorkers();
   }
 
@@ -46,6 +48,8 @@ class MyTicketController extends GetxController {
 
   void onTabOpen() {
     UserStore.cancelAllRequests();
+    state.tickets.value = [];
+    state.pagination.value = null;
     fetchMyTickets();
   }
 
@@ -109,22 +113,28 @@ class MyTicketController extends GetxController {
     state.selectedDateRange.value = range;
   }
 
-  void _onScroll() {
-    if (!scrollController.hasClients) return;
+  void _handleScroll(ScrollController controller) {
+    if (!controller.hasClients) return;
 
-    final maxScroll = scrollController.position.maxScrollExtent;
-    final currentScroll = scrollController.position.pixels;
-
+    final maxScroll = controller.position.maxScrollExtent;
+    final currentScroll = controller.position.pixels;
     const double prefetchThreshold = 200;
 
     if (maxScroll - currentScroll <= prefetchThreshold) {
-      if (state.pagination.value != null &&
-          state.pagination.value?.paging.links.next != null &&
-          !state.isLoadingMore.value &&
-          !state.isLoading.value) {
+      if (hasNext && !state.isLoadingMore.value && !state.isLoading.value) {
         loadMoreTickets();
       }
     }
+  }
+
+  void _onUpcomingScroll() {
+    if (state.selectedTab.value != 0) return;
+    _handleScroll(upcomingScrollController);
+  }
+
+  void _onCompletedScroll() {
+    if (state.selectedTab.value != 1) return;
+    _handleScroll(completedScrollController);
   }
 
   /*----- Api Calls -----*/
@@ -136,6 +146,7 @@ class MyTicketController extends GetxController {
       queryParams.add("eventName=${state.searchQuery.value}");
     }
 
+    /*------ Date filter -------*/
     if (state.selectedDateRange.value != null) {
       final dateRange = state.selectedDateRange.value!;
       final fromDateUtc = dateRange.start.toUtc();
@@ -151,6 +162,9 @@ class MyTicketController extends GetxController {
       queryParams.add("eventEndDate=${toDateUtc.toIso8601String()}");
     }
 
+    queryParams.add(
+      "status=${state.selectedTab.value == 1 ? "completed" : "existing"}",
+    );
     queryParams.add("limit=$itemsPerPage");
     queryParams.add("offset=0");
 
@@ -192,6 +206,9 @@ class MyTicketController extends GetxController {
       }
     } finally {
       state.isLoading.value = false;
+      if (state.isLoadingMore.value) {
+        state.isLoadingMore.value = false;
+      }
     }
   }
 
@@ -205,7 +222,7 @@ class MyTicketController extends GetxController {
     try {
       state.isLoadingMore.value = true;
 
-      final url = '${backendBaseUrl()}$nextUrl';
+      final url = '${backendBaseUrl()}/$nextUrl';
       final response = await MyTicketsApi.getMyTickets(url);
 
       state.tickets.addAll(response.data);
@@ -228,7 +245,7 @@ class MyTicketController extends GetxController {
         );
       }
     } finally {
-      state.isLoadingMore.value = false;
+      // state.isLoadingMore.value = false;
     }
   }
 
@@ -256,11 +273,19 @@ class MyTicketController extends GetxController {
     }
   }
 
+  void navigateToEventInfo(String ticketId) {
+    Get.toNamed(RouteName.eventInfoPage, arguments: {"ticketId": ticketId});
+  }
+
   // ✅ CLEANUP
   @override
   void onClose() {
     _searchWorker?.dispose();
     _dateWorker?.dispose();
+    upcomingScrollController.removeListener(_onUpcomingScroll);
+    completedScrollController.removeListener(_onCompletedScroll);
+    upcomingScrollController.dispose();
+    completedScrollController.dispose();
     super.onClose();
   }
 }

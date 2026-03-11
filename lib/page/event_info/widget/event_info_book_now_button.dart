@@ -34,6 +34,7 @@ class EventInfoBookButton extends StatelessWidget {
       // LoggerService.loggerInstance.dynamic_d(eventInfo?.toJson());
       final isRegistered = eventInfo?.userTicketStatus?.isRegistered == true;
       final isLoggedIn = controller.isLoggedIn.value;
+      final cameFromTicket = controller.state.ticketId.value != null;
 
       final organizerId = eventInfo?.organizer.id ?? '';
       final isEventBelongsToOrganizer =
@@ -66,14 +67,24 @@ class EventInfoBookButton extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             borderRadius: BorderRadius.circular(16),
-            onTap: isDisabled ? null : controller.handleBottomButton,
+            onTap: isDisabled
+                ? null
+                : () {
+                    if (cameFromTicket) {
+                      Navigator.pop(context);
+                      return;
+                    }
+                    controller.handleBottomButton();
+                  },
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 3.5.wp),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    isRegistered
+                    cameFromTicket
+                        ? Icons.arrow_back_rounded
+                        : isRegistered
                         ? Icons.check_circle_rounded
                         : Icons.confirmation_num_rounded,
                     color: Colors.white,
@@ -82,6 +93,7 @@ class EventInfoBookButton extends StatelessWidget {
                   SizedBox(width: 3.wp),
                   Text(
                     _buttonText(
+                      cameFromTicket,
                       isEventBelongsToOrganizer,
                       isRegistered,
                       isLoggedIn,
@@ -121,10 +133,12 @@ class EventInfoBookButton extends StatelessWidget {
   }
 
   String _buttonText(
+    bool cameFromTicket,
     bool isEventBelongsToOrganizer,
     bool isRegistered,
     bool isLoggedIn,
   ) {
+    if (cameFromTicket) return "Back to My Ticket";
     if (isEventBelongsToOrganizer) return "Your Event";
     if (isRegistered) return "View My Ticket";
     return isLoggedIn ? "Book Now" : "Login to Book";

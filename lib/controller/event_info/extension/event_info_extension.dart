@@ -6,7 +6,9 @@ extension EventInfoControllerExtensions on EventInfoController {
     if (event == null) return false;
 
     final isOneOnOneEnabled = event.isOneMeetingEnabled == true;
-    final isRegistered = event.userTicketStatus?.isRegistered == true;
+    final isRegistered =
+        event.userTicketStatus?.isRegistered == true ||
+        state.ticketId.value != null;
     final isOrganizerUser = isOrganizer(event.organizer.id);
 
     return isOneOnOneEnabled && (isRegistered || isOrganizerUser);

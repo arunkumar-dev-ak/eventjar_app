@@ -84,28 +84,27 @@ class MyTicketPage extends GetView<MyTicketController> {
                     return RefreshIndicator(
                       onRefresh: controller.refreshTickets,
                       child: ListView.builder(
-                        controller: controller.scrollController,
+                        controller: controller.state.selectedTab.value == 0
+                            ? controller.upcomingScrollController
+                            : controller.completedScrollController,
+                        key: ValueKey(controller.state.selectedTab.value),
                         padding: EdgeInsets.all(4.wp),
                         itemCount: controller.state.tickets.length + 1,
                         itemBuilder: (context, index) {
                           if (index < controller.state.tickets.length) {
                             final ticket = controller.state.tickets[index];
-                            return myTicketBuildTicketCard(ticket, context);
+                            return GestureDetector(
+                              onTap: () {
+                                controller.navigateToEventInfo(ticket.id);
+                              },
+                              child: myTicketBuildTicketCard(ticket, context),
+                            );
                           }
 
-                          if (controller.hasNext &&
-                              controller.state.isLoadingMore.value) {
+                          if (controller.hasNext) {
                             return Padding(
-                              padding: EdgeInsets.symmetric(vertical: 2.hp),
-                              child: Center(
-                                child: ListView.builder(
-                                  padding: EdgeInsets.all(4.wp),
-                                  itemCount: 1,
-                                  itemBuilder: (context, index) {
-                                    return myTicketShimmer();
-                                  },
-                                ),
-                              ),
+                              padding: EdgeInsets.symmetric(vertical: 0.5.hp),
+                              child: Center(child: myTicketShimmer()),
                             );
                           }
 
@@ -117,6 +116,7 @@ class MyTicketPage extends GetView<MyTicketController> {
                 ),
               ],
             ),
+            /*----- Search bar processing -----*/
             Obx(() {
               if (controller.state.isLoading.value &&
                   controller.state.tickets.isNotEmpty) {

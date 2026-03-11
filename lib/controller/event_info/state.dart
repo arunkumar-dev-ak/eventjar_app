@@ -1,10 +1,12 @@
 import 'package:eventjar/model/event_info/event_attendee_meeting_req_model.dart';
 import 'package:eventjar/model/event_info/event_attendee_model.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
+
 import 'package:get/get.dart';
 
 class EventInfoState {
   RxBool isLoading = false.obs;
+  Rxn<String> ticketId = Rxn();
   RxInt tabCount = 5.obs;
 
   Rxn<EventInfo> eventInfo = Rxn<EventInfo>();
