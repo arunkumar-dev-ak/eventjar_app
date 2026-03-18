@@ -51,8 +51,8 @@ class MyTicket {
   final int checkInCount;
   final int maxCheckIns;
   final DateTime? lastCheckInAt;
-  final TicketTierDetail ticketTierDetail;
-  final TicketEventDetail ticketEventDetail;
+  final TicketTierDetail? ticketTierDetail;
+  final TicketEventDetail? ticketEventDetail;
 
   MyTicket({
     required this.id,
@@ -78,8 +78,8 @@ class MyTicket {
     required this.checkInCount,
     required this.maxCheckIns,
     this.lastCheckInAt,
-    required this.ticketTierDetail,
-    required this.ticketEventDetail,
+    this.ticketTierDetail,
+    this.ticketEventDetail,
   });
 
   factory MyTicket.fromJson(Map<String, dynamic> json) {
@@ -112,8 +112,13 @@ class MyTicket {
         lastCheckInAt: json['lastCheckInAt'] != null
             ? DateTime.parse(json['lastCheckInAt'])
             : null,
-        ticketTierDetail: TicketTierDetail.fromJson(json['ticketTier']),
-        ticketEventDetail: TicketEventDetail.fromJson(json['event']),
+        ticketTierDetail: json['ticketTier'] != null
+            ? TicketTierDetail.fromJson(json['ticketTier'])
+            : null,
+
+        ticketEventDetail: json['event'] != null
+            ? TicketEventDetail.fromJson(json['event'])
+            : null,
       );
     } catch (e) {
       LoggerService.loggerInstance.e('Error parsing MobileTicket: $e');
@@ -145,8 +150,8 @@ class MyTicket {
     'checkInCount': checkInCount,
     'maxCheckIns': maxCheckIns,
     'lastCheckInAt': lastCheckInAt?.toIso8601String(),
-    'ticketTier': ticketTierDetail.toJson(),
-    'event': ticketEventDetail.toJson(),
+    'ticketTier': ticketTierDetail?.toJson(),
+    'event': ticketEventDetail?.toJson(),
   };
 }
 

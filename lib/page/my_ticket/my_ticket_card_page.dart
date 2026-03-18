@@ -5,8 +5,20 @@ import 'package:eventjar/page/my_ticket/my_ticket_card_page_utils.dart';
 import 'package:flutter/material.dart';
 
 Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
-  final isActive = ticket.status.toLowerCase() == "active" ? true : false;
-  final isFree = ticket.ticketTierDetail.price.toString() == '0' ? true : false;
+  final event = ticket.ticketEventDetail;
+  final tier = ticket.ticketTierDetail;
+
+  final isActive = ticket.status.toLowerCase() == "active";
+  final isFree = tier?.price.toString() == '0';
+
+  final eventTitle = event?.title ?? "Event";
+  final tierName = tier?.name ?? "Ticket";
+  final price = tier?.price ?? "0";
+
+  final venue = event?.venue ?? "Venue not available";
+  final address = event?.address ?? "";
+
+  final startDate = event?.startDate;
 
   return Container(
     margin: EdgeInsets.only(bottom: 3.hp),
@@ -28,7 +40,7 @@ Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header Section
+        /// HEADER
         Container(
           padding: EdgeInsets.all(4.wp),
           decoration: BoxDecoration(
@@ -39,7 +51,7 @@ Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(14),
               topRight: Radius.circular(14),
             ),
@@ -47,94 +59,86 @@ Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Event Title
+              /// EVENT TITLE
               Text(
-                ticket.ticketEventDetail.title,
+                eventTitle,
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
               ),
+
               SizedBox(height: 1.5.hp),
 
-              // Badges Row
+              /// BADGES
               Wrap(
                 spacing: 2.wp,
                 runSpacing: 1.hp,
                 children: [
-                  // Ticket Tier Badge
+                  /// TICKET TIER
                   myTicketBuildBadge(
-                    ticket.ticketTierDetail.name,
+                    tierName,
                     isFree ? Colors.green.shade600 : Colors.blue.shade600,
                     isFree ? Colors.green.shade50 : Colors.blue.shade50,
                   ),
 
-                  // Quantity Badge
+                  /// QUANTITY
                   myTicketBuildBadge(
                     'Qty: ${ticket.quantity}',
                     Colors.orange.shade700,
                     Colors.orange.shade50,
                   ),
 
-                  // Total/Free Badge
+                  /// PRICE
                   myTicketBuildBadge(
-                    isFree
-                        ? 'FREE'
-                        : 'Total: ₹${ticket.ticketTierDetail!.price}',
+                    isFree ? 'FREE' : 'Total: ₹$price',
                     isFree ? Colors.green.shade700 : Colors.purple.shade700,
                     isFree ? Colors.green.shade100 : Colors.purple.shade100,
                   ),
-
-                  // Status Badge
-                  // _buildBadge(
-                  //   isActive ? "Active" : "Inactive",
-                  //   isActive ? Colors.green.shade700 : Colors.grey.shade700,
-                  //   isActive ? Colors.green.shade100 : Colors.grey.shade200,
-                  // ),
                 ],
               ),
             ],
           ),
         ),
 
-        // Details Section
+        /// DETAILS SECTION
         Padding(
           padding: EdgeInsets.all(4.wp),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Location
+              /// LOCATION
               myTicketBuildInfoRow(
                 Icons.location_on,
                 'Venue',
-                '${ticket.ticketEventDetail.venue}${ticket.ticketEventDetail.address.isNotEmpty ? ', ${ticket.ticketEventDetail.address}' : ''}',
+                '$venue${address.isNotEmpty ? ', $address' : ''}',
                 Colors.red.shade400,
               ),
+
               SizedBox(height: 1.5.hp),
 
-              // Date
+              /// DATE
               myTicketBuildInfoRow(
                 Icons.calendar_today,
                 'Event Date',
-                formatDate(ticket.ticketEventDetail.startDate),
+                startDate != null ? formatDate(startDate) : "Date unavailable",
                 Colors.blue.shade400,
               ),
+
               SizedBox(height: 1.5.hp),
 
-              // Time (if you have start/end time in your model)
+              /// TIME
               myTicketBuildInfoRow(
                 Icons.access_time,
                 'Time',
-                // '${formatTimeFromDateTime(ticket.event.startDate, context)} - ${formatTimeFromDateTime(ticket.event.endDate, context)}',
-                formatTimeFromDateTime(
-                  ticket.ticketEventDetail.startDate,
-                  context,
-                ),
+                startDate != null
+                    ? formatTimeFromDateTime(startDate, context)
+                    : "Time unavailable",
                 Colors.orange.shade400,
               ),
 
-              // Check-in Status (if checked in)
+              /// CHECK-IN STATUS
               if (ticket.checkInCount > 0) ...[
                 SizedBox(height: 1.5.hp),
                 myTicketBuildInfoRow(
@@ -147,7 +151,7 @@ Widget myTicketBuildTicketCard(MyTicket ticket, BuildContext context) {
 
               SizedBox(height: 1.5.hp),
 
-              // QR Code Section
+              /// QR SECTION
               if (isActive)
                 myTicketBuildQRCodeSection(
                   ticket.qrCode,

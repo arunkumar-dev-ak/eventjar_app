@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/my_ticket/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_card_Page.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_empty_page.dart';
 import 'package:eventjar/page/my_ticket/widget/my_ticket_shimmer.dart';
@@ -101,7 +102,14 @@ class MyTicketPage extends GetView<MyTicketController> {
                             );
                           }
 
-                          if (controller.hasNext) {
+                          if (controller
+                                  .state
+                                  .pagination
+                                  .value
+                                  ?.paging
+                                  .links
+                                  .next !=
+                              null) {
                             return Padding(
                               padding: EdgeInsets.symmetric(vertical: 0.5.hp),
                               child: Center(child: myTicketShimmer()),

@@ -245,7 +245,8 @@ class MyTicketController extends GetxController {
         );
       }
     } finally {
-      // state.isLoadingMore.value = false;
+      if (state.isLoadingMore.value) state.isLoadingMore.value = false;
+      if (state.isLoading.value) state.isLoading.value = false;
     }
   }
 

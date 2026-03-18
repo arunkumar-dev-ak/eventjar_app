@@ -17,33 +17,54 @@ class MyTicketFilters extends GetView<MyTicketController> {
             child: Obx(
               () => TextField(
                 controller: controller.searchController,
+                style: TextStyle(
+                  fontSize: 9.sp, // text inside input
+                ),
                 decoration: InputDecoration(
                   hintText: 'Search events',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  hintStyle: TextStyle(fontSize: 9.sp),
+                  isDense: true,
+
+                  contentPadding: EdgeInsets.zero, // no padding
+
+                  prefixIcon: Icon(Icons.search, size: 12.sp),
+
                   filled: true,
                   fillColor: Colors.white,
+
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.wp),
+                  ),
+
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.wp),
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade400,
+                      width: 0.3.wp,
+                    ),
+                  ),
+
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.wp),
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade500,
+                      width: 0.4.wp,
+                    ),
+                  ),
+
                   suffixIcon: controller.state.searchQuery.value.isNotEmpty
                       ? Padding(
-                          padding: const EdgeInsets.only(right: 6),
+                          padding: EdgeInsets.only(right: 1.wp),
                           child: GestureDetector(
                             onTap: () {
                               controller.searchController.clear();
                               controller.state.searchQuery.value = '';
+                              Get.focusScope?.unfocus();
                             },
-                            child: Container(
-                              padding: const EdgeInsets.all(1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.close,
-                                size: 16,
-                                color: Colors.black54,
-                              ),
+                            child: Icon(
+                              Icons.cancel,
+                              size: 13.sp,
+                              color: Colors.grey.shade400,
                             ),
                           ),
                         )
@@ -59,30 +80,38 @@ class MyTicketFilters extends GetView<MyTicketController> {
           /* Date Filter */
           GestureDetector(
             onTap: () {
+              Get.focusScope?.unfocus();
               controller.pickDateRange();
             },
             child: Container(
-              padding: EdgeInsets.all(2.wp),
+              padding: EdgeInsets.all(1.5.wp),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(3.wp),
+                border: Border.all(color: Colors.grey.shade300, width: 0.3.wp),
               ),
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  const Icon(Icons.calendar_today),
+                  Icon(
+                    Icons.calendar_today,
+                    size: 14.sp,
+                    color: Colors.black87,
+                  ),
                   Obx(() {
                     if (controller.state.selectedDateRange.value != null) {
                       return Positioned(
-                        right: -2,
-                        top: -4,
+                        right: -0.8.wp,
+                        top: -0.8.hp,
                         child: Container(
-                          padding: const EdgeInsets.all(4),
+                          padding: EdgeInsets.all(0.7.wp),
                           decoration: BoxDecoration(
                             color: Colors.red,
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 1.5),
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 0.6.wp,
+                            ),
                           ),
                           child: Text(
                             '1',

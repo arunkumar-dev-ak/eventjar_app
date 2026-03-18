@@ -29,23 +29,25 @@ class MyTicketDateRangePickerWidget {
               Positioned(
                 bottom: 20,
                 right: 16,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    result = null;
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(Icons.close, size: 15),
-                  label: const Text('Clear Filter'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red.shade50,
-                    foregroundColor: Colors.red.shade700,
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
+                child: SafeArea(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      result = null;
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(Icons.close, size: 15),
+                    label: const Text('Clear Filter'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.shade50,
+                      foregroundColor: Colors.red.shade700,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
+                      shape: const StadiumBorder(),
+                      side: BorderSide(color: Colors.red.shade200),
                     ),
-                    shape: const StadiumBorder(),
-                    side: BorderSide(color: Colors.red.shade200),
                   ),
                 ),
               ),
