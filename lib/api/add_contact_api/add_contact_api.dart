@@ -22,6 +22,7 @@ class AddContactApi {
         return;
       }
     } catch (e) {
+      LoggerService.loggerInstance.e(e);
       rethrow;
     }
   }
