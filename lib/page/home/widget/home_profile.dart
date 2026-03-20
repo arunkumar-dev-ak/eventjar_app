@@ -112,7 +112,7 @@ class HomeProfile extends GetView<HomeController> {
                                     ),
                                     SizedBox(height: 1.hp),
                                     Text(
-                                      profileData.email,
+                                      profileData.email!,
                                       style: TextStyle(
                                         color: Colors.grey[700],
                                         fontSize: 9.sp,

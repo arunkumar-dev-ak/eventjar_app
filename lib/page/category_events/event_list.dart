@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:eventjar/controller/categories_event/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
@@ -20,52 +22,72 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
       appBar: _buildAppBar(context),
       body: Column(
         children: [
-          // Date filter chip
+          // Date range filter chip
           Obx(() {
-            final filterDate = controller.state.filterDate.value;
-            if (filterDate == null) return const SizedBox.shrink();
+            final from = controller.state.filterFrom.value;
+            final to = controller.state.filterTo.value;
+            if (from == null && to == null) return const SizedBox.shrink();
+            String fmt(DateTime d) =>
+                '${d.day.toString().padLeft(2, '0')}-${d.month.toString().padLeft(2, '0')}-${d.year}';
+            String label;
+            if (from != null && to != null) {
+              label = '${fmt(from)} – ${fmt(to)}';
+            } else if (from != null) {
+              label = 'From ${fmt(from)}';
+            } else {
+              label = 'To ${fmt(to!)}';
+            }
             return Container(
               color: Colors.white,
-              padding: EdgeInsets.fromLTRB(4.wp, 1.hp, 4.wp, 0),
+              padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.hp),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Icon(
-                    Icons.calendar_today,
-                    size: 14,
+                    Icons.date_range,
+                    size: 16,
                     color: const Color(0xFF1A73E8),
                   ),
                   SizedBox(width: 1.5.wp),
                   Text(
-                    '${filterDate.day}/${filterDate.month}/${filterDate.year}',
+                    'Date filter: ',
                     style: TextStyle(
-                      fontSize: 8.5.sp,
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 10.sp,
                       fontWeight: FontWeight.w600,
                       color: const Color(0xFF1A73E8),
                     ),
                   ),
                   SizedBox(width: 2.wp),
                   GestureDetector(
-                    onTap: () => controller.setFilterDate(null),
-                    child: Icon(Icons.close, size: 16, color: Colors.grey[600]),
+                    onTap: controller.clearDateRange,
+                    child: Icon(Icons.close, size: 18, color: Colors.grey[600]),
                   ),
                 ],
               ),
             );
           }),
-          // Category tabs
+          // Category tabs (dynamic)
           Container(
             color: Colors.white,
             child: SizedBox(
               height: 5.hp,
               child: Obx(() {
                 final selectedTab = controller.state.selectedTab.value;
+                final tabs = controller.tabs;
                 return ListView.separated(
                   scrollDirection: Axis.horizontal,
                   padding: EdgeInsets.symmetric(horizontal: 4.wp),
-                  itemCount: CategoriesEventController.categoryTabs.length,
-                  separatorBuilder: (_, __) => SizedBox(width: 5.wp),
+                  itemCount: tabs.length,
+                  separatorBuilder: (_, _) => SizedBox(width: 5.wp),
                   itemBuilder: (context, index) {
-                    final tab = CategoriesEventController.categoryTabs[index];
                     final isSelected = selectedTab == index;
                     return GestureDetector(
                       onTap: () => controller.setSelectedTab(index),
@@ -83,7 +105,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                         ),
                         padding: EdgeInsets.only(bottom: 0.5.hp),
                         child: Text(
-                          tab.label,
+                          tabs[index],
                           style: TextStyle(
                             fontSize: 9.sp,
                             fontWeight: isSelected
@@ -103,57 +125,65 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
           ),
           // Event list
           Expanded(
-            child: Obx(() {
-              if (controller.isLoading) {
-                return ListView.builder(
-                  padding: EdgeInsets.all(4.wp),
-                  itemCount: 4,
-                  itemBuilder: (_, __) => const EventCardShimmer(),
-                );
-              }
+            child: RefreshIndicator(
+              onRefresh: controller.refreshPage,
+              child: Obx(() {
+                if (controller.isLoading) {
+                  return ListView.builder(
+                    padding: EdgeInsets.all(4.wp),
+                    itemCount: 4,
+                    itemBuilder: (_, _) => const EventCardShimmer(),
+                  );
+                }
 
-              final events = controller.filteredEvents;
+                final events = controller.filteredEvents;
 
-              if (events.isEmpty) {
-                return Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                if (events.isEmpty) {
+                  return ListView(
                     children: [
-                      Icon(
-                        Icons.event_busy_outlined,
-                        size: 48,
-                        color: Colors.grey[400],
-                      ),
-                      SizedBox(height: 2.hp),
-                      Text(
-                        'No events found',
-                        style: TextStyle(
-                          fontSize: 10.sp,
-                          color: Colors.grey[500],
-                          fontWeight: FontWeight.w500,
+                      SizedBox(height: 15.hp),
+                      Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.event_busy_outlined,
+                              size: 48,
+                              color: Colors.grey[400],
+                            ),
+                            SizedBox(height: 2.hp),
+                            Text(
+                              'No events found',
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                color: Colors.grey[500],
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
-                );
-              }
+                  );
+                }
 
-              return ListView.builder(
-                controller: controller.scrollController,
-                padding: EdgeInsets.all(4.wp),
-                itemCount: events.length + 1,
-                itemBuilder: (context, index) {
-                  if (index < events.length) {
-                    return _buildEventCard(context, events[index]);
-                  }
-                  // Pagination shimmer
-                  return controller.state.meta.value != null &&
-                          controller.state.meta.value!.hasNext == true
-                      ? const EventCardShimmer()
-                      : const SizedBox();
-                },
-              );
-            }),
+                return ListView.builder(
+                  controller: controller.scrollController,
+                  padding: EdgeInsets.all(4.wp),
+                  itemCount: events.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index < events.length) {
+                      return _buildEventCard(context, events[index]);
+                    }
+                    // Pagination shimmer
+                    return controller.state.meta.value != null &&
+                            controller.state.meta.value!.hasNext == true
+                        ? const EventCardShimmer()
+                        : const SizedBox();
+                  },
+                );
+              }),
+            ),
           ),
         ],
       ),
@@ -166,32 +196,30 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
       child: Obx(() {
         final isSearching = controller.state.isSearching.value;
         return AppBar(
-          title:
-              // isSearching
-              //     ? TextField(
-              //         controller: controller.searchController,
-              //         autofocus: true,
-              //         decoration: InputDecoration(
-              //           hintText: 'Search events...',
-              //           hintStyle: TextStyle(
-              //             color: Colors.grey[400],
-              //             fontSize: 10.sp,
-              //           ),
-              //           border: InputBorder.none,
-              //         ),
-              //         style: TextStyle(color: Colors.black, fontSize: 10.sp),
-              //         onChanged: controller.onSearchChanged,
-              //       )
-              //     :
-              Text(
-                'Events',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14.sp,
+          title: isSearching
+              ? TextField(
+                  controller: controller.searchController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: 'Search events...',
+                    hintStyle: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 10.sp,
+                    ),
+                    border: InputBorder.none,
+                  ),
+                  style: TextStyle(color: Colors.white, fontSize: 10.sp),
+                  onChanged: controller.onSearchChanged,
+                )
+              : Text(
+                  'Events',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14.sp,
+                  ),
                 ),
-              ),
-          centerTitle: !isSearching,
+          centerTitle: false,
           backgroundColor: Colors.white,
           elevation: 0.5,
           leading: IconButton(
@@ -207,37 +235,99 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
           flexibleSpace: Container(
             decoration: BoxDecoration(gradient: AppColors.appBarGradient),
           ),
-
-          // actions: [
-          //   IconButton(
-          //     icon: Icon(
-          //       isSearching ? Icons.close : Icons.search,
-          //       color: Colors.black,
-          //     ),
-          //     onPressed: controller.toggleSearch,
-          //   ),
-          //   Obx(() {
-          //     final hasFilter = controller.state.filterDate.value != null;
-          //     return IconButton(
-          //       icon: Icon(
-          //         Icons.filter_list,
-          //         color: hasFilter ? const Color(0xFF1A73E8) : Colors.black,
-          //       ),
-          //       onPressed: () async {
-          //         final picked = await showDatePicker(
-          //           context: context,
-          //           initialDate:
-          //               controller.state.filterDate.value ?? DateTime.now(),
-          //           firstDate: DateTime(2024, 1, 1),
-          //           lastDate: DateTime(2027, 12, 31),
-          //         );
-          //         controller.setFilterDate(picked);
-          //       },
-          //     );
-          //   }),
-          // ],
+          actions: [
+            _buildActionButton(
+              icon: isSearching ? Icons.close : Icons.search,
+              onPressed: controller.toggleSearch,
+            ),
+            SizedBox(width: 2.wp),
+            _buildActionButton(
+              icon: Icons.date_range,
+              onPressed: () async {
+                final result = await showDateRangePicker(
+                  context: context,
+                  firstDate: DateTime(2024, 1, 1),
+                  lastDate: DateTime(2027, 12, 31),
+                  initialDateRange: controller.state.filterFrom.value != null
+                      ? DateTimeRange(
+                          start: controller.state.filterFrom.value!,
+                          end:
+                              controller.state.filterTo.value ?? DateTime.now(),
+                        )
+                      : null,
+                  builder: (context, child) => Theme(
+                    data: Theme.of(context).copyWith(
+                      colorScheme: Theme.of(context).colorScheme.copyWith(
+                        primary: const Color(0xFF1A73E8),
+                        onPrimary: Colors.white,
+                        primaryContainer: const Color(0xFF1A73E8),
+                        onPrimaryContainer: Colors.white,
+                        secondaryContainer: const Color(0xFF1A73E8),
+                        onSecondaryContainer: Colors.white,
+                        surface: Colors.white,
+                        onSurface: Colors.black87,
+                      ),
+                    ),
+                    child: child!,
+                  ),
+                );
+                if (result != null) {
+                  controller.setDateRange(result.start, result.end);
+                }
+              },
+            ),
+            SizedBox(width: 3.wp),
+          ],
         );
       }),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+    String? label,
+  }) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            height: 34,
+            padding: EdgeInsets.symmetric(horizontal: label != null ? 3.wp : 0),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.4),
+                width: 1.5,
+              ),
+            ),
+            child: label != null
+                ? Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(icon, color: Colors.white, size: 18),
+                      SizedBox(width: 1.5.wp),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 8.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  )
+                : SizedBox(
+                    width: 34,
+                    child: Icon(icon, color: Colors.white, size: 18),
+                  ),
+          ),
+        ),
+      ),
     );
   }
 

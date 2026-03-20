@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:eventjar/model/card_info.dart';
 import 'package:eventjar/model/contact/qr_contact_model.dart';
 import 'package:flutter_intl_phone_field/countries.dart';
 import 'package:get/get.dart';
@@ -15,7 +16,28 @@ class AddContactState {
   Rx<Country> selectedCountry = countries
       .firstWhere((country) => country.code == 'IN')
       .obs;
+
+  Rx<Country> selectedPhone2Country = countries
+      .firstWhere((country) => country.code == 'IN')
+      .obs;
+
+  // Incremented on every reset to force IntlPhoneField to rebuild
+  RxInt phone2FieldKey = 0.obs;
+
   RxString clearButtonTitle = 'Clear'.obs;
+
+  // Visiting card extra info
+  Rxn<VisitingCardInfo> visitingCardInfo = Rxn();
+  RxBool isFromCardScan = false.obs;
+  RxBool isExtractingFromCard = false.obs;
+
+  // Which additional fields the user wants to include in the API call
+  RxMap<String, bool> additionalInfoSelection = <String, bool>{
+    'phone2': false,
+    'company': false,
+    'website': false,
+    'address': false,
+  }.obs;
 
   RxList<Map<String, String>> stages = <Map<String, String>>[
     {'key': 'new', 'value': 'New Contact'},

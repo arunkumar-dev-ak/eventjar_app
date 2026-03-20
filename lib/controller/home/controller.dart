@@ -19,8 +19,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../api/contact_analytics_api/contact_analytics_api.dart';
-import '../../api/user_profile_api/user_profile_api.dart';
 import '../../api/verify_api/email.dart';
 import '../../api/verify_api/phone.dart';
 
@@ -124,31 +122,13 @@ class HomeController extends GetxController {
     onTabOpen();
   }
 
-  Future<void> fetchContactAnalytics() async {
-    try {
-      final result = await ContactAnalyticsApi.getAnalytics(
-        '/contacts/analytics',
-      );
-      state.analytics.value = result;
-      state.totalContacts.value = result.total;
-      state.hasAddedContact.value = result.total > 0;
-    } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-        if (statusCode == 401) {
-          UserStore.to.clearStore();
-          return;
-        }
-      }
-      // Rethrow so onTabOpen can handle retry
-      rethrow;
-    }
-  }
-
   Future<void> fetchUserProfile() async {
     try {
-      final response = await UserProfileApi.getUserProfile();
-      state.userProfile.value = response.data;
+      final response = await HomeApi.getUserProfileHome();
+      state.userProfile.value = response;
+      final contactCount = response.contactCount ?? 0;
+      state.totalContacts.value = contactCount;
+      state.hasAddedContact.value = contactCount > 0;
       if (!allStepsComplete) {
         startVerificationAutoScroll();
       }
@@ -170,7 +150,11 @@ class HomeController extends GetxController {
     try {
       // Events don't need auth — fetch independently
       // Profile & analytics need auth — run sequentially to avoid token race
-      await Future.wait([fetchEvents(), _fetchAuthenticatedData()]);
+      await Future.wait([
+        fetchEvents(),
+        fetchCategories(),
+        _fetchAuthenticatedData(),
+      ]);
     } catch (err) {
       LoggerService.loggerInstance.e('onTabOpen error: $err');
 
@@ -198,28 +182,7 @@ class HomeController extends GetxController {
 
   Future<void> _fetchAuthenticatedData() async {
     if (!UserStore.to.isLogin) return;
-
-    Object? firstError;
-
-    try {
-      await fetchUserProfile();
-    } catch (e) {
-      firstError = e;
-    }
-
-    if (!UserStore.to.isLogin) {
-      if (firstError != null) throw firstError;
-      return;
-    }
-
-    try {
-      await fetchContactAnalytics();
-    } catch (e) {
-      if (firstError != null) throw firstError;
-      rethrow;
-    }
-
-    if (firstError != null) throw firstError;
+    await fetchUserProfile();
   }
 
   void _onScroll() {
@@ -273,7 +236,7 @@ class HomeController extends GetxController {
 
   String getEndpoint() {
     if (state.meta.value == null) {
-      return '/events?page=$_currentPage&limit=$_limit';
+      return '/mobile/events?offset=$_currentPage&limit=$_limit';
     }
 
     final meta = state.meta.value!;
@@ -285,18 +248,27 @@ class HomeController extends GetxController {
       nextPage = meta.totalPages;
     }
 
-    return '/events?page=$nextPage&limit=$nextLimit';
+    return '/mobile/events?offset=$nextPage&limit=$nextLimit';
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      final response = await HomeApi.getCategoryListInfo();
+      state.eventCategories.value = response.eventCategories ?? [];
+    } catch (err) {
+      LoggerService.loggerInstance.e('Failed to load categories: $err');
+    }
   }
 
   Future<void> fetchEvents() async {
     try {
       EventResponse response = await HomeApi.getEventList(
-        '/events?page=$_currentPage&limit=$_limit',
+        '/mobile/events?offset=0&limit=$_limit',
       );
       state.events.value = response.data;
       state.meta.value = response.meta;
     } catch (err) {
-      rethrow;
+      LoggerService.loggerInstance.e('fetchEvents error: $err');
     }
   }
 

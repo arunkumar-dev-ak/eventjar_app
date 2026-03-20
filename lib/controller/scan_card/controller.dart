@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import '../../model/card_info.dart';
 import '../../model/contact/mobile_contact_model.dart';
 import '../../routes/route_name.dart';
@@ -187,15 +187,150 @@ class ScanCardController extends GetxController
     // Extract email - any text containing @ is email
     info.email = _extractEmail(text);
 
-    // Extract phone number with country code
-    final phoneParsed = await _extractPhoneParsed(text);
-    info.phoneParsed = phoneParsed;
-    info.phone = phoneParsed?.phoneNumber;
+    // Extract up to 2 phone numbers
+    final allPhones = await _extractAllPhonesParsed(text);
+    if (allPhones.isNotEmpty) {
+      info.phoneParsed = allPhones[0];
+      info.phone = allPhones[0].phoneNumber;
+    }
+    if (allPhones.length >= 2) {
+      info.phone2Parsed = allPhones[1];
+      info.phone2 = allPhones[1].phoneNumber;
+    }
+
+    // Extract additional card info
+    info.website = _extractWebsite(text);
+    info.address = _extractAddress(text);
+    info.company = _extractCompany(text);
 
     // Extract name - usually in top portion of card
     info.name = _extractName(text, info.email, info.phone);
 
     return info;
+  }
+
+  /// Extract up to [limit] distinct valid phone numbers from text.
+  Future<List<PhoneParsed>> _extractAllPhonesParsed(
+    String text, {
+    int limit = 2,
+  }) async {
+    final potentialNumbers = _extractPotentialNumbers(text);
+    if (potentialNumbers.isEmpty) return [];
+
+    final regionsToTry = ScanCardState.fallbackRegions;
+    final List<PhoneParsed> result = [];
+    final Set<String> seen = {};
+
+    for (final number in potentialNumbers) {
+      if (result.length >= limit) break;
+
+      final parsed =
+          await _parsePhoneWithLibrary(number, regionsToTry) ??
+          _fallbackPhoneParsing(number);
+
+      if (parsed != null && !seen.contains(parsed.fullNumber)) {
+        result.add(parsed);
+        seen.add(parsed.fullNumber);
+      }
+    }
+
+    return result;
+  }
+
+  /// Extract the first website URL found in the text.
+  String? _extractWebsite(String text) {
+    final websiteRegex = RegExp(
+      r'(?:https?://|www\.)\S+',
+      caseSensitive: false,
+    );
+    final match = websiteRegex.firstMatch(text);
+    return match?.group(0)?.trim().replaceAll(RegExp(r'[,;]+$'), '');
+  }
+
+  /// Extract address lines from text (lines containing common address keywords).
+  String? _extractAddress(String text) {
+    final lines = text.split('\n');
+    final addressLines = <String>[];
+    bool capturing = false;
+
+    // Regex for explicit address section headers
+    final sectionHeader = RegExp(
+      r'^(?:HEAD\s+OFFICE|OFFICE|BRANCH|ADDRESS|REGD\.?\s+OFFICE)',
+      caseSensitive: false,
+    );
+
+    // Regex for address-like keywords (extended for international cards)
+    final addressKeywords = RegExp(
+      r'\b(?:No\.|Road|Street|St\.|Floor|Level|Nagar|Colony|Dt\.|'
+      r'Near|Opp(?:osite)?|NH\.|Plot|Phase|Sector|Block|Cross|Main|'
+      r'Layout|Circle|Ave(?:nue)?|Lane|Ln\.|Drive|Dr\.|Boulevard|Blvd|'
+      r'Court|Ct\.|Way|Place|Pl\.|Square|Sq\.|Park|Garden|'
+      r'Gregory|Colombo|Mumbai|Delhi|Chennai|Bangalore|Hyderabad|'
+      r'Dubai|Singapore|London|Sydney|Toronto|Sri\s+Lanka|India|'
+      r'Malaysia|Australia|Canada|United\s+Kingdom)\b',
+      caseSensitive: false,
+    );
+
+    for (final line in lines) {
+      final trimmed = line.trim();
+      if (trimmed.isEmpty) continue;
+
+      // Skip lines with email / phone / website content
+      if (trimmed.contains('@') || trimmed.toLowerCase().contains('www')) {
+        continue;
+      }
+
+      // Skip lines that are heavily digit-based (phone numbers)
+      final digitCount = trimmed.replaceAll(RegExp(r'[^\d]'), '').length;
+      if (digitCount > 4 && trimmed.length < 15) continue;
+
+      // Lines that explicitly start an address section
+      if (sectionHeader.hasMatch(trimmed)) {
+        capturing = true;
+      }
+
+      if (capturing) {
+        addressLines.add(trimmed);
+        if (addressLines.length >= 3) break;
+        continue;
+      }
+
+      // Lines containing address indicators
+      if (addressKeywords.hasMatch(trimmed)) {
+        addressLines.add(trimmed);
+        if (addressLines.length >= 3) break;
+      }
+    }
+
+    if (addressLines.isEmpty) return null;
+    return addressLines.join(', ');
+  }
+
+  /// Best-effort company extraction: looks for all-caps multi-word lines
+  /// that contain known business-type words or suffixes.
+  String? _extractCompany(String text) {
+    final lines = text.split('\n');
+    final companySuffixes = RegExp(
+      r'\b(?:Pvt\.?\s*Ltd|Ltd\.?|LLP|Inc\.?|Corp\.?|Group|Industries|Technologies|Solutions|Services|Enterprises|Agriculture|Agri|Construction|Trading|Exports|Imports|Associates|Consultants|Foundation|Institute|Academy|College|Hospital|Clinic|Pharmacy|Retail|Wholesale|International|Global)\b',
+      caseSensitive: false,
+    );
+
+    for (final line in lines) {
+      final trimmed = line.trim();
+      if (trimmed.isEmpty) continue;
+      if (trimmed.contains('@') || trimmed.toLowerCase().contains('www')) {
+        continue;
+      }
+      // Skip lines heavy with digits
+      final digitCount = trimmed.replaceAll(RegExp(r'[^\d]'), '').length;
+      if (digitCount > 3) continue;
+
+      if (companySuffixes.hasMatch(trimmed)) {
+        return trimmed;
+      }
+    }
+
+    return null;
   }
 
   String? _extractEmail(String text) {
@@ -264,34 +399,6 @@ class ScanCardController extends GetxController
     // Single character that's likely an icon indicator (M for mail, etc.)
     final trimmed = text.trim();
     return trimmed.length == 1 && RegExp(r'^[A-Z]$').hasMatch(trimmed);
-  }
-
-  Future<PhoneParsed?> _extractPhoneParsed(String text) async {
-    // Extract all potential phone number strings from text
-    final potentialNumbers = _extractPotentialNumbers(text);
-
-    if (potentialNumbers.isEmpty) {
-      return null;
-    }
-
-    final regionsToTry = ScanCardState.fallbackRegions;
-
-    // Try each potential number with the plugin
-    for (final number in potentialNumbers) {
-      // First try with the plugin
-      final parsedPhone = await _parsePhoneWithLibrary(number, regionsToTry);
-      if (parsedPhone != null) {
-        return parsedPhone;
-      }
-
-      // If plugin fails, try fallback parsing
-      final fallbackPhone = _fallbackPhoneParsing(number);
-      if (fallbackPhone != null) {
-        return fallbackPhone;
-      }
-    }
-
-    return null;
   }
 
   List<String> _extractPotentialNumbers(String text) {
@@ -388,11 +495,14 @@ class ScanCardController extends GetxController
     // detect the exact region from the dial code so we never call the
     // plugin with the wrong region and get garbage back.
     List<String> regions;
+    String? expectedDialCode; // the dial-code we expect from the prefix (+94 etc.)
+
     if (cleaned.startsWith('+') || cleaned.startsWith('00')) {
       final plusForm = cleaned.startsWith('00')
           ? '+${cleaned.substring(2)}'
           : cleaned;
       final detected = _regionFromDialCode(plusForm);
+      expectedDialCode = _dialCodeFrom(plusForm); // e.g. "+94"
       if (detected != null) {
         // Only try the correct region for this number
         regions = [detected];
@@ -426,6 +536,14 @@ class ScanCardController extends GetxController
         if (e164 == null || e164.isEmpty || !e164.startsWith('+')) continue;
 
         final countryCode = '+$rawCountryCode'; // "+60"
+
+        // Sanity check: for international numbers (+XX...), the library must
+        // return the same country code we detected from the prefix.
+        // If they disagree (library returns +91 for a +94 number), reject it
+        // and let the fallback handle it correctly.
+        if (expectedDialCode != null && countryCode != expectedDialCode) {
+          continue;
+        }
 
         // Derive national number from e164, NOT from 'national' field.
         // The 'national' field includes the local trunk prefix 0
@@ -487,15 +605,43 @@ class ScanCardController extends GetxController
         countryCode = code;
         nationalNumber = withPlus.substring(code.length);
       }
-    } else if (cleaned.startsWith('91') && cleaned.length == 12) {
-      countryCode = '+91';
-      nationalNumber = cleaned.substring(2);
     } else if (cleaned.startsWith('0') && cleaned.length >= 10) {
-      nationalNumber = cleaned.substring(1);
+      // OCR sometimes misreads '+' as '0', turning "+94..." into "094...".
+      // Try treating the leading 0 as a misread + sign first.
+      final possibleIntl = '+${cleaned.substring(1)}';
+      final intlCode = _dialCodeFrom(possibleIntl);
+      if (intlCode != null) {
+        // e.g. "094750596601" → "+94" → Sri Lanka
+        countryCode = intlCode;
+        nationalNumber = possibleIntl.substring(intlCode.length);
+      } else {
+        // Genuine local trunk-prefix 0 (e.g. Indian "0XXXXXXXXXX")
+        nationalNumber = cleaned.substring(1);
+      }
+    } else {
+      // No known prefix — try to detect an embedded country code
+      // e.g. OCR drops '+' from "+94 11 269 9362" → "94112699362"
+      final possibleWithPlus = '+$cleaned';
+      final embeddedCode = _dialCodeFrom(possibleWithPlus);
+      if (embeddedCode != null) {
+        countryCode = embeddedCode;
+        // embeddedCode includes '+', so strip that many chars from cleaned
+        nationalNumber = cleaned.substring(embeddedCode.length - 1);
+      }
     }
 
-    final digitsOnly = nationalNumber.replaceAll(RegExp(r'[^\d]'), '');
+    String digitsOnly = nationalNumber.replaceAll(RegExp(r'[^\d]'), '');
     if (digitsOnly.length < 6 || digitsOnly.length > 15) return null;
+
+    // OCR often duplicates the leading digit (e.g. reads "90033 50323" as
+    // "990033 50323"). For India, mobile numbers are exactly 10 digits
+    // starting with 6–9. If we got 11 digits, try stripping the first digit.
+    if (digitsOnly.length == 11 && countryCode == '+91') {
+      final stripped = digitsOnly.substring(1);
+      if (RegExp(r'^[6-9]\d{9}$').hasMatch(stripped)) {
+        digitsOnly = stripped;
+      }
+    }
 
     return PhoneParsed(
       fullNumber: '$countryCode$digitsOnly',

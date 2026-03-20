@@ -12,5 +12,7 @@ class CategoriesEventState {
   final RxInt selectedTab = 0.obs;
   final RxString searchQuery = ''.obs;
   final RxBool isSearching = false.obs;
-  final Rxn<DateTime> filterDate = Rxn<DateTime>();
+  final Rxn<DateTime> filterFrom = Rxn<DateTime>();
+  final Rxn<DateTime> filterTo = Rxn<DateTime>();
+  final RxList<EventCategory> eventcategory = <EventCategory>[].obs;
 }

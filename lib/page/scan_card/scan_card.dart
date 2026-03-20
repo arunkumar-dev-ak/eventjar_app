@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import '../../controller/scan_card/controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../global/responsive/responsive.dart';
@@ -667,9 +668,9 @@ class ScanCard extends GetView<ScanCardController> {
   //                         size: 18,
   //                         color: Colors.grey[500],
   //                       ),
-  //                       onPressed: () {
+  //                       onPressed: () async {
   //                         if (info.rawText != null) {
-  //                           Clipboard.setData(
+  //                           await Clipboard.setData(
   //                             ClipboardData(text: info.rawText!),
   //                           );
   //                           Get.snackbar(

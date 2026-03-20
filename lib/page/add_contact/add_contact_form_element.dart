@@ -14,6 +14,7 @@ class ContactFormElement extends StatelessWidget {
   final bool obscureText;
   final TextStyle? labelStyle;
   final int? maxLength;
+  final VoidCallback? onTap;
 
   const ContactFormElement({
     required this.controller,
@@ -27,6 +28,7 @@ class ContactFormElement extends StatelessWidget {
     this.inputFormatters,
     this.obscureText = false,
     this.labelStyle,
+    this.onTap,
     super.key,
   });
 
@@ -47,6 +49,7 @@ class ContactFormElement extends StatelessWidget {
       minLines: minLines,
       inputFormatters: formatters,
       obscureText: obscureText,
+      onTap: onTap,
       style: TextStyle(fontSize: defaultFontSize),
       decoration: InputDecoration(
         labelText: label,

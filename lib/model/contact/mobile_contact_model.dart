@@ -58,7 +58,12 @@ class MobileContact {
   final Map<String, dynamic>? customAttributes;
   final ActiveMeeting? activeMeeting;
   final PhoneParsed? phoneParsed;
+  final PhoneParsed? phone2Parsed;
+
+  String? get phone2 => phone2Parsed?.fullNumber;
   final String? company;
+  final String? website;
+  final String? address;
   final String? position;
   final String? industry;
   final ContactStage stage;
@@ -87,7 +92,10 @@ class MobileContact {
     this.phone,
     this.phoneParsed,
     this.customAttributes,
+    this.phone2Parsed,
     this.company,
+    this.website,
+    this.address,
     this.position,
     this.industry,
     required this.stage,
@@ -126,7 +134,12 @@ class MobileContact {
         phoneParsed: json['phoneParsed'] != null
             ? PhoneParsed.fromJson(json['phoneParsed'])
             : null,
+        phone2Parsed: json['phone2'] != null
+            ? PhoneParsed.fromJson(json['phone2'])
+            : null,
         company: json['company'],
+        website: json['website'],
+        address: json['address'],
         position: json['position'],
         industry: json['industry'],
         stage: contactStageFromString(json['stage']),
@@ -169,7 +182,10 @@ class MobileContact {
     'customAttributes': customAttributes,
     'visitingCardUrl': visitingCardUrl,
     'phoneParsed': phoneParsed?.toJson(),
+    'phone2': phone2Parsed?.toJson(),
     'company': company,
+    'website': website,
+    'address': address,
     'position': position,
     'industry': industry,
     'stage': stage,

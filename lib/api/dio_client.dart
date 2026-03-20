@@ -34,6 +34,7 @@ class DioClient {
         // ✅ Add Authorization header to every request
         onRequest: (options, handler) async {
           final token = UserStore.to.accessToken;
+
           if (token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }

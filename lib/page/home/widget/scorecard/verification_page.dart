@@ -47,7 +47,7 @@ List<Widget> scorecardBuildVerificationPages() {
   final completed = <Widget>[];
 
   // Phone verification
-  if (!profile.phoneVerified) {
+  if (!profile.phoneVerified!) {
     pending.add(
       Obx(
         () => _buildActionPage(
@@ -80,7 +80,7 @@ List<Widget> scorecardBuildVerificationPages() {
   }
 
   // Email verification
-  if (!profile.isVerified) {
+  if (!profile.isVerified!) {
     pending.add(
       _buildActionPage(
         icon: Icons.email_outlined,

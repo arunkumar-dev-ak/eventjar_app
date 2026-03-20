@@ -34,11 +34,6 @@ class MyTicketTabs extends GetView<MyTicketController> {
             }),
           ),
 
-          /* Filter Icon */
-          IconButton(
-            icon: const Icon(Icons.filter_alt_outlined),
-            onPressed: controller.toggleFilters,
-          ),
         ],
       ),
     );
