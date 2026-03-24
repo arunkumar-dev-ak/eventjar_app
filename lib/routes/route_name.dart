@@ -19,13 +19,45 @@ class RouteName {
 
   //contact page
   static const addContactPage = '/addContact';
+  static const imageViewerPage = '/imageViewer';
   static const contactPage = '/contactPage';
+  static const contactListMeetingPage = '/contactListMeetingPage';
+  static const googleContactPage = '/googleContactPage';
 
   //qrCode page
   static const qrDashboardPage = '/qrDashboard';
+
+  //scan card page
+  static const scanCardPage = '/scanCard';
 
   //stage form
   static const thankYouMessagePage = '/thankYouMessage';
   static const qualifyLeadPage = '/qualifyLead';
   static const scheduleMeetingPage = '/scheduleMeeting';
+
+  //nfc form
+  static const nfcPage = '/nfcPage';
+  static const nfcReadPage = '/nfcReadPage';
+  static const nfcWritePage = '/nfcWritePage';
+
+  //profile form
+  static const basicInfoFormPage = '/basicInfoFormPage';
+  static const businessInfoFormPage = '/businessInfoFormPage';
+  static const locationFormPage = '/locationFormPage';
+  static const networkingFormPage = '/networkingFormPage';
+  static const summaryFormPage = '/summaryFormPage';
+  static const socialFormPage = '/socialFormPage';
+
+  //Notification
+  static const notificationpage = '/notificationPage';
+  static const emailNotificationFormOage = '/emailNotificationFormPage';
+
+  //network page
+  static const networkPage = '/networkPage';
+  static const connectionPage = '/connectionPage';
+  static const schedulerPage = '/schedulerPage';
+  static const meetingPage = '/meetingPage';
+  static const reminderPage = '/reminderPage';
+
+  static const categoriesPage = '/categoryPage';
 }

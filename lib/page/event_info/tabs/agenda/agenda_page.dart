@@ -30,19 +30,15 @@ class AgendaPage extends StatelessWidget {
       String startTime = "N/A";
       String endTime = "N/A";
 
-      if (eventInfo.startTime != null && eventInfo.startTime!.isNotEmpty) {
-        startTime = controller.generateDateTimeAndFormatTime(
-          eventInfo.startTime!,
-          context,
-        );
-      }
+      startTime = controller.generateDateTimeAndFormatTime(
+        eventInfo.startTime,
+        context,
+      );
 
-      if (eventInfo.endTime != null && eventInfo.endTime!.isNotEmpty) {
-        endTime = controller.generateDateTimeAndFormatTime(
-          eventInfo.endTime!,
-          context,
-        );
-      }
+      endTime = controller.generateDateTimeAndFormatTime(
+        eventInfo.endTime,
+        context,
+      );
 
       // Format event date for header display
       final eventDate = DateFormat('MMMM d, yyyy').format(eventInfo.startDate);
@@ -50,58 +46,53 @@ class AgendaPage extends StatelessWidget {
 
       return Padding(
         padding: EdgeInsets.all(5.wp),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // Header with time range and date
-              AgendaHeader(
-                eventTimeRange: eventTimeRange,
-                eventDate: eventDate,
-              ),
-              SizedBox(height: 2.hp),
+        child: Column(
+          children: [
+            // Header with time range and date
+            AgendaHeader(eventTimeRange: eventTimeRange, eventDate: eventDate),
+            SizedBox(height: 2.hp),
 
-              // Agenda items list
-              ...List.generate(agendaItems.length, (index) {
-                final agendaItem = agendaItems[index];
-                final isLastItem = index == agendaItems.length - 1;
+            // Agenda items list
+            ...List.generate(agendaItems.length, (index) {
+              final agendaItem = agendaItems[index];
+              final isLastItem = index == agendaItems.length - 1;
 
-                String agendaStartTime = "N/A";
-                String agendaEndTime = "N/A";
+              String agendaStartTime = "N/A";
+              String agendaEndTime = "N/A";
 
-                if (agendaItem['startTime'] != null &&
-                    agendaItem['startTime'].isNotEmpty) {
-                  agendaStartTime = controller.generateDateTimeAndFormatTime(
-                    eventInfo.startTime!,
-                    context,
-                  );
-                }
-
-                if (agendaItem['endTime'] != null &&
-                    agendaItem['endTime']!.isNotEmpty) {
-                  agendaEndTime = controller.generateDateTimeAndFormatTime(
-                    eventInfo.endTime!,
-                    context,
-                  );
-                }
-
-                return Column(
-                  children: [
-                    AgendaItem(
-                      title: agendaItem['title'] ?? 'Untitled',
-                      timeRange: "$agendaStartTime - $agendaEndTime",
-                      description:
-                          agendaItem['description'] ??
-                          'No description available',
-                      speaker: agendaItem['speaker'],
-                      location: agendaItem['location'],
-                      isLastItem: isLastItem,
-                    ),
-                    if (!isLastItem) SizedBox(height: 2.hp),
-                  ],
+              if (agendaItem['startTime'] != null &&
+                  agendaItem['startTime'].isNotEmpty) {
+                agendaStartTime = controller.generateDateTimeAndFormatTime(
+                  eventInfo.startTime,
+                  context,
                 );
-              }),
-            ],
-          ),
+              }
+
+              if (agendaItem['endTime'] != null &&
+                  agendaItem['endTime']!.isNotEmpty) {
+                agendaEndTime = controller.generateDateTimeAndFormatTime(
+                  eventInfo.endTime,
+                  context,
+                );
+              }
+
+              return Column(
+                children: [
+                  AgendaItem(
+                    title: agendaItem['title'] ?? 'Untitled',
+                    timeRange: "$agendaStartTime - $agendaEndTime",
+                    description:
+                        agendaItem['description'] ?? 'No description available',
+                    speaker: agendaItem['speaker'],
+                    location: agendaItem['location'],
+                    isLastItem: isLastItem,
+                  ),
+                  if (!isLastItem) SizedBox(height: 2.hp),
+                ],
+              );
+            }),
+            SizedBox(height: 2.hp),
+          ],
         ),
       );
     });

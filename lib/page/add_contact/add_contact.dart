@@ -1,20 +1,20 @@
-import 'package:country_code_picker/country_code_picker.dart';
 import 'package:eventjar/controller/add_contact/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/add_contact/add_contact_form_element.dart';
+import 'package:eventjar/page/add_contact/add_contact_header_widgets.dart';
+import 'package:eventjar/page/add_contact/add_contact_multi_tag.dart';
 import 'package:eventjar/page/add_contact/add_contact_stage_dropdown.dart';
-import 'package:eventjar/page/add_contact/add_contact_tag_dropdown.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_intl_phone_field/country_picker_dialog.dart';
 import 'package:get/get.dart';
+
+import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 
 class AddContactPage extends GetView<AddContactController> {
   const AddContactPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final defaultFontSize = 10.sp;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -28,201 +28,461 @@ class AddContactPage extends GetView<AddContactController> {
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
       body: GestureDetector(
-        onTap: () {
-          Get.focusScope?.unfocus();
-        },
+        onTap: () => Get.focusScope?.unfocus(),
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 3.hp),
+          padding: EdgeInsets.all(4.wp),
           child: Form(
             key: controller.formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                AddContactImagePreview(),
+                AddContactImageToggle(),
+                SizedBox(height: 2.hp),
+
                 // Name
                 ContactFormElement(
                   controller: controller.nameController,
-                  label: 'Name',
-                  validator: (val) => val == null || val.trim().isEmpty
-                      ? 'Name is required'
-                      : null,
+                  label: 'Name *',
+                  validator: controller.validateName,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 SizedBox(height: 2.hp),
 
                 // Email
                 ContactFormElement(
                   controller: controller.emailController,
-                  label: 'Email',
+                  label: 'Email *',
                   keyboardType: TextInputType.emailAddress,
-                  validator: (val) {
-                    if (val == null || val.trim().isEmpty) {
-                      return 'Email is required';
-                    }
-                    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-                    if (!emailRegex.hasMatch(val.trim())) {
-                      return 'Enter a valid email';
+                  validator: controller.validateEmail,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                ),
+                SizedBox(height: 2.hp),
+
+                // Phone 1
+                IntlPhoneField(
+                  decoration: _phoneDecoration('Phone Number *'),
+                  pickerDialogStyle: _pickerStyle(),
+                  initialCountryCode:
+                      controller.state.selectedCountry.value.code,
+                  onChanged: (_) {},
+                  onCountryChanged: (country) {
+                    controller.state.selectedCountry.value = country;
+                  },
+                  controller: controller.phoneController,
+                  validator: (value) {
+                    if (value == null || !value.isValidNumber()) {
+                      return 'Invalid phone number';
                     }
                     return null;
                   },
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
                 SizedBox(height: 2.hp),
 
-                // Phone
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // First container for CountryCodePicker
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade400),
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      child: CountryCodePicker(
-                        onChanged: (country) {
-                          controller.state.selectedCountryCode.value =
-                              country.dialCode ?? '+91';
-                        },
-                        initialSelection: 'IN',
-                        favorite: ['+91', 'IN'],
-                        showCountryOnly: false,
-                        showOnlyCountryWhenClosed: false,
-                        dialogBackgroundColor: Colors.white,
-                        textStyle: TextStyle(
-                          color: Colors.grey[800],
-                          fontSize: defaultFontSize,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    // Second container for Phone Number TextField
-                    Expanded(
-                      child: ContactFormElement(
-                        controller: controller.phoneController,
-                        label: 'Phone Number',
-                        keyboardType: TextInputType.phone,
-                        maxLength: 10,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(15),
-                        ],
-                        validator: (val) => val == null || val.trim().isEmpty
-                            ? 'Phone number is required'
-                            : null,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 2.hp),
-
-                // Stage dropdown widget
+                // Stage dropdown
                 ContactStageDropdown(),
-
                 SizedBox(height: 2.hp),
 
-                // Multi-select tags widget
-                MultiSelectTagsInput(),
-
+                // Tags
+                AddMultiSelectTagsInput(),
                 SizedBox(height: 2.hp),
 
-                // Notes (multiline)
+                // Notes
                 ContactFormElement(
                   controller: controller.notesController,
                   label: 'Notes',
                   maxLines: 4,
-                  minLines: 2,
+                  minLines: 3,
                 ),
+                SizedBox(height: 2.hp),
 
+                // ── Extract from Card button — visiting card update only ──
+                Obx(() {
+                  // Read observables first so GetX registers them as dependencies
+                  final isFromCard = controller.state.isFromCardScan.value;
+                  final isExtracting =
+                      controller.state.isExtractingFromCard.value;
+                  if (!controller.checkIsForUpdate() || !isFromCard) {
+                    return const SizedBox.shrink();
+                  }
+                  return Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: isExtracting
+                            ? OutlinedButton.icon(
+                                onPressed: null,
+                                icon: const SizedBox(
+                                  width: 14,
+                                  height: 14,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                                label: Text(
+                                  'Extracting...',
+                                  style: TextStyle(fontSize: 9.sp),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 1.2.hp,
+                                  ),
+                                  side: BorderSide(color: Colors.blue.shade200),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              )
+                            : OutlinedButton.icon(
+                                onPressed:
+                                    controller.extractAdditionalInfoFromCard,
+                                icon: Icon(
+                                  Icons.document_scanner_outlined,
+                                  size: 16,
+                                  color: Colors.blue.shade700,
+                                ),
+                                label: Text(
+                                  'Extract Additional Info from Card',
+                                  style: TextStyle(
+                                    fontSize: 9.sp,
+                                    color: Colors.blue.shade700,
+                                  ),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 1.2.hp,
+                                  ),
+                                  side: BorderSide(color: Colors.blue.shade400),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                      ),
+                      SizedBox(height: 2.hp),
+                    ],
+                  );
+                }),
+
+                // ── Additional Info section (always visible) ──
+                _buildAdditionalInfoSection(context),
                 SizedBox(height: 3.hp),
 
-                // Buttons row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: controller.clearForm,
-                        style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 6.wp,
-                            vertical: 1.8.hp,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              12,
-                            ), // smoother corners
-                          ),
-                          side: BorderSide(
-                            color: Colors.blue.shade700,
-                            width: 2,
-                          ),
-                          backgroundColor: Colors.white,
-                          foregroundColor:
-                              Colors.blue.shade700, // text and icon color
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          'Clear',
-                          style: TextStyle(
-                            fontSize: defaultFontSize,
-                            fontWeight: FontWeight.w600, // bolder text
-                            letterSpacing: 0.5,
+                // Submit row
+                SafeArea(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Obx(
+                          () => OutlinedButton(
+                            onPressed: controller.state.isLoading.value
+                                ? null
+                                : controller.clearForm,
+                            style: OutlinedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 6.wp,
+                                vertical: 1.8.hp,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              side: BorderSide(
+                                color: Colors.blue.shade700,
+                                width: 2,
+                              ),
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.blue.shade700,
+                            ),
+                            child: Text(
+                              controller.state.clearButtonTitle.value,
+                              style: TextStyle(
+                                fontSize: 8.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 3.wp),
-                    Expanded(
-                      child: Obx(() {
-                        final isLoading = controller.state.isLoading.value;
-                        return ElevatedButton(
-                          onPressed: isLoading
-                              ? null
-                              : () {
-                                  Get.focusScope?.unfocus();
-                                  controller.submitForm(context);
-                                },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 6.wp,
-                              vertical: 1.8.hp,
+                      SizedBox(width: 3.wp),
+                      Expanded(
+                        child: Obx(
+                          () => ElevatedButton(
+                            onPressed: () {
+                              if (controller.state.isLoading.value) return;
+                              if (controller.formKey.currentState?.validate() ??
+                                  false) {
+                                Get.focusScope?.unfocus();
+                                controller.submitForm(context);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 6.wp,
+                                vertical: 1.8.hp,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              backgroundColor: Colors.blue.shade700,
+                              foregroundColor: Colors.white,
+                              elevation: 5,
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            elevation: 5,
-                            shadowColor: Colors.blue.shade700.withValues(
-                              alpha: 0.5,
-                            ),
-                            backgroundColor: Colors.blue.shade700,
-                            foregroundColor: Colors.white,
+                            child: controller.state.isLoading.value
+                                ? SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Text(
+                                    controller.appBarTitle,
+                                    style: TextStyle(
+                                      fontSize: 8.sp,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
                           ),
-                          child: isLoading
-                              ? SizedBox(
-                                  height: defaultFontSize,
-                                  width: defaultFontSize,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text(
-                                  controller.appBarTitle,
-                                  style: TextStyle(
-                                    fontSize: defaultFontSize,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                        );
-                      }),
-                    ),
-                  ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildAdditionalInfoSection(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Header ──
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 4, 4),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 18,
+                  color: Colors.blue.shade700,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Additional Info',
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                  ),
+                ),
+                const Spacer(),
+                // Select All checkbox — only for visiting card contacts
+                Obx(() {
+                  if (!controller.state.isFromCardScan.value) {
+                    return const SizedBox.shrink();
+                  }
+                  final anyChecked = controller
+                      .state
+                      .additionalInfoSelection
+                      .values
+                      .any((v) => v);
+                  final allChecked = controller
+                      .state
+                      .additionalInfoSelection
+                      .values
+                      .every((v) => v);
+                  // tristate: true=all checked, null=some checked, false=none
+                  final checkboxValue = allChecked
+                      ? true
+                      : (anyChecked ? null : false);
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        allChecked ? 'Uncheck All' : 'Check All',
+                        style: TextStyle(
+                          fontSize: 9.sp,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                      Checkbox(
+                        value: checkboxValue,
+                        tristate: true,
+                        activeColor: Colors.blue.shade700,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        onChanged: (_) =>
+                            controller.toggleAllAdditionalFields(),
+                      ),
+                    ],
+                  );
+                }),
+              ],
+            ),
+          ),
+          Divider(height: 1, color: Colors.grey.shade200),
+
+          // ── Phone 2 ──
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 12, 16, 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Obx(
+                  () => controller.state.isFromCardScan.value
+                      ? Checkbox(
+                          value:
+                              controller
+                                  .state
+                                  .additionalInfoSelection['phone2'] ??
+                              false,
+                          activeColor: Colors.blue.shade700,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          onChanged: (_) =>
+                              controller.toggleAdditionalField('phone2'),
+                        )
+                      : const SizedBox(width: 16),
+                ),
+                Expanded(
+                  child: Obx(
+                    () => IntlPhoneField(
+                      key: ValueKey(
+                        '${controller.state.selectedPhone2Country.value.code}_${controller.state.phone2FieldKey.value}',
+                      ),
+                      decoration: _phoneDecoration('Phone Number'),
+                      pickerDialogStyle: _pickerStyle(),
+                      initialCountryCode:
+                          controller.state.selectedPhone2Country.value.code,
+                      onCountryChanged: (country) {
+                        controller.state.selectedPhone2Country.value = country;
+                      },
+                      controller: controller.phone2Controller,
+                      disableLengthCheck: true,
+                      autovalidateMode: AutovalidateMode.disabled,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ── Company ──
+          _buildFieldRow(
+            fieldKey: 'company',
+            child: ContactFormElement(
+              controller: controller.companyController,
+              label: 'Company',
+              keyboardType: TextInputType.text,
+              onTap: () => _autoCheck('company'),
+            ),
+          ),
+
+          // ── Website ──
+          _buildFieldRow(
+            fieldKey: 'website',
+            child: ContactFormElement(
+              controller: controller.websiteController,
+              label: 'Website',
+              keyboardType: TextInputType.url,
+              onTap: () => _autoCheck('website'),
+            ),
+          ),
+
+          // ── Address ──
+          _buildFieldRow(
+            fieldKey: 'address',
+            child: ContactFormElement(
+              controller: controller.addressController,
+              label: 'Address',
+              maxLines: 2,
+              minLines: 2,
+              onTap: () => _autoCheck('address'),
+            ),
+          ),
+
+          SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
+  void _autoCheck(String fieldKey) {
+    if (!controller.state.isFromCardScan.value) return;
+    if (!(controller.state.additionalInfoSelection[fieldKey] ?? false)) {
+      controller.toggleAdditionalField(fieldKey);
+    }
+  }
+
+  Widget _buildFieldRow({required String fieldKey, required Widget child}) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 4, 16, 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Obx(
+            () => controller.state.isFromCardScan.value
+                ? Checkbox(
+                    value:
+                        controller.state.additionalInfoSelection[fieldKey] ??
+                        false,
+                    activeColor: Colors.blue.shade700,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    onChanged: (_) =>
+                        controller.toggleAdditionalField(fieldKey),
+                  )
+                : const SizedBox(width: 16),
+          ),
+          Expanded(child: child),
+        ],
+      ),
+    );
+  }
+
+  InputDecoration _phoneDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(fontSize: 10.sp),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.0),
+        borderSide: BorderSide(color: Colors.grey.shade400, width: 1.5),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.0),
+        borderSide: BorderSide(color: Colors.blue.shade700, width: 2.0),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.0),
+        borderSide: const BorderSide(color: Colors.red, width: 2.0),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12.0),
+        borderSide: const BorderSide(color: Colors.redAccent, width: 2.0),
+      ),
+      errorStyle: const TextStyle(height: 0),
+    );
+  }
+
+  PickerDialogStyle _pickerStyle() {
+    return PickerDialogStyle(
+      countryNameStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 10.sp),
+      countryCodeStyle: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
     );
   }
 }

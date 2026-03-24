@@ -4,16 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 Widget buildCheckoutPriceSummarySection() {
-  final CheckoutController controller = Get.find();
+  final controller = Get.find<CheckoutController>();
 
   return Obx(() {
-    final selectedTicket = controller.state.selectedTicketTier.value;
-    final quantity = controller.state.quantity.value;
-    final subtotal = selectedTicket != null
-        ? double.parse(selectedTicket.price) * quantity
-        : 0.0;
-    final platformFee = 0.0; // Add platform fee logic if needed
-    final total = subtotal + platformFee;
+    final lines = controller.state.cartLines;
+    final subtotal = controller.subtotal;
+    final platformFee = controller.platformFee;
+    final total = controller.total;
+
+    final promo = controller.state.promoCodeResponse.value;
+    final promoDiscount = promo?.discountAmount ?? 0.0;
+    final isPromoApplied = promo?.valid == true && promoDiscount > 0;
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 4.wp),
@@ -36,10 +37,10 @@ Widget buildCheckoutPriceSummarySection() {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section Title
+          /// Title
           Row(
             children: [
-              Icon(Icons.receipt_long, color: Colors.white, size: 20),
+              const Icon(Icons.receipt_long, color: Colors.white, size: 20),
               SizedBox(width: 3.wp),
               Text(
                 "Price Summary",
@@ -53,7 +54,7 @@ Widget buildCheckoutPriceSummarySection() {
           ),
           SizedBox(height: 2.hp),
 
-          // Price Details Container
+          /// Content Card
           Container(
             padding: EdgeInsets.all(3.wp),
             decoration: BoxDecoration(
@@ -66,14 +67,41 @@ Widget buildCheckoutPriceSummarySection() {
             ),
             child: Column(
               children: [
-                // Subtotal
+                /// Ticket Lines
+                ...lines.map((line) {
+                  final price = double.tryParse(line.ticket.price) ?? 0;
+                  final lineTotal = price * line.quantity.value;
+
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 1.hp),
+                    child: _buildPriceRowWhite(
+                      "${line.ticket.name} (x${line.quantity.value})",
+                      "₹${lineTotal.toStringAsFixed(2)}",
+                    ),
+                  );
+                }),
+
+                if (lines.isNotEmpty) SizedBox(height: 1.5.hp),
+
+                /// Subtotal
                 _buildPriceRowWhite(
-                  "Subtotal ($quantity ticket${quantity > 1 ? 's' : ''})",
+                  "Subtotal",
                   "₹${subtotal.toStringAsFixed(2)}",
                 ),
                 SizedBox(height: 1.5.hp),
 
-                // Platform Fee
+                /// Promo Discount
+                if (isPromoApplied) ...[
+                  _buildPriceRowWhite(
+                    "Promo Discount",
+                    "- ₹${promoDiscount.toStringAsFixed(2)}",
+                  ),
+                  SizedBox(height: 1.5.hp),
+
+                  SizedBox(height: 1.5.hp),
+                ],
+
+                /// Platform Fee
                 _buildPriceRowWhite(
                   "Platform Fee",
                   "₹${platformFee.toStringAsFixed(2)}",
@@ -86,7 +114,7 @@ Widget buildCheckoutPriceSummarySection() {
                 ),
                 SizedBox(height: 1.5.hp),
 
-                // Total
+                /// Total
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -134,6 +162,7 @@ Widget buildCheckoutPriceSummarySection() {
   });
 }
 
+/// Reusable row
 Widget _buildPriceRowWhite(String label, String amount) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,

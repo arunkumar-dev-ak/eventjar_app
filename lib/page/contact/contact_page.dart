@@ -1,8 +1,15 @@
+import 'dart:ui';
+
 import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
+import 'package:eventjar/model/meta/meta_model.dart';
 import 'package:eventjar/page/contact/contact_card_page.dart';
+import 'package:eventjar/page/contact/filter/contact_search_page.dart';
+import 'package:eventjar/page/contact/widget/add_contact_bottom_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../global/responsive/responsive.dart';
 
 class ContactPage extends GetView<ContactController> {
   const ContactPage({super.key});
@@ -25,7 +32,7 @@ class ContactPage extends GetView<ContactController> {
           );
 
           final count = _getCountByKey(
-            controller.state.analytics.value,
+            controller.state.meta.value,
             selected?.key,
           );
 
@@ -42,144 +49,212 @@ class ContactPage extends GetView<ContactController> {
                 ),
                 const SizedBox(width: 6),
                 // Wrap count in a badge-like container
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: baseColor.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    count.toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                if (count != -1) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: baseColor.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      count.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
             centerTitle: false,
             elevation: 0,
             actions: [
-              IconButton(
-                icon: const Icon(Icons.person_add, color: Colors.white),
-                tooltip: 'Add Contact',
-                onPressed: () {
-                  controller.navigateToAddContact();
-                },
+              Row(
+                children: [
+                  _buildActionButton(
+                    icon: Icons.add_rounded,
+                    onPressed: () => addContactBottomModel(context, controller),
+                  ),
+                  SizedBox(width: 3.wp),
+                  _buildActionButton(
+                    icon: Icons.qr_code_scanner_rounded,
+                    onPressed: controller.navigateToQrPage,
+                  ),
+                  SizedBox(width: 2.wp),
+                ],
               ),
+              // IconButton(
+              //   icon: const Icon(Icons.person_add, color: Colors.white),
+              //   tooltip: 'Add Contact',
+              //   onPressed: () {
+              //     controller.navigateToAddContact();
+              //   },
+              // ),
             ],
           );
         }),
       ),
 
-      body: Column(
-        children: [
-          // Buttons row: Add Contact, Import Google, Import Mobile
-          // SingleChildScrollView(
-          //   scrollDirection: Axis.horizontal,
-          //   child: Padding(
-          //     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          //     child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //       children: [
-          //         ElevatedButton.icon(
-          //           icon: const Icon(Icons.person_add),
-          //           label: const Text("Add Contact"),
-          //           onPressed: () {
-          //             // Add your Add Contact action here
-          //           },
-          //           style: ElevatedButton.styleFrom(
-          //             shape: RoundedRectangleBorder(
-          //               borderRadius: BorderRadius.circular(10),
-          //             ),
-          //             padding: const EdgeInsets.symmetric(
-          //               vertical: 12,
-          //               horizontal: 12,
-          //             ),
-          //           ),
-          //         ),
-          //         ElevatedButton.icon(
-          //           icon: const Icon(Icons.account_circle),
-          //           label: const Text("Import Google"),
-          //           onPressed: () {
-          //             // Add your Import from Google action here
-          //           },
-          //           style: ElevatedButton.styleFrom(
-          //             shape: RoundedRectangleBorder(
-          //               borderRadius: BorderRadius.circular(10),
-          //             ),
-          //             padding: const EdgeInsets.symmetric(
-          //               vertical: 12,
-          //               horizontal: 12,
-          //             ),
-          //           ),
-          //         ),
-          //         ElevatedButton.icon(
-          //           icon: const Icon(Icons.phone_android),
-          //           label: const Text("Import Mobile"),
-          //           onPressed: () {
-          //             // Add your Import from Mobile action here
-          //           },
-          //           style: ElevatedButton.styleFrom(
-          //             shape: RoundedRectangleBorder(
-          //               borderRadius: BorderRadius.circular(10),
-          //             ),
-          //             padding: const EdgeInsets.symmetric(
-          //               vertical: 12,
-          //               horizontal: 12,
-          //             ),
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
-          // SizedBox(height: 1.hp),
+      body: SafeArea(
+        child: Obx(() {
+          final savingContact = controller.state.savingContact.value;
 
-          // Search and Contact cards below
-          // ContactsSearchAndFilters(),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                await controller.fetchContacts();
-              },
-              child: ContactCardPage(),
-            ),
-          ),
-        ],
+          final number =
+              savingContact?.phoneParsed?.phoneNumber ??
+              savingContact?.phoneParsed?.fullNumber ??
+              '';
+          return Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Buttons row: Add Contact, Import Google, Import Mobile
+                  // SingleChildScrollView(
+                  //   scrollDirection: Axis.horizontal,
+                  //   child: Padding(
+                  //     padding: EdgeInsets.only(top: 8, bottom: 8, left: 14),
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.start,
+                  //       children: [
+                  //         ElevatedButton.icon(
+                  //           icon: const Icon(Icons.account_circle),
+                  //           label: const Text("Import Google"),
+                  //           onPressed: () {
+                  //             // Add your Import from Google action here
+                  //           },
+                  //           style: ElevatedButton.styleFrom(
+                  //             shape: RoundedRectangleBorder(
+                  //               borderRadius: BorderRadius.circular(10),
+                  //             ),
+                  //             padding: const EdgeInsets.symmetric(
+                  //               vertical: 12,
+                  //               horizontal: 12,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //         SizedBox(width: 2.wp),
+                  //         ElevatedButton.icon(
+                  //           icon: const Icon(Icons.phone_android),
+                  //           label: const Text("Import Mobile"),
+                  //           onPressed: () {
+                  //             // Add your Import from Mobile action here
+                  //           },
+                  //           style: ElevatedButton.styleFrom(
+                  //             shape: RoundedRectangleBorder(
+                  //               borderRadius: BorderRadius.circular(10),
+                  //             ),
+                  //             padding: const EdgeInsets.symmetric(
+                  //               vertical: 12,
+                  //               horizontal: 12,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  // SizedBox(height: 1.hp),
+
+                  // Search and Contact cards below
+                  ContactsSearchAndFilters(),
+                  Expanded(child: ContactCardPage()),
+                ],
+              ),
+
+              if (savingContact != null)
+                Positioned(
+                  bottom: 20,
+                  left: 16,
+                  right: 16,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.85),
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: const [
+                          BoxShadow(blurRadius: 10, color: Colors.black26),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          const SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              "Searching $number in existing contacts...",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        }),
       ),
     );
   }
 }
 
-int _getCountByKey(ContactAnalytics? analytics, String? key) {
-  if (analytics == null || key == null) {
-    return 0;
+Widget _buildActionButton({
+  required IconData icon,
+  required VoidCallback onPressed,
+}) {
+  return GestureDetector(
+    onTap: onPressed,
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          width: 33,
+          height: 33,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.25),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.4),
+              width: 1.3,
+            ),
+          ),
+          child: Icon(icon, color: Colors.white, size: 18),
+        ),
+      ),
+    ),
+  );
+}
+
+int _getCountByKey(Meta? meta, String? key) {
+  if (meta == null || key == null) {
+    return -1;
   }
 
-  switch (key) {
-    case 'new':
-      return analytics.newCount;
-    case 'followup_24h':
-      return analytics.followup24h;
-    case 'followup_7d':
-      return analytics.followup7d;
-    case 'followup_30d':
-      return analytics.followup30d;
-    case 'qualified':
-      return analytics.qualified;
-    case 'overdue':
-      return analytics.overdue;
-    case 'total':
-      return analytics.total;
-    default:
-      return 0;
-  }
+  return meta.total;
 }
 
 String formatCount(int count) {

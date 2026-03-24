@@ -4,6 +4,7 @@ import 'package:eventjar/page/user_profile/user_profile_security/user_profile_se
 import 'package:eventjar/page/user_profile/user_profile_security/user_profile_security_pending_info.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 Widget userProfileBuildSecurity() {
   final controller = Get.find<UserProfileController>();
@@ -115,14 +116,48 @@ Widget userProfileBuildSecurity() {
 
       // Delete Button
       Obx(() {
-        final isPending =
-            controller
-                .state
-                .deleteAccountResponse
-                .value
-                ?.data
-                .hasPendingDeletion ==
-            true;
+        final response = controller.state.deleteAccountResponse.value;
+        final isDeleted = response?.data.deletedAt != null;
+        final isPending = response?.data.hasPendingDeletion == true;
+
+        if (isDeleted) {
+          return Container(
+            padding: EdgeInsets.all(3.wp),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.block, color: Colors.grey.shade600),
+                SizedBox(width: 3.wp),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Account Deleted",
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      Text(
+                        "Your account has been permanently deleted",
+                        style: TextStyle(
+                          fontSize: 8.sp,
+                          color: Colors.grey.shade500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
 
         final bgColor = isPending ? Colors.green.shade50 : Colors.red.shade50;
         final borderColor = isPending
@@ -184,6 +219,72 @@ Widget userProfileBuildSecurity() {
         );
       }),
     ],
+  );
+}
+
+void showDeletedAccountDialog(UserProfileController controller) {
+  final response = controller.state.deleteAccountResponse.value;
+  final deletedAt = response?.data.deletedAt;
+
+  Get.dialog(
+    Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.sp)),
+      child: Container(
+        padding: EdgeInsets.all(5.wp),
+        constraints: BoxConstraints(maxWidth: 400, maxHeight: 300),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Red X icon
+            Icon(
+              Icons.cancel_outlined,
+              size: 40.sp,
+              color: Colors.red.shade400,
+            ),
+            SizedBox(height: 16),
+
+            // Title
+            Text(
+              "Account Deleted",
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.red.shade600,
+              ),
+            ),
+
+            SizedBox(height: 12),
+
+            // Info
+            Text(
+              "Your account was permanently deleted on ${DateFormat('MMM dd, yyyy').format(deletedAt!)}",
+              style: TextStyle(fontSize: 10.sp, color: Colors.grey[700]),
+              textAlign: TextAlign.center,
+            ),
+
+            SizedBox(height: 24),
+
+            // Close button only
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Get.back(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey.shade600,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 1.5.hp),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: Text("Close"),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+    barrierDismissible: true,
   );
 }
 

@@ -1,5 +1,4 @@
 import 'package:eventjar/controller/event_info/controller.dart';
-import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,73 +23,25 @@ class OverViewPage extends StatelessWidget {
       // Add event tags
       tags.addAll(eventInfo.tags);
 
-      return SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 1.5.hp),
-            // Tags Horizontal Scroll
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(tags.length, (index) {
-                  return Padding(
-                    padding: EdgeInsets.only(left: index == 0 ? 5.wp : 2.wp),
-                    child: _buildTags(label: tags[index]),
-                  );
-                }),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 1.5.hp),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 5.wp),
+            child: Text(
+              eventInfo.description ??
+                  "No description available for this event.",
+              style: TextStyle(
+                fontSize: 8.sp,
+                color: Colors.grey.shade600,
+                height: 1.5,
               ),
             ),
-            SizedBox(height: 1.hp),
-            Padding(
-              padding: EdgeInsets.only(left: 5.wp, right: 5.wp),
-              child: Text(
-                eventInfo.title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 11.sp,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            SizedBox(height: 1.hp),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5.wp),
-              child: Text(
-                eventInfo.description ??
-                    "No description available for this event.",
-                style: TextStyle(fontSize: 10.sp),
-              ),
-            ),
-          ],
-        ),
+          ),
+          SizedBox(height: 2.hp),
+        ],
       );
     });
   }
-}
-
-Widget _buildTags({required String label}) {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      gradient: AppColors.buttonGradient,
-    ),
-    child: Container(
-      padding: EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(9),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: AppColors.gradientDarkStart,
-          fontWeight: FontWeight.bold,
-          fontSize: 8.sp,
-        ),
-      ),
-    ),
-  );
 }

@@ -1,8 +1,10 @@
-import 'package:confetti/confetti.dart';
 import 'package:eventjar/controller/contact/controller.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/page/contact/contact_card_empty_page.dart';
-import 'package:eventjar/page/contact/contact_card_page_card.dart';
 import 'package:eventjar/page/contact/contact_card_shimmer.dart';
+import 'package:eventjar/page/contact/radial_design/accordion_card.dart';
+import 'package:eventjar/page/contact/radial_design/radial_design_func.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,92 +15,157 @@ class ContactCardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Obx(() {
-          if (controller.state.isLoading.value) {
-            return ListView.builder(
-              padding: const EdgeInsets.only(top: 10),
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                return buildShimmerPlaceholderForContactCard();
-              },
-            );
-          } else if (controller.state.contacts.isEmpty) {
-            return buildEmptyStateForContact();
-          } else {
-            final contacts = controller.state.contacts;
-            return ListView.builder(
-              padding: const EdgeInsets.only(top: 10),
-              itemCount: controller.state.contacts.length,
-              itemBuilder: (context, index) {
-                final contact = contacts[index];
+    return Obx(() {
+      final screenWidth = MediaQuery.of(context).size.width;
+      final isSmallScreen = screenWidth < 360;
 
-                return ContactCard(contact: contact, index: index);
-              },
+      return Stack(
+        children: [
+          // Main content with RefreshIndicator
+          RefreshIndicator(
+            onRefresh: () async {
+              await controller.fetchContactsOnReload();
+            },
+            child: IgnorePointer(
+              ignoring: controller.state.isSearching.value,
+              child: _buildScrollableContent(isSmallScreen),
+            ),
+          ),
+
+          // Searching overlay
+          if (controller.state.isSearching.value)
+            Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.grey.shade300, width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 12,
+                      offset: Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        valueColor: AlwaysStoppedAnimation(
+                          Colors.grey.shade700,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Text(
+                      "Processing...",
+                      style: TextStyle(
+                        color: Colors.grey.shade800,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      );
+    });
+  }
+
+  Widget _buildScrollableContent(bool isSmallScreen) {
+    // Loading state
+    if (controller.state.isLoading.value) {
+      return ListView.builder(
+        padding: const EdgeInsets.only(top: 10),
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: 3,
+        itemBuilder: (context, index) {
+          return buildShimmerPlaceholderForContactCard();
+        },
+      );
+    }
+
+    // Empty state
+    if (controller.state.contacts.isEmpty) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(height: 25.hp),
+          buildEmptyStateForContact(),
+        ],
+      );
+    }
+
+    // Contacts list with pagination
+    final haveNextPage = controller.state.meta.value?.hasNext ?? false;
+
+    return Container(
+      width: 100.wp,
+      height: 100.hp,
+      color: Colors.grey.shade200,
+      child: ListView.builder(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        controller: controller.contactScrollController,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: haveNextPage
+            ? controller.state.contacts.length + 1
+            : controller.state.contacts.length,
+        itemBuilder: (context, index) {
+          // Pagination loader
+          if (index >= controller.state.contacts.length) {
+            return buildShimmerPlaceholderForContactCard(
+              isBottomNeedToLoad: false,
             );
           }
-        }),
 
-        // if (controller.showConfetti.value)
-        // if (true)
-        //   Positioned(
-        //     top: 0,
-        //     left: 0,
-        //     right: 0,
-        //     child: ConfettiWidget(
-        //       confettiController: controller.confettiController,
-        //       blastDirectionality: BlastDirectionality.explosive,
-        //       blastDirection: 0.5,
-        //       emissionFrequency: 0.1, // Higher = more particles
-        //       numberOfParticles: 100,
-        //       gravity: 0.1,
-        //       shouldLoop: false,
-        //       colors: [Colors.green, Colors.blue, Colors.yellow, Colors.purple],
-        //     ),
-        //   ),
-        // if (controller.showConfetti.value)
-        // if (true)
-        //   Center(
-        //     child: Container(
-        //       padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        //       decoration: BoxDecoration(
-        //         gradient: LinearGradient(
-        //           colors: [Colors.green.shade600, Colors.green.shade800],
-        //         ),
-        //         borderRadius: BorderRadius.circular(25),
-        //         boxShadow: [
-        //           BoxShadow(
-        //             color: Colors.green.shade400,
-        //             blurRadius: 30,
-        //             spreadRadius: 5,
-        //           ),
-        //         ],
-        //       ),
-        //       child: Column(
-        //         mainAxisSize: MainAxisSize.min,
-        //         children: [
-        //           Icon(Icons.celebration, color: Colors.white, size: 48),
-        //           SizedBox(height: 12),
-        //           Text(
-        //             'LEAD QUALIFIED! 🎉',
-        //             style: TextStyle(
-        //               color: Colors.white,
-        //               fontSize: 20,
-        //               fontWeight: FontWeight.bold,
-        //               letterSpacing: 1,
-        //             ),
-        //           ),
-        //           SizedBox(height: 4),
-        //           Text(
-        //             'Great job!',
-        //             style: TextStyle(color: Colors.white70, fontSize: 14),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-      ],
+          // Contact card
+          final contact = controller.state.contacts[index];
+
+          return Obx(() {
+            final isExpanded = controller.state.expandedIndex.value == index;
+            return radialDesignBuildAccordionCard(
+              context: context,
+              contact: contact,
+              stages: _buildStagesForContact(contact.stage.index),
+              isSmallScreen: isSmallScreen,
+              index: index,
+              isExpanded: isExpanded,
+              onToggleExpand: (int val) {
+                controller.state.expandedIndex.value = val;
+              },
+              isOverDue: contact.isOverdue,
+              onCall: () {
+                // controller.launchPhoneCall(contact.phoneNumber ?? '');
+              },
+              onMeetingClick: () {
+                controller.navigateToContactListMeeting(contact);
+              },
+            );
+          });
+        },
+      ),
     );
   }
+}
+
+List<PieChartModel> _buildStagesForContact(int activeStageIndex) {
+  return stageDefinitions.asMap().entries.map((entry) {
+    final index = entry.key;
+    final stage = entry.value;
+    final isEnabled = index <= activeStageIndex;
+    return PieChartModel(
+      name: stage.name,
+      color: isEnabled ? stage.color : Colors.grey.shade400,
+      isEnabled: isEnabled,
+    );
+  }).toList();
 }

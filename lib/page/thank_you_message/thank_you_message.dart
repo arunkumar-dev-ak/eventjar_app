@@ -1,6 +1,8 @@
 import 'package:eventjar/controller/thank_you_message/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/thank_you_message/thank_you_message_button.dart';
+import 'package:eventjar/page/thank_you_message/widget/thank_you_message_message_method.dart'
+    show thankYouMessageBuildMethodCard;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -59,7 +61,6 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
 
                   SizedBox(height: 3.hp),
 
-                  // Send via section
                   Text(
                     'Send via:',
                     style: TextStyle(
@@ -69,27 +70,98 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                   ),
                   SizedBox(height: 1.5.hp),
 
-                  // Email Card
+                  if (!controller.canSendEmail ||
+                      !controller.canSendWhatsApp) ...[
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(top: 2.hp),
+                      padding: EdgeInsets.all(3.wp),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.orange.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: Colors.orange,
+                                size: 18,
+                              ),
+                              SizedBox(width: 2.wp),
+                              Text(
+                                "Automation Not Configured",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 9.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 1.hp),
+                          Text(
+                            "Notifications will not be sent automatically. "
+                            "You can still mark this as sent after manually sending the message via the configured channels.",
+                            style: TextStyle(
+                              fontSize: 8.sp,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                          SizedBox(height: 1.5.hp),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton.icon(
+                              onPressed: controller.navigateToNotification,
+                              icon: const Icon(Icons.settings, size: 16),
+                              label: Text(
+                                !controller.canSendEmail &&
+                                        !controller.canSendWhatsApp
+                                    ? "Configure Email & WhatsApp"
+                                    : !controller.canSendEmail
+                                    ? "Configure Email"
+                                    : "Configure WhatsApp",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 2.hp),
+                  ],
+
                   Obx(
-                    () => _buildMethodCard(
+                    () => thankYouMessageBuildMethodCard(
                       title: 'Email',
                       icon: Icons.email_outlined,
                       isSelected: controller.state.emailChecked.value,
-                      onTap: () => controller.state.emailChecked.value =
-                          !controller.state.emailChecked.value,
+                      isLoading: controller.state.configLoading.value,
+                      badgeText: controller.canSendEmail
+                          ? null
+                          : 'Not Configured',
+                      onTap: controller.toggleEmail,
                     ),
                   ),
 
                   SizedBox(height: 1.5.hp),
 
-                  // WhatsApp Card
                   Obx(
-                    () => _buildMethodCard(
+                    () => thankYouMessageBuildMethodCard(
                       title: 'WhatsApp',
                       icon: Icons.message_outlined,
                       isSelected: controller.state.whatsappChecked.value,
-                      onTap: () => controller.state.whatsappChecked.value =
-                          !controller.state.whatsappChecked.value,
+                      badgeText: controller.canSendWhatsApp
+                          ? null
+                          : 'Not Configured',
+                      isLoading: controller.state.configLoading.value,
+                      onTap: controller.toggleWhatsApp,
                     ),
                   ),
 
@@ -121,7 +193,9 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                   SizedBox(height: 4.hp),
 
                   // Action Buttons
-                  ThankYouMessageActionButtons(controller: controller),
+                  SafeArea(
+                    child: ThankYouMessageActionButtons(controller: controller),
+                  ),
 
                   SizedBox(height: 2.hp),
                 ],

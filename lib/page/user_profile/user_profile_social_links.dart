@@ -12,7 +12,7 @@ Widget userProfileBuildSocialLinks() {
 
   return Column(
     children: [
-      _buildSocialLinkRow(
+      buildSocialLinkRow(
         icon: Icons.link,
         platform: "LinkedIn",
         url: socialLinks['linkedin']!.isEmpty
@@ -22,7 +22,7 @@ Widget userProfileBuildSocialLinks() {
         isConnected: socialLinks['linkedin']!.isNotEmpty,
       ),
       SizedBox(height: 2.hp),
-      _buildSocialLinkRow(
+      buildSocialLinkRow(
         icon: Icons.camera_alt,
         platform: "Instagram",
         url: socialLinks['instagram']!.isEmpty
@@ -32,7 +32,7 @@ Widget userProfileBuildSocialLinks() {
         isConnected: socialLinks['instagram']!.isNotEmpty,
       ),
       SizedBox(height: 2.hp),
-      _buildSocialLinkRow(
+      buildSocialLinkRow(
         icon: Icons.facebook,
         platform: "Facebook",
         url: socialLinks['facebook']!.isEmpty
@@ -42,7 +42,7 @@ Widget userProfileBuildSocialLinks() {
         isConnected: socialLinks['facebook']!.isNotEmpty,
       ),
       SizedBox(height: 2.hp),
-      _buildSocialLinkRow(
+      buildSocialLinkRow(
         icon: Icons.alternate_email,
         platform: "Twitter",
         url: socialLinks['twitter']!.isEmpty
@@ -51,21 +51,11 @@ Widget userProfileBuildSocialLinks() {
         color: Colors.lightBlue.shade400,
         isConnected: socialLinks['twitter']!.isNotEmpty,
       ),
-      SizedBox(height: 2.hp),
-      _buildSocialLinkRow(
-        icon: Icons.language,
-        platform: "Website",
-        url: socialLinks['website']!.isEmpty
-            ? "Not provided"
-            : socialLinks['website']!,
-        color: Colors.green.shade600,
-        isConnected: socialLinks['website']!.isNotEmpty,
-      ),
     ],
   );
 }
 
-Widget _buildSocialLinkRow({
+Widget buildSocialLinkRow({
   required IconData icon,
   required String platform,
   required String url,

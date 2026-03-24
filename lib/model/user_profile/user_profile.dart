@@ -1,3 +1,5 @@
+import 'package:eventjar/model/contact/mobile_contact_model.dart';
+
 class UserProfileResponse {
   final bool success;
   final UserProfile data;
@@ -25,8 +27,7 @@ class UserProfile {
   final String? phone;
   final String role;
   final bool isVerified;
-  final DateTime? lastLoginAt;
-  final DateTime createdAt;
+  final bool phoneVerified;
   final String? avatarUrl;
   final String? bio;
   final String? company;
@@ -34,20 +35,19 @@ class UserProfile {
   final String? location;
   final String? linkedin;
   final String? website;
-  final String username;
-  final int usernameChangeCount;
-  final DateTime? usernameLastChangedAt;
+  final String? username;
   final ExtendedProfile? extendedProfile;
+  final PhoneParsed? phoneParsed;
 
   UserProfile({
     required this.id,
     required this.email,
     this.name,
     this.phone,
+    this.phoneParsed,
     required this.role,
     required this.isVerified,
-    this.lastLoginAt,
-    required this.createdAt,
+    required this.phoneVerified,
     this.avatarUrl,
     this.bio,
     this.company,
@@ -55,9 +55,7 @@ class UserProfile {
     this.location,
     this.linkedin,
     this.website,
-    required this.username,
-    required this.usernameChangeCount,
-    this.usernameLastChangedAt,
+    this.username,
     this.extendedProfile,
   });
 
@@ -70,10 +68,10 @@ class UserProfile {
         phone: json['phone'],
         role: json['role'],
         isVerified: json['isVerified'] ?? false,
-        lastLoginAt: json['lastLoginAt'] != null
-            ? DateTime.parse(json['lastLoginAt'])
+        phoneVerified: json['phoneVerified'] ?? false,
+        phoneParsed: json['phoneParsed'] != null
+            ? PhoneParsed.fromJson(json['phoneParsed'])
             : null,
-        createdAt: DateTime.parse(json['createdAt']),
         avatarUrl: json['avatarUrl'],
         bio: json['bio'],
         company: json['company'],
@@ -82,10 +80,6 @@ class UserProfile {
         linkedin: json['linkedin'],
         website: json['website'],
         username: json['username'],
-        usernameChangeCount: json['usernameChangeCount'] ?? 0,
-        usernameLastChangedAt: json['usernameLastChangedAt'] != null
-            ? DateTime.parse(json['usernameLastChangedAt'])
-            : null,
         extendedProfile: json['extendedProfile'] != null
             ? ExtendedProfile.fromJson(json['extendedProfile'])
             : null,
@@ -102,18 +96,16 @@ class UserProfile {
     'phone': phone,
     'role': role,
     'isVerified': isVerified,
-    'lastLoginAt': lastLoginAt?.toIso8601String(),
-    'createdAt': createdAt.toIso8601String(),
+    'phoneVerified': phoneVerified,
     'avatarUrl': avatarUrl,
     'bio': bio,
     'company': company,
+    'phoneParsed': phoneParsed?.toJson(),
     'jobTitle': jobTitle,
     'location': location,
     'linkedin': linkedin,
     'website': website,
     'username': username,
-    'usernameChangeCount': usernameChangeCount,
-    'usernameLastChangedAt': usernameLastChangedAt?.toIso8601String(),
     'extendedProfile': extendedProfile?.toJson(),
   };
 }
@@ -122,7 +114,7 @@ class ExtendedProfile {
   final String id;
   final String userId;
   final String? fullName;
-  final String email;
+  final String? email;
   final String? mobileNumber;
   final String? profilePhoto;
   final String? position;
@@ -145,18 +137,13 @@ class ExtendedProfile {
   final String? linkedinProfile;
   final SocialMediaLinks socialMediaLinks;
   final List<String> eventInterests;
-  final String? gstTaxId;
-  final String? annualRevenue;
-  final String? companyLogo;
-  final String? referralCode;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final PhoneParsed? businessPhoneParsed;
 
   ExtendedProfile({
     required this.id,
     required this.userId,
     this.fullName,
-    required this.email,
+    this.email,
     this.mobileNumber,
     this.profilePhoto,
     this.position,
@@ -179,12 +166,7 @@ class ExtendedProfile {
     this.linkedinProfile,
     required this.socialMediaLinks,
     required this.eventInterests,
-    this.gstTaxId,
-    this.annualRevenue,
-    this.companyLogo,
-    this.referralCode,
-    required this.createdAt,
-    required this.updatedAt,
+    this.businessPhoneParsed,
   });
 
   factory ExtendedProfile.fromJson(Map<String, dynamic> json) {
@@ -221,12 +203,9 @@ class ExtendedProfile {
             ? SocialMediaLinks.fromJson(json['socialMediaLinks'])
             : SocialMediaLinks.empty(),
         eventInterests: (json['eventInterests'] as List?)?.cast<String>() ?? [],
-        gstTaxId: json['gstTaxId'],
-        annualRevenue: json['annualRevenue'],
-        companyLogo: json['companyLogo'],
-        referralCode: json['referralCode'],
-        createdAt: DateTime.parse(json['createdAt']),
-        updatedAt: DateTime.parse(json['updatedAt']),
+        businessPhoneParsed: json['businessPhoneParsed'] != null
+            ? PhoneParsed.fromJson(json['businessPhoneParsed'])
+            : null,
       );
     } catch (e) {
       throw Exception('Error in ExtendedProfile: $e');
@@ -246,6 +225,7 @@ class ExtendedProfile {
     'businessWebsite': businessWebsite,
     'businessEmail': businessEmail,
     'businessPhone': businessPhone,
+    'businessPhoneParsed': businessPhoneParsed?.toJson(),
     'businessAddress': businessAddress,
     'businessType': businessType,
     'numberOfEmployees': numberOfEmployees,
@@ -260,12 +240,6 @@ class ExtendedProfile {
     'linkedinProfile': linkedinProfile,
     'socialMediaLinks': socialMediaLinks.toJson(),
     'eventInterests': eventInterests,
-    'gstTaxId': gstTaxId,
-    'annualRevenue': annualRevenue,
-    'companyLogo': companyLogo,
-    'referralCode': referralCode,
-    'createdAt': createdAt.toIso8601String(),
-    'updatedAt': updatedAt.toIso8601String(),
   };
 }
 

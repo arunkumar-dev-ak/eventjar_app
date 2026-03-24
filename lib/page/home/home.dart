@@ -1,30 +1,39 @@
 import 'package:eventjar/controller/home/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/customized_upgrader/custom_upgrade_alert.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/home/widget/home_appbar.dart';
 import 'package:eventjar/page/home/widget/home_content.dart';
+import 'package:eventjar/page/home/widget/home_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:upgrader/upgrader.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 100.wp,
-      decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
-      child: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () {
-            return controller.fetchEvents();
-          },
-          child: Obx(() {
-            return CustomScrollView(
-              controller: controller.scrollController,
-              physics: controller.state.events.isEmpty
-                  ? const NeverScrollableScrollPhysics()
-                  : const AlwaysScrollableScrollPhysics(),
+    return CustomUpgradeAlert(
+      upgrader: Upgrader(
+        // messages: MyEventJarUpgradeMessages(),
+        // debugLogging: true,
+        durationUntilAlertAgain: const Duration(days: 2),
+        // durationUntilAlertAgain: const Duration(seconds: 60),
+      ),
+      child: Container(
+        width: 100.wp,
+        decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
+        child: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              return controller.onTabOpen();
+            },
+            child: CustomScrollView(
+              controller: controller.homeScrollController,
+              // physics: controller.state.events.isEmpty
+              //     ? const NeverScrollableScrollPhysics()
+              //     : const AlwaysScrollableScrollPhysics(),
               slivers: [
                 // SliverAppBar(
                 //   backgroundColor: Colors.transparent,
@@ -68,11 +77,16 @@ class HomePage extends GetView<HomeController> {
                       topRight: Radius.circular(20),
                     ),
                   ),
-                  sliver: HomeContent(),
+                  sliver: SliverMainAxisGroup(
+                    slivers: [
+                      SliverToBoxAdapter(child: HomeProfile()),
+                      HomeContent(),
+                    ],
+                  ),
                 ),
               ],
-            );
-          }),
+            ),
+          ),
         ),
       ),
     );

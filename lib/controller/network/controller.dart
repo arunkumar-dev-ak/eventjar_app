@@ -26,14 +26,82 @@ class NetworkScreenController extends GetxController
   }
 
   void onTabOpen() {
-    LoggerService.loggerInstance.dynamic_d("in on tab open");
+    UserStore.cancelAllRequests();
     fetchContactAnalytics();
   }
 
-  void changeTab(int index) {
-    if (index != state.selectedTab.value) {
-      state.selectedTab.value = index;
-      update();
+  final List<NetworkStatusCardData> statusCards = [
+    NetworkStatusCardData(
+      key: 'totalContacts',
+      label: 'Total Contacts',
+      enumKey: 'all',
+      icon: Icons.people,
+      color: Colors.blue,
+    ),
+    NetworkStatusCardData(
+      key: 'new',
+      enumKey: 'new',
+      label: 'New',
+      icon: Icons.fiber_new,
+      color: Colors.green,
+    ),
+    NetworkStatusCardData(
+      key: 'followup24h',
+      label: '24H Followup',
+      enumKey: 'followup_24h',
+      icon: Icons.access_time,
+      color: Colors.orange,
+    ),
+    NetworkStatusCardData(
+      key: 'followup7d',
+      label: '7D Followup',
+      enumKey: 'followup_7d',
+      icon: Icons.calendar_view_week,
+      color: Colors.purple,
+    ),
+    NetworkStatusCardData(
+      key: 'followup30d',
+      label: '30D Followup',
+      enumKey: 'followup_30d',
+      icon: Icons.calendar_month,
+      color: Colors.teal,
+    ),
+    NetworkStatusCardData(
+      key: 'qualified',
+      label: 'Qualified',
+      enumKey: 'qualified',
+      icon: Icons.verified,
+      color: Colors.indigo,
+    ),
+    NetworkStatusCardData(
+      key: 'overdue',
+      enumKey: 'overdue',
+      label: 'Overdue',
+      icon: Icons.warning_amber_rounded,
+      color: Colors.red,
+    ),
+  ];
+
+  int getCountByKey(ContactAnalytics? analytics, String key) {
+    if (analytics == null) return 0;
+
+    switch (key) {
+      case 'totalContacts':
+        return analytics.total;
+      case 'new':
+        return analytics.newCount;
+      case 'followup24h':
+        return analytics.followup24h;
+      case 'followup7d':
+        return analytics.followup7d;
+      case 'followup30d':
+        return analytics.followup30d;
+      case 'qualified':
+        return analytics.qualified;
+      case 'overdue':
+        return analytics.overdue;
+      default:
+        return 0;
     }
   }
 
@@ -72,7 +140,9 @@ class NetworkScreenController extends GetxController
       if (result == "logged_in") {
         await fetchContactAnalytics();
       } else {
-        dashboardController.state.selectedIndex.value = 0;
+        LoggerService.loggerInstance.dynamic_d("in back");
+        // dashboardController.state.selectedIndex.value = 0;
+        Get.offAllNamed(RouteName.dashboardpage);
       }
     });
   }
@@ -82,5 +152,21 @@ class NetworkScreenController extends GetxController
       RouteName.contactPage,
       arguments: {'statusCard': statusCard, 'analytics': state.analytics.value},
     )?.then((_) async => {await fetchContactAnalytics()});
+  }
+
+  void onConnectionTap() {
+    Get.toNamed(RouteName.connectionPage);
+  }
+
+  void onMeetingTap() {
+    Get.toNamed(RouteName.meetingPage);
+  }
+
+  void onSchedulerTap() {
+    Get.toNamed(RouteName.schedulerPage);
+  }
+
+  void onReminderTap() {
+    Get.toNamed(RouteName.reminderPage);
   }
 }

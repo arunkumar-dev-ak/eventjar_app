@@ -100,7 +100,7 @@ Widget buildCheckoutContinueButton() {
                   ),
                 ] else ...[
                   Text(
-                    "Continue to Register",
+                    "Click To Book Ticket",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 11.sp,
@@ -108,7 +108,6 @@ Widget buildCheckoutContinueButton() {
                     ),
                   ),
                   SizedBox(width: 2.wp),
-                  Icon(Icons.arrow_forward, color: Colors.white, size: 20),
                 ],
               ],
             ),

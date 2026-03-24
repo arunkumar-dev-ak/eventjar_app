@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:eventjar/api/contact_api/config_status_api.dart';
 import 'package:eventjar/api/schedule_meeting_api/schedule_meeting.dart';
 import 'package:eventjar/controller/schedule_meeting/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
@@ -18,13 +19,28 @@ class ScheduleMeetingController extends GetxController {
   TextEditingController meetingDateController = TextEditingController();
   TextEditingController meetingTimeController = TextEditingController();
 
+  bool get canSendEmail => state.configStatus.value?.emailConfig ?? false;
+  bool get canSendWhatsApp => state.configStatus.value?.whatsappConfig ?? false;
+  bool get hasAnyMethodSelected =>
+      state.meetingEmailChecked.value || state.meetingWhatsappChecked.value;
+
+  void toggleMeetingEmail() {
+    state.meetingEmailChecked.value = !state.meetingEmailChecked.value;
+  }
+
+  void toggleMeetingWhatsApp() {
+    state.meetingWhatsappChecked.value = !state.meetingWhatsappChecked.value;
+  }
+
   @override
   void onInit() {
+    UserStore.cancelAllRequests();
     final args = Get.arguments;
     state.contact.value = args;
     super.onInit();
     updateMeetingDate(DateTime.now());
     updateMeetingTime(TimeOfDay.now());
+    getConfigDetails();
   }
 
   // Update date/time display
@@ -147,8 +163,57 @@ class ScheduleMeetingController extends GetxController {
     }
   }
 
+  Future<void> getConfigDetails() async {
+    try {
+      state.configLoading.value = true;
+
+      final response = await ConfigStatusApi.getConfigStatus();
+      state.configStatus.value = response;
+    } catch (err) {
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return;
+        }
+        ApiErrorHandler.handleError(err, "Failed to Get Config details");
+      } else {
+        AppSnackbar.error(
+          title: "Failed",
+          message: "Something went wrong. Please try again.",
+        );
+      }
+    } finally {
+      state.configLoading.value = false;
+    }
+  }
+
+  void navigateToNotification() {
+    String channelArg = "";
+
+    if (!canSendEmail && !canSendWhatsApp) {
+      channelArg = "both";
+    } else if (!canSendEmail) {
+      channelArg = "email";
+    } else if (!canSendWhatsApp) {
+      channelArg = "whatsapp";
+    }
+    Get.toNamed(RouteName.notificationpage, arguments: channelArg)?.then((
+      result,
+    ) async {
+      getConfigDetails();
+    });
+  }
+
   void navigateToSignInPage() {
-    Get.toNamed(RouteName.signInPage);
+    Get.toNamed(RouteName.signInPage)?.then((result) async {
+      if (result == "logged_in") {
+        await getConfigDetails();
+      } else {
+        Get.back();
+      }
+    });
   }
 
   void resetForm() {

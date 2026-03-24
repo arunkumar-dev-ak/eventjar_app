@@ -4,6 +4,8 @@ import 'package:eventjar/controller/signIn/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/page/sign_in/widgets/signin_2fa_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -18,8 +20,10 @@ class SignInController extends GetxController {
 
   TextEditingController get emailController => _emailController.value;
   TextEditingController get passwordController => _passwordController.value;
+  final TextEditingController otpController = TextEditingController();
 
   void onInint() {
+    UserStore.cancelAllRequests();
     super.onInit();
   }
 
@@ -45,6 +49,8 @@ class SignInController extends GetxController {
   String? validatePassword(String? password) {
     if (password == null || password.isEmpty) {
       return "Password is required";
+    } else if (password.length < 8) {
+      return "Password must contain at least 8 characters";
     }
     return null;
   }
@@ -65,6 +71,24 @@ class SignInController extends GetxController {
         email: emailController.text,
         password: passwordController.text,
       );
+
+      if (response.requires2FA) {
+        state.isLoading.value = false;
+
+        state.tempToken = response.tempToken;
+        clear2FaController();
+        state.isOtpValid.value = false;
+
+        signInOpen2FAModal(
+          Get.context!,
+          email: emailController.text,
+          tempToken: state.tempToken!,
+          controller: this,
+        );
+
+        return;
+      }
+
       await UserStore.to.handleSetLocalData(response);
       AppSnackbar.success(
         title: "Login Successful",
@@ -74,6 +98,7 @@ class SignInController extends GetxController {
       navigateToBackPage(context);
     } catch (err) {
       state.isLoading.value = false;
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
         ApiErrorHandler.handleError(err, "Login Error");
       } else {
@@ -85,9 +110,72 @@ class SignInController extends GetxController {
     }
   }
 
+  Future<void> handleSubmit2fa(BuildContext context) async {
+    Get.focusScope?.unfocus();
+    if (state.tempToken == null) {
+      AppSnackbar.warning(
+        title: "Verification Error",
+        message: "Session expired. Please login again.",
+      );
+      return;
+    }
+
+    final otp = otpController.text;
+
+    if (otp.length != 6) {
+      AppSnackbar.warning(
+        title: "Invalid Code",
+        message: "Please enter the 6-digit verification code.",
+      );
+      return;
+    }
+
+    state.is2FaLoading.value = true;
+
+    try {
+      final normalResponse = await SignInApi.verify2FA(
+        tempToken: state.tempToken!,
+        otp: otp,
+      );
+
+      // Save user + tokens
+      await UserStore.to.handleSetLocalData(normalResponse);
+
+      AppSnackbar.success(
+        title: "Login Successful",
+        message: "2FA verified successfully",
+      );
+
+      state.is2FaLoading.value = false;
+      Navigator.pop(context);
+      navigateToBackPage(context);
+    } catch (err) {
+      state.is2FaLoading.value = false;
+      LoggerService.loggerInstance.dynamic_d(err);
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "2FA Error");
+      } else {
+        AppSnackbar.error(title: "2FA Error", message: "Something went wrong");
+      }
+    }
+  }
+
+  void clear2FaController() {
+    otpController.clear();
+  }
+
+  void updateOtpValidity() {
+    final otp = otpController.text;
+    state.isOtpValid.value = otp.length == 6;
+  }
+
   /*----- navigation ----*/
   void navigateToSignUp() {
-    Get.toNamed('/signUpPage');
+    Get.toNamed('/signUpPage')?.then((result) {
+      if (result == "logged_in") {
+        Navigator.pop(Get.context!, "logged_in");
+      }
+    });
   }
 
   void navigateToForgotPassword() {
@@ -96,5 +184,11 @@ class SignInController extends GetxController {
 
   void navigateToBackPage(BuildContext context) {
     Navigator.pop(context, "logged_in");
+  }
+
+  @override
+  void onClose() {
+    otpController.dispose();
+    super.onClose();
   }
 }

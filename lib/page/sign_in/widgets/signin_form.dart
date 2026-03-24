@@ -1,6 +1,8 @@
 import 'package:eventjar/controller/signIn/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/social_auth/google_auth.dart';
+import 'package:eventjar/global/social_auth/social_login_button.dart';
 import 'package:eventjar/global/widget/alignment_widget.dart';
 import 'package:eventjar/page/sign_in/widgets/signin_signup.dart';
 import 'package:eventjar/page/sign_in/widgets/signin_submit_button.dart';
@@ -203,7 +205,34 @@ class SignInForm extends StatelessWidget {
               ],
             ),
 
-            SizedBox(height: 2.hp),
+            /*----- Social Logins -----*/
+            SizedBox(height: 3.hp),
+
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: SocialButton(
+            //         text: "Google",
+            //         assetPath: "assets/app_icon/google.png",
+            //         color: Colors.red,
+            //         onTap: () => AuthService().signInWithGoogle(),
+            //       ),
+            //     ),
+            //     SizedBox(width: 3.wp),
+            //     Expanded(
+            //       child: SocialButton(
+            //         text: "LinkedIn",
+            //         assetPath: "assets/app_icon/linkedin.png",
+            //         color: Colors.blue,
+            //         onTap: () {},
+            //       ),
+            //     ),
+            //   ],
+            // ),
+
+            // SizedBox(height: 4.hp),
+
+            // SizedBox(height: 2.hp),
             AuthSignUp(
               onPressed: () {
                 controller.navigateToSignUp();

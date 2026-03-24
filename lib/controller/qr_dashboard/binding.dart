@@ -9,5 +9,6 @@ class QrDashboardBinding extends Bindings {
     Get.lazyPut<QrDashboardController>(() => QrDashboardController());
     Get.lazyPut<MyQrScreenController>(() => MyQrScreenController());
     Get.lazyPut<QrScanScreenController>(() => QrScanScreenController());
+    // Get.lazyPut<QrAddContactController>(() => QrAddContactController());
   }
 }

@@ -1,10 +1,12 @@
-import 'package:country_code_picker/country_code_picker.dart';
 import 'package:eventjar/controller/signUp/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/sign_up/widgets/signup_signin.dart';
 import 'package:eventjar/page/sign_up/widgets/signup_submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_intl_phone_field/country_picker_dialog.dart'
+    show PickerDialogStyle;
+import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:get/get.dart';
 
 class SignUpTextFormField extends StatelessWidget {
@@ -110,6 +112,7 @@ class SignUpTextFormField extends StatelessWidget {
             prefixIcon: hasOuterBorder
                 ? Icon(_getFieldIcon(label), color: Colors.grey.shade400)
                 : null,
+            errorMaxLines: 3,
           ),
         ),
       ),
@@ -119,6 +122,51 @@ class SignUpTextFormField extends StatelessWidget {
 
 class SignUpForm extends StatelessWidget {
   final SignUpController controller = Get.find();
+
+  InputDecoration _getFieldDecoration(
+    String label,
+    RxBool isFieldValid,
+    RxBool isFieldFocused,
+  ) {
+    return InputDecoration(
+      label: RichText(
+        text: TextSpan(
+          text: label,
+          style: TextStyle(
+            color: !isFieldValid.value
+                ? Colors.red
+                : isFieldFocused.value
+                ? Colors.black
+                : Colors.grey,
+            fontSize: 11.sp,
+          ),
+          children: const [
+            TextSpan(
+              text: ' *',
+              style: TextStyle(color: Colors.red),
+            ),
+          ],
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey.shade400),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black, width: 2),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.red),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.red),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      errorMaxLines: 3,
+    );
+  }
 
   SignUpForm({super.key});
 
@@ -142,7 +190,7 @@ class SignUpForm extends StatelessWidget {
             SignUpTextFormField(
               controller: controller.fullNameController,
               label: "Full Name",
-              validator: (val) => val!.isEmpty ? "Full Name is required" : null,
+              validator: (val) => controller.validateFullName(val),
               isFieldValid: controller.state.isFullNamelValid,
               isFieldFocused: controller.state.focusFullName,
               togglePasswordVisibility: () {},
@@ -154,7 +202,7 @@ class SignUpForm extends StatelessWidget {
             SignUpTextFormField(
               controller: controller.emailController,
               label: "Email",
-              validator: (val) => val!.isEmpty ? "Email is required" : null,
+              validator: (val) => controller.validateEmail(val),
               isFieldValid: controller.state.isEmailValid,
               isFieldFocused: controller.state.focusEmail,
               togglePasswordVisibility: () {},
@@ -164,46 +212,36 @@ class SignUpForm extends StatelessWidget {
 
             // Mobile Number
             Obx(
-              () => Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade400),
-                  borderRadius: BorderRadius.circular(10),
+              () => IntlPhoneField(
+                controller: controller.mobileNumberController,
+                decoration: _getFieldDecoration(
+                  'Mobile Number',
+                  controller.state.isMobileNumberValid,
+                  controller.state.focusMobileNumber,
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  children: [
-                    CountryCodePicker(
-                      onChanged: (country) {
-                        controller.state.selectedCountryCode.value =
-                            country.dialCode ?? '+91';
-                      },
-                      initialSelection: 'IN',
-                      favorite: ['+91', 'IN'],
-                      showCountryOnly: false,
-                      showOnlyCountryWhenClosed: false,
-                    ),
-                    Expanded(
-                      child: SignUpTextFormField(
-                        controller: controller.mobileNumberController,
-                        label: "Mobile Number",
-                        validator: (val) =>
-                            val!.isEmpty ? "Mobile Number is required" : null,
-                        isFieldValid: controller.state.isMobileNumberValid,
-                        isFieldFocused: controller.state.focusMobileNumber,
-                        togglePasswordVisibility: () {},
-                        onChanged: (_) {},
-                        hasOuterBorder:
-                            false, // new flag to remove internal border
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(
-                            RegExp(r'[0-9+]'),
-                          ), // only digits and plus sign allowed
-                        ],
-                      ),
-                    ),
-                  ],
+                pickerDialogStyle: PickerDialogStyle(
+                  countryNameStyle: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 10.sp,
+                  ),
+                  countryCodeStyle: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                  ),
                 ),
+
+                initialCountryCode: 'IN',
+                onChanged: (_) {},
+                onCountryChanged: (country) {
+                  controller.state.selectedCountry.value = country;
+                },
+                validator: (value) {
+                  if (value == null || !value.isValidNumber()) {
+                    return 'Invalid phone number';
+                  }
+                  return null;
+                },
+                autovalidateMode: AutovalidateMode.onUserInteraction,
               ),
             ),
 
@@ -219,8 +257,7 @@ class SignUpForm extends StatelessWidget {
                 togglePasswordVisibility: () =>
                     controller.state.isPasswordHidden.value =
                         !controller.state.isPasswordHidden.value,
-                validator: (val) =>
-                    val!.isEmpty ? "Password is required" : null,
+                validator: (val) => controller.validatePassword(val),
                 isFieldValid: controller.state.isPasswordValid,
                 isFieldFocused: controller.state.focusPassword,
                 onChanged: (_) {},

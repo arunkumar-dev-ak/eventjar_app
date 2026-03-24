@@ -1,16 +1,29 @@
+import 'dart:ui';
+
 import 'package:eventjar/model/meta/meta_model.dart';
+
+import '../contact/mobile_contact_model.dart';
 
 class EventResponse {
   final List<Event> data;
   final Meta meta;
+  String? message;
+  int? statusCode;
 
-  EventResponse({required this.data, required this.meta});
+  EventResponse({
+    required this.data,
+    required this.meta,
+    this.message,
+    this.statusCode,
+  });
 
   factory EventResponse.fromJson(Map<String, dynamic> json) {
     try {
       return EventResponse(
         data: (json['data'] as List).map((e) => Event.fromJson(e)).toList(),
         meta: Meta.fromJson(json['meta']),
+        message: json["message"],
+        statusCode: json["statusCode"],
       );
     } catch (e) {
       throw Exception('Error in EventResponse: $e');
@@ -20,12 +33,15 @@ class EventResponse {
   Map<String, dynamic> toJson() => {
     'data': data.map((e) => e.toJson()).toList(),
     'meta': meta.toJson(),
+    "message": message,
+    "statusCode": statusCode,
   };
 }
 
 class Event {
   final String id;
   final String title;
+  final String slug;
   final String description;
   final String? venue;
   final String? address;
@@ -53,6 +69,7 @@ class Event {
     required this.id,
     required this.title,
     required this.description,
+    required this.slug,
     this.venue,
     this.address,
     this.location,
@@ -79,8 +96,9 @@ class Event {
   factory Event.fromJson(Map<String, dynamic> json) {
     try {
       return Event(
-        id: json['id'],
+        id: json['id'] ?? '',
         title: json['title'] ?? '',
+        slug: json['slug'] ?? '',
         description: json['description'] ?? '',
         venue: json['venue'],
         address: json['address'],
@@ -91,13 +109,17 @@ class Event {
         category: json['category'] != null
             ? Category.fromJson(json['category'])
             : null,
-        startDate: DateTime.parse(json['startDate']),
-        endDate: DateTime.parse(json['endDate']),
-        startTime: json['startTime'],
-        endTime: json['endTime'],
+        startDate: json['startDate'] != null
+            ? DateTime.parse(json['startDate'])
+            : DateTime.now(),
+        endDate: json['endDate'] != null
+            ? DateTime.parse(json['endDate'])
+            : DateTime.now(),
+        startTime: json['startTime'] ?? '',
+        endTime: json['endTime'] ?? '',
         isVirtual: json['isVirtual'] ?? false,
         isHybrid: json['isHybrid'] ?? false,
-        isPaid: json['isPaid'],
+        isPaid: json['isPaid'] ?? false,
         ticketPrice: json['ticketPrice'] == null
             ? null
             : double.tryParse(json['ticketPrice'].toString()),
@@ -105,10 +127,14 @@ class Event {
         currentAttendees: json['currentAttendees'] ?? 0,
         featuredImageUrl: json['featuredImageUrl'],
         status: json['status'] ?? '',
-        organizer: Organizer.fromJson(json['organizer']),
-        ticketTiers: (json['ticketTiers'] as List)
-            .map((t) => TicketTier.fromJson(t))
-            .toList(),
+        organizer: json['organizer'] != null
+            ? Organizer.fromJson(json['organizer'])
+            : Organizer(id: '', name: ''),
+        ticketTiers:
+            (json['ticketTiers'] as List?)
+                ?.map((t) => TicketTier.fromJson(t))
+                .toList() ??
+            [],
       );
     } catch (e) {
       throw Exception('Error in Event: $e');
@@ -118,6 +144,7 @@ class Event {
   Map<String, dynamic> toJson() => {
     'id': id,
     'title': title,
+    'slug': slug,
     'description': description,
     'venue': venue,
     'address': address,
@@ -160,11 +187,11 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      icon: json['icon'],
-      color: json['color'],
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      icon: json['icon'] ?? '',
+      color: json['color'] ?? '',
     );
   }
 
@@ -184,7 +211,7 @@ class Organizer {
   Organizer({required this.id, required this.name});
 
   factory Organizer.fromJson(Map<String, dynamic> json) {
-    return Organizer(id: json['id'], name: json['name']);
+    return Organizer(id: json['id'] ?? '', name: json['name'] ?? '');
   }
 
   Map<String, dynamic> toJson() => {'id': id, 'name': name};
@@ -207,11 +234,11 @@ class TicketTier {
 
   factory TicketTier.fromJson(Map<String, dynamic> json) {
     return TicketTier(
-      id: json['id'],
-      name: json['name'],
-      price: json['price'],
-      quantity: json['quantity'],
-      isUnlimited: json['isUnlimited'],
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      price: json['price']?.toString() ?? '0',
+      quantity: json['quantity'] ?? 0,
+      isUnlimited: json['isUnlimited'] ?? false,
     );
   }
 
@@ -234,4 +261,135 @@ class EventCount {
   }
 
   Map<String, dynamic> toJson() => {'registrations': registrations};
+}
+
+class CategoryList {
+  List<EventCategory>? eventCategories;
+
+  CategoryList({this.eventCategories});
+
+  factory CategoryList.fromJson(Map<String, dynamic> json) => CategoryList(
+    eventCategories: json["eventCategories"] == null
+        ? []
+        : List<EventCategory>.from(
+            json["eventCategories"]!.map((x) => EventCategory.fromJson(x)),
+          ),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "eventCategories": eventCategories == null
+        ? []
+        : List<dynamic>.from(eventCategories!.map((x) => x.toJson())),
+  };
+}
+
+class EventCategory {
+  String? id;
+  String? name;
+  String? icon;
+  String? color;
+  Count? count;
+
+  EventCategory({this.id, this.name, this.icon, this.color, this.count});
+
+  factory EventCategory.fromJson(Map<String, dynamic> json) => EventCategory(
+    id: json["id"],
+    name: json["name"],
+    icon: json["icon"],
+    color: json["color"],
+    count: json["_count"] == null ? null : Count.fromJson(json["_count"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "icon": icon,
+    "color": color,
+    "_count": count?.toJson(),
+  };
+}
+
+class Count {
+  int? events;
+
+  Count({this.events});
+
+  factory Count.fromJson(Map<String, dynamic> json) =>
+      Count(events: json["events"]);
+
+  Map<String, dynamic> toJson() => {"events": events};
+}
+
+class Medal {
+  final Color baseColor;
+  final Color highlightColor;
+  final Color shadowColor;
+  final bool enabled;
+  final String name;
+
+  const Medal({
+    required this.baseColor,
+    required this.highlightColor,
+    required this.shadowColor,
+    required this.enabled,
+    required this.name,
+  });
+}
+
+class ProfileInfo {
+  int? contactCount;
+  String? id;
+  String? email;
+  String? name;
+  String? phone;
+  String? role;
+  bool? isVerified;
+  bool? phoneVerified;
+  String? avatarUrl;
+  dynamic extendedProfile;
+  PhoneParsed? phoneParsed;
+
+  ProfileInfo({
+    this.contactCount,
+    this.id,
+    this.email,
+    this.name,
+    this.phone,
+    this.role,
+    this.isVerified,
+    this.phoneVerified,
+    this.avatarUrl,
+    this.extendedProfile,
+    this.phoneParsed,
+  });
+
+  factory ProfileInfo.fromJson(Map<String, dynamic> json) => ProfileInfo(
+    contactCount: json["contactCount"],
+    id: json["id"],
+    email: json["email"],
+    name: json["name"],
+    phone: json["phone"],
+    role: json["role"],
+    isVerified: json["isVerified"],
+    phoneVerified: json["phoneVerified"],
+    avatarUrl: json["avatarUrl"],
+    extendedProfile: json["extendedProfile"],
+    phoneParsed: json["phoneParsed"] == null
+        ? null
+        : PhoneParsed.fromJson(json["phoneParsed"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "contactCount": contactCount,
+    "id": id,
+    "email": email,
+    "name": name,
+    "phone": phone,
+    "role": role,
+    "isVerified": isVerified,
+    "phoneVerified": phoneVerified,
+    "avatarUrl": avatarUrl,
+    "extendedProfile": extendedProfile,
+    "phoneParsed": phoneParsed?.toJson(),
+  };
 }

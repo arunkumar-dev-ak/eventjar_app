@@ -1,9 +1,11 @@
-import 'package:eventjar/controller/network/controller.dart';
-import 'package:get/get.dart';
+// import 'package:eventjar/controller/contact_analytics/controller.dart';
+// import 'package:eventjar/controller/network/controller.dart';
+// import 'package:get/get.dart';
 
-class NetworkBinding extends Bindings {
-  @override
-  void dependencies() {
-    Get.lazyPut<NetworkScreenController>(() => NetworkScreenController());
-  }
-}
+// class NetworkBinding extends Bindings {
+//   @override
+//   void dependencies() {
+//     Get.lazyPut<NetworkScreenController>(() => NetworkScreenController());
+//     Get.lazyPut<ContactAnalyticsController>(() => ContactAnalyticsController());
+//   }
+// }

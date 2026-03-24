@@ -95,20 +95,20 @@ class _OrganizerDetails extends StatelessWidget {
   Widget _buildName() => Text(
     organizer.name,
     style: TextStyle(
-      fontSize: 12.sp,
-      fontWeight: FontWeight.bold,
-      color: Colors.black87,
+      fontSize: 9.sp,
+      fontWeight: FontWeight.w600,
+      color: Colors.grey.shade800,
     ),
   );
 
   Widget _buildEmail() => Row(
     children: [
-      Icon(Icons.email, size: 14, color: Colors.grey[600]),
+      Icon(Icons.email, size: 12, color: Colors.grey[600]),
       SizedBox(width: 1.wp),
       Expanded(
         child: Text(
           organizer.email!,
-          style: TextStyle(fontSize: 9.sp, color: Colors.grey[700]),
+          style: TextStyle(fontSize: 7.5.sp, color: Colors.grey[600]),
           overflow: TextOverflow.ellipsis,
         ),
       ),
@@ -116,7 +116,7 @@ class _OrganizerDetails extends StatelessWidget {
   );
 
   Widget _buildRoleBadge() => Container(
-    padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 0.8.hp),
+    padding: EdgeInsets.symmetric(horizontal: 2.5.wp, vertical: 0.6.hp),
     decoration: BoxDecoration(
       gradient: AppColors.buttonGradient,
       borderRadius: BorderRadius.circular(20),
@@ -131,14 +131,14 @@ class _OrganizerDetails extends StatelessWidget {
     child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Icon(Icons.verified, color: Colors.white, size: 14),
+        const Icon(Icons.verified, color: Colors.white, size: 12),
         SizedBox(width: 1.wp),
         Text(
           organizer.role ?? "Organizer",
           style: TextStyle(
             color: Colors.white,
-            fontSize: 8.sp,
-            fontWeight: FontWeight.bold,
+            fontSize: 7.sp,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],

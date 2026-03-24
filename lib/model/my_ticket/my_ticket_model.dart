@@ -1,48 +1,29 @@
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/meta/mobile_meta_model.dart';
 
-class MyRegistrationsResponse {
-  final bool success;
-  final MyRegistrationsData data;
+class MyTicketResponse {
+  final List<MyTicket> data;
+  final MobileMeta meta;
 
-  MyRegistrationsResponse({required this.success, required this.data});
+  MyTicketResponse({required this.data, required this.meta});
 
-  factory MyRegistrationsResponse.fromJson(Map<String, dynamic> json) {
+  factory MyTicketResponse.fromJson(Map<String, dynamic> json) {
     try {
-      return MyRegistrationsResponse(
-        success: json['success'] ?? false,
-        data: MyRegistrationsData.fromJson(json['data']),
-      );
-    } catch (e) {
-      throw Exception('Error in MyRegistrationsResponse: $e');
-    }
-  }
-
-  Map<String, dynamic> toJson() => {'success': success, 'data': data.toJson()};
-}
-
-class MyRegistrationsData {
-  final List<MyTicket> registrations;
-  final TicketPagination pagination;
-
-  MyRegistrationsData({required this.registrations, required this.pagination});
-
-  factory MyRegistrationsData.fromJson(Map<String, dynamic> json) {
-    try {
-      return MyRegistrationsData(
-        registrations: (json['registrations'] as List)
+      return MyTicketResponse(
+        data: (json['data'] as List<dynamic>)
             .map((e) => MyTicket.fromJson(e))
             .toList(),
-        pagination: TicketPagination.fromJson(json['pagination']),
+        meta: MobileMeta.fromJson(json['meta']),
       );
     } catch (e) {
-      LoggerService.loggerInstance.e(e);
-      throw Exception('Error in MyRegistrationsData: $e');
+      LoggerService.loggerInstance.e('Error parsing MobileTicketResponse: $e');
+      rethrow;
     }
   }
 
   Map<String, dynamic> toJson() => {
-    'registrations': registrations.map((e) => e.toJson()).toList(),
-    'pagination': pagination.toJson(),
+    'data': data.map((e) => e.toJson()).toList(),
+    'meta': meta.toJson(),
   };
 }
 
@@ -70,8 +51,8 @@ class MyTicket {
   final int checkInCount;
   final int maxCheckIns;
   final DateTime? lastCheckInAt;
-  final TicketTierDetail? ticketTier;
-  final TicketEventDetail event;
+  final TicketTierDetail? ticketTierDetail;
+  final TicketEventDetail? ticketEventDetail;
 
   MyTicket({
     required this.id,
@@ -97,12 +78,11 @@ class MyTicket {
     required this.checkInCount,
     required this.maxCheckIns,
     this.lastCheckInAt,
-    this.ticketTier,
-    required this.event,
+    this.ticketTierDetail,
+    this.ticketEventDetail,
   });
 
   factory MyTicket.fromJson(Map<String, dynamic> json) {
-    LoggerService.loggerInstance.dynamic_d(json);
     try {
       return MyTicket(
         id: json['id'],
@@ -132,13 +112,17 @@ class MyTicket {
         lastCheckInAt: json['lastCheckInAt'] != null
             ? DateTime.parse(json['lastCheckInAt'])
             : null,
-        ticketTier: json['ticketTier'] == null
-            ? null
-            : TicketTierDetail.fromJson(json['ticketTier']),
-        event: TicketEventDetail.fromJson(json['event']),
+        ticketTierDetail: json['ticketTier'] != null
+            ? TicketTierDetail.fromJson(json['ticketTier'])
+            : null,
+
+        ticketEventDetail: json['event'] != null
+            ? TicketEventDetail.fromJson(json['event'])
+            : null,
       );
     } catch (e) {
-      throw Exception('Error in MyTicket: $e');
+      LoggerService.loggerInstance.e('Error parsing MobileTicket: $e');
+      rethrow;
     }
   }
 
@@ -166,8 +150,8 @@ class MyTicket {
     'checkInCount': checkInCount,
     'maxCheckIns': maxCheckIns,
     'lastCheckInAt': lastCheckInAt?.toIso8601String(),
-    'ticketTier': ticketTier?.toJson(),
-    'event': event.toJson(),
+    'ticketTier': ticketTierDetail?.toJson(),
+    'event': ticketEventDetail?.toJson(),
   };
 }
 
@@ -195,92 +179,106 @@ class TicketTierDetail {
 
 class TicketEventDetail {
   final String id;
+  final String slug;
   final String title;
-  final String description;
+  final String? description;
   final DateTime startDate;
   final DateTime endDate;
+  final String startTime;
+  final String endTime;
   final String venue;
   final String address;
-  final String status;
+  final String? location;
+  final String? city;
   final String? featuredImageUrl;
+  final String status;
+  final Organizer organizer;
 
   TicketEventDetail({
     required this.id,
+    required this.slug,
     required this.title,
-    required this.description,
+    this.description,
     required this.startDate,
     required this.endDate,
+    required this.startTime,
+    required this.endTime,
     required this.venue,
     required this.address,
-    required this.status,
+    this.location,
+    this.city,
     this.featuredImageUrl,
+    required this.status,
+    required this.organizer,
   });
 
   factory TicketEventDetail.fromJson(Map<String, dynamic> json) {
     try {
       return TicketEventDetail(
         id: json['id'],
+        slug: json['slug'],
         title: json['title'],
         description: json['description'],
         startDate: DateTime.parse(json['startDate']),
         endDate: DateTime.parse(json['endDate']),
+        startTime: json['startTime'],
+        endTime: json['endTime'],
         venue: json['venue'],
-        address: json['address'] ?? '',
-        status: json['status'],
+        address: json['address'],
+        location: json['location'],
+        city: json['city'],
         featuredImageUrl: json['featuredImageUrl'],
+        status: json['status'],
+        organizer: Organizer.fromJson(json['organizer']),
       );
     } catch (e) {
-      throw Exception('Error in TicketEventDetail: $e');
+      LoggerService.loggerInstance.e('Error parsing Event: $e');
+      rethrow;
     }
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
+    'slug': slug,
     'title': title,
     'description': description,
     'startDate': startDate.toIso8601String(),
     'endDate': endDate.toIso8601String(),
+    'startTime': startTime,
+    'endTime': endTime,
     'venue': venue,
     'address': address,
-    'status': status,
+    'location': location,
+    'city': city,
     'featuredImageUrl': featuredImageUrl,
+    'status': status,
+    'organizer': organizer.toJson(),
   };
 }
 
-class TicketPagination {
-  final int total;
-  final int page;
-  final int limit;
-  final int totalPages;
+class Organizer {
+  final String id;
+  final String name;
+  final String? avatarUrl;
 
-  TicketPagination({
-    required this.total,
-    required this.page,
-    required this.limit,
-    required this.totalPages,
-  });
+  Organizer({required this.id, required this.name, this.avatarUrl});
 
-  // 👇 These are your helper getters
-  bool get hasNextPage => page < totalPages;
-  bool get hasPreviousPage => page > 1;
-
-  factory TicketPagination.fromJson(Map<String, dynamic> json) {
+  factory Organizer.fromJson(Map<String, dynamic> json) {
     try {
-      return TicketPagination(
-        total: json['total'],
-        page: json['page'],
-        limit: json['limit'],
-        totalPages: json['totalPages'],
+      return Organizer(
+        id: json['id'],
+        name: json['name'],
+        avatarUrl: json['avatarUrl'],
       );
     } catch (e) {
-      throw Exception('Error in TicketPagination: $e');
+      LoggerService.loggerInstance.e('Error parsing Organizer: $e');
+      rethrow;
     }
   }
 
   Map<String, dynamic> toJson() => {
-    'total': total,
-    'page': page,
-    'limit': limit,
-    'totalPages': totalPages,
+    'id': id,
+    'name': name,
+    'avatarUrl': avatarUrl,
   };
 }

@@ -34,30 +34,39 @@ class ThankYouMessageActionButtons extends StatelessWidget {
             ),
           ),
           SizedBox(width: 2.wp),
-          // Send Message Button
+
+          // ✅ Send Message Button - DISABLED when no methods selected
           Expanded(
-            child: Obx(
-              () => ElevatedButton(
+            child: Obx(() {
+              final isLoading = controller.state.isLoading.value;
+              final configLoading = controller.state.configLoading.value;
+              final isButtonEnabled = !isLoading && !configLoading;
+
+              return ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  foregroundColor: Colors.white,
+                  backgroundColor: isButtonEnabled
+                      ? Colors.blue
+                      : Colors.grey.shade300,
+                  foregroundColor: isButtonEnabled
+                      ? Colors.white
+                      : Colors.grey.shade500,
                   padding: EdgeInsets.symmetric(vertical: 2.hp),
                   textStyle: TextStyle(fontSize: 9.sp),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  elevation: 2,
+                  elevation: isButtonEnabled ? 2 : 0,
                 ),
-                onPressed: () async {
-                  if (controller.state.isLoading.value) {
-                    return;
-                  }
-                  if (controller.formKey.currentState?.validate() ?? false) {
-                    Get.focusScope?.unfocus();
-                    await controller.sendThankYouMessage(context);
-                  }
-                },
-                child: controller.state.isLoading.value
+                onPressed: isButtonEnabled
+                    ? () async {
+                        if (controller.formKey.currentState?.validate() ??
+                            false) {
+                          Get.focusScope?.unfocus();
+                          await controller.sendThankYouMessage(context);
+                        }
+                      }
+                    : null, // ✅ Disabled when no methods selected
+                child: isLoading
                     ? SizedBox(
                         height: 16,
                         width: 16,
@@ -68,9 +77,17 @@ class ThankYouMessageActionButtons extends StatelessWidget {
                           ),
                         ),
                       )
-                    : Text('Send Message', style: TextStyle(fontSize: 10.sp)),
-              ),
-            ),
+                    : Text(
+                        'Send Message',
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          fontWeight: isButtonEnabled
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                        ),
+                      ),
+              );
+            }),
           ),
         ],
       ),

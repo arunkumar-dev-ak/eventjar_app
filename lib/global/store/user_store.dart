@@ -1,26 +1,32 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:eventjar/global/device_helper.dart';
 import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/auth/login_model.dart';
+import 'package:eventjar/model/auth/refresh_token_model.dart';
 import 'package:eventjar/storage/storage_service.dart';
 import 'package:get/get.dart';
 
 class UserStore extends GetxController {
   static UserStore get to => Get.find<UserStore>();
+  static CancelToken cancelToken = CancelToken();
 
   final _isLogin = false.obs;
   final _accessToken = "".obs;
   final _refreshToken = "".obs;
-  RxString _deviceId = ''.obs;
-  final _profile = RxMap<String, dynamic>(); // Declare as RxMap
+  final RxString _deviceId = ''.obs;
+  // final _profile = RxMap<String, dynamic>();
+  final _profile = <String, dynamic>{}.obs;
 
   bool get isLogin => _isLogin.value;
+  RxBool get isLoginReactive => _isLogin;
   String get accessToken => _accessToken.value;
   String get refreshToken => _refreshToken.value;
   String get deviceId => _deviceId.value;
-  Map<String, dynamic> get profile => _profile;
+  RxMap<String, dynamic> get profile => _profile;
+  static CancelToken get token => cancelToken;
 
   // String get name {
   //   final String firstName = capitalize(
@@ -62,12 +68,33 @@ class UserStore extends GetxController {
   Future<void> handleSetLocalData(LoginResponse loginData) async {
     LoggerService.loggerInstance.dynamic_d(loginData);
     _isLogin.value = true;
+    await setAccessToken(loginData.accessToken!);
+    _accessToken.value = loginData.accessToken!;
+    await setRefreshToken(loginData.refreshToken!);
+    _refreshToken.value = loginData.refreshToken!;
+    await setProfile(loginData.user!.toJson());
+    _profile.value = loginData.user!.toJson();
+  }
+
+  Future<void> handleSetLocalDataForProfileUpdate(User user) async {
+    await setProfile(user.toJson());
+    _profile.value = user.toJson();
+  }
+
+  Future<void> deleteAccessToken() async {
+    await setAccessToken("");
+    _accessToken.value = "";
+  }
+
+  Future<void> handleSetLocalDataForRefreshToken(
+    RefreshTokenResponse loginData,
+  ) async {
+    LoggerService.loggerInstance.dynamic_d(loginData);
+    _isLogin.value = true;
     await setAccessToken(loginData.accessToken);
     _accessToken.value = loginData.accessToken;
     await setRefreshToken(loginData.refreshToken);
     _refreshToken.value = loginData.refreshToken;
-    await setProfile(loginData.user.toJson());
-    _profile.value = loginData.user.toJson();
   }
 
   Future<void> setAccessToken(String accessToken) async {
@@ -100,8 +127,14 @@ class UserStore extends GetxController {
     await StorageService.to.deleteString(storageRefreshToken);
     await StorageService.to.deleteString(storageProfile);
 
-    _isLogin.value = true;
+    _isLogin.value = false;
     _accessToken.value = '';
     _refreshToken.value = '';
+  }
+
+  static void cancelAllRequests() {
+    cancelToken.cancel("Cancelled due to new request flow");
+
+    cancelToken = CancelToken(); // new token
   }
 }

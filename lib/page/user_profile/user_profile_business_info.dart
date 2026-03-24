@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/user_profile/user_profile_social_links.dart';
 import 'package:eventjar/page/user_profile/user_profile_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,8 +10,10 @@ Widget userProfileBuildBusinessInfo() {
 
   final user = controller.state.userProfile.value;
   final extended = user?.extendedProfile;
+  final socialLinks = controller.socialLinks;
 
   return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       userProfilebuildInfoRow(
         icon: Icons.business,
@@ -26,12 +29,14 @@ Widget userProfileBuildBusinessInfo() {
         iconColor: Colors.teal,
       ),
       SizedBox(height: 2.hp),
-      userProfilebuildInfoRow(
+      buildSocialLinkRow(
         icon: Icons.language,
-        label: "Business Website",
-        value: user?.website ?? "Not provided",
-        iconColor: Colors.blue,
-        isLink: user?.website != null && user!.website!.isNotEmpty,
+        platform: "Website",
+        url: socialLinks['website']!.isEmpty
+            ? "Not provided"
+            : socialLinks['website']!,
+        color: Colors.green.shade600,
+        isConnected: socialLinks['website']!.isNotEmpty,
       ),
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
@@ -44,7 +49,7 @@ Widget userProfileBuildBusinessInfo() {
       userProfilebuildInfoRow(
         icon: Icons.phone_in_talk,
         label: "Business Phone",
-        value: extended?.businessPhone ?? "Not provided",
+        value: extended?.businessPhoneParsed?.fullNumber ?? "Not provided",
         iconColor: Colors.green,
       ),
       SizedBox(height: 2.hp),
@@ -55,14 +60,20 @@ Widget userProfileBuildBusinessInfo() {
         iconColor: Colors.orange,
       ),
       SizedBox(height: 2.hp),
-      userProfilebuildInfoRow(
-        icon: Icons.calendar_today,
-        label: "Years in Business",
-        value: extended?.yearsInBusiness != null
-            ? "${extended!.yearsInBusiness} Years"
-            : "Not specified",
-        iconColor: Colors.indigo,
-      ),
+      if (extended != null && extended.preferredLocations.isNotEmpty)
+        opearingRegionBuildChipSection(
+          icon: Icons.public,
+          iconColor: Colors.blue,
+          label: "Operating Regions",
+          chips: extended.preferredLocations,
+        )
+      else
+        userProfilebuildInfoRow(
+          icon: Icons.public,
+          label: "Operating Regions",
+          value: "Not specified",
+          iconColor: Colors.blue,
+        ),
     ],
   );
 }

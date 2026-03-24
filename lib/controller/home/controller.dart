@@ -1,56 +1,202 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:eventjar/api/home_api/home_api.dart';
 import 'package:eventjar/controller/home/state.dart';
+import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/palette_generator.dart';
 import 'package:eventjar/global/store/user_store.dart';
+// import 'package:eventjar/global/toast/toast_controller.dart';
+import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/helper/date_handler.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/model/home/home_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../api/verify_api/email.dart';
+import '../../api/verify_api/phone.dart';
 
 class HomeController extends GetxController {
-  var appBarTitle = "EventJar";
+  // final ToastController toastController = Get.find();
+
+  var appBarTitle = "MyEventJar";
   final state = HomeState();
   final formKey = GlobalKey<FormState>();
   final logoPath = 'assets/app_icon/event_app_icon.png';
-  ScrollController scrollController = ScrollController();
+  ScrollController homeScrollController = ScrollController();
   final int _currentPage = 1;
   final int _limit = 10;
 
   bool get isLoading => state.isLoading.value;
 
+  // void testFunction() {
+  //   for (int i = 0; i < 10; i++) {
+  //     toastController.error(
+  //       title: "Error $i",
+  //       message:
+  //           "Configure Authorization: For most AWS services, you need to sign your request with AWS Signature Version 4. Go to the Authorization tab, select AWS Signature from the Type dropdown, and enter your AWS AccessKey and SecretKey. For enhanced security, use Postman's built-in Postman Vault or environment variables to store sensitive credentials.",
+  //     );
+  //   }
+  // }
+
   final _searchBarController = TextEditingController().obs;
 
   TextEditingController get searchBarController => _searchBarController.value;
+  //RxMap<String, dynamic> get profile => UserStore.to.profile;
+  RxBool get isLoggedIn => UserStore.to.isLoginReactive;
 
-  @override
-  void onInit() async {
-    onTabOpen();
-    super.onInit();
+  PageController scoreCardPageController = PageController();
+  int get scoreCardCurrentPage => state.scoreCardCurrentPage.value;
 
-    scrollController.addListener(_onScroll);
+  bool get isEmailVerified => state.userProfile.value?.isVerified ?? false;
+  bool get isPhoneVerified => state.userProfile.value?.phoneVerified ?? false;
+
+  bool get hasAddedContact => state.hasAddedContact.value;
+  bool get allStepsComplete =>
+      isEmailVerified && isPhoneVerified && hasAddedContact;
+
+  int get totalContacts => state.totalContacts.value;
+  bool get scoreCardExpanded => state.scoreCardExpanded.value;
+
+  int get currentTierIndex {
+    final contacts = totalContacts;
+    if (contacts <= 50) return 0;
+    if (contacts <= 250) return 1;
+    if (contacts <= 500) return 2;
+    return 3;
   }
 
-  void onTabOpen() {
+  Timer? _autoScrollTimer;
+
+  int get verificationPageCount {
+    if (state.userProfile.value == null) return 0;
+    return 3; // Always 3: phone, email, contact (pending + completed)
+  }
+
+  void toggleScoreCard() {
+    state.scoreCardExpanded.value = !state.scoreCardExpanded.value;
+  }
+
+  void startVerificationAutoScroll() {
+    _stopVerificationAutoScroll();
+    final pageCount = verificationPageCount;
+    if (pageCount <= 1) return;
+
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!scoreCardPageController.hasClients) return;
+      final nextPage = (state.scoreCardCurrentPage.value + 1) % pageCount;
+      scoreCardPageController.animateToPage(
+        nextPage,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  void _stopVerificationAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = null;
+  }
+
+  void resetAutoScrollTimer() {
+    if (_autoScrollTimer != null) {
+      startVerificationAutoScroll();
+    }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    homeScrollController.addListener(_onScroll);
+    ever(isLoggedIn, (bool loggedIn) {
+      if (loggedIn) {
+        onTabOpen();
+      }
+    });
+    onTabOpen();
+  }
+
+  Future<void> fetchUserProfile() async {
+    try {
+      final response = await HomeApi.getUserProfileHome();
+      state.userProfile.value = response;
+      final contactCount = response.contactCount ?? 0;
+      state.totalContacts.value = contactCount;
+      state.hasAddedContact.value = contactCount > 0;
+      if (!allStepsComplete) {
+        startVerificationAutoScroll();
+      }
+    } catch (err) {
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+        if (statusCode == 401) {
+          await UserStore.to.clearStore();
+          return;
+        }
+      }
+      rethrow;
+    }
+  }
+
+  Future<void> onTabOpen({int retryCount = 0}) async {
+    UserStore.cancelAllRequests();
     state.isLoading.value = true;
-    fetchEvents();
+    try {
+      // Events don't need auth — fetch independently
+      // Profile & analytics need auth — run sequentially to avoid token race
+      await Future.wait([
+        fetchEvents(),
+        fetchCategories(),
+        _fetchAuthenticatedData(),
+      ]);
+    } catch (err) {
+      LoggerService.loggerInstance.e('onTabOpen error: $err');
+
+      // Only retry on transient network errors (timeout, connection),
+      // NOT on server errors (5xx) — those won't resolve in 2 seconds
+      final isTransient =
+          err is DioException &&
+          (err.type == DioExceptionType.connectionTimeout ||
+              err.type == DioExceptionType.sendTimeout ||
+              err.type == DioExceptionType.receiveTimeout ||
+              err.type == DioExceptionType.connectionError);
+
+      if (isTransient && retryCount < 1) {
+        await Future.delayed(const Duration(seconds: 2));
+        return onTabOpen(retryCount: retryCount + 1);
+      }
+
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Failed to load data");
+      }
+    } finally {
+      state.isLoading.value = false;
+    }
+  }
+
+  Future<void> _fetchAuthenticatedData() async {
+    if (!UserStore.to.isLogin) return;
+    await fetchUserProfile();
   }
 
   void _onScroll() {
-    if (!scrollController.hasClients) return;
+    if (!homeScrollController.hasClients) return;
+
+    final maxScroll = homeScrollController.position.maxScrollExtent;
+    final currentScroll = homeScrollController.position.pixels;
 
     const double prefetchThreshold = 200.0;
-
-    final maxScroll = scrollController.position.maxScrollExtent;
-    final currentScroll = scrollController.position.pixels;
-
     if (maxScroll - currentScroll <= prefetchThreshold) {
-      // Only fetch when metadata exists and not already fetching
       if (state.meta.value != null &&
           state.meta.value!.hasNext == true &&
           !state.isFetching.value) {
+        LoggerService.loggerInstance.dynamic_d("triggering");
         fetchEventsOnScroll();
       }
     }
@@ -84,9 +230,13 @@ class HomeController extends GetxController {
     Get.toNamed(RouteName.eventInfoPage, parameters: {'eventId': event.id});
   }
 
+  void navigateToEventCategoryPage({String? category}) {
+    Get.toNamed(RouteName.categoriesPage, arguments: {'category': category});
+  }
+
   String getEndpoint() {
     if (state.meta.value == null) {
-      return '/events?page=$_currentPage&limit=$_limit';
+      return '/mobile/events?offset=$_currentPage&limit=$_limit';
     }
 
     final meta = state.meta.value!;
@@ -98,21 +248,27 @@ class HomeController extends GetxController {
       nextPage = meta.totalPages;
     }
 
-    return '/events?page=$nextPage&limit=$nextLimit';
+    return '/mobile/events?offset=$nextPage&limit=$nextLimit';
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      final response = await HomeApi.getCategoryListInfo();
+      state.eventCategories.value = response.eventCategories ?? [];
+    } catch (err) {
+      LoggerService.loggerInstance.e('Failed to load categories: $err');
+    }
   }
 
   Future<void> fetchEvents() async {
     try {
-      state.isLoading.value = true;
       EventResponse response = await HomeApi.getEventList(
-        '/events?page=$_currentPage&limit=$_limit',
+        '/mobile/events?offset=0&limit=$_limit',
       );
       state.events.value = response.data;
       state.meta.value = response.meta;
-    } catch (e) {
-      LoggerService.loggerInstance.e('Failed to load events: $e');
-    } finally {
-      state.isLoading.value = false;
+    } catch (err) {
+      LoggerService.loggerInstance.e('fetchEvents error: $err');
     }
   }
 
@@ -172,31 +328,262 @@ class HomeController extends GetxController {
     try {
       DateTime dateTime;
 
+      // Case 1: ISO string (2024-01-25T06:00:00Z)
       if (event.startTime.contains('T') || event.startTime.contains('Z')) {
         dateTime = DateTime.parse(event.startTime).toLocal();
-      } else {
-        final formattedDate = DateFormat('yyyy-MM-dd').format(event.startDate);
-        dateTime = DateTime.parse(
-          "$formattedDate ${event.startTime}:00",
+      }
+      // Case 2: HH:mm (06:00)
+      else {
+        final date = event.startDate as DateTime;
+        final parts = event.startTime.split(':');
+
+        dateTime = DateTime(
+          date.year,
+          date.month,
+          date.day,
+          int.parse(parts[0]),
+          int.parse(parts[1]),
         ).toLocal();
       }
 
-      final formattedDate =
-          '${event.startDate.day.toString().padLeft(2, '0')}-${event.startDate.month.toString().padLeft(2, '0')}-${event.startDate.year}';
+      // 📅 Jan 25, 2024
+      final formattedDate = DateFormat('MMM dd, yyyy').format(dateTime);
+
+      // ⏰ Uses your helper → respects 12/24h
       final formattedTime = formatTimeFromDateTime(dateTime, context);
 
-      return "$formattedDate • $formattedTime";
+      return '$formattedDate • $formattedTime';
     } catch (e) {
       LoggerService.loggerInstance.e('Date parse error: $e');
-      return "Invalid date";
+      return 'Invalid date';
     }
   }
 
   void navigateToAddContact() {
-    Get.toNamed(RouteName.addContactPage);
+    Get.toNamed(RouteName.addContactPage)?.then((result) {
+      if (result == "refresh") {
+        final statusCard = NetworkStatusCardData(
+          key: 'totalContacts',
+          label: 'Total Contacts',
+          enumKey: 'all',
+          icon: Icons.people,
+          color: Colors.blue,
+        );
+
+        Get.toNamed(
+          RouteName.contactPage,
+          arguments: {'statusCard': statusCard},
+        );
+      }
+    });
+  }
+
+  void navigateToReceive() {
+    Get.toNamed(RouteName.nfcReadPage)?.then((result) {
+      if (result == "refresh") {
+        final statusCard = NetworkStatusCardData(
+          key: 'totalContacts',
+          label: 'Total Contacts',
+          enumKey: 'all',
+          icon: Icons.people,
+          color: Colors.blue,
+        );
+
+        Get.toNamed(
+          RouteName.contactPage,
+          arguments: {'statusCard': statusCard},
+        );
+      }
+    });
   }
 
   void navigateToQrPage() {
-    Get.toNamed(RouteName.qrDashboardPage);
+    Get.toNamed(RouteName.qrDashboardPage)?.then((result) {
+      if (result == "refresh") {
+        final statusCard = NetworkStatusCardData(
+          key: 'totalContacts',
+          label: 'Total Contacts',
+          enumKey: 'all',
+          icon: Icons.people,
+          color: Colors.blue,
+        );
+
+        Get.toNamed(
+          RouteName.contactPage,
+          arguments: {'statusCard': statusCard},
+        );
+      }
+    });
+  }
+
+  void navigateToScanPage() {
+    Get.toNamed(RouteName.scanCardPage)?.then((result) {
+      if (result == "refresh") {
+        final statusCard = NetworkStatusCardData(
+          key: 'totalContacts',
+          label: 'Total Contacts',
+          enumKey: 'all',
+          icon: Icons.people,
+          color: Colors.blue,
+        );
+
+        Get.toNamed(
+          RouteName.contactPage,
+          arguments: {'statusCard': statusCard},
+        );
+      }
+    });
+  }
+
+  /*----- Phone OTP Verification -----*/
+  Timer? _resendTimer;
+
+  Future<bool> sendPhoneOtp() async {
+    final phone = state.userProfile.value?.phone;
+    if (phone == null || phone.isEmpty) {
+      AppSnackbar.error(
+        title: "Error",
+        message: "No phone number found on your profile",
+      );
+      return false;
+    }
+
+    state.isSendingOtp.value = true;
+    state.otpError.value = '';
+    try {
+      await VerifyPhoneApi.sendOtp(phone);
+      _startResendCooldown();
+      return true;
+    } catch (err) {
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Failed to send OTP");
+      } else {
+        AppSnackbar.error(title: "Error", message: err.toString());
+      }
+      return false;
+    } finally {
+      state.isSendingOtp.value = false;
+    }
+  }
+
+  Future<bool> verifyPhoneOtp(String otp) async {
+    final phone = state.userProfile.value?.phone;
+    if (phone == null || phone.isEmpty) return false;
+
+    state.isVerifyingOtp.value = true;
+    state.otpError.value = '';
+    try {
+      await VerifyPhoneApi.verifyOtp(phone, otp);
+      await fetchUserProfile();
+      return true;
+    } catch (err) {
+      if (err is DioException) {
+        final data = err.response?.data;
+        if (data is Map && data['message'] is String) {
+          state.otpError.value = data['message'];
+        } else if (data is String) {
+          state.otpError.value = data;
+        } else {
+          state.otpError.value = 'Verification failed. Please try again.';
+        }
+      } else {
+        state.otpError.value = err.toString();
+      }
+      return false;
+    } finally {
+      state.isVerifyingOtp.value = false;
+    }
+  }
+
+  void _startResendCooldown() {
+    state.resendCooldown.value = 30;
+    _resendTimer?.cancel();
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (state.resendCooldown.value <= 1) {
+        timer.cancel();
+        state.resendCooldown.value = 0;
+      } else {
+        state.resendCooldown.value--;
+      }
+    });
+  }
+
+  void resetOtpState() {
+    state.otpError.value = '';
+    state.isSendingOtp.value = false;
+    state.isVerifyingOtp.value = false;
+  }
+
+  /*----- Email Verification -----*/
+  final RxBool isSendingEmailVerification = false.obs;
+
+  Future<bool> sendEmailVerification() async {
+    isSendingEmailVerification.value = true;
+    try {
+      await VerifyEmailApi.resendVerify();
+      return true;
+    } catch (err) {
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Failed to send verification email");
+      } else {
+        AppSnackbar.error(
+          title: "Error",
+          message: "Something went wrong. Please try again.",
+        );
+      }
+      return false;
+    } finally {
+      isSendingEmailVerification.value = false;
+    }
+  }
+
+  void openEmailApp() async {
+    try {
+      if (Platform.isIOS) {
+        // iOS: try Gmail → Outlook → Apple Mail
+        for (final uri in [
+          Uri.parse('googlegmail://'),
+          Uri.parse('ms-outlook://'),
+          Uri.parse('message://'),
+        ]) {
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri);
+            return;
+          }
+        }
+      } else {
+        // Android: canLaunchUrl is unreliable for package intents —
+        // just try each app directly and catch if not installed.
+        final androidApps = [
+          'intent://#Intent;package=com.google.android.gm;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;end',
+          'intent://#Intent;package=com.microsoft.office.outlook;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;end',
+          'intent://#Intent;package=com.samsung.android.email.provider;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;end',
+        ];
+        for (final intentStr in androidApps) {
+          try {
+            await launchUrl(
+              Uri.parse(intentStr),
+              mode: LaunchMode.externalApplication,
+            );
+            return;
+          } catch (_) {
+            // App not installed, try next
+          }
+        }
+      }
+      AppSnackbar.error(title: "Error", message: "No email app found.");
+    } catch (e) {
+      LoggerService.loggerInstance.e(e);
+      AppSnackbar.error(title: "Error", message: "Could not open email app.");
+    }
+  }
+
+  @override
+  void onClose() {
+    _stopVerificationAutoScroll();
+    _resendTimer?.cancel();
+    homeScrollController.removeListener(_onScroll);
+    homeScrollController.dispose();
+    super.onClose();
   }
 }

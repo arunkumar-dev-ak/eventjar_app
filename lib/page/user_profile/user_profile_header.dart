@@ -16,27 +16,100 @@ class UserProfileHeader extends StatelessWidget {
 
     final initials = _getInitials(controller.displayName);
 
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.blue.shade50, Colors.white],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+    return Obx(() {
+      final editing = controller.state.isEditingAvatar.value;
+      return Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.grey.shade50, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
-      ),
-      child: Column(
-        children: [
-          SizedBox(height: 3.hp),
-          _buildAvatar(initials),
-          SizedBox(height: 2.hp),
-          _buildName(),
-          SizedBox(height: 0.5.hp),
-          _buildCompanyAndRole(),
-          SizedBox(height: 3.hp),
-        ],
-      ),
-    );
+        child: Column(
+          children: [
+            SizedBox(height: 3.hp),
+            // Avatar with verified badge
+            _buildAvatar(initials),
+            // "Edit Photo" or Save/Cancel
+            if (!editing)
+              TextButton(
+                onPressed: controller.selectAvatarImage,
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blue,
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                ),
+                child: Text(
+                  'Edit Photo',
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              )
+            else
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 1.hp),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: controller.state.isProfileLoading.value
+                          ? null
+                          : () async {
+                              await controller.uploadProfileAvatar();
+                            },
+                      icon: controller.state.isProfileLoading.value
+                          ? SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Icon(Icons.check, size: 16),
+                      label: Text(
+                        controller.state.isLoading.value
+                            ? 'Uploading...'
+                            : 'Save',
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 10,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(width: 20),
+                    TextButton.icon(
+                      onPressed: controller.state.isLoading.value
+                          ? null
+                          : () {
+                              controller.state.isEditingAvatar.value = false;
+                              controller.state.selectedAvatarFile.value = null;
+                            },
+                      icon: Icon(Icons.close, size: 16),
+                      label: Text('Cancel'),
+                    ),
+                  ],
+                ),
+              ),
+            SizedBox(height: 2.hp),
+            _buildName(),
+            SizedBox(height: 0.5.hp),
+            _buildCompanyAndRole(),
+            SizedBox(height: 3.hp),
+          ],
+        ),
+      );
+    });
   }
 
   // Helper to get initials from name
@@ -50,53 +123,69 @@ class UserProfileHeader extends StatelessWidget {
   // Avatar section with verified badge
   Widget _buildAvatar(String initials) {
     return Stack(
+      alignment: Alignment.bottomRight,
       children: [
         Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.blue.shade200, width: 3),
+            border: Border.all(color: Colors.grey, width: 3),
             boxShadow: [
               BoxShadow(
-                color: Colors.blue.shade100,
+                color: Colors.grey,
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
             ],
           ),
-          child:
-              controller.avatarUrl != null && controller.avatarUrl!.isNotEmpty
-              ? CircleAvatar(
-                  radius: 50,
-                  backgroundImage: NetworkImage(
-                    getFileUrl(controller.avatarUrl!),
-                  ),
-                )
-              : CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Colors.blue.shade100,
-                  child: Text(
-                    initials,
-                    style: TextStyle(
-                      fontSize: 24.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade700,
-                    ),
+          child: Obx(() {
+            final editing = controller.state.isEditingAvatar.value;
+            final file = controller.state.selectedAvatarFile.value;
+
+            if (editing && file != null) {
+              // Show selected image while editing
+              return CircleAvatar(
+                radius: 70,
+                backgroundColor: Colors.white,
+                backgroundImage: FileImage(file), // ← Use FileImage
+              );
+            } else if (controller.avatarUrl != null &&
+                controller.avatarUrl!.isNotEmpty) {
+              // Show server avatar
+              return CircleAvatar(
+                radius: 70,
+                backgroundColor: Colors.white,
+                backgroundImage: NetworkImage(
+                  getFileUrl(controller.avatarUrl!),
+                ),
+              );
+            } else {
+              // Show initials fallback
+              return CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.grey,
+                child: Text(
+                  initials,
+                  style: TextStyle(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue.shade700,
                   ),
                 ),
+              );
+            }
+          }),
         ),
-        if (controller.isVerified)
-          Positioned(
-            bottom: 0,
-            right: 0,
-            child: Container(
-              padding: EdgeInsets.all(1.5.wp),
-              decoration: BoxDecoration(
-                color: Colors.green,
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
-              ),
-              child: const Icon(Icons.check, color: Colors.white, size: 16),
+        // Verified badge
+        if (controller.isVerified && !controller.state.isEditingAvatar.value)
+          Container(
+            margin: EdgeInsets.all(1.5.wp),
+            padding: EdgeInsets.all(1.5.wp),
+            decoration: BoxDecoration(
+              color: Colors.green,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
             ),
+            child: const Icon(Icons.check, color: Colors.white, size: 16),
           ),
       ],
     );
@@ -160,7 +249,7 @@ class UserProfileHeader extends StatelessWidget {
     );
   }
 
-  //  Role gradient (dummy mapping — customize)
+  // Role gradient
   List<Color> _getRoleGradient(String role) {
     switch (role.toLowerCase()) {
       case 'organizer':

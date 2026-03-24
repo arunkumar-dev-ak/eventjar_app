@@ -24,36 +24,35 @@ class OrganizerPage extends StatelessWidget {
 
       final organizer = eventInfo.organizer;
 
-      return SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(4.wp),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Organizer Profile Section
-              buildOrganizerProfile(organizer),
-              SizedBox(height: 3.hp),
+      return Padding(
+        padding: EdgeInsets.all(4.wp),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Organizer Profile Section
+            buildOrganizerProfile(organizer),
+            SizedBox(height: 3.hp),
 
-              // About Section
-              if (organizer.bio != null && organizer.bio!.isNotEmpty) ...[
-                _buildCardSection(
-                  title: "About Organizer",
-                  icon: Icons.info_outline,
-                  child: buildAboutSection(organizer.bio!),
-                ),
-                SizedBox(height: 2.hp),
-              ],
-
-              // Company Section
-              if (_hasCompanyDetails(organizer, eventInfo)) ...[
-                _buildCardSection(
-                  title: "Company Details",
-                  icon: Icons.business,
-                  child: buildCompanySection(organizer, eventInfo),
-                ),
-              ],
+            // About Section
+            if (organizer.bio != null && organizer.bio!.isNotEmpty) ...[
+              _buildCardSection(
+                title: "About Organizer",
+                icon: Icons.info_outline,
+                child: buildAboutSection(organizer.bio!),
+              ),
+              SizedBox(height: 2.hp),
             ],
-          ),
+
+            // Company Section
+            if (_hasCompanyDetails(organizer, eventInfo)) ...[
+              _buildCardSection(
+                title: "Company Details",
+                icon: Icons.business,
+                child: buildCompanySection(organizer, eventInfo),
+              ),
+            ],
+            SizedBox(height: 2.hp),
+          ],
         ),
       );
     });
@@ -111,20 +110,20 @@ class OrganizerPage extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: EdgeInsets.all(2.wp),
+          padding: EdgeInsets.all(1.5.wp),
           decoration: BoxDecoration(
             gradient: AppColors.buttonGradient,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(icon, color: Colors.white, size: 18),
+          child: Icon(icon, color: Colors.white, size: 14),
         ),
-        SizedBox(width: 3.wp),
+        SizedBox(width: 2.wp),
         Text(
           title,
           style: TextStyle(
-            color: Colors.black,
-            fontSize: 10.sp,
-            fontWeight: FontWeight.bold,
+            color: Colors.grey.shade800,
+            fontSize: 9.sp,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],

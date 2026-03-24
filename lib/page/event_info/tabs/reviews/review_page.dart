@@ -41,9 +41,9 @@ class ReviewsPage extends StatelessWidget {
             Text(
               "No Reviews Yet",
               style: TextStyle(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                fontSize: 9.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey.shade700,
               ),
             ),
             SizedBox(height: 1.5.hp),

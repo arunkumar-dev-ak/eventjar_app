@@ -112,3 +112,71 @@ Widget userProfileBuildChipSection({
     ],
   );
 }
+
+Widget opearingRegionBuildChipSection({
+  required IconData icon,
+  required Color iconColor,
+  required String label,
+  required List<String> chips,
+}) {
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // Icon (same feel as info row)
+      Container(
+        padding: EdgeInsets.all(2.wp),
+        decoration: BoxDecoration(
+          color: iconColor.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, size: 20, color: iconColor),
+      ),
+
+      SizedBox(width: 3.wp),
+
+      // Label + Chips
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 8.sp,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 0.8.hp),
+
+            Wrap(
+              spacing: 2.wp,
+              runSpacing: 1.hp,
+              children: chips.map((chip) {
+                return Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 3.wp,
+                    vertical: 0.8.hp,
+                  ),
+                  decoration: BoxDecoration(
+                    color: iconColor.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: iconColor.withValues(alpha: 0.3)),
+                  ),
+                  child: Text(
+                    chip,
+                    style: TextStyle(
+                      fontSize: 8.sp,
+                      color: iconColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ),
+      ),
+    ],
+  );
+}

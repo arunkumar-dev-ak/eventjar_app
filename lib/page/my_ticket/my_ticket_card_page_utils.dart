@@ -1,171 +1,186 @@
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/page/my_ticket/my_ticket_shaper_painter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-Widget myTicketBuildBadge(String label, Color textColor, Color bgColor) {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 2.5.wp, vertical: 0.5.hp),
-    decoration: BoxDecoration(
-      color: bgColor,
-      borderRadius: BorderRadius.circular(6),
-      border: Border.all(color: textColor.withValues(alpha: 0.3), width: 1),
-    ),
-    child: Text(
-      label,
-      style: TextStyle(
-        color: textColor,
-        fontSize: 8.sp,
-        fontWeight: FontWeight.bold,
-      ),
+void myTicketShowQRSheet({
+  required BuildContext context,
+  required String qrData,
+  required String confirmationCode,
+  required String registeredDate,
+  required String eventTitle,
+}) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (_) => _QRBottomSheet(
+      qrData: qrData,
+      confirmationCode: confirmationCode,
+      registeredDate: registeredDate,
+      eventTitle: eventTitle,
     ),
   );
 }
 
-Widget myTicketBuildInfoRow(
-  IconData icon,
-  String label,
-  String value,
-  Color iconColor,
-) {
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Container(
-        padding: EdgeInsets.all(1.5.wp),
-        decoration: BoxDecoration(
-          color: iconColor.withValues(alpha: 0.15),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Icon(icon, size: 16, color: iconColor),
-      ),
-      SizedBox(width: 3.wp),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 8.sp,
-                color: Colors.grey.shade600,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            SizedBox(height: 0.3.hp),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 9.sp,
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ],
-  );
-}
+class _QRBottomSheet extends StatelessWidget {
+  final String qrData;
+  final String confirmationCode;
+  final String registeredDate;
+  final String eventTitle;
 
-Widget myTicketBuildQRCodeSection(
-  String qrData,
-  String confirmationCode,
-  String registeredDate,
-) {
-  return Column(
-    children: [
-      SizedBox(height: 1.hp),
-      CustomPaint(
-        painter: TicketShapePainter(
-          borderColor: Colors.grey.shade300,
-          borderRadius: 12,
-          circleRadius: 12,
-        ),
-        child: Container(
-          padding: EdgeInsets.all(4.wp),
-          width: double.infinity,
-          decoration: const BoxDecoration(color: Colors.transparent),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // QR Code
-              Container(
-                padding: EdgeInsets.all(2.wp),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: QrImageView(
-                  data: qrData,
-                  version: QrVersions.auto,
-                  size: 120,
-                  backgroundColor: Colors.white,
-                ),
-              ),
-              SizedBox(width: 3.wp),
+  const _QRBottomSheet({
+    required this.qrData,
+    required this.confirmationCode,
+    required this.registeredDate,
+    required this.eventTitle,
+  });
 
-              // Details
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Confirmation Number',
-                      style: TextStyle(
-                        fontSize: 8.sp,
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: 0.5.hp),
-                    Text(
-                      confirmationCode,
-                      style: TextStyle(
-                        fontSize: 9.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    SizedBox(height: 2.hp),
-                    Text(
-                      'Registered On',
-                      style: TextStyle(
-                        fontSize: 8.sp,
-                        color: Colors.grey.shade600,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: 0.5.hp),
-                    Text(
-                      registeredDate,
-                      style: TextStyle(
-                        fontSize: 9.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      padding: EdgeInsets.fromLTRB(6.wp, 1.5.hp, 6.wp, 4.hp),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Drag handle
+          Container(
+            width: 10.wp,
+            height: 4,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(2),
+            ),
           ),
-        ),
+          SizedBox(height: 2.hp),
+
+          // Header
+          Text(
+            'Your Ticket',
+            style: TextStyle(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          SizedBox(height: 0.5.hp),
+          Text(
+            eventTitle,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 9.sp,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 2.5.hp),
+
+          // QR Code
+          Container(
+            padding: EdgeInsets.all(4.wp),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey.shade200, width: 1.5),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: QrImageView(
+              data: qrData,
+              version: QrVersions.auto,
+              size: 55.wp,
+              backgroundColor: Colors.white,
+            ),
+          ),
+          SizedBox(height: 2.5.hp),
+
+          // Confirmation code + registered date
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 1.5.hp),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  'Confirmation Code',
+                  style: TextStyle(
+                    fontSize: 8.sp,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 0.5.hp),
+                Text(
+                  confirmationCode,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                SizedBox(height: 1.5.hp),
+                Text(
+                  'Registered On',
+                  style: TextStyle(
+                    fontSize: 8.sp,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 0.5.hp),
+                Text(
+                  registeredDate,
+                  style: TextStyle(
+                    fontSize: 9.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 2.hp),
+
+          // Close button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green.shade600,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(vertical: 1.5.hp),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                'Close',
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
-    ],
-  );
+    );
+  }
 }
-
-// Helper methods for date formatting
-// String _formatDate(DateTime date) {
-//   return DateFormat('dd MMM yyyy').format(date);
-// }
-
-// String _formatTime(DateTime date) {
-//   return DateFormat('hh:mm a').format(date);
-// }
-
-// String _formatDateTime(DateTime date) {
-//   return DateFormat('dd MMM yyyy, hh:mm a').format(date);
-// }

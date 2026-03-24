@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/dio_client.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/auth/delete_request_model.dart';
 import 'package:eventjar/model/user_profile/user_profile.dart';
 
@@ -18,6 +21,24 @@ class UserProfileApi {
         requestOptions: response.requestOptions,
         response: response,
         error: "Something went wrong",
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<bool> updateUserProfile(dynamic data) async {
+    try {
+      final response = await _dio.put('/user/profiles/me', data: data);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        error: "Failed to update",
       );
     } catch (e) {
       rethrow;
@@ -80,6 +101,38 @@ class UserProfileApi {
         requestOptions: response.requestOptions,
         response: response,
         error: "Failed to fetch deletion request status",
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<bool> uploadAvatar(File file) async {
+    final ext = file.path.split('.').last.toLowerCase();
+    final formData = FormData.fromMap({
+      'avatar': await MultipartFile.fromFile(file.path, filename: 'avatar.$ext'),
+    });
+
+    try {
+      final response = await _dio.post(
+        '/user/profiles/avatar/upload',
+        data: formData,
+        onSendProgress: (sent, total) {
+          // Optional: expose to progress widget
+        },
+      );
+
+      LoggerService.loggerInstance.dynamic_d(response.statusCode);
+
+      // Assume backend returns: { success: true, data: { url: '...' } }
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        error: 'Upload failed',
       );
     } catch (e) {
       rethrow;

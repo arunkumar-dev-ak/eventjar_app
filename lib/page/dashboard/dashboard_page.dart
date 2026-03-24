@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/dashboard/controller.dart';
+import 'package:eventjar/global/app_toast.dart';
 import 'package:eventjar/page/dashboard/widget/navigation_bar.dart';
 import 'package:eventjar/page/home/home.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_page.dart';
@@ -13,26 +14,41 @@ class DashboardPage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion(
-      value: const SystemUiOverlayStyle(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
       ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Obx(() {
-          return IndexedStack(
-            index: controller.state.selectedIndex.value,
-            children: const [
-              HomePage(),
-              NetworkPage(),
-              UserProfilePage(),
-              MyTicketPage(),
-            ],
-          );
-        }),
-        bottomNavigationBar: CustomBottomNavigationBar(),
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+          if (controller.state.selectedIndex.value != 0) {
+            controller.changeTab(0);
+          } else {
+            // Home tab → ask before exit
+            if (controller.shouldExit()) {
+              SystemNavigator.pop();
+            } else {
+              AppToast.exitApp();
+            }
+          }
+        },
+        child: Scaffold(
+          body: Obx(() {
+            return IndexedStack(
+              index: controller.state.selectedIndex.value,
+              children: const [
+                HomePage(),
+                NetworkPage(),
+                UserProfilePage(),
+                MyTicketPage(),
+              ],
+            );
+          }),
+          bottomNavigationBar: CustomBottomNavigationBar(),
+        ),
       ),
     );
   }

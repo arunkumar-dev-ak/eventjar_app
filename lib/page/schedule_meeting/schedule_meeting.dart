@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/schedule_meeting/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/schedule_meeting/schedule_meeting_button.dart';
+import 'package:eventjar/page/schedule_meeting/widget/schedule_meeting_message_method.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -82,9 +83,9 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                     onTap: controller.pickMeetingTime,
                   ),
 
+                  // Send via section - Updated with config checks
                   SizedBox(height: 3.hp),
 
-                  // Send via section
                   Text(
                     'Send Invitation via:',
                     style: TextStyle(
@@ -94,35 +95,109 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                   ),
                   SizedBox(height: 1.5.hp),
 
-                  // Email Card
+                  if (!controller.canSendEmail ||
+                      !controller.canSendWhatsApp) ...[
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.only(top: 2.hp),
+                      padding: EdgeInsets.all(3.wp),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.orange.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: Colors.orange,
+                                size: 18,
+                              ),
+                              SizedBox(width: 2.wp),
+                              Text(
+                                "Automation Not Configured",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 9.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 1.hp),
+                          Text(
+                            "Notifications will not be sent automatically. "
+                            "You can still mark this as sent after manually sending the message via the configured channels.",
+                            style: TextStyle(
+                              fontSize: 8.sp,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                          SizedBox(height: 1.5.hp),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton.icon(
+                              onPressed: controller.navigateToNotification,
+                              icon: const Icon(Icons.settings, size: 16),
+                              label: Text(
+                                !controller.canSendEmail &&
+                                        !controller.canSendWhatsApp
+                                    ? "Configure Email & WhatsApp"
+                                    : !controller.canSendEmail
+                                    ? "Configure Email"
+                                    : "Configure WhatsApp",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 2.hp),
+                  ],
+
+                  // ✅ Email Card with Config + Loading
                   Obx(
-                    () => _buildMethodCard(
+                    () => scheduleMeetingMessageBuildMethodCard(
                       title: 'Email',
                       icon: Icons.email_outlined,
                       isSelected: controller.state.meetingEmailChecked.value,
-                      onTap: () => controller.state.meetingEmailChecked.value =
-                          !controller.state.meetingEmailChecked.value,
+                      isLoading: controller.state.configLoading.value,
+                      badgeText: controller.canSendEmail
+                          ? null
+                          : 'Not Configured',
+                      onTap: () => controller.toggleMeetingEmail(),
                     ),
                   ),
 
                   SizedBox(height: 1.5.hp),
 
-                  // WhatsApp Card
+                  // ✅ WhatsApp Card with Config + Loading
                   Obx(
-                    () => _buildMethodCard(
+                    () => scheduleMeetingMessageBuildMethodCard(
                       title: 'WhatsApp',
                       icon: Icons.message_outlined,
                       isSelected: controller.state.meetingWhatsappChecked.value,
-                      onTap: () =>
-                          controller.state.meetingWhatsappChecked.value =
-                              !controller.state.meetingWhatsappChecked.value,
+                      isLoading: controller.state.configLoading.value,
+                      badgeText: controller.canSendWhatsApp
+                          ? null
+                          : 'Not Configured',
+                      onTap: () => controller.toggleMeetingWhatsApp(),
                     ),
                   ),
 
                   SizedBox(height: 4.hp),
 
                   // Action Buttons
-                  ScheduleMeetingActionButtons(controller: controller),
+                  SafeArea(
+                    child: ScheduleMeetingActionButtons(controller: controller),
+                  ),
                   SizedBox(height: 2.hp),
                 ],
               ),
@@ -183,72 +258,6 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildMethodCard({
-    required String title,
-    required IconData icon,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(4.wp),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? Colors.blue.withValues(alpha: 0.08)
-              : Colors.grey[50],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey[300]!,
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 4,
-              offset: Offset(0, 1),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                Icon(icon, color: isSelected ? Colors.blue : Colors.grey[600]),
-                SizedBox(width: 3.wp),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 9.sp,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? Colors.blue[700] : Colors.grey[700],
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected ? Colors.blue : Colors.transparent,
-                border: Border.all(
-                  color: isSelected ? Colors.blue : Colors.grey[400]!,
-                  width: 2,
-                ),
-              ),
-              child: isSelected
-                  ? Icon(Icons.check, color: Colors.white, size: 16)
-                  : null,
-            ),
-          ],
-        ),
       ),
     );
   }
