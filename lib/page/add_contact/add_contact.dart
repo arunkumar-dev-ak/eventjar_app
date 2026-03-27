@@ -371,8 +371,23 @@ class AddContactPage extends GetView<AddContactController> {
                         controller.state.selectedPhone2Country.value = country;
                       },
                       controller: controller.phone2Controller,
-                      disableLengthCheck: true,
-                      autovalidateMode: AutovalidateMode.disabled,
+                      // disableLengthCheck: true,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (phone) {
+                        final value = controller.phone2Controller.text.trim();
+
+                        if (value.isEmpty) return null;
+
+                        // if (phone == null || phone.number.isEmpty) {
+                        //   return 'Enter valid phone number';
+                        // }
+
+                        if (phone != null && !phone.isValidNumber()) {
+                          return 'Enter valid number';
+                        }
+
+                        return null;
+                      },
                     ),
                   ),
                 ),
