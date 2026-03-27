@@ -30,10 +30,12 @@ Widget myTicketBuildTicketCard(
   final startDate = event?.startDate;
   final imageUrl = event?.featuredImageUrl;
 
-  final dateStr =
-      startDate != null ? formatDate(startDate) : 'Date unavailable';
-  final timeStr =
-      startDate != null ? formatTimeFromDateTime(startDate, context) : '';
+  final dateStr = startDate != null
+      ? formatDate(startDate)
+      : 'Date unavailable';
+  final timeStr = startDate != null
+      ? formatTimeFromDateTime(startDate, context)
+      : '';
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,7 +249,7 @@ Widget myTicketBuildTicketCard(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'View',
+                                'View QR',
                                 style: TextStyle(
                                   fontSize: 9.sp,
                                   color: Colors.green.shade700,
@@ -360,11 +362,7 @@ Widget _myTicketImagePlaceholder() {
   return Container(
     color: Colors.grey.shade100,
     child: Center(
-      child: Icon(
-        Icons.event_outlined,
-        color: Colors.grey.shade300,
-        size: 32,
-      ),
+      child: Icon(Icons.event_outlined, color: Colors.grey.shade300, size: 32),
     ),
   );
 }

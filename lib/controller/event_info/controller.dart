@@ -10,10 +10,7 @@ import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/event_info/event_attendee_model.dart';
-import 'package:eventjar/page/event_info/tabs/agenda/agenda_page.dart';
 import 'package:eventjar/page/event_info/tabs/connection/connection_page.dart';
-import 'package:eventjar/page/event_info/tabs/location/location_page.dart';
-import 'package:eventjar/page/event_info/tabs/organizer/organizer_page.dart';
 import 'package:eventjar/page/event_info/tabs/overview/overview_page.dart';
 import 'package:eventjar/page/event_info/tabs/reviews/review_page.dart';
 import 'package:eventjar/page/event_info/widget/view_ticket_bottom_model_sheet.dart';
@@ -37,31 +34,22 @@ class EventInfoController extends GetxController
 
   final Rx<TabController?> tabControllerRx = Rx<TabController?>(null);
   RxBool get isLoggedIn => UserStore.to.isLoginReactive;
-  int get tabCount => canShowAttendeesTab ? 6 : 5;
+  int get tabCount => canShowAttendeesTab ? 2 : 1;
 
   List<String> get tabNames => [
     "Overview",
-    "Agenda",
-    "Location",
-    "Organizer",
     "Reviews",
     if (canShowAttendeesTab) "Attendees",
   ];
 
   List<IconData> get tabIcons => [
     Icons.info_outline_rounded,
-    Icons.event_note_rounded,
-    Icons.location_on_outlined,
-    Icons.person_outline_rounded,
     Icons.star_outline_rounded,
     if (canShowAttendeesTab) Icons.people_outline_rounded,
   ];
 
   List<Widget> get tabPages => [
     OverViewPage(),
-    AgendaPage(),
-    LocationPage(),
-    OrganizerPage(),
     ReviewsPage(),
     if (canShowAttendeesTab) EventInfoConnectionTab(),
   ];
@@ -81,6 +69,13 @@ class EventInfoController extends GetxController
 
     ever(state.eventInfo, (_) {
       _rebuildTabControllerIfNeeded();
+      // Prefetch attendee list for header avatars once event info is ready
+      // Only fetch if the user has access (logged in + registered/organizer)
+      if (canShowAttendeesTab &&
+          canAccessAttendeesTab &&
+          state.attendeeList.value == null) {
+        fetchEventAttendeeList(state.eventInfo.value?.id ?? eventId);
+      }
     });
 
     if (state.ticketId.value != null) {
@@ -117,13 +112,14 @@ class EventInfoController extends GetxController
     controller.addListener(() async {
       if (controller.indexIsChanging) return;
 
-      // Attendees tab is ALWAYS index 5 when enabled
-      if (canShowAttendeesTab && controller.index == 5) {
+      // Attendees tab is always the last tab when enabled
+      if (canShowAttendeesTab && controller.index == tabCount - 1) {
         if (!UserStore.to.isLogin) {
           navigateToSignInPage();
-        } else {
+        } else if (canAccessAttendeesTab) {
           await fetchAllAttendeeData();
         }
+        // If logged in but not registered, stay on the tab — UI shows a gate widget
       }
     });
   }
@@ -175,9 +171,6 @@ class EventInfoController extends GetxController
         final statusCode = err.response?.statusCode;
 
         if (statusCode == 401) {
-          // Auth error handling example
-          UserStore.to.clearStore();
-          navigateToSignInPage();
           return;
         }
 

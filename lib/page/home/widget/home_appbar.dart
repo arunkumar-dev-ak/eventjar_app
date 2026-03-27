@@ -92,6 +92,11 @@ class HomeAppBar extends StatelessWidget {
                 icon: Icons.qr_code_scanner_rounded,
                 onPressed: controller.navigateToQrPage,
               ),
+              SizedBox(width: 3.wp),
+              _buildActionButton(
+                icon: Icons.notifications_outlined,
+                onPressed: controller.navigateToNotificationPage,
+              ),
             ],
           ),
         ],
@@ -110,8 +115,8 @@ class HomeAppBar extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
-            width: 42,
-            height: 42,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.25),
               borderRadius: BorderRadius.circular(12),
@@ -120,7 +125,7 @@ class HomeAppBar extends StatelessWidget {
                 width: 1.5,
               ),
             ),
-            child: Icon(icon, color: Colors.white, size: 22),
+            child: Icon(icon, color: Colors.white, size: 18),
           ),
         ),
       ),

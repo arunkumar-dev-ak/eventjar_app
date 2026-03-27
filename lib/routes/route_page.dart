@@ -13,6 +13,7 @@ import 'package:eventjar/controller/nfc/binding.dart';
 import 'package:eventjar/controller/nfc_read/binding.dart';
 import 'package:eventjar/controller/nfc_write/binding.dart';
 import 'package:eventjar/controller/notification/binding.dart';
+import 'package:eventjar/controller/notification_inbox/binding.dart';
 import 'package:eventjar/controller/profile_form/basic_info/binding.dart';
 import 'package:eventjar/controller/profile_form/business_info/binding.dart';
 import 'package:eventjar/controller/profile_form/location/binding.dart';
@@ -43,6 +44,7 @@ import 'package:eventjar/page/nfc/nfc_page.dart';
 import 'package:eventjar/page/nfc_read/nfc_read.dart';
 import 'package:eventjar/page/nfc_write/nfc_write.dart';
 import 'package:eventjar/page/notification/notification_page.dart';
+import 'package:eventjar/page/notification_inbox/notification_inbox_page.dart';
 import 'package:eventjar/page/profile_form/basic_info/basic_info.dart';
 import 'package:eventjar/page/profile_form/business_info/business_info.dart';
 import 'package:eventjar/page/profile_form/location_form/location_form.dart';
@@ -240,6 +242,12 @@ class RoutePage {
       name: RouteName.notificationpage,
       page: () => NotificationPage(),
       binding: NotificationBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.notificationInboxPage,
+      page: () => const NotificationInboxPage(),
+      binding: NotificationInboxBinding(),
       middlewares: [LoginMiddleware()],
     ),
     GetPage(

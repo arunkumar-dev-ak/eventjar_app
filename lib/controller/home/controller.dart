@@ -359,6 +359,10 @@ class HomeController extends GetxController {
     }
   }
 
+  void navigateToNotificationPage() {
+    Get.toNamed(RouteName.notificationInboxPage);
+  }
+
   void navigateToAddContact() {
     Get.toNamed(RouteName.addContactPage)?.then((result) {
       if (result == "refresh") {

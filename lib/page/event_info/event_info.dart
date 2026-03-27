@@ -1,13 +1,10 @@
 import 'package:eventjar/controller/event_info/controller.dart';
+import 'package:eventjar/controller/event_info/extension/event_info_extension.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/customized_upgrader/custom_upgrade_alert.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/page/event_info/tabs/agenda/agenda_page.dart';
 import 'package:eventjar/page/event_info/tabs/connection/connection_page.dart';
-import 'package:eventjar/page/event_info/tabs/location/location_page.dart';
-import 'package:eventjar/page/event_info/tabs/organizer/organizer_page.dart';
 import 'package:eventjar/page/event_info/tabs/overview/overview_page.dart';
-import 'package:eventjar/page/event_info/tabs/reviews/review_page.dart';
 import 'package:eventjar/page/event_info/widget/event_info_appbar.dart';
 import 'package:eventjar/page/event_info/widget/event_info_book_now_button.dart';
 import 'package:eventjar/page/event_info/widget/event_info_header.dart';
@@ -15,7 +12,6 @@ import 'package:eventjar/page/event_info/widget/event_info_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:eventjar/controller/event_info/extension/event_info_extension.dart';
 
 class EventInfoPage extends GetView<EventInfoController> {
   const EventInfoPage({super.key});
@@ -44,8 +40,6 @@ class EventInfoPage extends GetView<EventInfoController> {
                     children: [
                       // Header (image + quick info)
                       EventInfoHeader(),
-                      // Event Name
-                      _buildEventName(),
                       // Tab Bar
                       _buildTabBar(),
                       // Tab Content (not scrollable, fixed height based on content)
@@ -72,45 +66,6 @@ class EventInfoPage extends GetView<EventInfoController> {
     );
   }
 
-  Widget _buildEventName() {
-    return Obx(() {
-      final isLoading = controller.state.isLoading.value;
-
-      if (isLoading) {
-        return EventInfoEventNameShimmer();
-      }
-      return Container(
-        color: Colors.white,
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.5.hp),
-        child: Obx(() {
-          final eventInfo = controller.state.eventInfo.value;
-          final isLoading = controller.state.isLoading.value;
-
-          if (isLoading) {
-            return Container(
-              height: 24,
-              width: 200,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(8),
-              ),
-            );
-          }
-
-          return Text(
-            eventInfo?.title ?? 'Event Details',
-            style: TextStyle(
-              color: Colors.grey.shade900,
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
-            ),
-          );
-        }),
-      );
-    });
-  }
-
   Widget _buildTabBar() {
     return Container(
       color: Colors.white,
@@ -123,24 +78,11 @@ class EventInfoPage extends GetView<EventInfoController> {
           return EventInfoTabBarShimmer();
         }
 
-        final canShowAttendees = controller.canShowAttendeesTab;
-
-        final tabNames = [
-          "Overview",
-          "Agenda",
-          "Location",
-          "Organizer",
-          "Reviews",
-          if (canShowAttendees) "Attendees",
-        ];
-
+        final tabCount = tabController.length;
+        final tabNames = ["Overview", if (tabCount > 1) "Attendees"];
         final tabIcons = [
           Icons.info_outline_rounded,
-          Icons.event_note_rounded,
-          Icons.location_on_outlined,
-          Icons.person_outline_rounded,
-          Icons.star_outline_rounded,
-          if (canShowAttendees) Icons.people_outline_rounded,
+          if (tabCount > 1) Icons.people_outline_rounded,
         ];
 
         return AnimatedBuilder(
@@ -173,17 +115,17 @@ class EventInfoPage extends GetView<EventInfoController> {
                               ? Colors.white
                               : Colors.grey.shade600,
                         ),
-                        if (isSelected) ...[
-                          const SizedBox(width: 6),
-                          Text(
-                            tabNames[i],
-                            style: TextStyle(
-                              fontSize: 9.sp,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
+                        const SizedBox(width: 6),
+                        Text(
+                          tabNames[i],
+                          style: TextStyle(
+                            fontSize: 9.sp,
+                            fontWeight: FontWeight.w600,
+                            color: isSelected
+                                ? Colors.white
+                                : Colors.grey.shade600,
                           ),
-                        ],
+                        ),
                       ],
                     ),
                   ),
@@ -199,6 +141,56 @@ class EventInfoPage extends GetView<EventInfoController> {
           },
         );
       }),
+    );
+  }
+
+  Widget _buildAttendeeGate(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8.wp, vertical: 6.hp),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ShaderMask(
+            shaderCallback: (bounds) =>
+                AppColors.buttonGradient.createShader(bounds),
+            child: const Icon(
+              Icons.people_outline_rounded,
+              size: 64,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(height: 2.hp),
+          Text(
+            "Register to Connect",
+            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 1.hp),
+          Text(
+            "Book a ticket to access attendees and start networking.",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 9.sp, color: Colors.grey.shade600),
+          ),
+          SizedBox(height: 3.hp),
+          GestureDetector(
+            onTap: () => controller.handleBottomButton(),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.wp, vertical: 1.5.hp),
+              decoration: BoxDecoration(
+                gradient: AppColors.buttonGradient,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                "Book Now",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10.sp,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -221,14 +213,14 @@ class EventInfoPage extends GetView<EventInfoController> {
               case 0:
                 return OverViewPage();
               case 1:
-                return AgendaPage();
-              case 2:
-                return LocationPage();
-              case 3:
-                return OrganizerPage();
-              case 4:
-                return ReviewsPage();
-              case 5:
+                // Not logged in — listener handles redirect, show nothing briefly
+                if (!controller.isLoggedIn.value) {
+                  return const SizedBox.shrink();
+                }
+                // Logged in but not registered — show registration gate
+                if (!controller.canAccessAttendeesTab) {
+                  return _buildAttendeeGate(context);
+                }
                 return EventInfoConnectionTab();
               default:
                 return OverViewPage();

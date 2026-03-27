@@ -51,6 +51,7 @@ class RouteName {
   //Notification
   static const notificationpage = '/notificationPage';
   static const emailNotificationFormOage = '/emailNotificationFormPage';
+  static const notificationInboxPage = '/notificationInboxPage';
 
   //network page
   static const networkPage = '/networkPage';
