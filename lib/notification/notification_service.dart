@@ -314,6 +314,12 @@ class NotificationService {
         "CONNECTION_REJECTED",
         "CONNECTION_ACCEPTED",
         "ATTENDEE_TICKET_CONFIRMED",
+        "event_updated",
+        "CONTACT_LIST",
+        "CONTACT_LIST_MEETING_SCHEDULED",
+        "CONTACT_LIST_MEETING_RESCHEDULED",
+        "CONTACT_LIST_MEETING_ACCEPTED",
+        "CONTACT_LIST_MEETING_COMPLETED",
       ];
 
       if (!allowedTypes.contains(type)) {
