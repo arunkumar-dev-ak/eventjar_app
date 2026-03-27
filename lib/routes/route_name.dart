@@ -4,6 +4,7 @@ class RouteName {
   static const signUpPage = '/signUpPage';
   static const forgotPasswordPage = '/forgotPasswordPage';
   static const splashScreen = '/splashScreen';
+  static const authProcessingPage = '/authProcessingPage';
 
   //home page
   static const dashboardpage = '/dashboardPage';

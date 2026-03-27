@@ -208,31 +208,33 @@ class SignInForm extends StatelessWidget {
             /*----- Social Logins -----*/
             SizedBox(height: 3.hp),
 
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: SocialButton(
-            //         text: "Google",
-            //         assetPath: "assets/app_icon/google.png",
-            //         color: Colors.red,
-            //         onTap: () => AuthService().signInWithGoogle(),
-            //       ),
-            //     ),
-            //     SizedBox(width: 3.wp),
-            //     Expanded(
-            //       child: SocialButton(
-            //         text: "LinkedIn",
-            //         assetPath: "assets/app_icon/linkedin.png",
-            //         color: Colors.blue,
-            //         onTap: () {},
-            //       ),
-            //     ),
-            //   ],
-            // ),
+            Row(
+              children: [
+                Expanded(
+                  child: SocialButton(
+                    text: "Google",
+                    assetPath: "assets/app_icon/google.png",
+                    color: Colors.red,
+                    onTap: () => AuthService().signInWithGoogle(
+                      onSuccess: (idToken) =>
+                          controller.navigateToAuthProcessign(idToken),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 3.wp),
+                Expanded(
+                  child: SocialButton(
+                    text: "LinkedIn",
+                    assetPath: "assets/app_icon/linkedin.png",
+                    color: Colors.blue,
+                    onTap: () {},
+                  ),
+                ),
+              ],
+            ),
 
-            // SizedBox(height: 4.hp),
+            SizedBox(height: 4.hp),
 
-            // SizedBox(height: 2.hp),
             AuthSignUp(
               onPressed: () {
                 controller.navigateToSignUp();

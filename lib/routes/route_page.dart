@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/add_contact/binding.dart';
+import 'package:eventjar/controller/auth_processing/binding.dart';
 import 'package:eventjar/controller/checkout/binding.dart';
 import 'package:eventjar/controller/connection/binding.dart';
 import 'package:eventjar/controller/contact/binding.dart';
@@ -30,6 +31,7 @@ import 'package:eventjar/controller/signUp/binding.dart';
 import 'package:eventjar/controller/splashScreen/binding.dart';
 import 'package:eventjar/controller/thank_you_message/binding.dart';
 import 'package:eventjar/page/add_contact/add_contact.dart';
+import 'package:eventjar/page/auth_processing/auth_processing.dart';
 import 'package:eventjar/page/checkout/checkout_page.dart';
 import 'package:eventjar/page/connection/connection_page.dart';
 import 'package:eventjar/page/contact/contact_page.dart';
@@ -95,6 +97,11 @@ class RoutePage {
       name: RouteName.forgotPasswordPage,
       page: () => ForgotPasswordPage(),
       binding: ForgotPasswordBinding(),
+    ),
+    GetPage(
+      name: RouteName.authProcessingPage,
+      page: () => AuthProcessingPage(),
+      binding: AuthProcessignBinding(),
     ),
 
     /*----- Dashoard page -----*/

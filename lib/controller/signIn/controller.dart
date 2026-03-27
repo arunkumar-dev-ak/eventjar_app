@@ -6,6 +6,7 @@ import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/sign_in/widgets/signin_2fa_model.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -172,6 +173,17 @@ class SignInController extends GetxController {
   /*----- navigation ----*/
   void navigateToSignUp() {
     Get.toNamed('/signUpPage')?.then((result) {
+      if (result == "logged_in") {
+        Navigator.pop(Get.context!, "logged_in");
+      }
+    });
+  }
+
+  void navigateToAuthProcessign(String idToken) {
+    Get.toNamed(
+      RouteName.authProcessingPage,
+      arguments: {'idToken': idToken},
+    )?.then((result) {
       if (result == "logged_in") {
         Navigator.pop(Get.context!, "logged_in");
       }
