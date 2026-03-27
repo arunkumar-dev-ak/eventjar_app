@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/event_info_api/event_info_api.dart';
@@ -26,6 +28,7 @@ class EventInfoController extends GetxController
   var appBarTitle = "EventJar";
   final state = EventInfoState();
   late final String eventId;
+  Timer? _searchDebounce;
 
   final TextEditingController searchController = TextEditingController();
   final CarouselSliderController carouselSliderController =
@@ -158,13 +161,49 @@ class EventInfoController extends GetxController
     }
   }
 
-  Future<void> fetchEventAttendeeList(String eventId) async {
+  void onSearchChanged(String query) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 500), () {
+      state.attendeeSearchQuery.value = query;
+      state.attendeeOffset.value = 0;
+      final finalEventId = state.eventInfo.value?.id ?? eventId;
+      fetchEventAttendeeList(finalEventId, offset: 0, search: query);
+    });
+  }
+
+  Future<void> fetchEventAttendeeList(
+    String eventId, {
+    int offset = 0,
+    String search = '',
+  }) async {
     try {
-      state.attendeeListLoading.value = true;
+      if (offset == 0) {
+        state.attendeeListLoading.value = true;
+        state.hasMoreAttendees.value = true;
+      } else {
+        state.isLoadingMoreAttendees.value = true;
+      }
       final response = await EventInfoApiAttendeeList.getEventAttendeeList(
         eventId,
+        offset: offset,
+        limit: 10,
+        search: search,
       );
-      state.attendeeList.value = response;
+      if (offset == 0) {
+        state.attendeeList.value = response;
+      } else {
+        final existing = state.attendeeList.value;
+        final merged = <Attendee>[
+          ...(existing?.attendee ?? []),
+          ...(response.attendee ?? []),
+        ];
+        state.attendeeList.value = EventAttendeeResponse(
+          attendee: merged,
+          meta: response.meta,
+        );
+      }
+      state.attendeeOffset.value = offset + (response.attendee?.length ?? 0);
+      state.hasMoreAttendees.value = (response.attendee?.length ?? 0) >= 10;
     } catch (err) {
       LoggerService.loggerInstance.dynamic_d(err);
       if (err is DioException) {
@@ -184,7 +223,20 @@ class EventInfoController extends GetxController
       }
     } finally {
       state.attendeeListLoading.value = false;
+      state.isLoadingMoreAttendees.value = false;
     }
+  }
+
+  Future<void> loadMoreAttendees() async {
+    if (state.isLoadingMoreAttendees.value || !state.hasMoreAttendees.value) {
+      return;
+    }
+    final finalEventId = state.eventInfo.value?.id ?? eventId;
+    await fetchEventAttendeeList(
+      finalEventId,
+      offset: state.attendeeOffset.value,
+      search: state.attendeeSearchQuery.value,
+    );
   }
 
   Future<void> fetchEventAttendeeRequestList(String eventId) async {
@@ -430,7 +482,7 @@ class EventInfoController extends GetxController
   }
 
   // In EventInfoController
-  Map<String, dynamic> getDynamicButtonState(EventAttendee attendee) {
+  Map<String, dynamic> getDynamicButtonState(Attendee attendee) {
     final requestState = state.attendeeRequests.value;
     if (requestState == null) {
       return {
@@ -455,14 +507,14 @@ class EventInfoController extends GetxController
       switch (existingRequest.status.toLowerCase()) {
         case 'pending':
           return {
-            'text': isOutgoing ? 'Request Sent' : 'Request received',
-            'disabled': isOutgoing,
+            'text': isOutgoing ? 'Request Sent' : 'Request Received',
+            'disabled': true,
             'color': isOutgoing ? 'yellow' : 'blue',
             'loading': false,
           };
         case 'accepted':
           return {
-            'text': 'Added to Contacts',
+            'text': 'Already in Your Contacts',
             'disabled': false,
             'color': 'green',
             'loading': false,
@@ -486,9 +538,7 @@ class EventInfoController extends GetxController
 
     // Default: Send new request
     return {
-      'text': state.eventInfo.value?.isOneMeetingEnabled == true
-          ? 'Send Meeting Request'
-          : 'Send Request',
+      'text': 'Send Request',
       'disabled': false,
       'color': 'blue',
       'loading': false,
@@ -497,6 +547,7 @@ class EventInfoController extends GetxController
 
   @override
   void onClose() {
+    _searchDebounce?.cancel();
     tabControllerRx.value?.dispose();
     super.onClose();
   }

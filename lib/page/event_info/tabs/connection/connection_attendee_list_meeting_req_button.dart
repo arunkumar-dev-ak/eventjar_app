@@ -18,61 +18,68 @@ class ConnectionAttendeeListCustomSendButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<EventInfoController>();
-    final buttonId = attendeeId; // ✅ Use attendeeId directly as key
+    final buttonId = attendeeId;
 
     return Obx(() {
-      // ✅ Use meetReqButtonLoadingStates instead
       final isButtonLoading =
           controller.state.meetReqButtonLoadingStates[buttonId] ?? false;
       final isProcessing = controller.state.isMeetReqProcessingRequest.value;
+      final isDisabled = isButtonLoading || isProcessing;
 
-      return ElevatedButton(
-        onPressed: (isButtonLoading || isProcessing) ? null : onPressed,
-        style:
-            ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              padding: EdgeInsets.zero,
-              elevation: 1,
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-            ).copyWith(
-              backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                (states) => Colors.transparent,
-              ),
-              elevation: WidgetStateProperty.resolveWith<double>((states) => 0),
-            ),
-        child: Ink(
+      return GestureDetector(
+        onTap: isDisabled ? null : onPressed,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: double.infinity,
+          height: 44,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: (isButtonLoading)
-                  ? [Colors.grey.shade400, Colors.grey.shade500]
-                  : [Colors.blueAccent, Colors.lightBlueAccent],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: isDisabled
+                  ? [Colors.grey.shade300, Colors.grey.shade400]
+                  : [const Color(0xFF1565C0), const Color(0xFF1E88E5)],
             ),
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: isDisabled
+                ? []
+                : [
+                    BoxShadow(
+                      color: const Color(0xFF1565C0).withValues(alpha: 0.35),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
           ),
-          child: Container(
-            padding: EdgeInsets.all(1.wp),
-            constraints: BoxConstraints(minWidth: 88),
-            alignment: Alignment.center,
+          child: Center(
             child: isButtonLoading
-                ? SizedBox(
-                    width: 16,
-                    height: 16,
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
                     child: CircularProgressIndicator(
-                      strokeWidth: 2,
+                      strokeWidth: 2.5,
                       valueColor: AlwaysStoppedAnimation(Colors.white),
                     ),
                   )
-                : Text(
-                    label,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 7.5.sp,
-                      letterSpacing: 0.2,
-                    ),
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.send_rounded,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        label,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 9.5.sp,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
                   ),
           ),
         ),

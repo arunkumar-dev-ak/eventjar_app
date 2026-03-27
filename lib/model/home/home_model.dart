@@ -348,6 +348,7 @@ class ProfileInfo {
   String? avatarUrl;
   dynamic extendedProfile;
   PhoneParsed? phoneParsed;
+  int? notificationCount;
 
   ProfileInfo({
     this.contactCount,
@@ -361,6 +362,7 @@ class ProfileInfo {
     this.avatarUrl,
     this.extendedProfile,
     this.phoneParsed,
+    this.notificationCount,
   });
 
   factory ProfileInfo.fromJson(Map<String, dynamic> json) => ProfileInfo(
@@ -377,6 +379,7 @@ class ProfileInfo {
     phoneParsed: json["phoneParsed"] == null
         ? null
         : PhoneParsed.fromJson(json["phoneParsed"]),
+    notificationCount: json["notificationCount"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -391,5 +394,6 @@ class ProfileInfo {
     "avatarUrl": avatarUrl,
     "extendedProfile": extendedProfile,
     "phoneParsed": phoneParsed?.toJson(),
+    "notificationCount": notificationCount,
   };
 }

@@ -1,6 +1,10 @@
+import 'package:eventjar/api/notification_api/notification_api.dart';
+import 'package:eventjar/controller/home/controller.dart';
 import 'package:eventjar/controller/notification_inbox/state.dart';
 import 'package:eventjar/model/notification_inbox/notification_inbox_model.dart';
+import 'package:eventjar/notification/utils/notification_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class NotificationInboxController extends GetxController {
@@ -10,108 +14,105 @@ class NotificationInboxController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadStaticNotifications();
+    fetchNotifications();
+    scrollController.addListener(_onScroll);
   }
 
-  void _loadStaticNotifications() {
-    final now = DateTime.now();
-    state.notifications.value = [
-      NotificationInboxItem(
-        id: '1',
-        title: 'New Event Added',
-        body: 'TechConnect 2025 is now live. Register before slots fill up!',
-        createdAt: now.subtract(const Duration(minutes: 10)),
-        isRead: false,
-        type: NotificationInboxType.event,
-      ),
-      NotificationInboxItem(
-        id: '2',
-        title: 'Meeting Request',
-        body: 'Arun Kumar sent you a meeting request for tomorrow at 3:00 PM.',
-        createdAt: now.subtract(const Duration(hours: 2)),
-        isRead: false,
-        type: NotificationInboxType.meeting,
-      ),
-      NotificationInboxItem(
-        id: '3',
-        title: 'New Contact',
-        body: 'Priya Sharma connected with you after the Startup Summit.',
-        createdAt: now.subtract(const Duration(hours: 5)),
-        isRead: true,
-        type: NotificationInboxType.contact,
-      ),
-      NotificationInboxItem(
-        id: '4',
-        title: 'Event Reminder',
-        body: 'Design Minds Meetup starts in 1 hour. Don\'t miss it!',
-        createdAt: now.subtract(const Duration(days: 1, hours: 1)),
-        isRead: true,
-        type: NotificationInboxType.reminder,
-      ),
-      NotificationInboxItem(
-        id: '5',
-        title: 'Contact Request',
-        body: 'Rahul Mehta wants to add you as a contact.',
-        createdAt: now.subtract(const Duration(days: 1, hours: 4)),
-        isRead: false,
-        type: NotificationInboxType.contact,
-      ),
-      NotificationInboxItem(
-        id: '6',
-        title: 'Meeting Confirmed',
-        body:
-            'Your meeting with Neha Joshi has been confirmed for Friday 11 AM.',
-        createdAt: now.subtract(const Duration(days: 2)),
-        isRead: true,
-        type: NotificationInboxType.meeting,
-      ),
-      NotificationInboxItem(
-        id: '7',
-        title: 'Event Update',
-        body: 'Venue for Flutter India Summit has been changed. Check details.',
-        createdAt: now.subtract(const Duration(days: 2, hours: 3)),
-        isRead: true,
-        type: NotificationInboxType.event,
-      ),
-      NotificationInboxItem(
-        id: '8',
-        title: 'Profile Viewed',
-        body: '5 people viewed your profile this week.',
-        createdAt: now.subtract(const Duration(days: 5)),
-        isRead: true,
-        type: NotificationInboxType.system,
-      ),
-      NotificationInboxItem(
-        id: '9',
-        title: 'New Event Near You',
-        body: 'AI & ML Conference 2025 is happening near you next week.',
-        createdAt: now.subtract(const Duration(days: 6)),
-        isRead: true,
-        type: NotificationInboxType.event,
-      ),
-    ];
-  }
-
-  void markAsRead(String id) {
-    final index = state.notifications.indexWhere((n) => n.id == id);
-    if (index != -1 && !state.notifications[index].isRead) {
-      state.notifications[index] = state.notifications[index].copyWith(
-        isRead: true,
-      );
+  void _onScroll() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        !state.isLoadingMore.value &&
+        state.hasMore.value) {
+      loadMore();
     }
+  }
+
+  static const int _limit = 10;
+
+  Future<void> fetchNotifications() async {
+    state.isLoading.value = true;
+    state.currentOffset.value = 0;
+    state.hasMore.value = true;
+    try {
+      final result = await NotificationApi.getNotificationInbox(
+        offset: 0,
+        limit: _limit,
+      );
+      final data = result.data ?? [];
+      state.notifications.value = data;
+      state.hasMore.value = data.length >= _limit;
+    } catch (_) {
+      state.notifications.value = [];
+    } finally {
+      state.isLoading.value = false;
+    }
+  }
+
+  Future<void> loadMore() async {
+    if (state.isLoadingMore.value || !state.hasMore.value) return;
+    state.isLoadingMore.value = true;
+    try {
+      final nextOffset = state.currentOffset.value + _limit;
+      final result = await NotificationApi.getNotificationInbox(
+        offset: nextOffset,
+        limit: _limit,
+      );
+      final data = result.data ?? [];
+      state.notifications.addAll(data);
+      state.currentOffset.value = nextOffset;
+      state.hasMore.value = data.length >= _limit;
+    } catch (_) {
+      // keep existing list on error
+    } finally {
+      state.isLoadingMore.value = false;
+    }
+  }
+
+
+  int get unreadCount =>
+      state.notifications.where((n) => n.isRead != true).length;
+
+  Future<void> handleTap(Datum item) async {
+    if (state.navigatingId.value.isNotEmpty) return;
+    HapticFeedback.lightImpact();
+    state.navigatingId.value = item.id ?? '';
+    await Future.wait([
+      markAsRead(item.id),
+      Future.delayed(const Duration(milliseconds: 400)),
+    ]);
+    state.navigatingId.value = '';
+    if (item.triggerKey != null) {
+      navigateBasedOnNotificationType(item.triggerKey!);
+    }
+  }
+
+  Future<void> markAsRead(String? id) async {
+    if (id == null) return;
+    final index = state.notifications.indexWhere((n) => n.id == id);
+    if (index != -1 && state.notifications[index].isRead != true) {
+      final updated = Datum.fromJson({
+        ...state.notifications[index].toJson(),
+        'isRead': true,
+      });
+      state.notifications[index] = updated;
+      state.notifications.refresh();
+      await NotificationApi.markNotificationAsRead(id);
+    }
+  }
+
+  void markAllAsRead() {
+    state.notifications.value = state.notifications
+        .map((n) => Datum.fromJson({...n.toJson(), 'isRead': true}))
+        .toList();
+    NotificationApi.markAllNotificationsAsRead();
   }
 
   @override
   void onClose() {
     scrollController.dispose();
+    if (Get.isRegistered<HomeController>()) {
+      Get.find<HomeController>().fetchUserProfile();
+    }
     super.onClose();
   }
-
-  void markAllAsRead() {
-    state.notifications.value = state.notifications
-        .map((n) => n.copyWith(isRead: true))
-        .toList();
-  }
-
-  int get unreadCount => state.notifications.where((n) => !n.isRead).length;
 }

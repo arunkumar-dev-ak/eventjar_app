@@ -40,7 +40,23 @@ class ContactController extends GetxController
 
       if (statusCard != null) {
         state.selectedTab.value = statusCard;
+      } else {
+        state.selectedTab.value = NetworkStatusCardData(
+          key: 'totalContacts',
+          label: 'Total Contacts',
+          enumKey: 'all',
+          icon: Icons.people,
+          color: Colors.blue,
+        );
       }
+    } else {
+      state.selectedTab.value = NetworkStatusCardData(
+        key: 'totalContacts',
+        label: 'Total Contacts',
+        enumKey: 'all',
+        icon: Icons.people,
+        color: Colors.blue,
+      );
     }
 
     _initHeartbeat();
@@ -106,6 +122,9 @@ class ContactController extends GetxController
 
   /*----- fetch contacts ------*/
   String getEndpoint({bool onRefresh = false}) {
+    LoggerService.loggerInstance.dynamic_d(
+      "ffffff ---- ${state.selectedTab.value}",
+    );
     final searchQuery = state.searchQuery.value.trim();
     final stageKey = state.selectedTab.value!.enumKey;
     final page = onRefresh ? _currentPage : _getNextPage();

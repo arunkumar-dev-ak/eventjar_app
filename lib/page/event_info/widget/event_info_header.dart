@@ -493,7 +493,7 @@ class EventInfoHeader extends StatelessWidget {
               },
               child: Obx(() {
                 final attendees =
-                    controller.state.attendeeList.value?.attendees ?? [];
+                    controller.state.attendeeList.value?.attendee ?? [];
                 final preview = attendees.take(3).toList();
                 final fallbackColors = [
                   Colors.blue.shade200,
@@ -515,7 +515,7 @@ class EventInfoHeader extends StatelessWidget {
                             final attendee = hasAttendee ? preview[i] : null;
                             final hasAttendeeAvatar =
                                 attendee?.avatarUrl != null &&
-                                attendee!.avatarUrl!.isNotEmpty;
+                                attendee!.avatarUrl.toString().isNotEmpty;
                             return Positioned(
                               left: i * 16.0,
                               child: Container(
@@ -531,15 +531,15 @@ class EventInfoHeader extends StatelessWidget {
                                   backgroundColor: fallbackColors[i],
                                   backgroundImage: hasAttendeeAvatar
                                       ? NetworkImage(
-                                          getFileUrl(attendee.avatarUrl ?? ''),
+                                          getFileUrl(attendee.avatarUrl.toString()),
                                         )
                                       : null,
                                   child: hasAttendeeAvatar
                                       ? null
                                       : (hasAttendee
                                             ? Text(
-                                                attendee!.name.isNotEmpty
-                                                    ? attendee.name[0]
+                                                (attendee!.name?.isNotEmpty ?? false)
+                                                    ? attendee.name![0]
                                                           .toUpperCase()
                                                     : '?',
                                                 style: TextStyle(

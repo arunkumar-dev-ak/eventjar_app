@@ -22,7 +22,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
   bool _searchExpanded = false;
   Offset _dragOffset = Offset.zero;
   double? _frontCardHeight;
-  List<EventAttendee> _currentAttendees = [];
+  List<Attendee> _currentAttendees = [];
   final GlobalKey _frontCardKey = GlobalKey();
 
   late AnimationController _snapBackController;
@@ -87,7 +87,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
     });
   }
 
-  void _exitCard(List<EventAttendee> attendees) {
+  void _exitCard(List<Attendee> attendees) {
     final isSwipeLeft = _dragOffset.dx < 0;
 
     // At boundaries: snap back instead of advancing
@@ -95,6 +95,8 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
     final atFirst = !isSwipeLeft && _currentIndex <= 0;
     if (atLast || atFirst) {
       _snapBack();
+      // Trigger load more when the user hits the last card
+      if (atLast) controller.loadMoreAttendees();
       return;
     }
 
@@ -111,10 +113,15 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
 
     _snapBackController.forward(from: 0).then((_) {
       if (mounted) {
+        final nextIndex = isSwipeLeft ? _currentIndex + 1 : _currentIndex - 1;
         setState(() {
-          _currentIndex = isSwipeLeft ? _currentIndex + 1 : _currentIndex - 1;
+          _currentIndex = nextIndex;
           _dragOffset = Offset.zero;
         });
+        // Preload next page when 2 cards away from the end
+        if (isSwipeLeft && nextIndex >= attendees.length - 2) {
+          controller.loadMoreAttendees();
+        }
       }
     });
   }
@@ -124,13 +131,16 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
     return Obx(() {
       final attendeeState = controller.state.attendeeList.value;
       final isLoading = controller.state.attendeeListLoading.value;
-      final searchText = controller.state.searchText.value.toLowerCase().trim();
 
       if (isLoading) {
         return Center(child: buildAttendeeListShimmer());
       }
 
-      if (attendeeState == null || attendeeState.attendees.isEmpty) {
+      final allAttendees = attendeeState?.attendee ?? [];
+      final totalCount =
+          attendeeState?.meta?.paging?.totalCount ?? allAttendees.length;
+
+      if (attendeeState == null || allAttendees.isEmpty) {
         return Center(
           child: Text(
             "No attendees found.",
@@ -139,15 +149,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
         );
       }
 
-      final filteredAttendees = searchText.isEmpty
-          ? attendeeState.attendees
-          : attendeeState.attendees.where((a) {
-              final name = a.name.toLowerCase();
-              final company = (a.company ?? '').toLowerCase();
-              return name.contains(searchText) || company.contains(searchText);
-            }).toList();
-
-      return _buildSwipeStack(filteredAttendees);
+      return _buildSwipeStack(allAttendees, totalCount);
     });
   }
 
@@ -155,7 +157,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
 
   // ─── Card stack ────────────────────────────────────────────────────────────
 
-  Widget _buildSwipeStack(List<EventAttendee> attendees) {
+  Widget _buildSwipeStack(List<Attendee> attendees, int totalCount) {
     _currentAttendees = attendees;
     return Column(
       children: [
@@ -199,8 +201,10 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                         fontSize: 13,
                         color: Colors.black87,
                       ),
-                      onChanged: (val) =>
-                          controller.state.searchText.value = val,
+                      onChanged: (val) {
+                        controller.state.searchText.value = val;
+                        controller.onSearchChanged(val);
+                      },
                     ),
                   ),
                 ),
@@ -214,13 +218,14 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                     setState(() => _searchExpanded = false);
                     controller.searchController.clear();
                     controller.state.searchText.value = "";
+                    controller.onSearchChanged("");
                   },
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
               ] else ...[
                 Text(
-                  "${_currentIndex + 1} of ${attendees.length}",
+                  "${_currentIndex + 1} of $totalCount",
                   style: TextStyle(
                     fontSize: 9.sp,
                     color: Colors.grey.shade500,
@@ -280,22 +285,28 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
             },
           ),
 
-          // Stacked cards — back cards peek out to the RIGHT
+          // Stacked cards — back cards peek below front card
           Stack(
             clipBehavior: Clip.none,
-            alignment: Alignment.topLeft,
+            alignment: Alignment.topCenter,
             children: [
-              // depth-2: furthest back (green), shifted right most
+              // depth-2: furthest back, narrower, peeks 14px below front card
               if (_currentIndex + 2 < attendees.length)
-                Transform.translate(
-                  offset: const Offset(20, 0),
-                  child: _buildBackCard(const Color(0xFF43A047)),
+                Padding(
+                  padding: const EdgeInsets.only(top: 28),
+                  child: Transform.scale(
+                    scaleX: 0.84,
+                    child: _buildBackCard(const Color(0xFFBBDEFB)),
+                  ),
                 ),
-              // depth-1: middle back (indigo), shifted right
+              // depth-1: middle, slightly narrower, peeks 7px below front card
               if (_currentIndex + 1 < attendees.length)
-                Transform.translate(
-                  offset: const Offset(10, 0),
-                  child: _buildBackCard(const Color(0xFF5C6BC0)),
+                Padding(
+                  padding: const EdgeInsets.only(top: 14),
+                  child: Transform.scale(
+                    scaleX: 0.92,
+                    child: _buildBackCard(const Color(0xFF90CAF9)),
+                  ),
                 ),
               // Front card — draggable with snap-back animation
               _buildFrontCard(attendees[_currentIndex]),
@@ -304,7 +315,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
         ],
 
         if (attendees.isNotEmpty) ...[
-          SizedBox(height: 1.2.hp),
+          SizedBox(height: 3.hp),
 
           // Swipe hint
           Row(
@@ -346,22 +357,21 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
   Widget _buildBackCard(Color color) {
     return Container(
       height: _frontCardHeight,
-      margin: EdgeInsets.only(right: 8.wp),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.25),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildFrontCard(EventAttendee attendee) {
+  Widget _buildFrontCard(Attendee attendee) {
     final Offset offset = _snapBackController.isAnimating
         ? _snapBackAnim.value
         : _dragOffset;
@@ -382,18 +392,30 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
 
   // ─── Card widget ───────────────────────────────────────────────────────────
 
-  Widget _buildCard(EventAttendee attendee) {
+  Widget _buildCard(Attendee attendee) {
+    final positionText = _positionText(attendee);
+    final locationText = attendee.location?.toString() ?? '';
+    final bioText = attendee.bio?.toString() ?? '';
+
     return Container(
       key: _frontCardKey,
-      margin: EdgeInsets.only(right: 8.wp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFEEF4FF), Color(0xFFF8FBFF)],
+        ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.15),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -401,27 +423,26 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ── Row 1: Avatar + Info ──
           Padding(
-            padding: EdgeInsets.all(3.wp),
+            padding: EdgeInsets.all(4.wp),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Avatar
                 CircleAvatar(
-                  radius: 26,
+                  radius: 28,
                   backgroundColor: Colors.blue.shade100,
                   backgroundImage:
                       (attendee.avatarUrl != null &&
-                          attendee.avatarUrl!.isNotEmpty)
-                      ? NetworkImage(getFileUrl(attendee.avatarUrl!))
+                          attendee.avatarUrl.toString().isNotEmpty)
+                      ? NetworkImage(getFileUrl(attendee.avatarUrl.toString()))
                       : null,
                   child:
                       (attendee.avatarUrl == null ||
-                          attendee.avatarUrl!.isEmpty)
+                          attendee.avatarUrl.toString().isEmpty)
                       ? Text(
-                          attendee.name.isNotEmpty
-                              ? attendee.name[0].toUpperCase()
+                          (attendee.name?.isNotEmpty ?? false)
+                              ? attendee.name![0].toUpperCase()
                               : '?',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
@@ -438,71 +459,57 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        attendee.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10.5.sp,
-                          color: Colors.black87,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      // Name + contact chip
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              attendee.name ?? '',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11.sp,
+                                color: Colors.black87,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
-                      if (_positionText(attendee).isNotEmpty) ...[
-                        SizedBox(height: 0.3.hp),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.work_outline_rounded,
-                              size: 11,
-                              color: Colors.blue.shade400,
-                            ),
-                            const SizedBox(width: 3),
-                            Expanded(
-                              child: Text(
-                                _positionText(attendee),
-                                style: TextStyle(
-                                  fontSize: 8.sp,
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                      if (attendee.location?.isNotEmpty == true) ...[
-                        SizedBox(height: 0.3.hp),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.location_on_outlined,
-                              size: 11,
-                              color: Colors.red.shade300,
-                            ),
-                            const SizedBox(width: 3),
-                            Expanded(
-                              child: Text(
-                                attendee.location!,
-                                style: TextStyle(
-                                  fontSize: 8.sp,
-                                  color: Colors.black45,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                      if (attendee.bio?.isNotEmpty == true) ...[
+                      SizedBox(height: 0.4.hp),
+
+                      // Job / position — always shown
+                      _infoRow(
+                        icon: Icons.work_outline_rounded,
+                        iconColor: positionText.isNotEmpty
+                            ? Colors.blue.shade400
+                            : Colors.grey.shade300,
+                        text: positionText.isNotEmpty
+                            ? positionText
+                            : "No job title added",
+                        isEmpty: positionText.isEmpty,
+                      ),
+                      SizedBox(height: 0.3.hp),
+
+                      // Location — always shown
+                      _infoRow(
+                        icon: Icons.location_on_outlined,
+                        iconColor: locationText.isNotEmpty
+                            ? Colors.red.shade300
+                            : Colors.grey.shade300,
+                        text: locationText.isNotEmpty
+                            ? locationText
+                            : "No location added",
+                        isEmpty: locationText.isEmpty,
+                      ),
+
+                      // Bio — only shown when present
+                      if (bioText.isNotEmpty) ...[
                         SizedBox(height: 0.4.hp),
                         Text(
-                          attendee.bio!,
+                          bioText,
                           style: TextStyle(
-                            fontSize: 7.5.sp,
+                            fontSize: 8.sp,
                             color: Colors.grey.shade600,
                             height: 1.4,
                           ),
@@ -516,30 +523,37 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
               ],
             ),
           ),
-
-          // ── Row 2: Action button ──
-          Divider(height: 1, color: Colors.grey.shade100),
+          // ── Action button ──
+          Divider(height: 1, color: Colors.blue.shade50),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 1.hp),
+            padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.2.hp),
             child: Obx(() {
               final buttonState = controller.getDynamicButtonState(attendee);
               final text = buttonState['text'] as String;
               final colorType = buttonState['color'] as String;
-              final isActionable =
-                  text == 'Send Meeting Request' || text == 'Send Request';
+              final isDisabled = buttonState['disabled'] as bool;
+              final isSendable = text == 'Send Request';
 
-              if (isActionable) {
+              if (isSendable) {
                 return ConnectionAttendeeListCustomSendButton(
-                  label: "Send Meeting Request",
-                  attendeeId: attendee.id,
-                  onPressed: () =>
-                      controller.sendMeetingRequest(attendee.id, attendee.name),
+                  label: "Send Request",
+                  attendeeId: attendee.id ?? '',
+                  onPressed: () => controller.sendMeetingRequest(
+                    attendee.id ?? '',
+                    attendee.name ?? '',
+                  ),
                 );
               }
 
               return Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [_statusBadge(text: text, colorType: colorType)],
+                children: [
+                  _statusBadge(
+                    text: text,
+                    colorType: colorType,
+                    disabled: isDisabled,
+                  ),
+                ],
               );
             }),
           ),
@@ -548,56 +562,85 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
     );
   }
 
-  String _positionText(EventAttendee attendee) {
-    final pos = attendee.position ?? '';
-    final co = attendee.company ?? '';
+  Widget _infoRow({
+    required IconData icon,
+    required Color iconColor,
+    required String text,
+    required bool isEmpty,
+  }) {
+    return Row(
+      children: [
+        Icon(icon, size: 12, color: iconColor),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 8.5.sp,
+              color: isEmpty ? Colors.grey.shade400 : Colors.black54,
+              fontStyle: isEmpty ? FontStyle.italic : FontStyle.normal,
+              fontWeight: isEmpty ? FontWeight.normal : FontWeight.w500,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _positionText(Attendee attendee) {
+    final pos = attendee.jobTitle?.toString() ?? '';
+    final co = attendee.company?.toString() ?? '';
     if (pos.isNotEmpty && co.isNotEmpty) return '$pos at $co';
     if (pos.isNotEmpty) return pos;
     return co;
   }
-}
 
-// ─── Status badge ─────────────────────────────────────────────────────────────
-
-Widget _statusBadge({required String text, required String colorType}) {
-  final colors = _badgeColors(colorType);
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-    decoration: BoxDecoration(
-      gradient: LinearGradient(colors: colors),
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: [
-        BoxShadow(
-          color: colors[0].withValues(alpha: 0.3),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
-    child: Text(
-      text,
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 7.5.sp,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.2,
+  Widget _statusBadge({
+    required String text,
+    required String colorType,
+    bool disabled = false,
+  }) {
+    final colors = _badgeColors(colorType);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: colors),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: colors[0].withValues(alpha: 0.3),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-    ),
-  );
-}
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 7.5.sp,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.2,
+        ),
+      ),
+    );
+  }
 
-List<Color> _badgeColors(String colorType) {
-  switch (colorType) {
-    case 'yellow':
-      return [Colors.amber.shade400, Colors.amber.shade600];
-    case 'green':
-      return [const Color(0xFF4CAF50), const Color(0xFF45A049)];
-    case 'blue':
-      return [Colors.blue.shade400, Colors.blue.shade600];
-    case 'orange':
-      return [Colors.orange.shade400, Colors.orange.shade700];
-    case 'grey':
-    default:
-      return [Colors.grey.shade400, Colors.grey.shade500];
+  List<Color> _badgeColors(String colorType) {
+    switch (colorType) {
+      case 'yellow':
+        return [Colors.amber.shade400, Colors.amber.shade600];
+      case 'green':
+        return [const Color(0xFF4CAF50), const Color(0xFF45A049)];
+      case 'blue':
+        return [Colors.blue.shade400, Colors.blue.shade600];
+      case 'orange':
+        return [Colors.orange.shade400, Colors.orange.shade700];
+      case 'grey':
+      default:
+        return [Colors.grey.shade400, Colors.grey.shade500];
+    }
   }
 }

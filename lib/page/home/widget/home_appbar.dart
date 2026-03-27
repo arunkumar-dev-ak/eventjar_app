@@ -93,15 +93,80 @@ class HomeAppBar extends StatelessWidget {
                 onPressed: controller.navigateToQrPage,
               ),
               SizedBox(width: 3.wp),
-              _buildActionButton(
-                icon: Icons.notifications_outlined,
-                onPressed: controller.navigateToNotificationPage,
-              ),
+              _buildNotificationButton(),
             ],
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildNotificationButton() {
+    return Obx(() {
+      final count = controller.state.userProfile.value?.notificationCount ?? 0;
+      final label = count <= 0
+          ? null
+          : count > 9
+          ? '9+'
+          : '$count';
+
+      return GestureDetector(
+        onTap: controller.navigateToNotificationPage,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.4),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.notifications_outlined,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ),
+            if (label != null)
+              Positioned(
+                top: -5,
+                right: -5,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 1,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.white, width: 1.2),
+                  ),
+                  child: Text(
+                    label,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildActionButton({

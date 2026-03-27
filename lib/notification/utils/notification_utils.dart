@@ -2,6 +2,26 @@ import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:get/get.dart';
 
+bool isNotificationNavigable(String? triggerKey) {
+  if (triggerKey == null) return false;
+  const navigableTypes = {
+    "CONTACT_LIST",
+    "CONTACT_LIST_MEETING_SCHEDULED",
+    "CONTACT_LIST_MEETING_RESCHEDULED",
+    "CONTACT_LIST_MEETING_ACCEPTED",
+    "CONTACT_LIST_MEETING_COMPLETED",
+    "MEETING_SCHEDULED",
+    "MEETING_COMPLETED",
+    "MEETING_ACCEPTED",
+    "MEETING_RESCHEDULED",
+    "CONNECTION_RECEIVED",
+    "CONNECTION_REJECTED",
+    "CONNECTION_ACCEPTED",
+    "ATTENDEE_TICKET_CONFIRMED",
+  };
+  return navigableTypes.contains(triggerKey);
+}
+
 void navigateBasedOnNotificationType(String type) {
   Map<String, dynamic> args = {};
 

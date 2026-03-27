@@ -2,6 +2,7 @@ import 'package:eventjar/controller/notification_inbox/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/notification_inbox/notification_inbox_model.dart';
+import 'package:eventjar/notification/utils/notification_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -44,23 +45,41 @@ class NotificationInboxPage extends GetView<NotificationInboxController> {
         ],
       ),
       body: Obx(() {
+        if (controller.state.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
         final notifications = controller.state.notifications;
         if (notifications.isEmpty) {
           return _buildEmpty();
         }
-        return ListView.builder(
-          controller: controller.scrollController,
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          itemCount: notifications.length,
-          itemBuilder: (_, i) {
-            final item = notifications[i];
-            final isLast = i == notifications.length - 1;
-            return _NotificationTile(
-              item: item,
-              showDivider: !isLast,
-              onTap: () => controller.markAsRead(item.id),
-            );
-          },
+        return RefreshIndicator(
+          onRefresh: controller.fetchNotifications,
+          child: ListView.builder(
+            controller: controller.scrollController,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount:
+                notifications.length + (controller.state.hasMore.value ? 1 : 0),
+            itemBuilder: (_, i) {
+              if (i == notifications.length) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              final item = notifications[i];
+              final isLast =
+                  i == notifications.length - 1 &&
+                  !controller.state.hasMore.value;
+              return Obx(
+                () => _NotificationTile(
+                  item: item,
+                  showDivider: !isLast,
+                  isNavigating: controller.state.navigatingId.value == item.id,
+                  onTap: () => controller.handleTap(item),
+                ),
+              );
+            },
+          ),
         );
       }),
     );
@@ -104,29 +123,41 @@ class NotificationInboxPage extends GetView<NotificationInboxController> {
 }
 
 class _NotificationTile extends StatelessWidget {
-  final NotificationInboxItem item;
+  final Datum item;
   final bool showDivider;
+  final bool isNavigating;
   final VoidCallback onTap;
 
   const _NotificationTile({
     required this.item,
     required this.showDivider,
+    required this.isNavigating,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final title = item.subject ?? '';
+    final body = item.metadata?.body ?? '';
+    final timestamp = item.createdAt ?? item.sentAt ?? DateTime.now();
+    final navigable = isNotificationNavigable(item.triggerKey);
+    final isRead = item.isRead ?? true;
+
     return InkWell(
-      onTap: onTap,
+      onTap: navigable ? onTap : null,
       child: Column(
         children: [
           Container(
-            color: item.isRead ? Colors.white : const Color(0xFFEEF3FB),
+            color: !isRead
+                ? const Color(0xFFEEF3FB)
+                : navigable
+                ? Colors.white
+                : const Color(0xFFF7F7F7),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildIcon(),
+                _buildIcon(item.notificationType),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -137,57 +168,88 @@ class _NotificationTile extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              item.title,
-                              style: TextStyle(
-                                fontWeight: item.isRead
-                                    ? FontWeight.w500
-                                    : FontWeight.w700,
+                              title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
                                 fontSize: 13,
-                                color: const Color(0xFF1A1A1A),
+                                color: Color(0xFF1A1A1A),
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            _formatTime(item.createdAt),
+                            _formatTime(timestamp),
                             style: TextStyle(
                               fontSize: 11,
-                              color: item.isRead
-                                  ? Colors.grey.shade500
-                                  : AppColors.gradientDarkStart,
-                              fontWeight: item.isRead
-                                  ? FontWeight.w400
-                                  : FontWeight.w600,
+                              color: Colors.grey.shade500,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 3),
-                      Text(
-                        item.body,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: item.isRead
-                              ? Colors.grey.shade600
-                              : const Color(0xFF333333),
-                          height: 1.4,
+                      if (body.isNotEmpty) ...[
+                        const SizedBox(height: 3),
+                        Text(
+                          body,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                            height: 1.4,
+                          ),
                         ),
-                      ),
+                      ],
+                      if (!navigable) ...[
+                        const SizedBox(height: 5),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade200,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'Info only',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.grey.shade500,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
-                if (!item.isRead) ...[
-                  const SizedBox(width: 10),
-                  Container(
-                    width: 8,
-                    height: 8,
-                    margin: const EdgeInsets.only(top: 4),
-                    decoration: const BoxDecoration(
-                      color: AppColors.gradientDarkStart,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ],
+                const SizedBox(width: 8),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (!isRead)
+                      Container(
+                        width: 8,
+                        height: 8,
+                        margin: const EdgeInsets.only(bottom: 4),
+                        decoration: const BoxDecoration(
+                          color: AppColors.gradientDarkStart,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    if (isNavigating)
+                      const SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    else if (navigable)
+                      Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 14,
+                        color: Colors.grey.shade700,
+                      ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -198,30 +260,42 @@ class _NotificationTile extends StatelessWidget {
     );
   }
 
-  Widget _buildIcon() {
+  Widget _buildIcon(NotificationInboxType type) {
     IconData icon;
     List<Color> colors;
 
-    switch (item.type) {
-      case NotificationInboxType.event:
-        icon = Icons.event_rounded;
-        colors = [const Color(0xFF667EEA), const Color(0xFF764BA2)];
-        break;
-      case NotificationInboxType.contact:
-        icon = Icons.person_add_rounded;
-        colors = [const Color(0xFF11998E), const Color(0xFF38EF7D)];
-        break;
+    switch (type) {
       case NotificationInboxType.meeting:
         icon = Icons.handshake_rounded;
         colors = [const Color(0xFFFC4A1A), const Color(0xFFF7B733)];
         break;
-      case NotificationInboxType.reminder:
-        icon = Icons.alarm_rounded;
+      case NotificationInboxType.connection:
+        icon = Icons.people_rounded;
+        colors = [const Color(0xFF11998E), const Color(0xFF38EF7D)];
+        break;
+      case NotificationInboxType.contact:
+        icon = Icons.contacts_rounded;
+        colors = [const Color(0xFF667EEA), const Color(0xFF764BA2)];
+        break;
+      case NotificationInboxType.ticket:
+        icon = Icons.confirmation_number_rounded;
+        colors = [const Color(0xFF8E2DE2), const Color(0xFF4A00E0)];
+        break;
+      case NotificationInboxType.security:
+        icon = Icons.shield_rounded;
+        colors = [const Color(0xFFCB2D3E), const Color(0xFFEF473A)];
+        break;
+      case NotificationInboxType.event:
+        icon = Icons.event_rounded;
         colors = [const Color(0xFF4E54C8), const Color(0xFF8F94FB)];
         break;
-      case NotificationInboxType.system:
-        icon = Icons.info_rounded;
+      case NotificationInboxType.reminder:
+        icon = Icons.alarm_rounded;
         colors = [const Color(0xFF2193B0), const Color(0xFF6DD5ED)];
+        break;
+      case NotificationInboxType.system:
+        icon = Icons.notifications_rounded;
+        colors = [const Color(0xFF757F9A), const Color(0xFFD7DDE8)];
         break;
     }
 
