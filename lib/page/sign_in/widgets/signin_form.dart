@@ -212,7 +212,7 @@ class SignInForm extends StatelessWidget {
               children: [
                 Expanded(
                   child: SocialButton(
-                    text: "Google",
+                    text: "Connect Using Google",
                     assetPath: "assets/app_icon/google.png",
                     color: Colors.red,
                     onTap: () => AuthService().signInWithGoogle(
@@ -221,15 +221,15 @@ class SignInForm extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 3.wp),
-                Expanded(
-                  child: SocialButton(
-                    text: "LinkedIn",
-                    assetPath: "assets/app_icon/linkedin.png",
-                    color: Colors.blue,
-                    onTap: () {},
-                  ),
-                ),
+                // SizedBox(width: 3.wp),
+                // Expanded(
+                //   child: SocialButton(
+                //     text: "LinkedIn",
+                //     assetPath: "assets/app_icon/linkedin.png",
+                //     color: Colors.blue,
+                //     onTap: () {},
+                //   ),
+                // ),
               ],
             ),
 
