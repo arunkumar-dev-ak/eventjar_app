@@ -11,53 +11,89 @@ Widget userProfileBuildSecurity() {
 
   return Column(
     children: [
-      // Change Password
-      InkWell(
-        onTap: () {
-          controller.navigateToResetPassword();
-        },
-        child: Container(
-          padding: EdgeInsets.all(3.wp),
-          decoration: BoxDecoration(
-            color: Colors.blue.shade50,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.blue.shade200),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.lock_outline, color: Colors.blue.shade700),
-              SizedBox(width: 3.wp),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Change Password",
-                      style: TextStyle(
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.blue.shade700,
-                      ),
+      // ===== Security Section (Unified Card) =====
+      Container(
+        padding: EdgeInsets.all(3.wp),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Column(
+          children: [
+            // ===== Enable 2FA =====
+            InkWell(
+              onTap: () {
+                controller.navigateToTwoFaPage();
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.shield_outlined, color: Colors.blue),
+                  SizedBox(width: 3.wp),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Enable Two-Factor Authentication",
+                          style: TextStyle(
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Text(
+                          "Add extra security to your account",
+                          style: TextStyle(fontSize: 8.sp, color: Colors.grey),
+                        ),
+                      ],
                     ),
-                    Text(
-                      "Update your password regularly",
-                      style: TextStyle(
-                        fontSize: 8.sp,
-                        color: Colors.grey.shade600,
-                      ),
+                  ),
+                  Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+                ],
+              ),
+            ),
+
+            SizedBox(height: 2.hp),
+            Divider(color: Colors.grey.shade300),
+            SizedBox(height: 2.hp),
+
+            // ===== Change Password =====
+            InkWell(
+              onTap: () {
+                controller.navigateToResetPassword();
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.lock_outline, color: Colors.orange),
+                  SizedBox(width: 3.wp),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Change Password",
+                          style: TextStyle(
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Text(
+                          "Update your password regularly",
+                          style: TextStyle(fontSize: 8.sp, color: Colors.grey),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+                ],
               ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: Colors.blue.shade700,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
+
       SizedBox(height: 2.hp),
 
       // Session Management
@@ -91,24 +127,53 @@ Widget userProfileBuildSecurity() {
               style: TextStyle(fontSize: 9.sp, color: Colors.grey.shade700),
             ),
             SizedBox(height: 2.hp),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  controller.handleLogout();
-                },
-                icon: Icon(Icons.logout, size: 16),
-                label: Text("Sign Out"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(vertical: 1.5.hp),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+            Obx(() {
+              bool isLoading = controller.state.isLoggingOut.value;
+              return SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          controller.handleLogout();
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isLoading
+                        ? Colors.red.withValues(alpha: 0.6)
+                        : Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 1.5.hp),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.logout, size: 16),
+
+                      SizedBox(width: 8),
+
+                      Text(isLoading ? "Signing Out..." : "Sign Out"),
+
+                      if (isLoading) ...[
+                        SizedBox(width: 10),
+                        SizedBox(
+                          height: 14,
+                          width: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-              ),
-            ),
+              );
+            }),
           ],
         ),
       ),

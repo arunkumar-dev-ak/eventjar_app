@@ -1,12 +1,9 @@
 import 'package:eventjar/controller/auth_processing/controller.dart';
-import 'package:eventjar/global/app_colors.dart';
-import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/auth_processing/widget/auth_processing_loading.dart';
 import 'package:eventjar/page/auth_processing/widget/auth_processing_mobile_number.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 
 class AuthProcessingPage extends GetView<AuthProcessingController> {
   const AuthProcessingPage({super.key});

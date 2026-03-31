@@ -26,6 +26,7 @@ import 'package:eventjar/controller/qualify_lead/binding.dart';
 import 'package:eventjar/controller/reminder/binding.dart';
 import 'package:eventjar/controller/schedule_meeting/binding.dart';
 import 'package:eventjar/controller/scheduler/binding.dart';
+import 'package:eventjar/controller/set_2fa/binding.dart';
 import 'package:eventjar/controller/signIn/binding.dart';
 import 'package:eventjar/controller/signUp/binding.dart';
 import 'package:eventjar/controller/splashScreen/binding.dart';
@@ -58,6 +59,7 @@ import 'package:eventjar/page/qualify_lead/qualify_lead.dart';
 import 'package:eventjar/page/reminder/reminder_page.dart';
 import 'package:eventjar/page/schedule_meeting/schedule_meeting.dart';
 import 'package:eventjar/page/scheduler/scheduler_page.dart';
+import 'package:eventjar/page/set_2fa/set_2fa_page.dart';
 import 'package:eventjar/page/sign_in/sign_in_page.dart';
 import 'package:eventjar/page/sign_up/sign_up_page.dart';
 import 'package:eventjar/page/splash_screen/splash_screen_page.dart';
@@ -91,6 +93,11 @@ class RoutePage {
       name: RouteName.signUpPage,
       page: () => SignUpPage(),
       binding: SignUpBinding(),
+    ),
+    GetPage(
+      name: RouteName.set2fa,
+      page: () => Set2faPage(),
+      binding: Set2faBinding(),
     ),
     //Forgot password
     GetPage(

@@ -19,6 +19,8 @@ class UserProfileState {
   RxBool isEditingAvatar = false.obs;
   Rx<File?> selectedAvatarFile = Rxn<File>();
 
+  RxBool isLoggingOut = false.obs;
+
   // Phone OTP verification
   RxBool isSendingOtp = false.obs;
   RxBool isVerifyingOtp = false.obs;

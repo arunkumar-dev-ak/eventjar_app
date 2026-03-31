@@ -5,6 +5,7 @@ class RouteName {
   static const forgotPasswordPage = '/forgotPasswordPage';
   static const splashScreen = '/splashScreen';
   static const authProcessingPage = '/authProcessingPage';
+  static const set2fa = '/set2faPage';
 
   //home page
   static const dashboardpage = '/dashboardPage';

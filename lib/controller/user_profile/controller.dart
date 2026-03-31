@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:eventjar/api/signin_api/signin_api.dart';
 import 'package:eventjar/model/auth/login_model.dart';
 import 'package:eventjar/model/user_profile/user_profile.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -76,6 +77,7 @@ class UserProfileController extends GetxController
       await checkDeletionStatus();
     }
     state.isDeleteLoading.value = false;
+    if (state.isLoggingOut.value) state.isLoggingOut.value = false;
   }
 
   void checkAndUpdateLocalProfileInfo() async {
@@ -221,6 +223,10 @@ class UserProfileController extends GetxController
         dashboardController.state.selectedIndex.value = 0;
       }
     });
+  }
+
+  void navigateToTwoFaPage() {
+    Get.toNamed(RouteName.set2fa);
   }
 
   Future<void> handleDeleteAccount({
@@ -701,9 +707,16 @@ class UserProfileController extends GetxController
     };
   }
 
-  void handleLogout() {
+  void handleLogout() async {
+    try {
+      state.isLoggingOut.value = true;
+      await SignInApi.logout();
+    } catch (err) {
+      LoggerService.loggerInstance.e(err);
+    } finally {
+      state.isLoggingOut.value = false;
+    }
     UserStore.to.clearStore();
-    // dashboardController.state.selectedIndex.value = 0;
     Get.offAllNamed(RouteName.dashboardpage);
     AppSnackbar.success(
       title: "Logged Out Successfully",
