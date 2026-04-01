@@ -11,7 +11,6 @@ Widget userProfileBuildSecurity() {
 
   return Column(
     children: [
-      // ===== Security Section (Unified Card) =====
       Container(
         padding: EdgeInsets.all(3.wp),
         decoration: BoxDecoration(
@@ -19,79 +18,112 @@ Widget userProfileBuildSecurity() {
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.grey.shade300),
         ),
-        child: Column(
-          children: [
-            // ===== Enable 2FA =====
-            InkWell(
-              onTap: () {
-                controller.navigateToTwoFaPage();
-              },
-              child: Row(
-                children: [
-                  Icon(Icons.shield_outlined, color: Colors.blue),
-                  SizedBox(width: 3.wp),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Enable Two-Factor Authentication",
-                          style: TextStyle(
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
+        child: Obx(() {
+          bool is2FaEnabled =
+              controller.state.userProfile.value?.twoFactorEnabled ?? false;
+          return Column(
+            children: [
+              Container(
+                padding: EdgeInsets.all(3.wp),
+                decoration: BoxDecoration(
+                  color: is2FaEnabled ? Colors.red.shade50 : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: InkWell(
+                  onTap: () {
+                    if (is2FaEnabled) {
+                      controller.showDisable2FaDialog();
+                    } else {
+                      controller.navigateToTwoFaPage();
+                    }
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        is2FaEnabled
+                            ? Icons.shield_moon_outlined
+                            : Icons.shield_outlined,
+                        color: is2FaEnabled ? Colors.red : Colors.blue,
+                      ),
+                      SizedBox(width: 3.wp),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              is2FaEnabled
+                                  ? "Disable 2FA Authentication"
+                                  : "Enable 2FA Authentication",
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w600,
+                                color: is2FaEnabled ? Colors.red : Colors.black,
+                              ),
+                            ),
+                            Text(
+                              is2FaEnabled
+                                  ? "This will make your account less secure"
+                                  : "Add extra security to your account",
+                              style: TextStyle(
+                                fontSize: 8.sp,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          "Add extra security to your account",
-                          style: TextStyle(fontSize: 8.sp, color: Colors.grey),
-                        ),
-                      ],
-                    ),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        size: 14,
+                        color: Colors.grey,
+                      ),
+                    ],
                   ),
-                  Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-                ],
+                ),
               ),
-            ),
 
-            SizedBox(height: 2.hp),
-            Divider(color: Colors.grey.shade300),
-            SizedBox(height: 2.hp),
+              SizedBox(height: 2.hp),
+              Divider(color: Colors.grey.shade300),
+              SizedBox(height: 2.hp),
 
-            // ===== Change Password =====
-            InkWell(
-              onTap: () {
-                controller.navigateToResetPassword();
-              },
-              child: Row(
-                children: [
-                  Icon(Icons.lock_outline, color: Colors.orange),
-                  SizedBox(width: 3.wp),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Change Password",
-                          style: TextStyle(
-                            fontSize: 10.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
+              // ===== Change Password =====
+              InkWell(
+                onTap: () {
+                  controller.navigateToResetPassword();
+                },
+                child: Row(
+                  children: [
+                    Icon(Icons.lock_outline, color: Colors.orange),
+                    SizedBox(width: 3.wp),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Change Password",
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                        Text(
-                          "Update your password regularly",
-                          style: TextStyle(fontSize: 8.sp, color: Colors.grey),
-                        ),
-                      ],
+                          Text(
+                            "Update your password regularly",
+                            style: TextStyle(
+                              fontSize: 8.sp,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-                ],
+                    Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        }),
       ),
 
       SizedBox(height: 2.hp),

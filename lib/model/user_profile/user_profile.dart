@@ -28,6 +28,7 @@ class UserProfile {
   final String role;
   final bool isVerified;
   final bool phoneVerified;
+  final bool twoFactorEnabled;
   final String? avatarUrl;
   final String? bio;
   final String? company;
@@ -48,6 +49,7 @@ class UserProfile {
     required this.role,
     required this.isVerified,
     required this.phoneVerified,
+    required this.twoFactorEnabled,
     this.avatarUrl,
     this.bio,
     this.company,
@@ -69,6 +71,7 @@ class UserProfile {
         role: json['role'],
         isVerified: json['isVerified'] ?? false,
         phoneVerified: json['phoneVerified'] ?? false,
+        twoFactorEnabled: json['twoFactorEnabled'] ?? false,
         phoneParsed: json['phoneParsed'] != null
             ? PhoneParsed.fromJson(json['phoneParsed'])
             : null,
@@ -97,6 +100,7 @@ class UserProfile {
     'role': role,
     'isVerified': isVerified,
     'phoneVerified': phoneVerified,
+    'twoFactorEnabled': twoFactorEnabled,
     'avatarUrl': avatarUrl,
     'bio': bio,
     'company': company,

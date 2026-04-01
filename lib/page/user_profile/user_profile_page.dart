@@ -43,66 +43,71 @@ class UserProfilePage extends GetView<UserProfileController> {
           },
           child: controller.state.isLoading.value
               ? userProfileBuildShimmerSkeleton()
-              : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      UserProfileHeader(),
-                      SizedBox(height: 2.hp),
-                      _buildSection(
-                        title: "Basic Information",
-                        child: userProfileBuildBasicInfo(),
-                        isEditEnabled: true,
-                        onEdit: () {
-                          controller.navigateToBasicInfoUpdate();
-                        },
-                      ),
-                      SizedBox(height: 2.hp),
-                      _buildSection(
-                        title: "Business Information",
-                        child: userProfileBuildBusinessInfo(),
-                        isEditEnabled: true,
-                        onEdit: () {
-                          controller.navigateToBusinessInfoUpdate();
-                        },
-                      ),
-                      SizedBox(height: 2.hp),
-                      _buildSection(
-                        title: "Networking & Interests",
-                        child: userProfileBuildNetworkInfo(),
-                        isEditEnabled: true,
-                        onEdit: () {
-                          controller.navigateToNetworkingInfoUpdate();
-                        },
-                      ),
-                      SizedBox(height: 2.hp),
-                      _buildSection(
-                        title: "Professional Summary",
-                        child: userProfilebuildSummary(),
-                        isEditEnabled: true,
-                        onEdit: () {
-                          controller.navigateToProfessionalSummaryUpdate();
-                        },
-                      ),
-                      SizedBox(height: 2.hp),
-                      _buildSection(
-                        title: "Social & Contact Links",
-                        child: userProfileBuildSocialLinks(),
-                        isEditEnabled: true,
-                        onEdit: () {
-                          controller.navigateToSocialUpdate();
-                        },
-                      ),
-                      SizedBox(height: 2.hp),
-                      _buildNotificationsSection(),
-                      SizedBox(height: 2.hp),
-                      _buildSection(
-                        title: "Security & Sessions",
-                        child: userProfileBuildSecurity(),
-                      ),
-                      // SizedBox(height: 2.hp),
-                      _buildVersionFooter(),
-                      SizedBox(height: 2.hp),
-                    ],
+              : GestureDetector(
+                  onTap: () {
+                    Get.focusScope?.unfocus();
+                  },
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        UserProfileHeader(),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          title: "Basic Information",
+                          child: userProfileBuildBasicInfo(),
+                          isEditEnabled: true,
+                          onEdit: () {
+                            controller.navigateToBasicInfoUpdate();
+                          },
+                        ),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          title: "Business Information",
+                          child: userProfileBuildBusinessInfo(),
+                          isEditEnabled: true,
+                          onEdit: () {
+                            controller.navigateToBusinessInfoUpdate();
+                          },
+                        ),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          title: "Networking & Interests",
+                          child: userProfileBuildNetworkInfo(),
+                          isEditEnabled: true,
+                          onEdit: () {
+                            controller.navigateToNetworkingInfoUpdate();
+                          },
+                        ),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          title: "Professional Summary",
+                          child: userProfilebuildSummary(),
+                          isEditEnabled: true,
+                          onEdit: () {
+                            controller.navigateToProfessionalSummaryUpdate();
+                          },
+                        ),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          title: "Social & Contact Links",
+                          child: userProfileBuildSocialLinks(),
+                          isEditEnabled: true,
+                          onEdit: () {
+                            controller.navigateToSocialUpdate();
+                          },
+                        ),
+                        SizedBox(height: 2.hp),
+                        _buildNotificationsSection(),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          title: "Security & Sessions",
+                          child: userProfileBuildSecurity(),
+                        ),
+                        // SizedBox(height: 2.hp),
+                        _buildVersionFooter(),
+                        SizedBox(height: 2.hp),
+                      ],
+                    ),
                   ),
                 ),
         );
@@ -146,7 +151,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Click to Configure Notifications",
+                      "Click to Configure Automations",
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 10.sp,
@@ -155,7 +160,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      "Manage Email, WhatsApp notifications",
+                      "Manage Email, WhatsApp automations",
                       style: TextStyle(fontSize: 8.sp, color: Colors.grey[600]),
                     ),
                   ],

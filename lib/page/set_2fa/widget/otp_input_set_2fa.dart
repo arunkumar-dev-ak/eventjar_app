@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/set_2fa/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/state_manager.dart';
 import 'package:pinput/pinput.dart';
 
@@ -21,6 +22,7 @@ class Set2faOtpInputSection extends GetView<Set2faController> {
           controller: controller.otpController,
           keyboardType: TextInputType.number,
           onChanged: (_) => controller.updateOtpValidity(),
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           defaultPinTheme: PinTheme(
             width: 45,
             height: 55,

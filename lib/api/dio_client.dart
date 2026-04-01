@@ -34,7 +34,6 @@ class DioClient {
         // ✅ Add Authorization header to every request
         onRequest: (options, handler) async {
           final token = UserStore.to.accessToken;
-          LoggerService.loggerInstance.dynamic_d("Access token -- $token");
           if (token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
