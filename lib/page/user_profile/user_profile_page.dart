@@ -36,6 +36,20 @@ class UserProfilePage extends GetView<UserProfileController> {
           ),
         ),
         elevation: 0,
+        actions: [
+          Obx(() => IconButton(
+                icon: Icon(
+                  ThemeStore.to.isDarkMode
+                      ? Icons.light_mode_rounded
+                      : Icons.dark_mode_rounded,
+                  color: Colors.white,
+                ),
+                onPressed: () => ThemeStore.to.toggleTheme(),
+                tooltip: ThemeStore.to.isDarkMode
+                    ? 'Switch to Light Mode'
+                    : 'Switch to Dark Mode',
+              )),
+        ],
       ),
       body: Obx(() {
         return RefreshIndicator(
