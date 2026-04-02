@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/nfc_write/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -93,7 +94,7 @@ class NfcWriteScanningZone extends GetView<NfcWriteController> {
               SizedBox(height: 8),
               Text(
                 'Hold your NFC card against the back of your phone',
-                style: TextStyle(fontSize: 8.sp, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 8.sp, color: AppColors.textSecondary(context)),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -137,7 +138,7 @@ class _ErrorPreview extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 4.wp),
               child: Text(
                 controller.state.errorMessage.value ?? 'Unknown error',
-                style: TextStyle(fontSize: 9.sp, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 9.sp, color: AppColors.textSecondary(context)),
                 textAlign: TextAlign.center,
               ),
             ),

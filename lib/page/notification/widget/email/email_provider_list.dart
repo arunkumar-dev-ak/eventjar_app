@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/notification/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/notification/email_providers.dart'
@@ -88,10 +89,10 @@ class ProviderCard extends StatelessWidget {
       duration: const Duration(milliseconds: 250),
       margin: EdgeInsets.only(bottom: 1.hp),
       decoration: BoxDecoration(
-        color: isConfigured ? Colors.green.shade50 : Colors.white,
+        color: isConfigured ? Colors.green.shade50 : AppColors.cardBg(context),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isConfigured ? Colors.green.shade200 : Colors.grey.shade200,
+          color: isConfigured ? Colors.green.shade200 : AppColors.divider(context),
         ),
         boxShadow: [
           BoxShadow(
@@ -141,12 +142,12 @@ class ProviderCard extends StatelessWidget {
         SizedBox(height: 0.4.hp),
         Text(
           provider.description,
-          style: TextStyle(color: Colors.grey.shade600, fontSize: 8.sp),
+          style: TextStyle(color: AppColors.textSecondaryStatic, fontSize: 8.sp),
         ),
         SizedBox(height: 0.4.hp),
         Text(
           "${provider.host} • ${provider.port}",
-          style: TextStyle(fontSize: 7.sp, color: Colors.grey.shade500),
+          style: TextStyle(fontSize: 7.sp, color: AppColors.textHintStatic),
         ),
       ],
     );

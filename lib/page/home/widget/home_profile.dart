@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/home/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/page/home/widget/scorecard/networking_scorecard.dart';
@@ -44,12 +45,18 @@ class HomeProfile extends GetView<HomeController> {
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
                 ),
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFFE3F2FD),
-                    Color(0xFFBBDEFB),
-                    Color(0xFF90CAF9),
-                  ],
+                gradient: LinearGradient(
+                  colors: Theme.of(context).brightness == Brightness.dark
+                      ? [
+                          const Color(0xFF1A2A3A),
+                          const Color(0xFF1E3450),
+                          const Color(0xFF223E5A),
+                        ]
+                      : [
+                          const Color(0xFFE3F2FD),
+                          const Color(0xFFBBDEFB),
+                          const Color(0xFF90CAF9),
+                        ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
@@ -103,7 +110,7 @@ class HomeProfile extends GetView<HomeController> {
                                     Text(
                                       profileData.name.toString().toUpperCase(),
                                       style: TextStyle(
-                                        color: const Color(0xFF1A1A2E),
+                                        color: AppColors.textPrimary(context),
                                         fontSize: 11.sp,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -114,7 +121,7 @@ class HomeProfile extends GetView<HomeController> {
                                     Text(
                                       profileData.email!,
                                       style: TextStyle(
-                                        color: Colors.grey[700],
+                                        color: AppColors.textSecondary(context),
                                         fontSize: 9.sp,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -125,7 +132,7 @@ class HomeProfile extends GetView<HomeController> {
                                     Text(
                                       profileData.phone ?? "Yet to add",
                                       style: TextStyle(
-                                        color: Colors.grey[600],
+                                        color: AppColors.textSecondary(context),
                                         fontSize: 9.sp,
                                       ),
                                     ),
@@ -243,8 +250,8 @@ class HomeProfile extends GetView<HomeController> {
 
   Widget _buildShimmerProfile() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: AppColors.borderStatic,
+      highlightColor: AppColors.chipBgStatic,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.5.hp),
         child: Column(

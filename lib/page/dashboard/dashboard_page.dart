@@ -5,6 +5,7 @@ import 'package:eventjar/page/home/home.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_page.dart';
 import 'package:eventjar/page/network/network_page.dart';
 import 'package:eventjar/page/user_profile/user_profile_page.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -14,11 +15,18 @@ class DashboardPage extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: isDark
+            ? AppColors.darkCard
+            : Colors.white,
+        systemNavigationBarIconBrightness: isDark
+            ? Brightness.light
+            : Brightness.dark,
       ),
       child: PopScope(
         canPop: false,

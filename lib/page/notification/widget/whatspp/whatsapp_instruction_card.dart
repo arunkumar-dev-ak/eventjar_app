@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/notification/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -48,7 +49,7 @@ class WhatsAppInstructionCard extends GetView<NotificationController> {
 
           Text(
             "Store your WhatsApp Business API token to enable event notifications.",
-            style: TextStyle(fontSize: 9.sp, color: Colors.grey.shade800),
+            style: TextStyle(fontSize: 9.sp, color: AppColors.textPrimary(context)),
           ),
 
           SizedBox(height: 1.5.hp),
@@ -60,7 +61,7 @@ class WhatsAppInstructionCard extends GetView<NotificationController> {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 1.2.hp),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.cardBg(context),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.blue.shade200),
                 boxShadow: [

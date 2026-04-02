@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/set_2fa/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,9 +29,9 @@ class Set2faOtpInputSection extends GetView<Set2faController> {
             height: 55,
             textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
+              color: AppColors.scaffoldBg(context),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(color: AppColors.border(context)),
             ),
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/event_info/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/model/event_info/event_attendee_meeting_req_model.dart';
@@ -75,11 +76,11 @@ Widget buildRequestAttendeeListFromModel(
     margin: EdgeInsets.symmetric(vertical: 0.5.hp),
     padding: EdgeInsets.all(2.wp),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: AppColors.cardBgStatic,
       borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
-          color: Colors.grey.withValues(alpha: 0.1),
+          color: AppColors.shadowStatic.withValues(alpha: 0.1),
           blurRadius: 8,
           offset: Offset(0, 4),
         ),
@@ -117,7 +118,7 @@ Widget buildRequestAttendeeListFromModel(
               if (user.company != null)
                 Text(
                   user.company ?? "",
-                  style: TextStyle(fontSize: 8.sp, color: Colors.grey[700]),
+                  style: TextStyle(fontSize: 8.sp, color: AppColors.textSecondaryStatic),
                 ),
               SizedBox(height: 0.5.hp),
               Row(
@@ -172,7 +173,7 @@ Widget buildRequestAttendeeListFromModel(
               ),
               Text(
                 req.message,
-                style: TextStyle(fontSize: 8.sp, color: Colors.black87),
+                style: TextStyle(fontSize: 8.sp, color: AppColors.textPrimaryStatic),
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
               ),

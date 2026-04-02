@@ -34,7 +34,7 @@ class AuthProcessignLoading extends GetView<AuthProcessingController> {
                   controller.state.loadingText.value,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.black87,
+                    color: AppColors.textPrimary(context),
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.2,
@@ -49,7 +49,7 @@ class AuthProcessignLoading extends GetView<AuthProcessingController> {
             "Hang tight, we’re setting things up for you",
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.grey.shade600,
+              color: AppColors.textSecondary(context),
               fontSize: 10.sp,
               height: 1.4,
             ),

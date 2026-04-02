@@ -75,7 +75,7 @@ class NotificationTab extends StatelessWidget {
           border: Border.all(
             color: selected
                 ? AppColors.gradientDarkStart.withValues(alpha: 0.2)
-                : Colors.grey.shade300,
+                : AppColors.border(context),
             width: 1.2,
           ),
           boxShadow: selected

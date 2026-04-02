@@ -18,14 +18,21 @@ class EventInfoPage extends GetView<EventInfoController> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: isDark
+            ? AppColors.darkBackground
+            : Colors.white,
+        systemNavigationBarIconBrightness: isDark
+            ? Brightness.light
+            : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.cardBg(context),
         body: SafeArea(
           top: false,
           child: Column(
@@ -68,7 +75,7 @@ class EventInfoPage extends GetView<EventInfoController> {
 
   Widget _buildTabBar() {
     return Container(
-      color: Colors.white,
+      color: AppColors.cardBgStatic,
       padding: EdgeInsets.only(bottom: 1.hp),
       child: Obx(() {
         final isLoading = controller.state.isLoading.value;
@@ -102,7 +109,7 @@ class EventInfoPage extends GetView<EventInfoController> {
                     ),
                     decoration: BoxDecoration(
                       gradient: isSelected ? AppColors.buttonGradient : null,
-                      color: isSelected ? null : Colors.grey.shade100,
+                      color: isSelected ? null : AppColors.chipBg(context),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -113,7 +120,7 @@ class EventInfoPage extends GetView<EventInfoController> {
                           size: 16,
                           color: isSelected
                               ? Colors.white
-                              : Colors.grey.shade600,
+                              : AppColors.textSecondary(context),
                         ),
                         const SizedBox(width: 6),
                         Text(
@@ -123,7 +130,7 @@ class EventInfoPage extends GetView<EventInfoController> {
                             fontWeight: FontWeight.w600,
                             color: isSelected
                                 ? Colors.white
-                                : Colors.grey.shade600,
+                                : AppColors.textSecondary(context),
                           ),
                         ),
                       ],
@@ -168,7 +175,10 @@ class EventInfoPage extends GetView<EventInfoController> {
           Text(
             "Book a ticket to access attendees and start networking.",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 9.sp, color: Colors.grey.shade600),
+            style: TextStyle(
+              fontSize: 9.sp,
+              color: AppColors.textSecondary(context),
+            ),
           ),
           SizedBox(height: 3.hp),
           GestureDetector(
@@ -204,7 +214,7 @@ class EventInfoPage extends GetView<EventInfoController> {
       }
 
       return Container(
-        color: Colors.grey.shade50,
+        color: AppColors.scaffoldBgStatic,
         child: AnimatedBuilder(
           animation: tabController,
           builder: (context, child) {

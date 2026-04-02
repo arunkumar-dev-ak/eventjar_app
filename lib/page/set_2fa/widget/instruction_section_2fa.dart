@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -10,9 +11,9 @@ class InstructionSection extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(3.5.wp),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: AppColors.scaffoldBg(context),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: AppColors.divider(context)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +60,7 @@ class InstructionStep extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: TextStyle(fontSize: 9.sp, color: Colors.grey.shade700),
+              style: TextStyle(fontSize: 9.sp, color: AppColors.textSecondary(context)),
             ),
           ),
         ],

@@ -23,7 +23,9 @@ class HomePage extends GetView<HomeController> {
       ),
       child: Container(
         width: 100.wp,
-        decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
+        decoration: BoxDecoration(
+          gradient: AppColors.appBarGradientFor(context),
+        ),
         child: SafeArea(
           child: RefreshIndicator(
             onRefresh: () async {
@@ -62,16 +64,16 @@ class HomePage extends GetView<HomeController> {
                     minHeight: 70,
                     maxHeight: 70,
                     child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: AppColors.appBarGradient,
+                      decoration: BoxDecoration(
+                        gradient: AppColors.appBarGradientFor(context),
                       ),
                       child: HomeAppBar(),
                     ),
                   ),
                 ),
                 DecoratedSliver(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: AppColors.cardBg(context),
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20),
@@ -110,7 +112,11 @@ class _SliverSearchBarDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    return Container(height: maxHeight, color: Colors.white, child: child);
+    return Container(
+      height: maxHeight,
+      color: AppColors.cardBg(context),
+      child: child,
+    );
   }
 
   @override

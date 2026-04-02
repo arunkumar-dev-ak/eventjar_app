@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,7 @@ Widget buildNotesSection(String notes, Color stageColor) {
         style: TextStyle(
           fontSize: 10.sp,
           fontWeight: FontWeight.w700,
-          color: Colors.black87,
+          color: AppColors.textPrimaryStatic,
         ),
       ),
       tilePadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -29,21 +30,21 @@ Widget buildNotesSection(String notes, Color stageColor) {
       ), // Indent content
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
+        side: BorderSide(color: AppColors.dividerStatic),
       ),
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: AppColors.scaffoldBgStatic,
       collapsedBackgroundColor: Colors.transparent,
       collapsedShape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
+        side: BorderSide(color: AppColors.dividerStatic),
       ),
       children: [
         Container(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.cardBgStatic,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade100),
+            border: Border.all(color: AppColors.chipBgStatic),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.04),
@@ -56,7 +57,7 @@ Widget buildNotesSection(String notes, Color stageColor) {
             notes,
             style: TextStyle(
               fontSize: 8.sp,
-              color: Colors.grey.shade800,
+              color: AppColors.textPrimaryStatic,
               height: 1.5,
             ),
           ),

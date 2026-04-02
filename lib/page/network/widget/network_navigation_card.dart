@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,8 @@ class NetworkNavigationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -26,20 +29,29 @@ class NetworkNavigationCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(22),
 
-            /// 🌤 Light blue gradient background
+            /// Gradient background
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [const Color(0xFFF5FAFF), const Color(0xFFE9F3FF)],
+              colors: isDark
+                  ? [const Color(0xFF1A2A3A), const Color(0xFF1E3450)]
+                  : [const Color(0xFFF5FAFF), const Color(0xFFE9F3FF)],
             ),
 
-            /// Subtle blue border
-            border: Border.all(color: const Color(0xFFB6D9FF), width: 1),
+            /// Border
+            border: Border.all(
+              color: isDark
+                  ? const Color(0xFF2A4A6A)
+                  : const Color(0xFFB6D9FF),
+              width: 1,
+            ),
 
             /// Soft elevation
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFB6D9FF).withValues(alpha: 0.25),
+                color: isDark
+                    ? Colors.black.withValues(alpha: 0.3)
+                    : const Color(0xFFB6D9FF).withValues(alpha: 0.25),
                 blurRadius: 16,
                 offset: const Offset(0, 8),
               ),
@@ -54,10 +66,15 @@ class NetworkNavigationCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: LinearGradient(
-                    colors: [
-                      Colors.white.withValues(alpha: 0.9),
-                      Colors.white.withValues(alpha: 0.6),
-                    ],
+                    colors: isDark
+                        ? [
+                            const Color(0xFF2A3A4A).withValues(alpha: 0.9),
+                            const Color(0xFF2A3A4A).withValues(alpha: 0.6),
+                          ]
+                        : [
+                            Colors.white.withValues(alpha: 0.9),
+                            Colors.white.withValues(alpha: 0.6),
+                          ],
                   ),
                   boxShadow: [
                     BoxShadow(
@@ -70,7 +87,9 @@ class NetworkNavigationCard extends StatelessWidget {
                 child: Icon(
                   icon,
                   size: 22,
-                  color: const Color(0xFF2F6FED), // blue accent
+                  color: isDark
+                      ? const Color(0xFF5B9BEF)
+                      : const Color(0xFF2F6FED),
                 ),
               ),
 
@@ -84,7 +103,7 @@ class NetworkNavigationCard extends StatelessWidget {
                     fontSize: 10.5.sp,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.3,
-                    color: const Color(0xFF1F3B6E),
+                    color: AppColors.textPrimary(context),
                   ),
                 ),
               ),
@@ -93,7 +112,9 @@ class NetworkNavigationCard extends StatelessWidget {
               Icon(
                 onTap == null ? Icons.lock : Icons.arrow_right,
                 size: onTap == null ? 20 : 25,
-                color: const Color(0xFF5A7FCB),
+                color: isDark
+                    ? const Color(0xFF7A9FCB)
+                    : const Color(0xFF5A7FCB),
               ),
             ],
           ),

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:eventjar/controller/event_info/controller.dart';
 import 'package:eventjar/controller/event_info/extension/event_info_extension.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:eventjar/model/event_info/event_info_media_extension_model.dart';
@@ -66,12 +67,12 @@ class EventInfoHeader extends StatelessWidget {
       final eventInfo = controller.state.eventInfo.value;
 
       return Container(
-        color: Colors.white,
+        color: AppColors.cardBgStatic,
         width: double.infinity,
         child: Text(
           eventInfo?.title ?? 'Event Details',
           style: TextStyle(
-            color: Colors.grey.shade900,
+            color: AppColors.textPrimaryStatic,
             fontSize: 12.sp,
             fontWeight: FontWeight.w700,
           ),
@@ -302,7 +303,7 @@ class EventInfoHeader extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'No Image',
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+              style: TextStyle(color: AppColors.textHintStatic, fontSize: 12),
             ),
           ],
         ),
@@ -376,7 +377,7 @@ class EventInfoHeader extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 1.2.hp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBgStatic,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -400,10 +401,10 @@ class EventInfoHeader extends StatelessWidget {
                   minChildSize: 0.4,
                   maxChildSize: 0.95,
                   expand: false,
-                  builder: (_, scrollController) => Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.vertical(
+                  builder: (sheetContext, scrollController) => Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBg(sheetContext),
+                      borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(20),
                       ),
                     ),
@@ -414,7 +415,7 @@ class EventInfoHeader extends StatelessWidget {
                           width: 40,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
+                            color: AppColors.border(sheetContext),
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -462,7 +463,7 @@ class EventInfoHeader extends StatelessWidget {
                           'Organised by',
                           style: TextStyle(
                             fontSize: 8.5.sp,
-                            color: Colors.grey.shade500,
+                            color: AppColors.textHintStatic,
                           ),
                         ),
                         Text(
@@ -470,7 +471,7 @@ class EventInfoHeader extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 9.sp,
                             fontWeight: FontWeight.w700,
-                            color: Colors.grey.shade800,
+                            color: AppColors.textPrimaryStatic,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -596,7 +597,7 @@ class EventInfoHeader extends StatelessWidget {
                     Icon(
                       Icons.chevron_right_rounded,
                       size: 16,
-                      color: Colors.grey.shade400,
+                      color: AppColors.iconMutedStatic,
                     ),
                   ],
                 );
@@ -675,7 +676,7 @@ class EventInfoHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBgStatic,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -699,10 +700,10 @@ class EventInfoHeader extends StatelessWidget {
                   minChildSize: 0.4,
                   maxChildSize: 0.95,
                   expand: false,
-                  builder: (_, scrollController) => Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.vertical(
+                  builder: (sheetContext, scrollController) => Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBg(sheetContext),
+                      borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(20),
                       ),
                     ),
@@ -713,7 +714,7 @@ class EventInfoHeader extends StatelessWidget {
                           width: 40,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
+                            color: AppColors.border(sheetContext),
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -764,7 +765,7 @@ class EventInfoHeader extends StatelessWidget {
                           Text(
                             'Tap to view agenda',
                             style: TextStyle(
-                              color: Colors.grey.shade500,
+                              color: AppColors.textHintStatic,
                               fontSize: 8.sp,
                             ),
                           ),
@@ -774,14 +775,14 @@ class EventInfoHeader extends StatelessWidget {
                     Icon(
                       Icons.chevron_right_rounded,
                       size: 16,
-                      color: Colors.grey.shade400,
+                      color: AppColors.iconMutedStatic,
                     ),
                   ],
                 ),
               ),
             ),
           ),
-          Container(width: 1, height: 40, color: Colors.grey.shade200),
+          Container(width: 1, height: 40, color: AppColors.dividerStatic),
           SizedBox(width: 4.wp),
           // Location preview
           Expanded(
@@ -835,7 +836,7 @@ class EventInfoHeader extends StatelessWidget {
                           Text(
                             eventInfo.isVirtual ? 'Tap to join' : 'Tap to View',
                             style: TextStyle(
-                              color: Colors.grey.shade500,
+                              color: AppColors.textHintStatic,
                               fontSize: 8.sp,
                             ),
                             maxLines: 1,
@@ -847,7 +848,7 @@ class EventInfoHeader extends StatelessWidget {
                     Icon(
                       Icons.chevron_right_rounded,
                       size: 16,
-                      color: Colors.grey.shade400,
+                      color: AppColors.iconMutedStatic,
                     ),
                   ],
                 ),

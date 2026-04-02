@@ -1,3 +1,4 @@
+import 'package:eventjar/global/store/theme_store.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/storage/storage_service.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,7 @@ class Global {
     // );
     await Get.putAsync<StorageService>(() => StorageService().init());
     Get.put<UserStore>(UserStore());
+    Get.put<ThemeStore>(ThemeStore());
     // Get.put<ToastController>(ToastController());
   }
 }

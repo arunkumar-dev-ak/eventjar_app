@@ -25,7 +25,7 @@ Widget buildVirtualEventCard({required String platform, String? meetingLink}) {
           Text(
             "Platform",
             style: TextStyle(
-              color: Colors.grey.shade800,
+              color: AppColors.textPrimaryStatic,
               fontSize: 8.sp,
               fontWeight: FontWeight.w600,
             ),

@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -37,7 +38,7 @@ Widget eventInfoAppBarImageNotFound() {
           Text(
             'No Image Available',
             style: TextStyle(
-              color: Colors.grey.shade500,
+              color: AppColors.textHintStatic,
               fontSize: 12,
               fontWeight: FontWeight.w500,
             ),

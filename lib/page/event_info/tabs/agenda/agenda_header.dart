@@ -30,7 +30,7 @@ class AgendaHeader extends StatelessWidget {
             Text(
               eventTimeRange,
               style: TextStyle(
-                color: Colors.grey.shade800,
+                color: AppColors.textPrimary(context),
                 fontSize: 8.sp,
                 fontWeight: FontWeight.w600,
               ),

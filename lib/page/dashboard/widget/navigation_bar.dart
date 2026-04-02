@@ -27,12 +27,12 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
       return BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.cardBg(context),
         elevation: 8,
         selectedItemColor: AppColors.gradientDarkStart,
         unselectedItemColor: Colors.grey,
-        selectedLabelStyle: optionStyle.copyWith(color: Colors.grey.shade900),
-        unselectedLabelStyle: optionStyle.copyWith(color: Colors.grey.shade500),
+        selectedLabelStyle: optionStyle.copyWith(color: AppColors.textPrimary(context)),
+        unselectedLabelStyle: optionStyle.copyWith(color: AppColors.textHint(context)),
         items: [
           _createBottomNavigationItem(
             filledIcon: Icons.home,
@@ -137,7 +137,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       iconWidget = Icon(
         selectedIndex ? Icons.account_circle : Icons.account_circle_outlined,
         size: 24,
-        color: selectedIndex ? Colors.grey.shade800 : Colors.grey.shade400,
+        color: selectedIndex ? AppColors.textPrimaryStatic : AppColors.iconMutedStatic,
       );
     }
 

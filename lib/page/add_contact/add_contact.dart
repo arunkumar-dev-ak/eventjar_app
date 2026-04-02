@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/add_contact/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/add_contact/add_contact_form_element.dart';
 import 'package:eventjar/page/add_contact/add_contact_header_widgets.dart';
@@ -19,12 +20,12 @@ class AddContactPage extends GetView<AddContactController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: AppColors.textPrimary(context)),
         ),
         centerTitle: false,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
         elevation: 4,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.cardBg(context),
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
       body: GestureDetector(
@@ -187,11 +188,15 @@ class AddContactPage extends GetView<AddContactController> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               side: BorderSide(
-                                color: Colors.blue.shade700,
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.blue.shade300
+                                    : Colors.blue.shade700,
                                 width: 2,
                               ),
-                              backgroundColor: Colors.white,
-                              foregroundColor: Colors.blue.shade700,
+                              backgroundColor: AppColors.cardBg(context),
+                              foregroundColor: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.blue.shade300
+                                  : Colors.blue.shade700,
                             ),
                             child: Text(
                               controller.state.clearButtonTitle.value,
@@ -258,181 +263,205 @@ class AddContactPage extends GetView<AddContactController> {
   }
 
   Widget _buildAdditionalInfoSection(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ── Header ──
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 4, 4),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.info_outline_rounded,
-                  size: 18,
-                  color: Colors.blue.shade700,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Additional Info',
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black87,
-                  ),
-                ),
-                const Spacer(),
-                // Select All checkbox — only for visiting card contacts
-                Obx(() {
-                  if (!controller.state.isFromCardScan.value) {
-                    return const SizedBox.shrink();
-                  }
-                  final anyChecked = controller
-                      .state
-                      .additionalInfoSelection
-                      .values
-                      .any((v) => v);
-                  final allChecked = controller
-                      .state
-                      .additionalInfoSelection
-                      .values
-                      .every((v) => v);
-                  // tristate: true=all checked, null=some checked, false=none
-                  final checkboxValue = allChecked
-                      ? true
-                      : (anyChecked ? null : false);
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        allChecked ? 'Uncheck All' : 'Check All',
+    return Obx(() {
+      final isExpanded = controller.state.isAdditionalInfoExpanded.value;
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        decoration: BoxDecoration(
+          color: AppColors.scaffoldBg(context),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.divider(context)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── Tappable Header ──
+            InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () => controller.state.isAdditionalInfoExpanded.toggle(),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline_rounded,
+                      size: 18,
+                      color: Colors.blue.shade700,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Additional Info',
                         style: TextStyle(
-                          fontSize: 9.sp,
-                          color: Colors.grey[600],
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary(context),
                         ),
                       ),
-                      Checkbox(
-                        value: checkboxValue,
-                        tristate: true,
-                        activeColor: Colors.blue.shade700,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        onChanged: (_) =>
-                            controller.toggleAllAdditionalFields(),
+                    ),
+                    // Select All checkbox — only for visiting card contacts
+                    if (isExpanded && controller.state.isFromCardScan.value)
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Obx(() {
+                            final anyChecked = controller
+                                .state
+                                .additionalInfoSelection
+                                .values
+                                .any((v) => v);
+                            final allChecked = controller
+                                .state
+                                .additionalInfoSelection
+                                .values
+                                .every((v) => v);
+                            final checkboxValue = allChecked
+                                ? true
+                                : (anyChecked ? null : false);
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  allChecked ? 'Uncheck All' : 'Check All',
+                                  style: TextStyle(
+                                    fontSize: 9.sp,
+                                    color: AppColors.textSecondary(context),
+                                  ),
+                                ),
+                                Checkbox(
+                                  value: checkboxValue,
+                                  tristate: true,
+                                  activeColor: Colors.blue.shade700,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  onChanged: (_) =>
+                                      controller.toggleAllAdditionalFields(),
+                                ),
+                              ],
+                            );
+                          }),
+                        ],
                       ),
-                    ],
-                  );
-                }),
-              ],
-            ),
-          ),
-          Divider(height: 1, color: Colors.grey.shade200),
-
-          // ── Phone 2 ──
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 12, 16, 8),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Obx(
-                  () => controller.state.isFromCardScan.value
-                      ? Checkbox(
-                          value:
-                              controller
-                                  .state
-                                  .additionalInfoSelection['phone2'] ??
-                              false,
-                          activeColor: Colors.blue.shade700,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          onChanged: (_) =>
-                              controller.toggleAdditionalField('phone2'),
-                        )
-                      : const SizedBox(width: 16),
+                    AnimatedRotation(
+                      turns: isExpanded ? 0.5 : 0.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: Icon(
+                        Icons.expand_more_rounded,
+                        color: AppColors.textSecondary(context),
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: Obx(
-                    () => IntlPhoneField(
-                      key: ValueKey(
-                        '${controller.state.selectedPhone2Country.value.code}_${controller.state.phone2FieldKey.value}',
-                      ),
-                      decoration: _phoneDecoration('Phone Number'),
-                      pickerDialogStyle: _pickerStyle(),
-                      initialCountryCode:
-                          controller.state.selectedPhone2Country.value.code,
-                      onCountryChanged: (country) {
-                        controller.state.selectedPhone2Country.value = country;
-                      },
-                      controller: controller.phone2Controller,
-                      // disableLengthCheck: true,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (phone) {
-                        final value = controller.phone2Controller.text.trim();
+              ),
+            ),
 
-                        if (value.isEmpty) return null;
+            // ── Collapsible content ──
+            AnimatedCrossFade(
+              firstChild: const SizedBox(width: double.infinity, height: 0),
+              secondChild: Column(
+                children: [
+                  Divider(height: 1, color: AppColors.divider(context)),
 
-                        // if (phone == null || phone.number.isEmpty) {
-                        //   return 'Enter valid phone number';
-                        // }
-
-                        if (phone != null && !phone.isValidNumber()) {
-                          return 'Enter valid number';
-                        }
-
-                        return null;
-                      },
+                  // ── Phone 2 ──
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 12, 16, 8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Obx(
+                          () => controller.state.isFromCardScan.value
+                              ? Checkbox(
+                                  value:
+                                      controller
+                                          .state
+                                          .additionalInfoSelection['phone2'] ??
+                                      false,
+                                  activeColor: Colors.blue.shade700,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  onChanged: (_) =>
+                                      controller.toggleAdditionalField('phone2'),
+                                )
+                              : const SizedBox(width: 16),
+                        ),
+                        Expanded(
+                          child: Obx(
+                            () => IntlPhoneField(
+                              key: ValueKey(
+                                '${controller.state.selectedPhone2Country.value.code}_${controller.state.phone2FieldKey.value}',
+                              ),
+                              decoration: _phoneDecoration('Phone Number'),
+                              pickerDialogStyle: _pickerStyle(),
+                              initialCountryCode:
+                                  controller.state.selectedPhone2Country.value.code,
+                              onCountryChanged: (country) {
+                                controller.state.selectedPhone2Country.value = country;
+                              },
+                              controller: controller.phone2Controller,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              validator: (phone) {
+                                final value = controller.phone2Controller.text.trim();
+                                if (value.isEmpty) return null;
+                                if (phone != null && !phone.isValidNumber()) {
+                                  return 'Enter valid number';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
 
-          // ── Company ──
-          _buildFieldRow(
-            fieldKey: 'company',
-            child: ContactFormElement(
-              controller: controller.companyController,
-              label: 'Company',
-              keyboardType: TextInputType.text,
-              onTap: () => _autoCheck('company'),
-            ),
-          ),
+                  // ── Company ──
+                  _buildFieldRow(
+                    fieldKey: 'company',
+                    child: ContactFormElement(
+                      controller: controller.companyController,
+                      label: 'Company',
+                      keyboardType: TextInputType.text,
+                      onTap: () => _autoCheck('company'),
+                    ),
+                  ),
 
-          // ── Website ──
-          _buildFieldRow(
-            fieldKey: 'website',
-            child: ContactFormElement(
-              controller: controller.websiteController,
-              label: 'Website',
-              keyboardType: TextInputType.url,
-              onTap: () => _autoCheck('website'),
-            ),
-          ),
+                  // ── Website ──
+                  _buildFieldRow(
+                    fieldKey: 'website',
+                    child: ContactFormElement(
+                      controller: controller.websiteController,
+                      label: 'Website',
+                      keyboardType: TextInputType.url,
+                      onTap: () => _autoCheck('website'),
+                    ),
+                  ),
 
-          // ── Address ──
-          _buildFieldRow(
-            fieldKey: 'address',
-            child: ContactFormElement(
-              controller: controller.addressController,
-              label: 'Address',
-              maxLines: 2,
-              minLines: 2,
-              onTap: () => _autoCheck('address'),
-            ),
-          ),
+                  // ── Address ──
+                  _buildFieldRow(
+                    fieldKey: 'address',
+                    child: ContactFormElement(
+                      controller: controller.addressController,
+                      label: 'Address',
+                      maxLines: 2,
+                      minLines: 2,
+                      onTap: () => _autoCheck('address'),
+                    ),
+                  ),
 
-          SizedBox(height: 8),
-        ],
-      ),
-    );
+                  SizedBox(height: 8),
+                ],
+              ),
+              crossFadeState: isExpanded
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
+              duration: const Duration(milliseconds: 200),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   void _autoCheck(String fieldKey) {
@@ -476,11 +505,11 @@ class AddContactPage extends GetView<AddContactController> {
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.0),
-        borderSide: BorderSide(color: Colors.grey.shade400, width: 1.5),
+        borderSide: BorderSide(color: AppColors.borderStatic, width: 1.5),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.0),
-        borderSide: BorderSide(color: Colors.blue.shade700, width: 2.0),
+        borderSide: BorderSide(color: AppColors.isDark ? Colors.blue.shade300 : Colors.blue.shade700, width: 2.0),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.0),

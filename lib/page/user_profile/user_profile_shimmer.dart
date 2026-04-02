@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
@@ -25,19 +26,26 @@ Widget userProfileBuildShimmerSkeleton() {
 }
 
 Widget _buildHeaderShimmer() {
+  final base = AppColors.dividerStatic;
+  final highlight = AppColors.chipBgStatic;
+  final placeholder = AppColors.borderStatic;
+
   return Container(
     width: double.infinity,
     padding: EdgeInsets.all(4.wp),
     decoration: BoxDecoration(
       gradient: LinearGradient(
-        colors: [Colors.blue.shade50, Colors.white],
+        colors: [
+          AppColors.isDark ? AppColors.darkCardElevated : Colors.blue.shade50,
+          AppColors.cardBgStatic,
+        ],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
       ),
     ),
     child: Shimmer.fromColors(
-      baseColor: Colors.grey.shade50,
-      highlightColor: Colors.grey.shade50,
+      baseColor: base,
+      highlightColor: highlight,
       period: Duration(milliseconds: 1500),
       child: Column(
         children: [
@@ -47,7 +55,7 @@ Widget _buildHeaderShimmer() {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: placeholder,
               shape: BoxShape.circle,
             ),
           ),
@@ -57,7 +65,7 @@ Widget _buildHeaderShimmer() {
             width: 80,
             height: 32,
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: placeholder,
               borderRadius: BorderRadius.circular(20),
             ),
           ),
@@ -67,7 +75,7 @@ Widget _buildHeaderShimmer() {
             width: 200,
             height: 24,
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
+              color: base,
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -80,7 +88,7 @@ Widget _buildHeaderShimmer() {
                 width: 120,
                 height: 16,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
+                  color: base,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
@@ -89,7 +97,7 @@ Widget _buildHeaderShimmer() {
                 width: 60,
                 height: 24,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
+                  color: base,
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
@@ -103,21 +111,24 @@ Widget _buildHeaderShimmer() {
 }
 
 Widget _buildSectionShimmer() {
+  final base = AppColors.dividerStatic;
+  final highlight = AppColors.chipBgStatic;
+
   return Container(
     decoration: BoxDecoration(
-      color: Colors.grey.shade50,
+      color: AppColors.cardBgStatic,
       borderRadius: BorderRadius.circular(12),
       boxShadow: [
         BoxShadow(
-          color: Colors.grey.shade200,
+          color: AppColors.shadowStatic,
           blurRadius: 8,
           offset: Offset(0, 2),
         ),
       ],
     ),
     child: Shimmer.fromColors(
-      baseColor: Colors.grey.shade200,
-      highlightColor: Colors.grey.shade200,
+      baseColor: base,
+      highlightColor: highlight,
       period: Duration(milliseconds: 1500),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,7 +143,7 @@ Widget _buildSectionShimmer() {
                   width: 150,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
+                    color: base,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -140,7 +151,7 @@ Widget _buildSectionShimmer() {
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
+                    color: base,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -151,7 +162,7 @@ Widget _buildSectionShimmer() {
           Container(
             height: 1,
             width: double.infinity,
-            color: Colors.grey.shade100,
+            color: AppColors.dividerStatic,
           ),
           // Content shimmer (3 lines)
           Padding(
@@ -165,7 +176,7 @@ Widget _buildSectionShimmer() {
                     height: 16,
                     width: i == 0 ? double.infinity : 70.wp,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
+                      color: base,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),

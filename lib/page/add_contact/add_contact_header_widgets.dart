@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:eventjar/controller/add_contact/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -70,8 +71,8 @@ class AddContactImagePreview extends GetView<AddContactController> {
                   height: isPortrait ? 40.hp : 25.hp,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: Colors.grey.shade300),
-                    color: Colors.grey.shade100,
+                    border: Border.all(color: AppColors.borderStatic),
+                    color: AppColors.chipBgStatic,
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(18),
@@ -112,8 +113,8 @@ class AddContactImagePreview extends GetView<AddContactController> {
                   height: isPortrait ? 40.hp : 25.hp,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: Colors.grey.shade300),
-                    color: Colors.grey.shade100,
+                    border: Border.all(color: AppColors.borderStatic),
+                    color: AppColors.chipBgStatic,
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(18),
@@ -160,7 +161,7 @@ class AddContactImageToggle extends GetView<AddContactController> {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 2.hp),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.cardBgStatic,
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
@@ -170,7 +171,7 @@ class AddContactImageToggle extends GetView<AddContactController> {
               ),
             ],
             border: Border.all(
-              color: isDisabled ? Colors.red.shade200 : Colors.grey.shade200,
+              color: isDisabled ? Colors.red.shade200 : AppColors.dividerStatic,
             ),
           ),
           child: Column(

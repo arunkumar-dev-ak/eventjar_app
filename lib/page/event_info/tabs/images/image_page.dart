@@ -65,7 +65,7 @@ class ImagesPage extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.all(2),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.cardBgStatic,
           borderRadius: BorderRadius.circular(14),
         ),
         child: ClipRRect(
@@ -113,7 +113,7 @@ class ImagesPage extends StatelessWidget {
                               "Failed to load image",
                               style: TextStyle(
                                 fontSize: 9.sp,
-                                color: Colors.grey[500],
+                                color: AppColors.textHintStatic,
                               ),
                             ),
                           ],
@@ -191,7 +191,7 @@ class ImagesPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: AppColors.textPrimaryStatic,
               ),
             ),
             SizedBox(height: 1.5.hp),
@@ -202,7 +202,7 @@ class ImagesPage extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 10.sp,
-                  color: Colors.grey[600],
+                  color: AppColors.textSecondaryStatic,
                   height: 1.6,
                 ),
               ),

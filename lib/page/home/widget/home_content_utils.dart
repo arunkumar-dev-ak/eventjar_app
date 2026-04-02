@@ -53,7 +53,7 @@ Widget homeContentImageNotFound() {
   return Container(
     decoration: BoxDecoration(
       gradient: LinearGradient(
-        colors: [Colors.grey.shade100, Colors.grey.shade200],
+        colors: [AppColors.chipBgStatic, AppColors.dividerStatic],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
@@ -65,7 +65,7 @@ Widget homeContentImageNotFound() {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.cardBgStatic,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
@@ -77,7 +77,7 @@ Widget homeContentImageNotFound() {
             ),
             child: Icon(
               Icons.image_outlined,
-              color: Colors.grey.shade400,
+              color: AppColors.iconMutedStatic,
               size: 32,
             ),
           ),
@@ -85,7 +85,7 @@ Widget homeContentImageNotFound() {
           Text(
             'No Image',
             style: TextStyle(
-              color: Colors.grey.shade400,
+              color: AppColors.iconMutedStatic,
               fontSize: 10,
               fontWeight: FontWeight.w500,
             ),
@@ -98,10 +98,10 @@ Widget homeContentImageNotFound() {
 
 Widget homeContentImageShimmer() {
   return Shimmer.fromColors(
-    baseColor: Colors.grey.shade200,
-    highlightColor: Colors.grey.shade50,
+    baseColor: AppColors.dividerStatic,
+    highlightColor: AppColors.scaffoldBgStatic,
     period: const Duration(milliseconds: 1500),
-    child: Container(color: Colors.grey.shade200),
+    child: Container(color: AppColors.dividerStatic),
   );
 }
 
@@ -110,7 +110,7 @@ Widget homeContentPaidOrFreeButton({required String label}) {
   return Container(
     decoration: BoxDecoration(
       gradient: isFree ? AppColors.buttonGradient : null,
-      color: isFree ? null : Colors.white,
+      color: isFree ? null : AppColors.cardBgStatic,
       borderRadius: BorderRadius.circular(12),
       border: isFree
           ? null
@@ -180,7 +180,7 @@ Widget noEventsFoundWidget() {
           "We couldn't find any events at the moment.\nCheck back later for exciting new events!",
           style: TextStyle(
             fontSize: 10.sp,
-            color: Colors.grey.shade500,
+            color: AppColors.textHintStatic,
             height: 1.5,
           ),
           textAlign: TextAlign.center,

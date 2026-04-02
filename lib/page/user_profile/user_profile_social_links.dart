@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/user_profile/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
@@ -69,13 +70,13 @@ Widget buildSocialLinkRow({
         decoration: BoxDecoration(
           color: isConnected
               ? color.withValues(alpha: 0.1)
-              : Colors.grey.shade200,
+              : AppColors.greyBgStatic,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           icon,
           size: 20,
-          color: isConnected ? color : Colors.grey.shade500,
+          color: isConnected ? color : AppColors.iconMutedStatic,
         ),
       ),
       SizedBox(width: 3.wp),
@@ -87,7 +88,7 @@ Widget buildSocialLinkRow({
               platform,
               style: TextStyle(
                 fontSize: 8.sp,
-                color: Colors.grey.shade600,
+                color: AppColors.textSecondaryStatic,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -96,7 +97,7 @@ Widget buildSocialLinkRow({
               url,
               style: TextStyle(
                 fontSize: 10.sp,
-                color: isConnected ? color : Colors.grey.shade500,
+                color: isConnected ? color : AppColors.textHintStatic,
                 fontWeight: isConnected ? FontWeight.w600 : FontWeight.normal,
                 decoration: isConnected ? TextDecoration.underline : null,
                 fontStyle: isConnected ? null : FontStyle.italic,
@@ -123,7 +124,7 @@ Widget buildSocialLinkRow({
         child: Icon(
           isConnected ? Icons.open_in_new : Icons.link_off,
           size: 16,
-          color: isConnected ? color : Colors.grey.shade400,
+          color: isConnected ? color : AppColors.iconMutedStatic,
         ),
       ),
     ],

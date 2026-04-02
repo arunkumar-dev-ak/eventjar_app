@@ -15,6 +15,10 @@ class EventInfoState {
   RxString searchText = ''.obs;
   RxString attendeeSearchQuery = ''.obs;
 
+  RxString attendeeStatusFilter = ''.obs; // '', 'sent', 'received'
+  RxInt attendeeCurrentIndex = 0.obs;
+  RxBool attendeeSearchExpanded = false.obs;
+  RxBool attendeeSearchClearing = false.obs;
   RxBool attendeeListLoading = false.obs;
   RxBool isLoadingMoreAttendees = false.obs;
   RxBool hasMoreAttendees = true.obs;

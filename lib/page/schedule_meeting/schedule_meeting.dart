@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/schedule_meeting/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/schedule_meeting/schedule_meeting_button.dart';
 import 'package:eventjar/page/schedule_meeting/widget/schedule_meeting_message_method.dart';
@@ -16,12 +17,12 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
         appBar: AppBar(
           title: Text(
             controller.appBarTitle,
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: AppColors.textPrimary(context)),
           ),
           centerTitle: false,
-          iconTheme: IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
           elevation: 4,
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.cardBg(context),
           shadowColor: Colors.black.withValues(alpha: 0.1),
         ),
         body: Obx(() {
@@ -134,7 +135,7 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                             "You can still mark this as sent after manually sending the message via the configured channels.",
                             style: TextStyle(
                               fontSize: 8.sp,
-                              color: Colors.grey.shade700,
+                              color: AppColors.textSecondaryStatic,
                             ),
                           ),
                           SizedBox(height: 1.5.hp),
@@ -240,7 +241,7 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                 Text(
                   title,
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: AppColors.textSecondaryStatic,
                     fontSize: 8.sp,
                     fontWeight: FontWeight.w500,
                   ),
@@ -251,7 +252,7 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                   style: TextStyle(
                     fontSize: 9.sp,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey[800],
+                    color: AppColors.textPrimaryStatic,
                   ),
                 ),
               ],

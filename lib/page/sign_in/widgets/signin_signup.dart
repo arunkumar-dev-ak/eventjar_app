@@ -23,7 +23,7 @@ class AuthSignUp extends StatelessWidget {
           text: TextSpan(
             text: "Don't have an account? ",
             style: TextStyle(
-              color: Colors.grey.shade600,
+              color: AppColors.textSecondary(context),
               fontSize: 11.sp,
               fontWeight: FontWeight.w500,
             ),

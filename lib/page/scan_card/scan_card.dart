@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import '../../controller/scan_card/controller.dart';
+import '../../global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -18,7 +19,7 @@ class ScanCard extends GetView<ScanCardController> {
           controller.appBarTitle,
           style: TextStyle(
             fontSize: 14.sp,
-            color: Colors.black,
+            color: AppColors.textPrimary(context),
             letterSpacing: 0.5,
           ),
         ),
@@ -32,7 +33,7 @@ class ScanCard extends GetView<ScanCardController> {
           // Background gradient
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.cardBg(context),
               // gradient: LinearGradient(
               //   begin: Alignment.topLeft,
               //   end: Alignment.bottomRight,
@@ -99,7 +100,7 @@ class ScanCard extends GetView<ScanCardController> {
       return Container(
         height: 220,
         decoration: BoxDecoration(
-          color: image == null ? Colors.white : null,
+          color: image == null ? AppColors.cardBgStatic : null,
           gradient: image == null
               ? LinearGradient(
                   begin: Alignment.topLeft,
@@ -163,7 +164,7 @@ class ScanCard extends GetView<ScanCardController> {
           Text(
             'Scan a Visting card to begin',
             style: TextStyle(
-              color: Colors.grey,
+              color: AppColors.textHintStatic,
               fontSize: 10.sp,
               fontWeight: FontWeight.w500,
             ),
@@ -269,7 +270,7 @@ class ScanCard extends GetView<ScanCardController> {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBgStatic,
         boxShadow: [
           BoxShadow(
             color: controller.primaryColor.withValues(alpha: 0.1),
@@ -401,7 +402,7 @@ class ScanCard extends GetView<ScanCardController> {
             opacity: value,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.cardBgStatic,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -464,7 +465,7 @@ class ScanCard extends GetView<ScanCardController> {
                                 'Successfully extracted',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey,
+                                  color: AppColors.textHintStatic,
                                 ),
                               ),
                             ],
@@ -543,9 +544,9 @@ class ScanCard extends GetView<ScanCardController> {
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
+                color: AppColors.scaffoldBgStatic,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.grey[200]!),
+                border: Border.all(color: AppColors.dividerStatic),
               ),
               child: Row(
                 children: [
@@ -571,7 +572,7 @@ class ScanCard extends GetView<ScanCardController> {
                           label,
                           style: TextStyle(
                             fontSize: 10.sp,
-                            color: Colors.grey[600],
+                            color: AppColors.textSecondaryStatic,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -581,7 +582,7 @@ class ScanCard extends GetView<ScanCardController> {
                           style: TextStyle(
                             fontSize: 10.sp,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            color: AppColors.textPrimaryStatic,
                           ),
                         ),
                       ],
@@ -628,7 +629,7 @@ class ScanCard extends GetView<ScanCardController> {
   //               Icon(
   //                 Icons.text_snippet_outlined,
   //                 size: 20,
-  //                 color: Colors.grey[600],
+  //                 color: AppColors.textSecondaryStatic,
   //               ),
   //               const SizedBox(width: 10),
   //               Text(

@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/add_contact/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -29,7 +30,7 @@ class ContactStageDropdown extends StatelessWidget {
                   maxHeight: MediaQuery.of(context).size.height * 0.5,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade50, // light themed background
+                  color: AppColors.scaffoldBg(context),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 padding: const EdgeInsets.all(16),
@@ -46,7 +47,7 @@ class ContactStageDropdown extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Divider(color: Colors.grey.shade300, thickness: 1),
+                    Divider(color: AppColors.border(context), thickness: 1),
                     const SizedBox(height: 8),
                     // List of stages with scrolling
                     Expanded(child: _buildStageSelection(context)),
@@ -82,7 +83,7 @@ class ContactStageDropdown extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade400, width: 1.5),
+            border: Border.all(color: AppColors.border(context), width: 1.5),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -108,7 +109,7 @@ class ContactStageDropdown extends StatelessWidget {
         padding: const EdgeInsets.only(top: 8),
         shrinkWrap: true,
         itemCount: stages.length,
-        separatorBuilder: (_, __) => Divider(color: Colors.grey.shade300),
+        separatorBuilder: (_, __) => Divider(color: AppColors.border(context)),
         itemBuilder: (_, index) {
           final stage = stages[index];
           final isSelected = stage['key'] == selectedKey;

@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -24,14 +25,14 @@ Widget userProfilebuildInfoRow({
         padding: EdgeInsets.all(2.wp),
         decoration: BoxDecoration(
           color: isEmpty
-              ? Colors.grey.shade200
+              ? AppColors.greyBgStatic
               : iconColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           icon,
           size: 20,
-          color: isEmpty ? Colors.grey.shade500 : iconColor,
+          color: isEmpty ? AppColors.iconMutedStatic : iconColor,
         ),
       ),
       SizedBox(width: 3.wp),
@@ -43,7 +44,7 @@ Widget userProfilebuildInfoRow({
               label,
               style: TextStyle(
                 fontSize: 8.sp,
-                color: Colors.grey.shade600,
+                color: AppColors.textSecondaryStatic,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -53,8 +54,8 @@ Widget userProfilebuildInfoRow({
               style: TextStyle(
                 fontSize: 10.sp,
                 color: isEmpty
-                    ? Colors.grey.shade500
-                    : (isLink ? Colors.blue.shade700 : Colors.black87),
+                    ? AppColors.textHintStatic
+                    : (isLink ? Colors.blue.shade700 : AppColors.textPrimaryStatic),
                 fontWeight: isEmpty ? FontWeight.normal : FontWeight.w600,
                 decoration: (isLink && !isEmpty)
                     ? TextDecoration.underline
@@ -82,7 +83,7 @@ Widget userProfileBuildChipSection({
         label,
         style: TextStyle(
           fontSize: 9.sp,
-          color: Colors.grey.shade700,
+          color: AppColors.textSecondaryStatic,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -94,9 +95,9 @@ Widget userProfileBuildChipSection({
           return Container(
             padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 0.8.hp),
             decoration: BoxDecoration(
-              color: Colors.blue.shade50,
+              color: AppColors.lightBlueBgStatic,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.blue.shade200),
+              border: Border.all(color: AppColors.lightBlueBorderStatic),
             ),
             child: Text(
               chip,
@@ -143,7 +144,7 @@ Widget opearingRegionBuildChipSection({
               label,
               style: TextStyle(
                 fontSize: 8.sp,
-                color: Colors.grey.shade600,
+                color: AppColors.textSecondaryStatic,
                 fontWeight: FontWeight.w500,
               ),
             ),

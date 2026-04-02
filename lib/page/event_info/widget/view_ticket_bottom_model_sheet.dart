@@ -20,8 +20,9 @@ class EventInfoTicketSheet extends StatelessWidget {
     final timeStr = formatTimeFromHHMM(event.startTime, context);
 
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xfff8fafc),
+      margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+      decoration: BoxDecoration(
+        color: AppColors.scaffoldBg(context),
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       padding: EdgeInsets.only(
@@ -37,7 +38,7 @@ class EventInfoTicketSheet extends StatelessWidget {
             height: 5,
             width: 50,
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: AppColors.border(context),
               borderRadius: BorderRadius.circular(10),
             ),
           ),
@@ -70,12 +71,12 @@ class EventInfoTicketSheet extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(5.wp, 0, 5.wp, 3.hp),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.cardBg(context),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isActive
                       ? AppColors.gradientDarkStart.withValues(alpha: 0.3)
-                      : Colors.grey.shade300,
+                      : AppColors.border(context),
                   width: 2,
                 ),
                 boxShadow: [
@@ -161,7 +162,7 @@ class EventInfoTicketSheet extends StatelessWidget {
                         /// QR Section
                         CustomPaint(
                           painter: TicketShapePainter(
-                            borderColor: Colors.grey.shade300,
+                            borderColor: AppColors.border(context),
                             borderRadius: 12,
                             circleRadius: 12,
                           ),
@@ -169,15 +170,23 @@ class EventInfoTicketSheet extends StatelessWidget {
                             padding: const EdgeInsets.all(20),
                             child: Column(
                               children: [
-                                QrImageView(
-                                  data: ticket.qrCode ?? "N/A",
-                                  size: 160,
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: QrImageView(
+                                    data: ticket.qrCode ?? "N/A",
+                                    size: 160,
+                                    backgroundColor: Colors.white,
+                                  ),
                                 ),
                                 const SizedBox(height: 15),
                                 Text(
                                   "Registration ID",
                                   style: TextStyle(
-                                    color: Colors.grey.shade600,
+                                    color: AppColors.textSecondary(context),
                                   ),
                                 ),
                                 const SizedBox(height: 5),
@@ -192,7 +201,7 @@ class EventInfoTicketSheet extends StatelessWidget {
                                   Text(
                                     "Registered On ${formatDate(ticket.registeredAt!)}",
                                     style: TextStyle(
-                                      color: Colors.grey.shade600,
+                                      color: AppColors.textSecondary(context),
                                     ),
                                   ),
                                 ],
@@ -215,7 +224,7 @@ class EventInfoTicketSheet extends StatelessWidget {
   Widget _infoRow(IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: Colors.grey.shade600),
+        Icon(icon, size: 18, color: AppColors.textSecondaryStatic),
         const SizedBox(width: 10),
         Expanded(
           child: Text(

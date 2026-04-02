@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/notification/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/whatsapp_integration/whatsapp_integration_model.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +74,7 @@ class WhatsAppConnectedCard extends GetView<NotificationController> {
 
           Text(
             "Your integration token is securely stored and ready to send WhatsApp notifications.",
-            style: TextStyle(fontSize: 9.sp, color: Colors.grey.shade800),
+            style: TextStyle(fontSize: 9.sp, color: AppColors.textPrimary(context)),
           ),
 
           SizedBox(height: 2.hp),
@@ -82,7 +83,7 @@ class WhatsAppConnectedCard extends GetView<NotificationController> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 1.2.hp),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.cardBg(context),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: Colors.green.shade200),
             ),

@@ -29,7 +29,7 @@ void authProcessingOpen2FAModal(
               bottom: 20 + MediaQuery.of(context).viewInsets.bottom,
             ),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.cardBg(context),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(25),
                 topRight: Radius.circular(25),
@@ -79,9 +79,9 @@ void authProcessingOpen2FAModal(
                       fontWeight: FontWeight.bold,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade50,
+                      color: AppColors.scaffoldBg(context),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade300),
+                      border: Border.all(color: AppColors.border(context)),
                     ),
                   ),
                   focusedPinTheme: PinTheme(

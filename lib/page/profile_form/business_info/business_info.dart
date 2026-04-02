@@ -1,5 +1,6 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:eventjar/controller/profile_form/business_info/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/profile_form/business_info/widget/business_category_dropdown.dart';
 import 'package:eventjar/page/profile_form/business_info/widget/business_info_form_element.dart';
@@ -20,12 +21,12 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: AppColors.textPrimary(context)),
         ),
         centerTitle: false,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
         elevation: 4,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.cardBg(context),
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
       body: GestureDetector(
@@ -103,7 +104,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
                           borderSide: BorderSide(
-                            color: Colors.grey.shade400,
+                            color: AppColors.border(context),
                             width: 1.5,
                           ),
                         ),
@@ -185,7 +186,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                               color: Colors.blue.shade700,
                               width: 2,
                             ),
-                            backgroundColor: Colors.white,
+                            backgroundColor: AppColors.cardBg(context),
                             foregroundColor: Colors.blue.shade700,
                             elevation: 0,
                           ),

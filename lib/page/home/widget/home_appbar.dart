@@ -202,9 +202,14 @@ class HomeAppBar extends StatelessWidget {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        margin: EdgeInsets.all(4.wp),
+        margin: EdgeInsets.fromLTRB(
+          4.wp,
+          4.wp,
+          4.wp,
+          4.wp + MediaQuery.of(context).padding.bottom,
+        ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.cardBg(context),
           borderRadius: BorderRadius.circular(24),
         ),
         child: Column(
@@ -215,7 +220,7 @@ class HomeAppBar extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: AppColors.border(context),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -234,7 +239,7 @@ class HomeAppBar extends StatelessWidget {
               height: 1,
               indent: 20,
               endIndent: 20,
-              color: Colors.grey.shade200,
+              color: AppColors.divider(context),
             ),
             _buildMenuItem(
               icon: Icons.nfc_rounded,
@@ -251,7 +256,7 @@ class HomeAppBar extends StatelessWidget {
               height: 1,
               indent: 20,
               endIndent: 20,
-              color: Colors.grey.shade200,
+              color: AppColors.divider(context),
             ),
             _buildMenuItem(
               icon: Icons.qr_code_scanner_rounded,
@@ -267,7 +272,7 @@ class HomeAppBar extends StatelessWidget {
               height: 1,
               indent: 20,
               endIndent: 20,
-              color: Colors.grey.shade200,
+              color: AppColors.divider(context),
             ),
             _buildMenuItem(
               icon: Icons.document_scanner,
@@ -317,12 +322,12 @@ class HomeAppBar extends StatelessWidget {
         style: TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: 10.sp,
-          color: Colors.grey.shade800,
+          color: AppColors.textPrimaryStatic,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(fontSize: 8.sp, color: Colors.grey.shade500),
+        style: TextStyle(fontSize: 8.sp, color: AppColors.textHintStatic),
       ),
       trailing: Icon(
         Icons.arrow_forward_ios_rounded,

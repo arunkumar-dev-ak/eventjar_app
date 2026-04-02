@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class RescheduleMeetingContactList
               width: 85.wp,
               padding: EdgeInsets.all(5.wp),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.cardBg(context),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: SingleChildScrollView(
@@ -58,7 +59,7 @@ class RescheduleMeetingContactList
                       decoration: InputDecoration(
                         labelText: "Select Date",
                         filled: true,
-                        fillColor: Colors.grey.shade100,
+                        fillColor: AppColors.inputBg(context),
                         suffixIcon: Icon(Icons.calendar_today, size: 15.sp),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -77,7 +78,7 @@ class RescheduleMeetingContactList
                       decoration: InputDecoration(
                         labelText: "Select Time",
                         filled: true,
-                        fillColor: Colors.grey.shade100,
+                        fillColor: AppColors.inputBg(context),
                         suffixIcon: Icon(Icons.access_time, size: 15.sp),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),

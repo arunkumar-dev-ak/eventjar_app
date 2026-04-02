@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/signUp/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/sign_up/widgets/signup_signin.dart';
 import 'package:eventjar/page/sign_up/widgets/signup_submit_button.dart';
@@ -62,8 +63,8 @@ class SignUpTextFormField extends StatelessWidget {
                   color: !isFieldValid.value
                       ? Colors.red
                       : isFieldFocused.value
-                      ? Colors.black
-                      : Colors.grey,
+                      ? AppColors.textPrimary(context)
+                      : AppColors.textHint(context),
                   fontSize: 11.sp,
                 ),
                 children: const [
@@ -76,13 +77,13 @@ class SignUpTextFormField extends StatelessWidget {
             ),
             enabledBorder: hasOuterBorder
                 ? OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey.shade400),
+                    borderSide: BorderSide(color: AppColors.border(context)),
                     borderRadius: BorderRadius.circular(10),
                   )
                 : InputBorder.none,
             focusedBorder: hasOuterBorder
                 ? OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black, width: 2),
+                    borderSide: BorderSide(color: AppColors.textPrimary(context), width: 2),
                     borderRadius: BorderRadius.circular(10),
                   )
                 : InputBorder.none,
@@ -105,12 +106,12 @@ class SignUpTextFormField extends StatelessWidget {
                       isPasswordHidden
                           ? Icons.visibility
                           : Icons.visibility_off,
-                      color: Colors.grey.shade400,
+                      color: AppColors.iconMuted(context),
                     ),
                   )
                 : null,
             prefixIcon: hasOuterBorder
-                ? Icon(_getFieldIcon(label), color: Colors.grey.shade400)
+                ? Icon(_getFieldIcon(label), color: AppColors.iconMuted(context))
                 : null,
             errorMaxLines: 3,
           ),
@@ -136,8 +137,8 @@ class SignUpForm extends StatelessWidget {
             color: !isFieldValid.value
                 ? Colors.red
                 : isFieldFocused.value
-                ? Colors.black
-                : Colors.grey,
+                ? AppColors.textPrimaryStatic
+                : AppColors.textHintStatic,
             fontSize: 11.sp,
           ),
           children: const [
@@ -149,11 +150,11 @@ class SignUpForm extends StatelessWidget {
         ),
       ),
       enabledBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.grey.shade400),
+        borderSide: BorderSide(color: AppColors.borderStatic),
         borderRadius: BorderRadius.circular(10),
       ),
       focusedBorder: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.black, width: 2),
+        borderSide: BorderSide(color: AppColors.textPrimaryStatic, width: 2),
         borderRadius: BorderRadius.circular(10),
       ),
       errorBorder: OutlineInputBorder(
@@ -174,10 +175,10 @@ class SignUpForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBg(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
+          BoxShadow(color: AppColors.shadow(context), blurRadius: 8, offset: Offset(0, 2)),
         ],
       ),
       padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 2.hp),
@@ -273,21 +274,21 @@ class SignUpForm extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Divider(color: Colors.grey.shade300, thickness: 1),
+                  child: Divider(color: AppColors.divider(context), thickness: 1),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.wp),
                   child: Text(
                     "OR",
                     style: TextStyle(
-                      color: Colors.grey.shade500,
+                      color: AppColors.textHint(context),
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
                 Expanded(
-                  child: Divider(color: Colors.grey.shade300, thickness: 1),
+                  child: Divider(color: AppColors.divider(context), thickness: 1),
                 ),
               ],
             ),

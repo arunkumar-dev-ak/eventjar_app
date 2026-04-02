@@ -54,16 +54,16 @@ class LoginTextFormField extends StatelessWidget {
               color: !isFieldValid.value
                   ? Colors.red
                   : isFieldFocused.value
-                  ? Colors.black
-                  : Colors.grey,
+                  ? AppColors.textPrimary(context)
+                  : AppColors.textHint(context),
               fontSize: fontSize.sp,
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade400),
+              borderSide: BorderSide(color: AppColors.border(context)),
               borderRadius: BorderRadius.circular(10),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black, width: 2),
+              borderSide: BorderSide(color: AppColors.textPrimary(context), width: 2),
               borderRadius: BorderRadius.circular(10),
             ),
             errorBorder: OutlineInputBorder(
@@ -74,7 +74,7 @@ class LoginTextFormField extends StatelessWidget {
               borderSide: BorderSide(color: Colors.red),
               borderRadius: BorderRadius.circular(10),
             ),
-            prefixIcon: Icon(_getFieldIcon(label), color: Colors.grey.shade400),
+            prefixIcon: Icon(_getFieldIcon(label), color: AppColors.iconMuted(context)),
             suffixIcon: isPassword
                 ? IconButton(
                     onPressed: togglePasswordVisibility,
@@ -82,7 +82,7 @@ class LoginTextFormField extends StatelessWidget {
                       isPasswordHidden
                           ? Icons.visibility
                           : Icons.visibility_off,
-                      color: Colors.grey.shade400,
+                      color: AppColors.iconMuted(context),
                     ),
                   )
                 : null,
@@ -113,10 +113,10 @@ class SignInForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBg(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
+          BoxShadow(color: AppColors.shadow(context), blurRadius: 8, offset: Offset(0, 2)),
         ],
       ),
       padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 2.hp),
@@ -186,21 +186,21 @@ class SignInForm extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Divider(color: Colors.grey.shade300, thickness: 1),
+                  child: Divider(color: AppColors.divider(context), thickness: 1),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.wp),
                   child: Text(
                     "OR",
                     style: TextStyle(
-                      color: Colors.grey.shade500,
+                      color: AppColors.textHint(context),
                       fontSize: 11.sp,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
                 Expanded(
-                  child: Divider(color: Colors.grey.shade300, thickness: 1),
+                  child: Divider(color: AppColors.divider(context), thickness: 1),
                 ),
               ],
             ),

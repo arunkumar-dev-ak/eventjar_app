@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -38,8 +39,9 @@ class _QRBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      margin: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+      decoration: BoxDecoration(
+        color: AppColors.cardBg(context),
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: EdgeInsets.fromLTRB(6.wp, 1.5.hp, 6.wp, 4.hp),
@@ -51,7 +53,7 @@ class _QRBottomSheet extends StatelessWidget {
             width: 10.wp,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: AppColors.border(context),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -63,7 +65,7 @@ class _QRBottomSheet extends StatelessWidget {
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: AppColors.textPrimary(context),
             ),
           ),
           SizedBox(height: 0.5.hp),
@@ -74,7 +76,7 @@ class _QRBottomSheet extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 9.sp,
-              color: Colors.grey.shade600,
+              color: AppColors.textSecondary(context),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -84,9 +86,9 @@ class _QRBottomSheet extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(4.wp),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.cardBg(context),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.shade200, width: 1.5),
+              border: Border.all(color: AppColors.divider(context), width: 1.5),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.06),
@@ -109,9 +111,9 @@ class _QRBottomSheet extends StatelessWidget {
             width: double.infinity,
             padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 1.5.hp),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
+              color: AppColors.scaffoldBg(context),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.grey.shade200),
+              border: Border.all(color: AppColors.divider(context)),
             ),
             child: Column(
               children: [
@@ -119,7 +121,7 @@ class _QRBottomSheet extends StatelessWidget {
                   'Confirmation Code',
                   style: TextStyle(
                     fontSize: 8.sp,
-                    color: Colors.grey.shade600,
+                    color: AppColors.textSecondary(context),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -129,7 +131,7 @@ class _QRBottomSheet extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: AppColors.textPrimary(context),
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -138,7 +140,7 @@ class _QRBottomSheet extends StatelessWidget {
                   'Registered On',
                   style: TextStyle(
                     fontSize: 8.sp,
-                    color: Colors.grey.shade600,
+                    color: AppColors.textSecondary(context),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -148,7 +150,7 @@ class _QRBottomSheet extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 9.sp,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: AppColors.textPrimary(context),
                   ),
                 ),
               ],

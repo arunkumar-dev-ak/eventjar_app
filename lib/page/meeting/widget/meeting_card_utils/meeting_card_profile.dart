@@ -88,7 +88,7 @@ class MeetingCardProfile extends GetView<MeetingController> {
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w700,
-                  color: Colors.black87,
+                  color: AppColors.textPrimary(context),
                   height: 1.2,
                 ),
                 maxLines: 1,
@@ -102,7 +102,7 @@ class MeetingCardProfile extends GetView<MeetingController> {
                   _buildPositionCompany(),
                   style: TextStyle(
                     fontSize: 9.sp,
-                    color: Colors.grey[600],
+                    color: AppColors.textSecondary(context),
                     fontWeight: FontWeight.w500,
                     height: 1.3,
                   ),
@@ -118,7 +118,7 @@ class MeetingCardProfile extends GetView<MeetingController> {
                   'Scheduled by ${meeting.scheduledByUser!.name}',
                   style: TextStyle(
                     fontSize: 8.sp,
-                    color: Colors.grey[500],
+                    color: AppColors.textHint(context),
                     fontWeight: FontWeight.w400,
                   ),
                 ),

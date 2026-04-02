@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/user_profile/user_profile_security/user_profile_security_form.dart';
@@ -14,9 +15,9 @@ Widget userProfileBuildSecurity() {
       Container(
         padding: EdgeInsets.all(3.wp),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.cardBgStatic,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(color: AppColors.borderStatic),
         ),
         child: Obx(() {
           bool is2FaEnabled =
@@ -57,7 +58,7 @@ Widget userProfileBuildSecurity() {
                               style: TextStyle(
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w600,
-                                color: is2FaEnabled ? Colors.red : Colors.black,
+                                color: is2FaEnabled ? Colors.red : AppColors.textPrimaryStatic,
                               ),
                             ),
                             Text(
@@ -66,7 +67,7 @@ Widget userProfileBuildSecurity() {
                                   : "Add extra security to your account",
                               style: TextStyle(
                                 fontSize: 8.sp,
-                                color: Colors.grey,
+                                color: AppColors.textSecondaryStatic,
                               ),
                             ),
                           ],
@@ -75,7 +76,7 @@ Widget userProfileBuildSecurity() {
                       Icon(
                         Icons.arrow_forward_ios,
                         size: 14,
-                        color: Colors.grey,
+                        color: AppColors.iconMutedStatic,
                       ),
                     ],
                   ),
@@ -83,7 +84,7 @@ Widget userProfileBuildSecurity() {
               ),
 
               SizedBox(height: 2.hp),
-              Divider(color: Colors.grey.shade300),
+              Divider(color: AppColors.dividerStatic),
               SizedBox(height: 2.hp),
 
               // ===== Change Password =====
@@ -104,20 +105,20 @@ Widget userProfileBuildSecurity() {
                             style: TextStyle(
                               fontSize: 10.sp,
                               fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                              color: AppColors.textPrimaryStatic,
                             ),
                           ),
                           Text(
                             "Update your password regularly",
                             style: TextStyle(
                               fontSize: 8.sp,
-                              color: Colors.grey,
+                              color: AppColors.textSecondaryStatic,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+                    Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.iconMutedStatic),
                   ],
                 ),
               ),
@@ -156,7 +157,7 @@ Widget userProfileBuildSecurity() {
             // SizedBox(height: 1.hp),
             Text(
               "Manage your active session",
-              style: TextStyle(fontSize: 9.sp, color: Colors.grey.shade700),
+              style: TextStyle(fontSize: 9.sp, color: AppColors.textSecondaryStatic),
             ),
             SizedBox(height: 2.hp),
             Obx(() {
@@ -221,13 +222,13 @@ Widget userProfileBuildSecurity() {
           return Container(
             padding: EdgeInsets.all(3.wp),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: AppColors.chipBgStatic,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(color: AppColors.borderStatic),
             ),
             child: Row(
               children: [
-                Icon(Icons.block, color: Colors.grey.shade600),
+                Icon(Icons.block, color: AppColors.iconMutedStatic),
                 SizedBox(width: 3.wp),
                 Expanded(
                   child: Column(
@@ -238,14 +239,14 @@ Widget userProfileBuildSecurity() {
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w600,
-                          color: Colors.grey.shade700,
+                          color: AppColors.textSecondaryStatic,
                         ),
                       ),
                       Text(
                         "Your account has been permanently deleted",
                         style: TextStyle(
                           fontSize: 8.sp,
-                          color: Colors.grey.shade500,
+                          color: AppColors.textHintStatic,
                         ),
                       ),
                     ],
@@ -355,7 +356,7 @@ void showDeletedAccountDialog(UserProfileController controller) {
             // Info
             Text(
               "Your account was permanently deleted on ${DateFormat('MMM dd, yyyy').format(deletedAt!)}",
-              style: TextStyle(fontSize: 10.sp, color: Colors.grey[700]),
+              style: TextStyle(fontSize: 10.sp, color: AppColors.textSecondaryStatic),
               textAlign: TextAlign.center,
             ),
 
@@ -435,7 +436,7 @@ void userProfileShowDeleteAccountDialog(
                 hasPendingDeletion
                     ? "Enter your password to reactivate your account"
                     : "Account will be scheduled for deletion in 30 days. You can reactivate anytime before permanent deletion.",
-                style: TextStyle(fontSize: 8.5.sp, color: Colors.grey[700]),
+                style: TextStyle(fontSize: 8.5.sp, color: AppColors.textSecondaryStatic),
                 textAlign: TextAlign.center,
               ),
 

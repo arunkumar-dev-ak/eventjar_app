@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/checkout/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,11 +39,11 @@ class CheckoutBottomBar extends GetView<CheckoutController> {
       return Container(
         padding: EdgeInsets.fromLTRB(4.wp, 2.hp, 4.wp, 2.hp),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.cardBg(context),
           boxShadow: [
             BoxShadow(
               blurRadius: 10,
-              color: Colors.black.withValues(alpha: 0.08),
+              color: AppColors.shadow(context),
             ),
           ],
         ),
@@ -60,7 +61,7 @@ class CheckoutBottomBar extends GetView<CheckoutController> {
                     "Total",
                     style: TextStyle(
                       fontSize: 9.sp,
-                      color: Colors.grey.shade600,
+                      color: AppColors.textSecondary(context),
                     ),
                   ),
                   SizedBox(height: 0.5.hp),

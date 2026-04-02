@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/qualify_lead/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/qualify_lead/qualify_lead_button.dart';
 import 'package:eventjar/page/qualify_lead/qualify_lead_info_card.dart';
@@ -16,12 +17,12 @@ class QualifyLeadPage extends GetView<QualifyLeadController> {
         appBar: AppBar(
           title: Text(
             controller.appBarTitle,
-            style: const TextStyle(color: Colors.black),
+            style: TextStyle(color: AppColors.textPrimary(context)),
           ),
           centerTitle: false,
-          iconTheme: const IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
           elevation: 4,
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.cardBg(context),
           shadowColor: Colors.black.withValues(alpha: 0.1),
         ),
         body: Obx(
@@ -127,7 +128,7 @@ class QualifyLeadPage extends GetView<QualifyLeadController> {
         style: TextStyle(
           fontSize: 11.sp,
           fontWeight: FontWeight.w600,
-          color: Colors.grey[700],
+          color: AppColors.textSecondaryStatic,
         ),
       ),
     );

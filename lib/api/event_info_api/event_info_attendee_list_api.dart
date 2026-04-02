@@ -11,6 +11,7 @@ class EventInfoApiAttendeeList {
     int offset = 0,
     int limit = 10,
     String search = '',
+    String status = '',
   }) async {
     try {
       final response = await _dio.get(
@@ -19,6 +20,7 @@ class EventInfoApiAttendeeList {
           'offset': offset,
           'limit': limit,
           if (search.isNotEmpty) 'search': search,
+          if (status.isNotEmpty) 'status': status,
         },
       );
       if (response.statusCode == 200) {

@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/event_info/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/model/event_info/event_attendee_model.dart';
@@ -18,8 +19,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
     with SingleTickerProviderStateMixin {
   final EventInfoController controller = Get.find();
 
-  int _currentIndex = 0;
-  bool _searchExpanded = false;
+  // Animation-only local state (needs setState for AnimationController)
   Offset _dragOffset = Offset.zero;
   double? _frontCardHeight;
   List<Attendee> _currentAttendees = [];
@@ -27,7 +27,6 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
 
   late AnimationController _snapBackController;
   late Animation<Offset> _snapBackAnim;
-  late Worker _searchWorker;
 
   @override
   void initState() {
@@ -40,16 +39,11 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
     _snapBackAnim = Tween<Offset>(begin: Offset.zero, end: Offset.zero).animate(
       CurvedAnimation(parent: _snapBackController, curve: Curves.elasticOut),
     );
-
-    _searchWorker = ever(controller.state.searchText, (_) {
-      if (mounted) setState(() => _currentIndex = 0);
-    });
   }
 
   @override
   void dispose() {
     _snapBackController.dispose();
-    _searchWorker.dispose();
     super.dispose();
   }
 
@@ -88,14 +82,13 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
   }
 
   void _exitCard(List<Attendee> attendees) {
+    final currentIndex = controller.state.attendeeCurrentIndex.value;
     final isSwipeLeft = _dragOffset.dx < 0;
 
-    // At boundaries: snap back instead of advancing
-    final atLast = isSwipeLeft && _currentIndex >= attendees.length - 1;
-    final atFirst = !isSwipeLeft && _currentIndex <= 0;
+    final atLast = isSwipeLeft && currentIndex >= attendees.length - 1;
+    final atFirst = !isSwipeLeft && currentIndex <= 0;
     if (atLast || atFirst) {
       _snapBack();
-      // Trigger load more when the user hits the last card
       if (atLast) controller.loadMoreAttendees();
       return;
     }
@@ -113,12 +106,9 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
 
     _snapBackController.forward(from: 0).then((_) {
       if (mounted) {
-        final nextIndex = isSwipeLeft ? _currentIndex + 1 : _currentIndex - 1;
-        setState(() {
-          _currentIndex = nextIndex;
-          _dragOffset = Offset.zero;
-        });
-        // Preload next page when 2 cards away from the end
+        final nextIndex = isSwipeLeft ? currentIndex + 1 : currentIndex - 1;
+        controller.state.attendeeCurrentIndex.value = nextIndex;
+        setState(() => _dragOffset = Offset.zero);
         if (isSwipeLeft && nextIndex >= attendees.length - 2) {
           controller.loadMoreAttendees();
         }
@@ -128,228 +118,332 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      final attendeeState = controller.state.attendeeList.value;
-      final isLoading = controller.state.attendeeListLoading.value;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Status filter tabs — always visible
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 0.5.hp),
+          child: Obx(() {
+            final selected = controller.state.attendeeStatusFilter.value;
+            return Row(
+              children: [
+                _buildFilterChip('All', '', selected),
+                SizedBox(width: 2.wp),
+                _buildFilterChip('Sent', 'sent', selected),
+                SizedBox(width: 2.wp),
+                _buildFilterChip('Received', 'received', selected),
+              ],
+            );
+          }),
+        ),
 
-      if (isLoading) {
-        return Center(child: buildAttendeeListShimmer());
-      }
+        // Content
+        Obx(() {
+          final attendeeState = controller.state.attendeeList.value;
+          final isLoading = controller.state.attendeeListLoading.value;
+          final isClearing = controller.state.attendeeSearchClearing.value;
 
-      final allAttendees = attendeeState?.attendee ?? [];
-      final totalCount =
-          attendeeState?.meta?.paging?.totalCount ?? allAttendees.length;
+          if (isLoading || isClearing) {
+            if (isClearing && isLoading) {
+              controller.state.attendeeSearchClearing.value = false;
+            }
+            return buildAttendeeListShimmer();
+          }
 
-      if (attendeeState == null || allAttendees.isEmpty) {
-        return Center(
-          child: Text(
-            "No attendees found.",
-            style: TextStyle(fontSize: 10.sp, color: Colors.grey),
-          ),
-        );
-      }
+          final allAttendees = attendeeState?.attendee ?? [];
+          final totalCount =
+              attendeeState?.meta?.paging?.totalCount ?? allAttendees.length;
 
-      return _buildSwipeStack(allAttendees, totalCount);
-    });
+          final isSearching =
+              controller.state.attendeeSearchExpanded.value ||
+              controller.state.searchText.value.isNotEmpty;
+          final hasFilter =
+              controller.state.attendeeStatusFilter.value.isNotEmpty;
+
+          if ((attendeeState == null || allAttendees.isEmpty) &&
+              !isSearching &&
+              !hasFilter) {
+            return Padding(
+              padding: EdgeInsets.symmetric(vertical: 6.hp),
+              child: Text(
+                "No attendees found.",
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  color: AppColors.textHint(context),
+                ),
+              ),
+            );
+          }
+
+          return _buildSwipeStack(allAttendees, totalCount);
+        }),
+      ],
+    );
   }
-
-  // ─── All seen ──────────────────────────────────────────────────────────────
-
-  // ─── Card stack ────────────────────────────────────────────────────────────
 
   Widget _buildSwipeStack(List<Attendee> attendees, int totalCount) {
     _currentAttendees = attendees;
-    return Column(
-      children: [
-        // Search + Counter row
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 0.5.hp),
-          child: Row(
-            children: [
-              if (_searchExpanded) ...[
-                Expanded(
-                  child: Container(
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.blueAccent, width: 1.5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withValues(alpha: 0.1),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+    return Obx(() {
+      final currentIndex = controller.state.attendeeCurrentIndex.value;
+      final searchExpanded = controller.state.attendeeSearchExpanded.value;
+
+      return Column(
+        children: [
+          // Search + Counter row
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 0.5.hp),
+            child: Row(
+              children: [
+                if (searchExpanded) ...[
+                  Expanded(
+                    child: Container(
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: AppColors.cardBg(context),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.blueAccent, width: 1.5),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.shadow(context),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: controller.searchController,
+                        autofocus: true,
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: const InputDecoration(
+                          hintText: "Search name or company",
+                          border: InputBorder.none,
+                          isCollapsed: true,
+                          prefixIcon: Icon(
+                            Icons.search,
+                            size: 18,
+                            color: Colors.grey,
+                          ),
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textPrimary(context),
+                        ),
+                        onChanged: (val) {
+                          controller.state.searchText.value = val;
+                          controller.onSearchChanged(val);
+                        },
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.close,
+                      size: 18,
+                      color: AppColors.textHint(context),
+                    ),
+                    onPressed: () => controller.closeAttendeeSearch(),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ] else ...[
+                  Text(
+                    "${currentIndex + 1} of $totalCount",
+                    style: TextStyle(
+                      fontSize: 9.sp,
+                      color: AppColors.textHint(context),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () => controller.resetAttendeeIndex(),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.refresh_rounded,
+                          size: 13,
+                          color: AppColors.iconMuted(context),
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          "Reset",
+                          style: TextStyle(
+                            fontSize: 8.5.sp,
+                            color: AppColors.iconMuted(context),
+                          ),
                         ),
                       ],
                     ),
-                    child: TextField(
-                      controller: controller.searchController,
-                      autofocus: true,
-                      textAlignVertical: TextAlignVertical.center,
-                      decoration: const InputDecoration(
-                        hintText: "Search name or company",
-                        border: InputBorder.none,
-                        isCollapsed: true,
-                        prefixIcon: Icon(
-                          Icons.search,
-                          size: 18,
-                          color: Colors.grey,
-                        ),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Colors.black87,
-                      ),
-                      onChanged: (val) {
-                        controller.state.searchText.value = val;
-                        controller.onSearchChanged(val);
-                      },
+                  ),
+                  SizedBox(width: 3.wp),
+                  GestureDetector(
+                    onTap: () => controller.expandAttendeeSearch(),
+                    child: Icon(
+                      Icons.search_rounded,
+                      size: 22,
+                      color: AppColors.textSecondary(context),
                     ),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.close,
-                    size: 18,
-                    color: Colors.grey.shade500,
-                  ),
-                  onPressed: () {
-                    setState(() => _searchExpanded = false);
-                    controller.searchController.clear();
-                    controller.state.searchText.value = "";
-                    controller.onSearchChanged("");
-                  },
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
-              ] else ...[
-                Text(
-                  "${_currentIndex + 1} of $totalCount",
-                  style: TextStyle(
-                    fontSize: 9.sp,
-                    color: Colors.grey.shade500,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const Spacer(),
-                GestureDetector(
-                  onTap: () => setState(() => _currentIndex = 0),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.refresh_rounded,
-                        size: 13,
-                        color: Colors.grey.shade400,
-                      ),
-                      const SizedBox(width: 3),
-                      Text(
-                        "Reset",
-                        style: TextStyle(
-                          fontSize: 8.5.sp,
-                          color: Colors.grey.shade400,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 3.wp),
-                GestureDetector(
-                  onTap: () => setState(() => _searchExpanded = true),
-                  child: Icon(
-                    Icons.search_rounded,
-                    size: 22,
-                    color: Colors.grey.shade700,
-                  ),
-                ),
+                ],
               ],
-            ],
-          ),
-        ),
-        SizedBox(height: 1.hp),
-
-        if (attendees.isEmpty) ...[
-          SizedBox(height: 4.hp),
-          Center(
-            child: Text(
-              "No attendees match your search.",
-              style: TextStyle(fontSize: 10.sp, color: Colors.grey),
             ),
           ),
-        ] else ...[
-          // Measure front card height so back cards match
-          Builder(
-            builder: (_) {
-              _measureFrontCard();
-              return const SizedBox.shrink();
-            },
-          ),
+          SizedBox(height: 1.hp),
 
-          // Stacked cards — back cards peek below front card
-          Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.topCenter,
-            children: [
-              // depth-2: furthest back, narrower, peeks 14px below front card
-              if (_currentIndex + 2 < attendees.length)
-                Padding(
-                  padding: const EdgeInsets.only(top: 28),
-                  child: Transform.scale(
-                    scaleX: 0.84,
-                    child: _buildBackCard(const Color(0xFFBBDEFB)),
+          if (attendees.isEmpty) ...[
+            SizedBox(height: 4.hp),
+            Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.search_off_rounded,
+                    size: 40,
+                    color: AppColors.iconMuted(context),
                   ),
-                ),
-              // depth-1: middle, slightly narrower, peeks 7px below front card
-              if (_currentIndex + 1 < attendees.length)
-                Padding(
-                  padding: const EdgeInsets.only(top: 14),
-                  child: Transform.scale(
-                    scaleX: 0.92,
-                    child: _buildBackCard(const Color(0xFF90CAF9)),
+                  SizedBox(height: 1.hp),
+                  Text(
+                    searchExpanded
+                        ? "No attendees match your search."
+                        : "No attendees found.",
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      color: AppColors.textHint(context),
+                    ),
                   ),
+                  if (searchExpanded) ...[
+                    SizedBox(height: 2.hp),
+                    TextButton.icon(
+                      onPressed: () => controller.closeAttendeeSearch(),
+                      icon: const Icon(Icons.close, size: 16),
+                      label: const Text("Clear search"),
+                    ),
+                  ],
+                  if (!searchExpanded &&
+                      controller.state.attendeeStatusFilter.value.isNotEmpty) ...[
+                    SizedBox(height: 2.hp),
+                    TextButton.icon(
+                      onPressed: () => controller.onStatusFilterChanged(''),
+                      icon: const Icon(Icons.filter_alt_off, size: 16),
+                      label: const Text("Show all attendees"),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ] else ...[
+            // Measure front card height so back cards match
+            Builder(
+              builder: (_) {
+                _measureFrontCard();
+                return const SizedBox.shrink();
+              },
+            ),
+
+            // Stacked cards
+            Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.topCenter,
+              children: [
+                if (currentIndex + 2 < attendees.length)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 28),
+                    child: Transform.scale(
+                      scaleX: 0.84,
+                      child: _buildBackCard(
+                        Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFF1A2A3A)
+                            : const Color(0xFFBBDEFB),
+                      ),
+                    ),
+                  ),
+                if (currentIndex + 1 < attendees.length)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 14),
+                    child: Transform.scale(
+                      scaleX: 0.92,
+                      child: _buildBackCard(
+                        Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFF1E3450)
+                            : const Color(0xFF90CAF9),
+                      ),
+                    ),
+                  ),
+                _buildFrontCard(attendees[currentIndex]),
+              ],
+            ),
+          ],
+
+          if (attendees.isNotEmpty) ...[
+            SizedBox(height: 3.hp),
+
+            // Swipe hint
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.arrow_back_ios_rounded,
+                  size: 11,
+                  color: AppColors.iconMuted(context),
                 ),
-              // Front card — draggable with snap-back animation
-              _buildFrontCard(attendees[_currentIndex]),
-            ],
-          ),
+                SizedBox(width: 1.wp),
+                Text(
+                  "Swipe left for next",
+                  style: TextStyle(fontSize: 8.sp, color: AppColors.iconMuted(context)),
+                ),
+                SizedBox(width: 2.wp),
+                Container(width: 1, height: 10, color: AppColors.border(context)),
+                SizedBox(width: 2.wp),
+                Text(
+                  "Swipe right for previous",
+                  style: TextStyle(fontSize: 8.sp, color: AppColors.iconMuted(context)),
+                ),
+                SizedBox(width: 1.wp),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 11,
+                  color: AppColors.iconMuted(context),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 0.8.hp),
+          ],
         ],
+      );
+    });
+  }
 
-        if (attendees.isNotEmpty) ...[
-          SizedBox(height: 3.hp),
-
-          // Swipe hint
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.arrow_back_ios_rounded,
-                size: 11,
-                color: Colors.grey.shade400,
-              ),
-              SizedBox(width: 1.wp),
-              Text(
-                "Swipe left for next",
-                style: TextStyle(fontSize: 8.sp, color: Colors.grey.shade400),
-              ),
-              SizedBox(width: 2.wp),
-              Container(width: 1, height: 10, color: Colors.grey.shade300),
-              SizedBox(width: 2.wp),
-              Text(
-                "Swipe right for previous",
-                style: TextStyle(fontSize: 8.sp, color: Colors.grey.shade400),
-              ),
-              SizedBox(width: 1.wp),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 11,
-                color: Colors.grey.shade400,
-              ),
-            ],
+  Widget _buildFilterChip(String label, String value, String selected) {
+    final isSelected = selected == value;
+    return GestureDetector(
+      onTap: () => controller.onStatusFilterChanged(value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          gradient: isSelected ? AppColors.buttonGradient : null,
+          color: isSelected ? null : AppColors.chipBg(context),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected
+                ? Colors.transparent
+                : AppColors.border(context),
+            width: 1,
           ),
-
-          SizedBox(height: 0.8.hp),
-        ],
-      ],
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 8.sp,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            color: isSelected
+                ? Colors.white
+                : AppColors.textPrimary(context),
+          ),
+        ),
+      ),
     );
   }
 
@@ -375,9 +469,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
     final Offset offset = _snapBackController.isAnimating
         ? _snapBackAnim.value
         : _dragOffset;
-    // Subtle tilt while dragging
     final rotation = offset.dx / 2000;
-
     final bool isAnimating = _snapBackController.isAnimating;
 
     return GestureDetector(
@@ -390,8 +482,6 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
     );
   }
 
-  // ─── Card widget ───────────────────────────────────────────────────────────
-
   Widget _buildCard(Attendee attendee) {
     final positionText = _positionText(attendee);
     final locationText = attendee.location?.toString() ?? '';
@@ -400,10 +490,12 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
     return Container(
       key: _frontCardKey,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFEEF4FF), Color(0xFFF8FBFF)],
+          colors: Theme.of(context).brightness == Brightness.dark
+              ? [const Color(0xFF1E2A3A), const Color(0xFF222E3E)]
+              : [const Color(0xFFEEF4FF), const Color(0xFFF8FBFF)],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -428,7 +520,6 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Avatar
                 CircleAvatar(
                   radius: 28,
                   backgroundColor: Colors.blue.shade100,
@@ -453,13 +544,10 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                       : null,
                 ),
                 SizedBox(width: 3.wp),
-
-                // Info
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Name + contact chip
                       Row(
                         children: [
                           Expanded(
@@ -468,7 +556,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 11.sp,
-                                color: Colors.black87,
+                                color: AppColors.textPrimary(context),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -477,40 +565,34 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                         ],
                       ),
                       SizedBox(height: 0.4.hp),
-
-                      // Job / position — always shown
                       _infoRow(
                         icon: Icons.work_outline_rounded,
                         iconColor: positionText.isNotEmpty
                             ? Colors.blue.shade400
-                            : Colors.grey.shade300,
+                            : AppColors.border(context),
                         text: positionText.isNotEmpty
                             ? positionText
                             : "No job title added",
                         isEmpty: positionText.isEmpty,
                       ),
                       SizedBox(height: 0.3.hp),
-
-                      // Location — always shown
                       _infoRow(
                         icon: Icons.location_on_outlined,
                         iconColor: locationText.isNotEmpty
                             ? Colors.red.shade300
-                            : Colors.grey.shade300,
+                            : AppColors.border(context),
                         text: locationText.isNotEmpty
                             ? locationText
                             : "No location added",
                         isEmpty: locationText.isEmpty,
                       ),
-
-                      // Bio — only shown when present
                       if (bioText.isNotEmpty) ...[
                         SizedBox(height: 0.4.hp),
                         Text(
                           bioText,
                           style: TextStyle(
                             fontSize: 8.sp,
-                            color: Colors.grey.shade600,
+                            color: AppColors.textSecondary(context),
                             height: 1.4,
                           ),
                           maxLines: 2,
@@ -523,8 +605,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
               ],
             ),
           ),
-          // ── Action button ──
-          Divider(height: 1, color: Colors.blue.shade50),
+          Divider(height: 1, color: AppColors.divider(context)),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.2.hp),
             child: Obx(() {
@@ -577,7 +658,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
             text,
             style: TextStyle(
               fontSize: 8.5.sp,
-              color: isEmpty ? Colors.grey.shade400 : Colors.black54,
+              color: isEmpty ? AppColors.iconMuted(context) : AppColors.textSecondary(context),
               fontStyle: isEmpty ? FontStyle.italic : FontStyle.normal,
               fontWeight: isEmpty ? FontWeight.normal : FontWeight.w500,
             ),

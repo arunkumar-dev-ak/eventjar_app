@@ -90,7 +90,7 @@ class OrganizerPage extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.all(4.wp),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.cardBgStatic,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Column(
@@ -121,7 +121,7 @@ class OrganizerPage extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            color: Colors.grey.shade800,
+            color: AppColors.textPrimaryStatic,
             fontSize: 9.sp,
             fontWeight: FontWeight.w600,
           ),

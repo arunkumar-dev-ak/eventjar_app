@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
@@ -37,7 +38,7 @@ Widget buildSet2faSuccess() {
           // Subtitle
           Text(
             "Your account is now protected with two-factor authentication.",
-            style: TextStyle(fontSize: 9.sp, color: Colors.grey.shade600),
+            style: TextStyle(fontSize: 9.sp, color: AppColors.textSecondaryStatic),
             textAlign: TextAlign.center,
           ),
 

@@ -13,7 +13,7 @@ class NotificationPage extends GetView<NotificationController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
           "Notifications",

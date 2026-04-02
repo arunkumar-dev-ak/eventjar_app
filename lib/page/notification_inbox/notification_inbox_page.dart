@@ -13,7 +13,7 @@ class NotificationInboxPage extends GetView<NotificationInboxController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F2EF),
+      backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
           'Notifications',
@@ -24,7 +24,9 @@ class NotificationInboxPage extends GetView<NotificationInboxController> {
           ),
         ),
         flexibleSpace: Container(
-          decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
         ),
         elevation: 0,
         actions: [
@@ -92,8 +94,8 @@ class NotificationInboxPage extends GetView<NotificationInboxController> {
         children: [
           Container(
             padding: const EdgeInsets.all(24),
-            decoration: const BoxDecoration(
-              color: AppColors.liteBlue,
+            decoration: BoxDecoration(
+              color: AppColors.lightBlueBgStatic,
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -103,18 +105,18 @@ class NotificationInboxPage extends GetView<NotificationInboxController> {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'No notifications yet',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF333333),
+              color: AppColors.textPrimaryStatic,
             ),
           ),
           const SizedBox(height: 6),
           Text(
             'You\'re all caught up!',
-            style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
+            style: TextStyle(fontSize: 13, color: AppColors.textHintStatic),
           ),
         ],
       ),
@@ -149,10 +151,10 @@ class _NotificationTile extends StatelessWidget {
         children: [
           Container(
             color: !isRead
-                ? const Color(0xFFEEF3FB)
+                ? AppColors.lightBlueBg(context)
                 : navigable
-                ? Colors.white
-                : const Color(0xFFF7F7F7),
+                ? AppColors.cardBg(context)
+                : AppColors.scaffoldBg(context),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,10 +171,10 @@ class _NotificationTile extends StatelessWidget {
                           Expanded(
                             child: Text(
                               title,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 13,
-                                color: Color(0xFF1A1A1A),
+                                color: AppColors.textPrimary(context),
                               ),
                             ),
                           ),
@@ -181,7 +183,7 @@ class _NotificationTile extends StatelessWidget {
                             _formatTime(timestamp),
                             style: TextStyle(
                               fontSize: 11,
-                              color: Colors.grey.shade500,
+                              color: AppColors.textHint(context),
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -193,7 +195,7 @@ class _NotificationTile extends StatelessWidget {
                           body,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey.shade600,
+                            color: AppColors.textSecondary(context),
                             height: 1.4,
                           ),
                         ),
@@ -206,14 +208,14 @@ class _NotificationTile extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
+                            color: AppColors.chipBg(context),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             'Info only',
                             style: TextStyle(
                               fontSize: 10,
-                              color: Colors.grey.shade500,
+                              color: AppColors.textHint(context),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -246,7 +248,7 @@ class _NotificationTile extends StatelessWidget {
                       Icon(
                         Icons.arrow_forward_ios_rounded,
                         size: 14,
-                        color: Colors.grey.shade700,
+                        color: AppColors.textSecondary(context),
                       ),
                   ],
                 ),
@@ -254,7 +256,13 @@ class _NotificationTile extends StatelessWidget {
             ),
           ),
           if (showDivider)
-            const Divider(height: 1, indent: 68, endIndent: 0, thickness: 0.5),
+            Divider(
+              height: 1,
+              indent: 68,
+              endIndent: 0,
+              thickness: 0.5,
+              color: AppColors.divider(context),
+            ),
         ],
       ),
     );

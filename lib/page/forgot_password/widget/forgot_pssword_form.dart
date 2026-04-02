@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/forgotPassword/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/forgot_password/widget/forgot_password_button.dart';
 import 'package:flutter/material.dart';
@@ -45,8 +46,8 @@ class ForgotPasswordTextFormField extends StatelessWidget {
                   color: !isFieldValid.value
                       ? Colors.red
                       : isFieldFocused.value
-                      ? Colors.black
-                      : Colors.grey,
+                      ? AppColors.textPrimary(context)
+                      : AppColors.textHint(context),
                   fontSize: 11.sp,
                 ),
                 children: const [
@@ -58,11 +59,11 @@ class ForgotPasswordTextFormField extends StatelessWidget {
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade400),
+              borderSide: BorderSide(color: AppColors.border(context)),
               borderRadius: BorderRadius.circular(10),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black, width: 2),
+              borderSide: BorderSide(color: AppColors.textPrimary(context), width: 2),
               borderRadius: BorderRadius.circular(10),
             ),
             errorBorder: OutlineInputBorder(
@@ -73,7 +74,7 @@ class ForgotPasswordTextFormField extends StatelessWidget {
               borderSide: BorderSide(color: Colors.red),
               borderRadius: BorderRadius.circular(10),
             ),
-            prefixIcon: Icon(Icons.email, color: Colors.grey.shade400),
+            prefixIcon: Icon(Icons.email, color: AppColors.iconMuted(context)),
           ),
         ),
       ),
@@ -90,10 +91,10 @@ class ForgotPasswordForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBg(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 8, offset: Offset(0, 2)),
+          BoxShadow(color: AppColors.shadow(context), blurRadius: 8, offset: Offset(0, 2)),
         ],
       ),
       padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 2.hp),

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -21,9 +22,9 @@ class QrCodeCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(3.wp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBg(context),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: AppColors.border(context)),
       ),
       child: Image.memory(bytes, width: 45.wp, height: 45.wp),
     );

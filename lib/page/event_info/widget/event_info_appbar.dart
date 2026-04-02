@@ -28,7 +28,7 @@ class EventInfoAppBar extends GetView<EventInfoController> {
         bottom: 1.5.hp,
       ),
       decoration: BoxDecoration(
-        gradient: AppColors.appBarGradient,
+        gradient: AppColors.appBarGradientFor(context),
         boxShadow: [
           BoxShadow(
             color: AppColors.gradientDarkStart.withValues(alpha: 0.2),

@@ -36,7 +36,7 @@ class SignUpPage extends GetView<SignUpController> {
                       SizedBox(height: 3.hp),
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.cardBg(context),
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(50),
                             topRight: Radius.circular(50),
@@ -48,7 +48,7 @@ class SignUpPage extends GetView<SignUpController> {
                       /*----- Form -----*/
                       Expanded(
                         child: Container(
-                          decoration: BoxDecoration(color: Colors.white),
+                          decoration: BoxDecoration(color: AppColors.cardBg(context)),
                           child: Padding(
                             padding: EdgeInsets.only(
                               left: 5.wp,

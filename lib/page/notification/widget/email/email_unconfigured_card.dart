@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 
 Widget emailUnconfiguredCard() {
@@ -26,7 +27,7 @@ Widget emailUnconfiguredCard() {
                 const SizedBox(height: 4),
                 Text(
                   'Configure SMTP to send tickets, reminders, and notifications.',
-                  style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                  style: TextStyle(fontSize: 13, color: AppColors.textSecondaryStatic),
                 ),
               ],
             ),

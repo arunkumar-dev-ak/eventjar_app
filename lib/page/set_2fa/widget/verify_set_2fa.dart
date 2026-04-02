@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/set_2fa/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/set_2fa/widget/enable_button_set_2fa.dart';
 import 'package:eventjar/page/set_2fa/widget/instruction_section_2fa.dart';
@@ -47,7 +48,7 @@ class Set2faVerifySection extends GetView<Set2faController> {
 
           Text(
             "Scan the QR code or enter the secret manually",
-            style: TextStyle(fontSize: 9.sp, color: Colors.grey),
+            style: TextStyle(fontSize: 9.sp, color: AppColors.textSecondary(context)),
             textAlign: TextAlign.center,
           ),
 
@@ -99,21 +100,21 @@ class Set2faVerifySection extends GetView<Set2faController> {
   Widget buildOrDivider() {
     return Row(
       children: [
-        Expanded(child: Divider(thickness: 1, color: Colors.grey.shade300)),
+        Expanded(child: Divider(thickness: 1, color: AppColors.dividerStatic)),
 
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 3.wp),
           child: Text(
             "OR",
             style: TextStyle(
-              color: Colors.grey.shade500,
+              color: AppColors.textHintStatic,
               fontSize: 9.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
         ),
 
-        Expanded(child: Divider(thickness: 1, color: Colors.grey.shade300)),
+        Expanded(child: Divider(thickness: 1, color: AppColors.dividerStatic)),
       ],
     );
   }

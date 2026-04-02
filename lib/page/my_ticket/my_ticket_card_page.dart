@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/helper/date_handler.dart';
@@ -47,7 +48,7 @@ Widget myTicketBuildTicketCard(
           'Registered on:  ${formatDate(ticket.registeredAt)}',
           style: TextStyle(
             fontSize: 8.sp,
-            color: Colors.grey.shade500,
+            color: AppColors.textHintStatic,
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -62,10 +63,10 @@ Widget myTicketBuildTicketCard(
         child: Container(
           margin: EdgeInsets.only(bottom: 3.hp),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.cardBgStatic,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: isActive ? Colors.green.shade100 : Colors.grey.shade200,
+              color: isActive ? Colors.green.shade100 : AppColors.dividerStatic,
               width: 1.5,
             ),
             boxShadow: [
@@ -118,7 +119,7 @@ Widget myTicketBuildTicketCard(
                             style: TextStyle(
                               fontSize: 9.sp,
                               fontWeight: FontWeight.w700,
-                              color: Colors.black87,
+                              color: AppColors.textPrimaryStatic,
                             ),
                           ),
 
@@ -158,7 +159,7 @@ Widget myTicketBuildTicketCard(
                             style: TextStyle(
                               fontSize: 10.sp,
                               fontWeight: FontWeight.w800,
-                              color: Colors.black,
+                              color: AppColors.textPrimaryStatic,
                             ),
                           ),
 
@@ -172,7 +173,7 @@ Widget myTicketBuildTicketCard(
                                     ? Icons.location_on_outlined
                                     : Icons.videocam_outlined,
                                 size: 12,
-                                color: Colors.grey.shade500,
+                                color: AppColors.textHintStatic,
                               ),
                               SizedBox(width: 1.wp),
                               Expanded(
@@ -182,7 +183,7 @@ Widget myTicketBuildTicketCard(
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontSize: 8.sp,
-                                    color: Colors.grey.shade600,
+                                    color: AppColors.textSecondaryStatic,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -205,7 +206,7 @@ Widget myTicketBuildTicketCard(
                       '${ticket.quantity} Ticket${ticket.quantity > 1 ? 's' : ''}',
                       style: TextStyle(
                         fontSize: 8.sp,
-                        color: Colors.grey.shade700,
+                        color: AppColors.textSecondaryStatic,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -213,7 +214,7 @@ Widget myTicketBuildTicketCard(
                       '  •  ',
                       style: TextStyle(
                         fontSize: 8.sp,
-                        color: Colors.grey.shade400,
+                        color: AppColors.iconMutedStatic,
                       ),
                     ),
                     Text(
@@ -302,7 +303,7 @@ Widget myTicketBuildTicketCard(
 
               // Divider + bottom strip (finished tickets only)
               if (!isActive) ...[
-                Divider(height: 1, color: Colors.grey.shade200),
+                Divider(height: 1, color: AppColors.dividerStatic),
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 3.5.wp,
@@ -333,7 +334,7 @@ Widget myTicketBuildTicketCard(
                       Container(
                         height: 3.hp,
                         width: 1,
-                        color: Colors.grey.shade300,
+                        color: AppColors.dividerStatic,
                       ),
                       SizedBox(width: 3.wp),
                       Expanded(
@@ -341,7 +342,7 @@ Widget myTicketBuildTicketCard(
                           'Hope you enjoyed the Show!',
                           style: TextStyle(
                             fontSize: 8.sp,
-                            color: Colors.grey.shade500,
+                            color: AppColors.textHintStatic,
                             fontStyle: FontStyle.italic,
                           ),
                         ),
@@ -360,9 +361,9 @@ Widget myTicketBuildTicketCard(
 
 Widget _myTicketImagePlaceholder() {
   return Container(
-    color: Colors.grey.shade100,
+    color: AppColors.chipBgStatic,
     child: Center(
-      child: Icon(Icons.event_outlined, color: Colors.grey.shade300, size: 32),
+      child: Icon(Icons.event_outlined, color: AppColors.borderStatic, size: 32),
     ),
   );
 }

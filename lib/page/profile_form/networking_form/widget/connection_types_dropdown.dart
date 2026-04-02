@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/profile_form/networking/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -31,7 +32,7 @@ class CommonMultiSelectDropdown extends GetView<NetworkingFormController> {
         SizedBox(height: 0.5.hp),
         Text(
           subtitle,
-          style: TextStyle(fontSize: 8.5.sp, color: Colors.grey.shade600),
+          style: TextStyle(fontSize: 8.5.sp, color: AppColors.textSecondary(context)),
         ),
         SizedBox(height: 1.5.hp),
         Obx(
@@ -58,10 +59,10 @@ class CommonMultiSelectDropdown extends GetView<NetworkingFormController> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 0.8.hp),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.green.shade500 : Colors.grey.shade100,
+          color: isSelected ? Colors.green.shade500 : AppColors.chipBgStatic,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? Colors.green.shade600 : Colors.grey.shade300,
+            color: isSelected ? Colors.green.shade600 : AppColors.borderStatic,
             width: 1,
           ),
         ),
@@ -69,7 +70,7 @@ class CommonMultiSelectDropdown extends GetView<NetworkingFormController> {
           item,
           style: TextStyle(
             fontSize: 8.5.sp,
-            color: isSelected ? Colors.white : Colors.black87,
+            color: isSelected ? Colors.white : AppColors.textPrimaryStatic,
             fontWeight: FontWeight.w600,
           ),
         ),

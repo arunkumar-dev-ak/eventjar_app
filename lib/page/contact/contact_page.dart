@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:eventjar/controller/contact/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/model/meta/meta_model.dart';
 import 'package:eventjar/page/contact/contact_card_page.dart';
@@ -17,7 +18,7 @@ class ContactPage extends GetView<ContactController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.cardBg(context),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: Obx(() {

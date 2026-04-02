@@ -21,7 +21,7 @@ class SignInFooter extends StatelessWidget {
         label,
         style: TextStyle(
           fontWeight: FontWeight.w500,
-          color: Colors.grey.shade600,
+          color: AppColors.textSecondaryStatic,
           fontSize: 10.sp,
         ),
       ),
@@ -62,13 +62,13 @@ class SignInFooter extends StatelessWidget {
           // ),
           Text(
             "© 2025 EventJar. All rights reserved.",
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 9.sp),
+            style: TextStyle(color: AppColors.textHint(context), fontSize: 9.sp),
           ),
           SizedBox(height: 0.5.hp),
           RichText(
             text: TextSpan(
               text: "Developed by ",
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 10.sp),
+              style: TextStyle(color: AppColors.textSecondary(context), fontSize: 10.sp),
               children: [
                 TextSpan(
                   text: "Humbletree Cloud Pvt Ltd",

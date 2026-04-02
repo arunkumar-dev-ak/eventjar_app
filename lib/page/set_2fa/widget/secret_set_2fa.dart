@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,8 +14,8 @@ class SecretBox extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 1.5.hp),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
-        color: Colors.grey.shade50,
+        border: Border.all(color: AppColors.border(context)),
+        color: AppColors.scaffoldBg(context),
       ),
       child: Row(
         children: [

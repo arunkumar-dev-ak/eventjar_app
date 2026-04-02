@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/contact_list_meeting/controller.dart';
 import 'package:eventjar/controller/contact_list_meeting/state.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:flutter/material.dart';
@@ -17,13 +18,13 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
           title: Obx(
             () => Text(
               controller.state.appBarTitle.value,
-              style: const TextStyle(color: Colors.black),
+              style: TextStyle(color: AppColors.textPrimary(context)),
             ),
           ),
           centerTitle: false,
-          iconTheme: const IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
           elevation: 4,
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.cardBg(context),
           shadowColor: Colors.black.withValues(alpha: 0.1),
         ),
         body: Obx(() {
@@ -68,7 +69,7 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
       width: double.infinity,
       padding: EdgeInsets.all(2.wp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBgStatic,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -109,7 +110,7 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
                       () => Text(
                         controller.state.mobileContact.value!.email,
                         style: TextStyle(
-                          color: Colors.grey[600],
+                          color: AppColors.textSecondaryStatic,
                           fontSize: 8.sp,
                         ),
                       ),
@@ -131,7 +132,7 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
       width: double.infinity,
       padding: EdgeInsets.all(2.wp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBgStatic,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -182,20 +183,20 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
                 style: TextStyle(
                   fontSize: 10.sp,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey[800],
+                  color: AppColors.textPrimaryStatic,
                 ),
               ),
               childrenPadding: EdgeInsets.all(3.wp),
               expandedCrossAxisAlignment: CrossAxisAlignment.start,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(2.wp),
-                side: BorderSide(color: Colors.grey[200]!),
+                side: BorderSide(color: AppColors.dividerStatic),
               ),
-              backgroundColor: Colors.grey[50],
+              backgroundColor: AppColors.scaffoldBgStatic,
               collapsedBackgroundColor: Colors.transparent,
               collapsedShape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(2.wp),
-                side: BorderSide(color: Colors.grey[200]!),
+                side: BorderSide(color: AppColors.dividerStatic),
               ),
               children: [
                 Container(
@@ -204,13 +205,13 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(2.wp),
-                    border: Border.all(color: Colors.grey[100]!),
+                    border: Border.all(color: AppColors.chipBgStatic),
                   ),
                   child: Text(
                     controller.state.currentMeeting.value!.notes!,
                     style: TextStyle(
                       fontSize: 8.sp,
-                      color: Colors.grey[700],
+                      color: AppColors.textSecondaryStatic,
                       height: 1.4,
                     ),
                   ),
@@ -228,12 +229,12 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.grey[600]),
+          Icon(icon, size: 20, color: AppColors.textSecondaryStatic),
           const SizedBox(width: 12),
           Text(
             '$label: ',
             style: TextStyle(
-              color: Colors.grey[600],
+              color: AppColors.textSecondaryStatic,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -302,7 +303,7 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
                         ? null
                         : controller.onRescheduleMeeting,
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Colors.grey[400]!, width: 1.5),
+                      side: BorderSide(color: AppColors.borderStatic, width: 1.5),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -310,7 +311,7 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
                     child: Text(
                       'Reschedule',
                       style: TextStyle(
-                        color: Colors.grey[700],
+                        color: AppColors.textSecondaryStatic,
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
                       ),

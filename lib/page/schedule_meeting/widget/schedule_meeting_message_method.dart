@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -17,17 +18,17 @@ Widget scheduleMeetingMessageBuildMethodCard({
       padding: EdgeInsets.all(4.wp),
       decoration: BoxDecoration(
         color: isLoading
-            ? Colors.grey[100]
+            ? AppColors.chipBgStatic
             : isSelected
             ? Colors.blue.withValues(alpha: 0.08)
-            : Colors.grey[50],
+            : AppColors.scaffoldBgStatic,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isLoading
-              ? Colors.grey[300]!
+              ? AppColors.dividerStatic
               : isSelected
               ? Colors.blue
-              : Colors.grey[300]!,
+              : AppColors.dividerStatic,
           width: 1.5,
         ),
         boxShadow: isLoading
@@ -60,7 +61,7 @@ Widget scheduleMeetingMessageBuildMethodCard({
                       )
                     : Icon(
                         icon,
-                        color: isSelected ? Colors.blue : Colors.grey[600],
+                        color: isSelected ? Colors.blue : AppColors.textSecondaryStatic,
                       ),
                 SizedBox(width: 3.wp),
                 Expanded(
@@ -76,7 +77,7 @@ Widget scheduleMeetingMessageBuildMethodCard({
                               : FontWeight.w500,
                           color: isSelected
                               ? Colors.blue[700]
-                              : Colors.grey[700],
+                              : AppColors.textSecondaryStatic,
                         ),
                       ),
 
@@ -141,7 +142,7 @@ Widget scheduleMeetingMessageBuildMethodCard({
                 shape: BoxShape.circle,
                 color: isSelected ? Colors.blue : Colors.transparent,
                 border: Border.all(
-                  color: isSelected ? Colors.blue : Colors.grey[400]!,
+                  color: isSelected ? Colors.blue : AppColors.textHintStatic,
                   width: 2,
                 ),
               ),

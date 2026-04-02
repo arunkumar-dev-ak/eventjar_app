@@ -1,11 +1,13 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:eventjar/global/global_values.dart';
+import 'package:eventjar/global/store/theme_store.dart';
 import 'package:eventjar/notification/notification_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/routes/route_page.dart';
 import 'package:eventjar/services/nfc_intent_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 // import 'package:clarity_flutter/clarity_flutter.dart';
@@ -47,15 +49,16 @@ class _MyAppState extends State<MyApp> {
       localizationsDelegates: [CountryLocalizations.delegate],
       debugShowCheckedModeBanner: false,
       title: 'EventJar',
-      theme: _buildLightTheme(context),
-      themeMode: ThemeMode.system,
+      theme: _buildLightTheme(),
+      darkTheme: _buildDarkTheme(),
+      themeMode: ThemeStore.to.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       initialRoute: RouteName.splashScreen,
       getPages: RoutePage().getPage,
     );
   }
 
   //light theme
-  ThemeData _buildLightTheme(BuildContext context) {
+  ThemeData _buildLightTheme() {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme(
@@ -74,7 +77,9 @@ class _MyAppState extends State<MyApp> {
         error: Colors.red.shade700,
         onError: Colors.white,
       ),
-      textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+      textTheme: GoogleFonts.poppinsTextTheme(
+        ThemeData(brightness: Brightness.light).textTheme,
+      ),
       appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: true,
@@ -92,32 +97,52 @@ class _MyAppState extends State<MyApp> {
   ThemeData _buildDarkTheme() {
     return ThemeData(
       useMaterial3: true,
+      brightness: Brightness.dark,
+      scaffoldBackgroundColor: const Color(0xFF121212),
       colorScheme: ColorScheme(
         brightness: Brightness.dark,
-        primary: const Color(0xFF1C56BF),
+        primary: const Color(0xFF5B8DEF),
         onPrimary: Colors.white,
-        secondary: const Color(0xFF167B4D),
+        secondary: const Color(0xFF2ECC71),
         onSecondary: Colors.white,
         tertiary: const Color(0xFF789ADE),
         onTertiary: Colors.white,
         surface: const Color(0xFF1E1E1E),
         onSurface: Colors.white,
+        surfaceContainerHighest: const Color(0xFF2C2C2C),
         error: Colors.red.shade400,
         onError: Colors.black,
       ),
-      textTheme: TextTheme(
-        displayLarge: GoogleFonts.poppins(
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+      cardColor: const Color(0xFF1E1E1E),
+      dividerColor: Colors.grey.shade800,
+      textTheme: GoogleFonts.poppinsTextTheme(
+        ThemeData(brightness: Brightness.dark).textTheme,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: const Color(0xFF2C2C2C),
+        hintStyle: TextStyle(color: Colors.grey.shade500),
+        labelStyle: const TextStyle(color: Colors.white70),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade700),
         ),
-        titleLarge: GoogleFonts.inter(
-          fontSize: 22,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF3A3A3A), width: 1.5),
         ),
-        bodyLarge: GoogleFonts.roboto(fontSize: 16, color: Colors.white),
-        bodyMedium: GoogleFonts.roboto(fontSize: 14, color: Colors.white),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF5B8DEF), width: 2.0),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.red.shade400, width: 1.5),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.red.shade400, width: 2.0),
+        ),
       ),
       appBarTheme: AppBarTheme(
         elevation: 0,
@@ -127,6 +152,10 @@ class _MyAppState extends State<MyApp> {
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: Colors.white,
+        ),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          systemNavigationBarColor: Color(0xFF1E1E1E),
+          systemNavigationBarIconBrightness: Brightness.light,
         ),
       ),
     );

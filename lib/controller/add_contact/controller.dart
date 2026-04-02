@@ -382,6 +382,7 @@ class AddContactController extends GetxController {
     websiteController.clear();
     addressController.clear();
     state.isFromCardScan.value = false;
+    state.isAdditionalInfoExpanded.value = false;
     state.selectedStage.value = {'key': 'new', 'value': 'New Contact'};
     state.additionalInfoSelection.value = {
       'phone2': false,
@@ -731,6 +732,9 @@ class AddContactController extends GetxController {
             break;
         }
       }
+
+      // Auto-expand the additional info section so user sees the filled fields
+      state.isAdditionalInfoExpanded.value = true;
 
       AppSnackbar.success(
         title: 'Applied',

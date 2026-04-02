@@ -17,15 +17,18 @@ class NetworkPage extends GetView<NetworkScreenController> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
       ),
       child: Container(
         width: 100.wp,
-        color: AppColors.liteBlue.withValues(alpha: 0.3),
+        color: isDark
+            ? AppColors.darkBackground
+            : AppColors.liteBlue.withValues(alpha: 0.3),
         child: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 3.wp),

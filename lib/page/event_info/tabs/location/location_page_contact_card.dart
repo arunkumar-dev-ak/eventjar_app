@@ -50,7 +50,7 @@ Widget _buildContactRow({
           style: TextStyle(
             fontSize: 10.sp,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: AppColors.textPrimaryStatic,
           ),
         ),
       ),

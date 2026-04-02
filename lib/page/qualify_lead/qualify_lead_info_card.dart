@@ -1,4 +1,5 @@
 // COMMON TEXT FORM FIELD
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -24,16 +25,16 @@ Widget qualifyLeadTextField({
     decoration: InputDecoration(
       labelText: label,
       labelStyle: TextStyle(
-        color: hasValue ? Colors.black : Colors.grey[600],
+        color: hasValue ? AppColors.textPrimaryStatic : AppColors.textSecondaryStatic,
         fontSize: 9.sp,
       ),
       floatingLabelStyle: TextStyle(
-        color: Colors.black,
+        color: AppColors.textPrimaryStatic,
         fontSize: 10.sp,
         fontWeight: FontWeight.w500,
       ),
       prefixIcon: prefixIcon != null
-          ? Icon(prefixIcon, color: Colors.grey[600])
+          ? Icon(prefixIcon, color: AppColors.textSecondaryStatic)
           : null,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -101,7 +102,7 @@ Widget buildLeadCard({
               Text(
                 title,
                 style: TextStyle(
-                  color: Colors.grey[600],
+                  color: AppColors.textSecondaryStatic,
                   fontSize: 8.sp,
                   fontWeight: FontWeight.w500,
                 ),
@@ -112,7 +113,7 @@ Widget buildLeadCard({
                 style: TextStyle(
                   fontSize: 9.sp,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey[800],
+                  color: AppColors.textPrimaryStatic,
                 ),
               ),
             ],

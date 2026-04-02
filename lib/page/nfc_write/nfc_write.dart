@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/nfc_write/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/nfc_write/nfc_write_bottom_control.dart';
 import 'package:eventjar/page/nfc_write/nfc_write_header.dart';
@@ -16,8 +17,11 @@ class NfcWritePage extends GetView<NfcWriteController> {
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
-          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness:
+              Theme.of(context).brightness == Brightness.dark
+                  ? Brightness.light
+                  : Brightness.dark,
+          statusBarBrightness: Theme.of(context).brightness,
         ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
@@ -29,7 +33,7 @@ class NfcWritePage extends GetView<NfcWriteController> {
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 11.sp,
-                color: Colors.black87,
+                color: AppColors.textPrimary(context),
               ),
             ),
           ],
@@ -44,7 +48,7 @@ class NfcWritePage extends GetView<NfcWriteController> {
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.white, Colors.white.withValues(alpha: 0.9)],
+              colors: [AppColors.cardBg(context), AppColors.cardBg(context).withValues(alpha: 0.9)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -52,7 +56,7 @@ class NfcWritePage extends GetView<NfcWriteController> {
         ),
       ),
 
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.scaffoldBg(context),
       body: SafeArea(
         child: Column(
           children: [

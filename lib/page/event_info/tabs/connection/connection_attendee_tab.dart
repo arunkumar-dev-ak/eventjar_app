@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/event_info/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,7 +25,7 @@ class ConnectionAttendeesTab extends StatelessWidget {
           ),
           Container(
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
+              color: AppColors.chipBg(context),
               borderRadius: BorderRadius.circular(24),
             ),
             child: Obx(() {
@@ -36,11 +37,11 @@ class ConnectionAttendeesTab extends StatelessWidget {
                     onTap: () => controller.selectRequestTab(0),
                     leftSide: true,
                     selectedBgColor: Colors.blue,
-                    unselectedBgColor: Colors.white,
+                    unselectedBgColor: AppColors.cardBg(context),
                     selectedTextColor: Colors.white,
                     unselectedTextColor: Colors.blue,
                     selectedBorderColor: Colors.blue,
-                    unselectedBorderColor: Colors.grey.shade300,
+                    unselectedBorderColor: AppColors.border(context),
                     count: sentCount,
                     countGradient: LinearGradient(
                       colors: [Colors.blue, Colors.lightBlueAccent],
@@ -52,11 +53,11 @@ class ConnectionAttendeesTab extends StatelessWidget {
                     onTap: () => controller.selectRequestTab(1),
                     leftSide: false,
                     selectedBgColor: Colors.green,
-                    unselectedBgColor: Colors.white,
+                    unselectedBgColor: AppColors.cardBg(context),
                     selectedTextColor: Colors.white,
                     unselectedTextColor: Colors.green,
                     selectedBorderColor: Colors.green,
-                    unselectedBorderColor: Colors.grey.shade300,
+                    unselectedBorderColor: AppColors.border(context),
                     count: receivedCount,
                     countGradient: LinearGradient(
                       colors: [Colors.green, Colors.lightGreenAccent],

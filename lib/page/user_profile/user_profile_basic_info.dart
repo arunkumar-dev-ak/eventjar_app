@@ -263,8 +263,8 @@ void _showPhoneOtpDialog(
                 right: 24,
                 bottom: 24,
               ),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: AppColors.cardBgStatic,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(25),
                   topRight: Radius.circular(25),
@@ -278,7 +278,7 @@ void _showPhoneOtpDialog(
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade900,
+                      color: AppColors.textPrimaryStatic,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -307,12 +307,12 @@ void _showPhoneOtpDialog(
                       textStyle: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade900,
+                        color: AppColors.textPrimaryStatic,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade50,
+                        color: AppColors.inputBgStatic,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade300),
+                        border: Border.all(color: AppColors.borderStatic),
                       ),
                     ),
                     focusedPinTheme: PinTheme(
@@ -321,10 +321,10 @@ void _showPhoneOtpDialog(
                       textStyle: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade900,
+                        color: AppColors.textPrimaryStatic,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.cardBgStatic,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: AppColors.gradientDarkStart,
@@ -526,8 +526,8 @@ void _showEmailVerifyDialog(
               right: 24,
               bottom: 24,
             ),
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: AppColors.cardBgStatic,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(25),
                 topRight: Radius.circular(25),
@@ -541,7 +541,7 @@ void _showEmailVerifyDialog(
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade900,
+                    color: AppColors.textPrimaryStatic,
                   ),
                   textAlign: TextAlign.center,
                 ),

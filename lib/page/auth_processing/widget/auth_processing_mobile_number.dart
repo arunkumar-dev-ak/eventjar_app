@@ -63,8 +63,8 @@ class AuthProcessignMobileNumber extends GetView<AuthProcessingController> {
                   Expanded(
                     child: Container(
                       width: 100.wp,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
+                      decoration: BoxDecoration(
+                        color: AppColors.cardBg(context),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(50),
                           topRight: Radius.circular(50),
@@ -137,11 +137,11 @@ class AuthProcessignMobileNumber extends GetView<AuthProcessingController> {
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.0),
-        borderSide: BorderSide(color: Colors.grey.shade400, width: 1.5),
+        borderSide: BorderSide(color: AppColors.borderStatic, width: 1.5),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.0),
-        borderSide: BorderSide(color: Colors.blue.shade700, width: 2.0),
+        borderSide: BorderSide(color: AppColors.isDark ? Colors.blue.shade300 : Colors.blue.shade700, width: 2.0),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.0),

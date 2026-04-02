@@ -167,14 +167,50 @@ class EventInfoController extends GetxController
       state.attendeeSearchQuery.value = query;
       state.attendeeOffset.value = 0;
       final finalEventId = state.eventInfo.value?.id ?? eventId;
-      fetchEventAttendeeList(finalEventId, offset: 0, search: query);
+      fetchEventAttendeeList(
+        finalEventId,
+        offset: 0,
+        search: query,
+        status: state.attendeeStatusFilter.value,
+      );
     });
+  }
+
+  void onStatusFilterChanged(String status) {
+    state.attendeeStatusFilter.value = status;
+    state.attendeeOffset.value = 0;
+    state.attendeeCurrentIndex.value = 0;
+    state.attendeeSearchClearing.value = true;
+    final finalEventId = state.eventInfo.value?.id ?? eventId;
+    fetchEventAttendeeList(
+      finalEventId,
+      offset: 0,
+      search: state.attendeeSearchQuery.value,
+      status: status,
+    );
+  }
+
+  void expandAttendeeSearch() {
+    state.attendeeSearchExpanded.value = true;
+  }
+
+  void closeAttendeeSearch() {
+    state.attendeeSearchExpanded.value = false;
+    state.attendeeSearchClearing.value = true;
+    searchController.clear();
+    state.searchText.value = "";
+    onSearchChanged("");
+  }
+
+  void resetAttendeeIndex() {
+    state.attendeeCurrentIndex.value = 0;
   }
 
   Future<void> fetchEventAttendeeList(
     String eventId, {
     int offset = 0,
     String search = '',
+    String status = '',
   }) async {
     try {
       if (offset == 0) {
@@ -188,6 +224,7 @@ class EventInfoController extends GetxController
         offset: offset,
         limit: 10,
         search: search,
+        status: status,
       );
       if (offset == 0) {
         state.attendeeList.value = response;
@@ -236,6 +273,7 @@ class EventInfoController extends GetxController
       finalEventId,
       offset: state.attendeeOffset.value,
       search: state.attendeeSearchQuery.value,
+      status: state.attendeeStatusFilter.value,
     );
   }
 

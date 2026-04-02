@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +8,7 @@ Widget buildCheckoutTermsText() {
     child: RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-        style: TextStyle(fontSize: 8.sp, color: Colors.grey[600], height: 1.5),
+        style: TextStyle(fontSize: 8.sp, color: AppColors.textSecondaryStatic, height: 1.5),
         children: [
           // TextSpan(text: "By continuing, you agree to our "),
           // TextSpan(

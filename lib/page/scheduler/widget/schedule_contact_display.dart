@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
 import 'package:flutter/material.dart';
 
@@ -40,12 +41,12 @@ Widget buildContactDisplayForSchedulePage(ContactMeeting? meeting) {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: AppColors.textPrimaryStatic,
                 ),
               ),
               Text(
                 meeting.contact?.email ?? '',
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 12, color: AppColors.textSecondaryStatic),
               ),
             ],
           ),

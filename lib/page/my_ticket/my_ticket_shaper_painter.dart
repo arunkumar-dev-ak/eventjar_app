@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class TicketShapePainter extends CustomPainter {
@@ -14,7 +15,7 @@ class TicketShapePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white
+      ..color = AppColors.cardBgStatic
       ..style = PaintingStyle.fill;
 
     final borderPaint = Paint()

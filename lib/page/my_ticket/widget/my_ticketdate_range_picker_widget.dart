@@ -15,12 +15,21 @@ class MyTicketDateRangePickerWidget {
       lastDate: selectedTab == 1 ? DateTime.now() : DateTime(2035),
       initialDateRange: initialRange,
       builder: (context, child) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.fromSwatch().copyWith(
-              primary: AppColors.gradientDarkStart,
-              onSurface: Colors.black87,
+          data: (isDark ? ThemeData.dark() : ThemeData.light()).copyWith(
+            colorScheme: (isDark
+                    ? const ColorScheme.dark()
+                    : const ColorScheme.light())
+                .copyWith(
+              primary: const Color(0xFF1A73E8),
               onPrimary: Colors.white,
+              primaryContainer: const Color(0xFF1A73E8),
+              onPrimaryContainer: Colors.white,
+              secondaryContainer: const Color(0xFF1A73E8),
+              onSecondaryContainer: Colors.white,
+              surface: isDark ? AppColors.darkCard : Colors.white,
+              onSurface: isDark ? Colors.white : Colors.black87,
             ),
           ),
           child: Stack(

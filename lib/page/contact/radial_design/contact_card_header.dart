@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/contact/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
@@ -71,13 +72,13 @@ class ContactCardHeader extends StatelessWidget {
                           SizedBox(height: 3),
                           _buildInfoRow(
                             Icons.email_outlined,
-                            Colors.grey.shade600,
+                            AppColors.textSecondary(context),
                             contact.email,
                           ),
                           if (contact.phone != null)
                             _buildInfoRow(
                               Icons.phone_outlined,
-                              Colors.grey.shade600,
+                              AppColors.textSecondary(context),
                               contact.phone ?? 'No phone',
                             ),
                           SizedBox(height: 12),
@@ -120,14 +121,14 @@ class ContactCardHeader extends StatelessWidget {
                                       style: TextStyle(
                                         fontSize: 10.sp,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.black87,
+                                        color: AppColors.textPrimary(context),
                                       ),
                                     ),
 
                                     // Email
                                     _buildInfoRow(
                                       Icons.email_outlined,
-                                      Colors.grey.shade600,
+                                      AppColors.textSecondary(context),
                                       contact.email,
                                     ),
 
@@ -139,7 +140,7 @@ class ContactCardHeader extends StatelessWidget {
                                         children: [
                                           _buildInfoRowCompact(
                                             Icons.phone_rounded,
-                                            Colors.grey.shade600,
+                                            AppColors.textSecondary(context),
                                             contact.phone!,
                                           ),
                                           SizedBox(width: 3.wp),
@@ -173,13 +174,13 @@ class ContactCardHeader extends StatelessWidget {
                                 icon: Container(
                                   padding: EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.shade200,
+                                    color: AppColors.divider(context),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
                                     Icons.more_vert,
                                     size: 18,
-                                    color: Colors.black,
+                                    color: AppColors.textPrimary(context),
                                   ),
                                 ),
                                 itemBuilder: (context) => [
@@ -196,7 +197,7 @@ class ContactCardHeader extends StatelessWidget {
                                         Text(
                                           'Send Mail',
                                           style: TextStyle(
-                                            color: Colors.grey.shade800,
+                                            color: AppColors.textPrimary(context),
                                           ),
                                         ),
                                       ],
@@ -215,7 +216,7 @@ class ContactCardHeader extends StatelessWidget {
                                         Text(
                                           'Call',
                                           style: TextStyle(
-                                            color: Colors.grey.shade800,
+                                            color: AppColors.textPrimary(context),
                                           ),
                                         ),
                                       ],
@@ -235,7 +236,7 @@ class ContactCardHeader extends StatelessWidget {
                                           Text(
                                             'Invite to MyEventJar',
                                             style: TextStyle(
-                                              color: Colors.grey.shade800,
+                                              color: AppColors.textPrimary(context),
                                             ),
                                           ),
                                         ],
@@ -254,7 +255,7 @@ class ContactCardHeader extends StatelessWidget {
                                         Text(
                                           'Add to Phone',
                                           style: TextStyle(
-                                            color: Colors.grey.shade800,
+                                            color: AppColors.textPrimary(context),
                                           ),
                                         ),
                                       ],
@@ -273,7 +274,7 @@ class ContactCardHeader extends StatelessWidget {
                                         Text(
                                           'Edit Contact',
                                           style: TextStyle(
-                                            color: Colors.grey.shade800,
+                                            color: AppColors.textPrimary(context),
                                           ),
                                         ),
                                       ],
@@ -292,7 +293,7 @@ class ContactCardHeader extends StatelessWidget {
                                         Text(
                                           'Delete Contact',
                                           style: TextStyle(
-                                            color: Colors.grey.shade800,
+                                            color: AppColors.textPrimary(context),
                                           ),
                                         ),
                                       ],
@@ -418,7 +419,7 @@ Widget _buildInfoRow(IconData icon, Color iconColor, String value) {
             value,
             style: TextStyle(
               fontSize: 8.sp,
-              color: Colors.grey.shade700,
+              color: AppColors.textSecondaryStatic,
               fontWeight: FontWeight.w500,
             ),
             overflow: TextOverflow.ellipsis,
@@ -439,7 +440,7 @@ Widget _buildInfoRowCompact(IconData icon, Color iconColor, String value) {
         value,
         style: TextStyle(
           fontSize: 8.sp,
-          color: Colors.grey.shade700,
+          color: AppColors.textSecondaryStatic,
           fontWeight: FontWeight.w500,
         ),
         overflow: TextOverflow.ellipsis,
@@ -482,7 +483,7 @@ Widget _buildNameWithCallButton({
                 style: TextStyle(
                   fontSize: nameFontSize.sp,
                   fontWeight: nameFontWeight,
-                  color: Colors.black87,
+                  color: AppColors.textPrimaryStatic,
                 ),
               ),
             ),

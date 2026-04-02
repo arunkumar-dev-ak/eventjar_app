@@ -22,7 +22,7 @@ Widget buildCompanySection(Organizer organizer, EventInfo eventInfo) {
       eventInfo.organizerContactPhone!.isNotEmpty &&
       eventInfo.userTicketStatus?.isRegistered == true) {
     if (items.isNotEmpty) {
-      items.add(Divider(height: 3.hp, color: Colors.grey.shade300));
+      items.add(Divider(height: 3.hp, color: AppColors.borderStatic));
     }
     items.add(
       _infoRow(
@@ -37,7 +37,7 @@ Widget buildCompanySection(Organizer organizer, EventInfo eventInfo) {
   // Website
   if (organizer.website != null && organizer.website!.isNotEmpty) {
     if (items.isNotEmpty) {
-      items.add(Divider(height: 3.hp, color: Colors.grey.shade300));
+      items.add(Divider(height: 3.hp, color: AppColors.borderStatic));
     }
     items.add(
       _infoRow(
@@ -56,7 +56,7 @@ Widget buildCompanySection(Organizer organizer, EventInfo eventInfo) {
   // LinkedIn
   if (organizer.linkedin != null && organizer.linkedin!.isNotEmpty) {
     if (items.isNotEmpty) {
-      items.add(Divider(height: 3.hp, color: Colors.grey.shade300));
+      items.add(Divider(height: 3.hp, color: AppColors.borderStatic));
     }
     items.add(
       _infoRow(
@@ -102,7 +102,7 @@ Widget _infoRow(
               style: TextStyle(
                 fontSize: 9.sp,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: AppColors.textPrimaryStatic,
               ),
             ),
             SizedBox(height: 0.5.hp),
@@ -112,7 +112,7 @@ Widget _infoRow(
                 fontSize: 9.sp,
                 color: onTap != null
                     ? AppColors.gradientDarkStart
-                    : Colors.grey[700],
+                    : AppColors.textSecondaryStatic,
                 fontWeight: FontWeight.w500,
                 decoration: onTap != null ? TextDecoration.underline : null,
               ),

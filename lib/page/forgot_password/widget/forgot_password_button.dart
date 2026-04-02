@@ -85,7 +85,7 @@ void openModel(BuildContext context, {required VoidCallback onTap}) {
             margin: EdgeInsets.only(top: 50), // space for the circle
             padding: EdgeInsets.only(top: 60, left: 20, right: 20, bottom: 20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.cardBg(context),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(25),
                 topRight: Radius.circular(25),

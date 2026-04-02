@@ -21,7 +21,7 @@ class Set2faPage extends GetView<Set2faController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,

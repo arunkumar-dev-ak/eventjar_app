@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
@@ -7,6 +8,10 @@ class EventInfoHeaderShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final base = AppColors.divider(context);
+    final highlight = AppColors.chipBg(context);
+    final placeholder = AppColors.border(context);
+
     return Container(
       padding: EdgeInsets.all(4.wp),
       child: Column(
@@ -20,7 +25,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withValues(alpha: 0.1),
+                  color: AppColors.shadow(context).withValues(alpha: 0.1),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -32,13 +37,13 @@ class EventInfoHeaderShimmer extends StatelessWidget {
               children: [
                 // Main image shimmer
                 Shimmer.fromColors(
-                  baseColor: Colors.grey.shade200,
-                  highlightColor: Colors.grey.shade100,
+                  baseColor: base,
+                  highlightColor: highlight,
                   period: const Duration(milliseconds: 1500),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Colors.grey.shade200,
+                      color: base,
                     ),
                   ),
                 ),
@@ -50,9 +55,9 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.grey.withValues(alpha: 0.6),
+                          base.withValues(alpha: 0.6),
                           Colors.transparent,
-                          Colors.grey.withValues(alpha: 0.7),
+                          base.withValues(alpha: 0.7),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -66,8 +71,8 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                   top: 12,
                   left: 12,
                   child: Shimmer.fromColors(
-                    baseColor: Colors.white.withValues(alpha: 0.7),
-                    highlightColor: Colors.white,
+                    baseColor: highlight,
+                    highlightColor: base,
                     period: const Duration(milliseconds: 1200),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -75,7 +80,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
+                        color: placeholder,
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
@@ -87,8 +92,8 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                   top: 12,
                   right: 12,
                   child: Shimmer.fromColors(
-                    baseColor: Colors.white.withValues(alpha: 0.7),
-                    highlightColor: Colors.white,
+                    baseColor: highlight,
+                    highlightColor: base,
                     period: const Duration(milliseconds: 1200),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -96,7 +101,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
+                        color: placeholder,
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
@@ -108,8 +113,8 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                   bottom: 12,
                   left: 12,
                   child: Shimmer.fromColors(
-                    baseColor: Colors.white.withValues(alpha: 0.8),
-                    highlightColor: Colors.white,
+                    baseColor: highlight,
+                    highlightColor: base,
                     period: const Duration(milliseconds: 1000),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -117,7 +122,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: base,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -127,7 +132,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                             width: 16,
                             height: 16,
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade400,
+                              color: placeholder,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -136,7 +141,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                             width: 60,
                             height: 12,
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade400,
+                              color: placeholder,
                               borderRadius: BorderRadius.circular(6),
                             ),
                           ),
@@ -145,7 +150,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                             width: 16,
                             height: 16,
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade400,
+                              color: placeholder,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -154,7 +159,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                             width: 50,
                             height: 12,
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade400,
+                              color: placeholder,
                               borderRadius: BorderRadius.circular(6),
                             ),
                           ),
@@ -170,17 +175,17 @@ class EventInfoHeaderShimmer extends StatelessWidget {
 
           // Quick Info Row shimmer (matching your existing design)
           Shimmer.fromColors(
-            baseColor: Colors.grey.shade300,
-            highlightColor: Colors.grey.shade400,
+            baseColor: placeholder,
+            highlightColor: base,
             period: const Duration(milliseconds: 1500),
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.cardBg(context),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withValues(alpha: 0.04),
+                    color: AppColors.shadow(context).withValues(alpha: 0.04),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -196,7 +201,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
+                            color: base,
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
@@ -209,7 +214,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                                 height: 14,
                                 width: 80,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade200,
+                                  color: base,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
@@ -218,7 +223,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                                 height: 10,
                                 width: 50,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade200,
+                                  color: base,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
@@ -228,7 +233,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Container(width: 1, height: 40, color: Colors.grey.shade200),
+                  Container(width: 1, height: 40, color: base),
                   SizedBox(width: 4.wp),
                   // Location section
                   Expanded(
@@ -238,7 +243,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
+                            color: base,
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
@@ -251,7 +256,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                                 height: 14,
                                 width: 60,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade200,
+                                  color: base,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
@@ -260,7 +265,7 @@ class EventInfoHeaderShimmer extends StatelessWidget {
                                 height: 10,
                                 width: 80,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade200,
+                                  color: base,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
@@ -285,11 +290,14 @@ class EventInfoEventNameShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final base = AppColors.divider(context);
+    final highlight = AppColors.border(context);
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.5.hp),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade200,
-        highlightColor: Colors.grey.shade300,
+        baseColor: base,
+        highlightColor: highlight,
         period: const Duration(milliseconds: 1500),
         child: Row(
           children: [
@@ -297,7 +305,7 @@ class EventInfoEventNameShimmer extends StatelessWidget {
               height: 24,
               width: 200,
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: base,
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
@@ -306,7 +314,7 @@ class EventInfoEventNameShimmer extends StatelessWidget {
               width: 20,
               height: 20,
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: base,
                 shape: BoxShape.circle,
               ),
             ),
@@ -322,9 +330,12 @@ class EventInfoTabBarShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final base = AppColors.border(context);
+    final highlight = AppColors.divider(context);
+
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade400,
+      baseColor: base,
+      highlightColor: highlight,
       period: const Duration(milliseconds: 1200),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 4.wp),
@@ -345,7 +356,7 @@ class EventInfoTabBarShimmer extends StatelessWidget {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.black,
+                            color: base,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Row(
@@ -355,7 +366,7 @@ class EventInfoTabBarShimmer extends StatelessWidget {
                                 width: 16,
                                 height: 16,
                                 decoration: BoxDecoration(
-                                  color: Colors.black,
+                                  color: base,
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
                               ),
@@ -364,7 +375,7 @@ class EventInfoTabBarShimmer extends StatelessWidget {
                                 width: 40,
                                 height: 10,
                                 decoration: BoxDecoration(
-                                  color: Colors.black,
+                                  color: base,
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                               ),
@@ -379,14 +390,14 @@ class EventInfoTabBarShimmer extends StatelessWidget {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.black,
+                            color: base,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Container(
                             width: 16,
                             height: 16,
                             decoration: BoxDecoration(
-                              color: Colors.black,
+                              color: base,
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                           ),
@@ -403,7 +414,7 @@ class EventInfoTabBarShimmer extends StatelessWidget {
               height: 1,
               width: 80,
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: base,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -419,9 +430,13 @@ class EventInfoTabContentShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final base = AppColors.border(context);
+    final highlight = AppColors.divider(context);
+    final placeholder = AppColors.divider(context);
+
     return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade400,
+      baseColor: base,
+      highlightColor: highlight,
       period: const Duration(milliseconds: 1500),
       child: SingleChildScrollView(
         padding: EdgeInsets.all(4.wp),
@@ -433,7 +448,7 @@ class EventInfoTabContentShimmer extends StatelessWidget {
               width: double.infinity,
               height: 20,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: base,
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
@@ -447,11 +462,11 @@ class EventInfoTabContentShimmer extends StatelessWidget {
                   width: double.infinity,
                   padding: EdgeInsets.all(3.wp),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.cardBg(context),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
+                        color: AppColors.shadow(context).withValues(alpha: 0.04),
                         blurRadius: 10,
                         offset: const Offset(0, 2),
                       ),
@@ -465,7 +480,7 @@ class EventInfoTabContentShimmer extends StatelessWidget {
                         height: 14,
                         width: index == 0 ? 120 : 80,
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
+                          color: base,
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
@@ -478,7 +493,7 @@ class EventInfoTabContentShimmer extends StatelessWidget {
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
+                              color: placeholder,
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
@@ -491,7 +506,7 @@ class EventInfoTabContentShimmer extends StatelessWidget {
                                   height: 12,
                                   width: 100,
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.shade300,
+                                    color: base,
                                     borderRadius: BorderRadius.circular(6),
                                   ),
                                 ),
@@ -500,7 +515,7 @@ class EventInfoTabContentShimmer extends StatelessWidget {
                                   height: 10,
                                   width: 80,
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.shade200,
+                                    color: placeholder,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),

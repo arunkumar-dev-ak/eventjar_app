@@ -120,7 +120,7 @@ class ConnectionCard extends GetView<ConnectionController> {
                               '${otherUserPosition ?? ''}${otherUserPosition != null && otherUserCompany != null ? ' at ' : ''}${otherUserCompany ?? ''}',
                               style: TextStyle(
                                 fontSize: 8.sp,
-                                color: Colors.grey[600],
+                                color: AppColors.textSecondary(context),
                               ),
                             ),
                           ),
@@ -140,7 +140,7 @@ class ConnectionCard extends GetView<ConnectionController> {
                                   '$otherUserTotalBadges badges',
                                   style: TextStyle(
                                     fontSize: 7.5.sp,
-                                    color: Colors.grey[600],
+                                    color: AppColors.textSecondary(context),
                                   ),
                                 ),
                               ],
@@ -156,7 +156,7 @@ class ConnectionCard extends GetView<ConnectionController> {
               // Event & Time
               Row(
                 children: [
-                  Icon(Icons.event, size: 18, color: Colors.grey[600]),
+                  Icon(Icons.event, size: 18, color: AppColors.textSecondary(context)),
                   SizedBox(width: 2.wp),
                   Expanded(
                     child: Column(
@@ -175,7 +175,7 @@ class ConnectionCard extends GetView<ConnectionController> {
                           '${request.preferredTime} • ${request.duration} min',
                           style: TextStyle(
                             fontSize: 8.sp,
-                            color: Colors.grey[600],
+                            color: AppColors.textSecondary(context),
                           ),
                         ),
                       ],
@@ -191,12 +191,12 @@ class ConnectionCard extends GetView<ConnectionController> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: AppColors.chipBg(context),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     request.message,
-                    style: TextStyle(fontSize: 8.5.sp, color: Colors.grey[800]),
+                    style: TextStyle(fontSize: 8.5.sp, color: AppColors.textPrimary(context)),
                     maxLines: 10,
                     overflow: TextOverflow.ellipsis,
                   ),

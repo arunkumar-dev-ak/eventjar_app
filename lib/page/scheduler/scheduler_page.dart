@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/scheduler/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/scheduler/widget/schedule_contact_display.dart';
 import 'package:eventjar/page/scheduler/widget/schedule_form_element.dart';
@@ -16,12 +17,12 @@ class SchedulerPage extends GetView<SchedulerController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: AppColors.textPrimary(context)),
         ),
         centerTitle: false,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
         elevation: 4,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.cardBg(context),
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
       body: GestureDetector(
@@ -223,12 +224,12 @@ class SchedulerPage extends GetView<SchedulerController> {
     return Container(
       padding: EdgeInsets.all(3.wp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBgStatic,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: AppColors.dividerStatic),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: AppColors.shadowStatic,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -240,10 +241,10 @@ class SchedulerPage extends GetView<SchedulerController> {
           Container(
             padding: EdgeInsets.all(2.wp),
             decoration: BoxDecoration(
-              color: (color ?? Colors.grey.shade200).withValues(alpha: 0.2),
+              color: (color ?? AppColors.dividerStatic).withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, size: 5.wp, color: color ?? Colors.grey.shade600),
+            child: Icon(icon, size: 5.wp, color: color ?? AppColors.textSecondaryStatic),
           ),
           SizedBox(width: 3.wp),
           Expanded(
@@ -254,7 +255,7 @@ class SchedulerPage extends GetView<SchedulerController> {
                   label,
                   style: TextStyle(
                     fontSize: 7.sp,
-                    color: Colors.grey.shade600,
+                    color: AppColors.textSecondaryStatic,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -264,7 +265,7 @@ class SchedulerPage extends GetView<SchedulerController> {
                   style: TextStyle(
                     fontSize: 9.sp,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: AppColors.textPrimaryStatic,
                     height: 1.2,
                   ),
                   maxLines: maxLines,

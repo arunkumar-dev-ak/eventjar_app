@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/checkout/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:flutter/material.dart';
@@ -106,14 +107,14 @@ Widget buildSimpleTag(String label) {
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 2.5.wp, vertical: 0.5.hp),
     decoration: BoxDecoration(
-      color: Colors.grey.shade200,
+      color: AppColors.dividerStatic,
       borderRadius: BorderRadius.circular(6),
-      border: Border.all(color: Colors.grey.shade300, width: 1),
+      border: Border.all(color: AppColors.borderStatic, width: 1),
     ),
     child: Text(
       label,
       style: TextStyle(
-        color: Colors.grey.shade700,
+        color: AppColors.textSecondaryStatic,
         fontSize: 8.sp,
         fontWeight: FontWeight.bold,
       ),
@@ -144,9 +145,9 @@ Widget buildEventModeTag(String mode) {
       textColor = Colors.teal.shade700;
       break;
     default:
-      bgColor = Colors.grey.shade200;
-      borderColor = Colors.grey.shade300;
-      textColor = Colors.grey.shade700;
+      bgColor = AppColors.dividerStatic;
+      borderColor = AppColors.borderStatic;
+      textColor = AppColors.textSecondaryStatic;
   }
 
   return Container(
@@ -183,7 +184,7 @@ Widget _buildInfoRow(IconData icon, String text, Color iconColor) {
       Expanded(
         child: Text(
           text,
-          style: TextStyle(fontSize: 9.sp, color: Colors.grey[700]),
+          style: TextStyle(fontSize: 9.sp, color: AppColors.textSecondaryStatic),
         ),
       ),
     ],

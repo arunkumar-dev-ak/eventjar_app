@@ -9,11 +9,11 @@ Widget buildPhysicalEventCard(EventInfo eventInfo) {
     children: [
       if (eventInfo.venue != null && eventInfo.venue!.isNotEmpty) ...[
         _infoRow(Icons.apartment, "Venue", eventInfo.venue!),
-        Divider(height: 3.hp, color: Colors.grey.shade300),
+        Divider(height: 3.hp, color: AppColors.borderStatic),
       ],
       if (eventInfo.address.isNotEmpty) ...[
         _infoRow(Icons.home, "Address", eventInfo.address),
-        Divider(height: 3.hp, color: Colors.grey.shade300),
+        Divider(height: 3.hp, color: AppColors.borderStatic),
       ],
       _infoRow(
         Icons.location_on,
@@ -22,12 +22,12 @@ Widget buildPhysicalEventCard(EventInfo eventInfo) {
       ),
       if (eventInfo.parkingInfo != null &&
           eventInfo.parkingInfo!.isNotEmpty) ...[
-        Divider(height: 3.hp, color: Colors.grey.shade300),
+        Divider(height: 3.hp, color: AppColors.borderStatic),
         _infoRow(Icons.local_parking, "Parking", eventInfo.parkingInfo!),
       ],
       if (eventInfo.accessibilityInfo != null &&
           eventInfo.accessibilityInfo!.isNotEmpty) ...[
-        Divider(height: 3.hp, color: Colors.grey.shade300),
+        Divider(height: 3.hp, color: AppColors.borderStatic),
         _infoRow(
           Icons.accessible,
           "Accessibility",
@@ -60,7 +60,7 @@ Widget _infoRow(IconData icon, String title, String value) {
               style: TextStyle(
                 fontSize: 8.sp,
                 fontWeight: FontWeight.w600,
-                color: Colors.grey.shade800,
+                color: AppColors.textPrimaryStatic,
               ),
             ),
             SizedBox(height: 0.3.hp),
@@ -68,7 +68,7 @@ Widget _infoRow(IconData icon, String title, String value) {
               value,
               style: TextStyle(
                 fontSize: 8.sp,
-                color: Colors.grey.shade600,
+                color: AppColors.textSecondaryStatic,
                 fontWeight: FontWeight.w500,
               ),
             ),

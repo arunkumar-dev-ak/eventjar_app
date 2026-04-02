@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
 import 'package:eventjar/page/meeting/widget/meeting_card_utils/meeting_card_button.dart';
@@ -85,12 +86,12 @@ class MeetingCard extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: AppColors.chipBg(context),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   meeting.notes!,
-                  style: TextStyle(fontSize: 8.5.sp, color: Colors.grey[800]),
+                  style: TextStyle(fontSize: 8.5.sp, color: AppColors.textPrimary(context)),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

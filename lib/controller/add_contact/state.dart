@@ -31,6 +31,9 @@ class AddContactState {
   RxBool isFromCardScan = false.obs;
   RxBool isExtractingFromCard = false.obs;
 
+  // Whether the additional info section is expanded
+  RxBool isAdditionalInfoExpanded = false.obs;
+
   // Which additional fields the user wants to include in the API call
   RxMap<String, bool> additionalInfoSelection = <String, bool>{
     'phone2': false,

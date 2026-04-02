@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -77,7 +78,7 @@ Widget _agendaContent(
         Text(
           title,
           style: TextStyle(
-            color: Colors.grey.shade800,
+            color: AppColors.textPrimaryStatic,
             fontSize: 8.sp,
             fontWeight: FontWeight.w600,
           ),
@@ -109,7 +110,7 @@ Widget _agendaContent(
           description,
           maxLines: 100,
           style: TextStyle(
-            color: Colors.grey.shade600,
+            color: AppColors.textSecondaryStatic,
             fontSize: 7.5.sp,
             height: 1.4,
             overflow: TextOverflow.ellipsis,

@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/add_contact/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,9 +10,9 @@ class AddContactAdditionalInfoSheet extends GetView<AddContactController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: AppColors.cardBg(context),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: EdgeInsets.only(
         left: 4.wp,
@@ -30,7 +31,7 @@ class AddContactAdditionalInfoSheet extends GetView<AddContactController> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: AppColors.border(context),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -41,13 +42,13 @@ class AddContactAdditionalInfoSheet extends GetView<AddContactController> {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w700,
-                color: Colors.black87,
+                color: AppColors.textPrimary(context),
               ),
             ),
             SizedBox(height: 0.5.hp),
             Text(
               'Check the fields you want to save with this contact.',
-              style: TextStyle(fontSize: 9.sp, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 9.sp, color: AppColors.textSecondary(context)),
             ),
             SizedBox(height: 2.hp),
 
@@ -134,10 +135,10 @@ class _AdditionalField extends GetView<AddContactController> {
       return Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: isChecked ? Colors.blue.shade50 : Colors.grey.shade50,
+          color: isChecked ? Colors.blue.shade50 : AppColors.scaffoldBg(context),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isChecked ? Colors.blue.shade200 : Colors.grey.shade200,
+            color: isChecked ? Colors.blue.shade200 : AppColors.divider(context),
           ),
         ),
         child: Row(
@@ -164,14 +165,14 @@ class _AdditionalField extends GetView<AddContactController> {
                   children: [
                     Row(
                       children: [
-                        Icon(icon, size: 16, color: Colors.grey[600]),
+                        Icon(icon, size: 16, color: AppColors.textSecondary(context)),
                         const SizedBox(width: 6),
                         Text(
                           label,
                           style: TextStyle(
                             fontSize: 9.sp,
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey[700],
+                            color: AppColors.textSecondary(context),
                           ),
                         ),
                       ],
@@ -200,15 +201,15 @@ class _AdditionalField extends GetView<AddContactController> {
                         hintText: 'Enter $label',
                         hintStyle: TextStyle(
                           fontSize: 9.sp,
-                          color: Colors.grey[400],
+                          color: AppColors.textHint(context),
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
+                          borderSide: BorderSide(color: AppColors.border(context)),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
+                          borderSide: BorderSide(color: AppColors.border(context)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
