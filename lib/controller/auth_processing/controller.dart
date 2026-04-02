@@ -114,6 +114,7 @@ class AuthProcessingController extends GetxController {
 
       final errorData = e.response?.data?.toString().toLowerCase() ?? "";
       if (errorData.contains('mobile number is required')) {
+        await Future.delayed(const Duration(seconds: 2));
         state.isMobileNumberRequired.value = true;
         Future.delayed(Duration.zero, () {
           phoneFocusNode.requestFocus();

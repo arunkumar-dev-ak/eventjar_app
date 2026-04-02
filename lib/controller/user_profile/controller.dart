@@ -909,16 +909,7 @@ class UserProfileController extends GetxController
       }
     } catch (err) {
       if (err is DioException) {
-        final message = err.response?.data?['message'] ?? '';
-
-        if (message.contains('Invalid password')) {
-          AppSnackbar.error(title: "Error", message: "Incorrect password");
-        } else {
-          AppSnackbar.error(
-            title: "Error",
-            message: message.isNotEmpty ? message : "Failed to disable 2FA",
-          );
-        }
+        ApiErrorHandler.handleError(err, "Error");
       } else {
         AppSnackbar.error(title: "Error", message: "Something went wrong");
       }

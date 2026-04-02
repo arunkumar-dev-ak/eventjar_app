@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/global/device_helper.dart';
 import 'package:eventjar/global/global_values.dart';
+import 'package:eventjar/global/store/user_store.dart' show UserStore;
 import 'package:eventjar/model/auth/login_model.dart';
 import 'package:eventjar/storage/storage_service.dart';
 
@@ -37,6 +38,8 @@ class AuthProcessignApi {
             'Content-Type': 'application/json',
             'X-Device-Platform': devicePlatform,
             'User-Agent': deviceName,
+            'X-Device-Id': UserStore.to.deviceId,
+            'X-Device-Name': deviceName,
           },
         ),
       );

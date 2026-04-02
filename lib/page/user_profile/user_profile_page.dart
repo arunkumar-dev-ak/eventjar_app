@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
@@ -117,7 +115,7 @@ class UserProfilePage extends GetView<UserProfileController> {
 
   Widget _buildNotificationsSection() {
     return _buildSection(
-      title: "Notifications",
+      title: "Automations",
       child: GestureDetector(
         onTap: () {
           controller.navigateToConfigureNotification();

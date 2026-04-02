@@ -11,6 +11,7 @@ import 'package:eventjar/storage/storage_service.dart';
 
 class SignUpApi {
   static final Dio _dio = DioClient().dio;
+  static final devicePlatform = getDevicePlatform();
 
   static String getDevicePlatform() {
     if (Platform.isAndroid) return 'android';
@@ -22,7 +23,6 @@ class SignUpApi {
     final deviceName = await getDeviceModel();
     final fcmToken = await StorageService.to.getString(storageFcmToken);
     try {
-      final devicePlatform = getDevicePlatform();
       final response = await _dio.post(
         '/auth/register',
         options: Options(
@@ -54,12 +54,17 @@ class SignUpApi {
 
   static Future<void> googleSignIn(String idToken) async {
     try {
+      final deviceName = await getDeviceModel();
       final response = await _dio.post(
         '/auth/mobile/google',
         options: Options(
           headers: {
-            'X-Client-Type': 'mobile',
+            'X-Client-Platform': 'mobile',
             'Content-Type': 'application/json',
+            'X-Device-Platform': devicePlatform,
+            'User-Agent': deviceName,
+            'X-Device-Id': UserStore.to.deviceId,
+            'X-Device-Name': deviceName,
           },
         ),
         data: {"idToken": idToken},
