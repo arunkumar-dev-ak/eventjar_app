@@ -14,6 +14,7 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
     return GestureDetector(
       onTap: () => Get.focusScope?.unfocus(),
       child: Scaffold(
+        backgroundColor: AppColors.scaffoldBg(context),
         appBar: AppBar(
           title: Text(
             controller.appBarTitle,
@@ -92,6 +93,7 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 10.sp,
+                      color: AppColors.textPrimary(context),
                     ),
                   ),
                   SizedBox(height: 1.5.hp),
@@ -125,6 +127,7 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 9.sp,
+                                  color: AppColors.textPrimary(context),
                                 ),
                               ),
                             ],

@@ -16,11 +16,13 @@ class NotificationPage extends GetView<NotificationController> {
       backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
-          "Notifications",
+          "Automation",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         flexibleSpace: Container(
-          decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
         ),
         elevation: 0,
       ),

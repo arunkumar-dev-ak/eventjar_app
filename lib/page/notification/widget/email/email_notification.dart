@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/notification/widget/email/email_provider_list.dart';
 import 'package:eventjar/page/notification/widget/email/email_shimmer.dart';
@@ -23,7 +24,7 @@ class EmailNotificationTab extends StatelessWidget {
       return Column(
         children: [
           if (config == null || config.status != 'active')
-            emailUnconfiguredCard()
+            const EmailUnconfiguredCard()
           else if (config.authType == 'oauth_google')
             _StatusBanner(
               title: 'Gmail Connected',
@@ -70,12 +71,15 @@ class _StatusBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.green.shade50, Colors.green.shade100],
+          colors: isDark
+              ? [const Color(0xFF0A2A1A), const Color(0xFF0F3322)]
+              : [Colors.green.shade50, Colors.green.shade100],
         ),
         borderRadius: BorderRadius.circular(14),
       ),
@@ -97,6 +101,7 @@ class _StatusBanner extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 10.sp,
+                            color: AppColors.textPrimary(context),
                           ),
                         ),
                         SizedBox(width: 1.wp),
@@ -111,7 +116,7 @@ class _StatusBanner extends StatelessWidget {
                     Text(
                       subtitle,
                       style: TextStyle(
-                        color: Colors.grey.shade700,
+                        color: AppColors.textSecondary(context),
                         fontSize: 8.sp,
                       ),
                     ),
@@ -145,7 +150,7 @@ class _StatusBanner extends StatelessWidget {
           Text(
             "To use a different provider, kindly disconnect the current one first.",
             style: TextStyle(
-              color: Colors.grey.shade600,
+              color: AppColors.textSecondary(context),
               fontSize: 7.5.sp,
               fontStyle: FontStyle.italic,
             ),

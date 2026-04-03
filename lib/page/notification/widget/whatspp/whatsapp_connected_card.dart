@@ -18,22 +18,27 @@ class WhatsAppConnectedCard extends GetView<NotificationController> {
           "********${config.apiToken!.substring(config.apiToken!.length - 4)}";
     }
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: EdgeInsets.all(3.5.wp),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Colors.green.shade50,
-            Colors.green.shade100.withValues(alpha: .25),
-          ],
+          colors: isDark
+              ? [const Color(0xFF0A2A1A), const Color(0xFF0F3322)]
+              : [
+                  Colors.green.shade50,
+                  Colors.green.shade100.withValues(alpha: .25),
+                ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.green.shade200),
+        border: Border.all(
+          color: isDark ? Colors.green.shade800 : Colors.green.shade200,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .05),
+            color: Colors.black.withValues(alpha: isDark ? .08 : .05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -48,7 +53,7 @@ class WhatsAppConnectedCard extends GetView<NotificationController> {
               Container(
                 padding: EdgeInsets.all(2.wp),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade100,
+                  color: isDark ? Colors.green.shade900 : Colors.green.shade100,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -64,6 +69,7 @@ class WhatsAppConnectedCard extends GetView<NotificationController> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 11.sp,
+                    color: AppColors.textPrimary(context),
                   ),
                 ),
               ),

@@ -27,7 +27,9 @@ Widget userProfileBuildSecurity() {
               Container(
                 padding: EdgeInsets.all(3.wp),
                 decoration: BoxDecoration(
-                  color: is2FaEnabled ? Colors.red.shade50 : Colors.transparent,
+                  color: is2FaEnabled
+                      ? (AppColors.isDark ? const Color(0xFF2A1010) : Colors.red.shade50)
+                      : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: InkWell(
@@ -133,9 +135,11 @@ Widget userProfileBuildSecurity() {
       Container(
         padding: EdgeInsets.all(3.wp),
         decoration: BoxDecoration(
-          color: Colors.orange.shade50,
+          color: AppColors.isDark ? const Color(0xFF2A2010) : Colors.orange.shade50,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.orange.shade200),
+          border: Border.all(
+            color: AppColors.isDark ? Colors.orange.shade800 : Colors.orange.shade200,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,10 +261,12 @@ Widget userProfileBuildSecurity() {
           );
         }
 
-        final bgColor = isPending ? Colors.green.shade50 : Colors.red.shade50;
+        final bgColor = isPending
+            ? (AppColors.isDark ? const Color(0xFF0A2A1A) : Colors.green.shade50)
+            : (AppColors.isDark ? const Color(0xFF2A1010) : Colors.red.shade50);
         final borderColor = isPending
-            ? Colors.green.shade200
-            : Colors.red.shade200;
+            ? (AppColors.isDark ? Colors.green.shade800 : Colors.green.shade200)
+            : (AppColors.isDark ? Colors.red.shade800 : Colors.red.shade200);
         final iconColor = isPending
             ? Colors.green.shade700
             : Colors.red.shade700;

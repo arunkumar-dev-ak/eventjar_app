@@ -38,10 +38,11 @@ class MeetingCardDate extends GetView<MeetingController> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
+        color: isDark ? const Color(0xFF1A2A3A) : Colors.blue.shade50,
         borderRadius: BorderRadius.circular(12),
         border: Border(
           left: BorderSide(color: statusColor.withValues(alpha: 0.3), width: 4),
@@ -53,13 +54,13 @@ class MeetingCardDate extends GetView<MeetingController> {
           Container(
             padding: EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.blue.shade100,
+              color: isDark ? Colors.blue.shade900 : Colors.blue.shade100,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               Icons.calendar_today_outlined,
               size: 16,
-              color: Colors.blue.shade700,
+              color: isDark ? Colors.blue.shade300 : Colors.blue.shade700,
             ),
           ),
           SizedBox(width: 3.wp),

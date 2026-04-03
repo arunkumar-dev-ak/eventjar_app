@@ -29,7 +29,7 @@ class Set2faPage extends GetView<Set2faController> {
         ),
         centerTitle: true,
         flexibleSpace: Container(
-          decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+          decoration: BoxDecoration(gradient: AppColors.appBarGradientFor(context)),
         ),
       ),
       body: GestureDetector(

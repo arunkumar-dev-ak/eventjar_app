@@ -15,7 +15,11 @@ class Set2faOtpInputSection extends GetView<Set2faController> {
       children: [
         Text(
           "Enter the 6-digit code",
-          style: TextStyle(fontSize: 9.sp, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 9.sp,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textPrimary(context),
+          ),
         ),
         SizedBox(height: 2.hp),
         Pinput(

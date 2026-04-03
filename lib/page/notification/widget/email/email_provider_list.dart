@@ -85,18 +85,23 @@ class ProviderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
       margin: EdgeInsets.only(bottom: 1.hp),
       decoration: BoxDecoration(
-        color: isConfigured ? Colors.green.shade50 : AppColors.cardBg(context),
+        color: isConfigured
+            ? (isDark ? const Color(0xFF0A2A1A) : Colors.green.shade50)
+            : AppColors.cardBg(context),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isConfigured ? Colors.green.shade200 : AppColors.divider(context),
+          color: isConfigured
+              ? (isDark ? Colors.green.shade800 : Colors.green.shade200)
+              : AppColors.divider(context),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: .04),
+            color: Colors.black.withValues(alpha: isDark ? .08 : .04),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -109,9 +114,9 @@ class ProviderCard extends StatelessWidget {
           padding: EdgeInsets.all(3.wp),
           child: Row(
             children: [
-              _iconBox(),
+              _iconBox(context),
               SizedBox(width: 3.wp),
-              Expanded(child: _details()),
+              Expanded(child: _details(context)),
               _action(),
             ],
           ),
@@ -120,34 +125,39 @@ class ProviderCard extends StatelessWidget {
     );
   }
 
-  Widget _iconBox() {
+  Widget _iconBox(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: EdgeInsets.all(2.wp),
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
+        color: isDark ? const Color(0xFF1A2A3A) : Colors.blue.shade50,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(Icons.email, color: Colors.blue.shade600),
     );
   }
 
-  Widget _details() {
+  Widget _details(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           provider.name,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10.sp),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 10.sp,
+            color: AppColors.textPrimary(context),
+          ),
         ),
         SizedBox(height: 0.4.hp),
         Text(
           provider.description,
-          style: TextStyle(color: AppColors.textSecondaryStatic, fontSize: 8.sp),
+          style: TextStyle(color: AppColors.textSecondary(context), fontSize: 8.sp),
         ),
         SizedBox(height: 0.4.hp),
         Text(
           "${provider.host} • ${provider.port}",
-          style: TextStyle(fontSize: 7.sp, color: AppColors.textHintStatic),
+          style: TextStyle(fontSize: 7.sp, color: AppColors.textHint(context)),
         ),
       ],
     );

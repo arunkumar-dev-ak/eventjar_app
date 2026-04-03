@@ -31,7 +31,9 @@ class Set2faVerifySection extends GetView<Set2faController> {
             padding: EdgeInsets.all(3.wp),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.blue.withValues(alpha: 0.1),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.blue.withValues(alpha: 0.2)
+                  : Colors.blue.withValues(alpha: 0.1),
             ),
             child: Icon(Icons.security, size: 28.sp, color: Colors.blue),
           ),
@@ -40,7 +42,11 @@ class Set2faVerifySection extends GetView<Set2faController> {
 
           Text(
             "Setup Your Authenticator App",
-            style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary(context),
+            ),
             textAlign: TextAlign.center,
           ),
 
@@ -64,7 +70,11 @@ class Set2faVerifySection extends GetView<Set2faController> {
 
           Text(
             "Enter this secret manually",
-            style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 10.sp,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary(context),
+            ),
           ),
 
           SizedBox(height: 2.hp),
@@ -92,6 +102,8 @@ class Set2faVerifySection extends GetView<Set2faController> {
           SizedBox(height: 3.hp),
 
           Enable2FAButton(),
+
+          SizedBox(height: 4.hp),
         ],
       ),
     );

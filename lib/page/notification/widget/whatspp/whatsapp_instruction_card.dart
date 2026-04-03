@@ -9,19 +9,24 @@ class WhatsAppInstructionCard extends GetView<NotificationController> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: EdgeInsets.all(3.5.wp),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Colors.blue.shade50,
-            Colors.blue.shade100.withValues(alpha: .3),
-          ],
+          colors: isDark
+              ? [const Color(0xFF0A1A2A), const Color(0xFF0F2233)]
+              : [
+                  Colors.blue.shade50,
+                  Colors.blue.shade100.withValues(alpha: .3),
+                ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.blue.shade100),
+        border: Border.all(
+          color: isDark ? Colors.blue.shade800 : Colors.blue.shade100,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +37,7 @@ class WhatsAppInstructionCard extends GetView<NotificationController> {
               Container(
                 padding: EdgeInsets.all(2.wp),
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade100,
+                  color: isDark ? Colors.blue.shade900 : Colors.blue.shade100,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(Icons.chat, color: Colors.blue, size: 18.sp),
@@ -40,7 +45,11 @@ class WhatsAppInstructionCard extends GetView<NotificationController> {
               SizedBox(width: 2.5.wp),
               Text(
                 "WhatsApp Integration",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11.sp),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11.sp,
+                  color: AppColors.textPrimary(context),
+                ),
               ),
             ],
           ),
@@ -63,7 +72,9 @@ class WhatsAppInstructionCard extends GetView<NotificationController> {
               decoration: BoxDecoration(
                 color: AppColors.cardBg(context),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.blue.shade200),
+                border: Border.all(
+                  color: isDark ? Colors.blue.shade800 : Colors.blue.shade200,
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: .04),
@@ -78,14 +89,14 @@ class WhatsAppInstructionCard extends GetView<NotificationController> {
                   Icon(
                     Icons.open_in_new,
                     size: 14.sp,
-                    color: Colors.blue.shade700,
+                    color: isDark ? Colors.blue.shade300 : Colors.blue.shade700,
                   ),
                   SizedBox(width: 1.5.wp),
                   Text(
                     "whatsapp.mybotify.com",
                     style: TextStyle(
                       fontSize: 9.5.sp,
-                      color: Colors.blue.shade700,
+                      color: isDark ? Colors.blue.shade300 : Colors.blue.shade700,
                       fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
                     ),

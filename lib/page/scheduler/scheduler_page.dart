@@ -14,6 +14,7 @@ class SchedulerPage extends GetView<SchedulerController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
