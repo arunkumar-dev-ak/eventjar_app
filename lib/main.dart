@@ -4,6 +4,7 @@ import 'package:eventjar/global/store/theme_store.dart';
 import 'package:eventjar/notification/notification_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/routes/route_page.dart';
+import 'package:eventjar/services/deep_link_handler.dart';
 import 'package:eventjar/services/nfc_intent_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,7 @@ class _MyAppState extends State<MyApp> {
     // Initialize NFC intent handler after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NfcIntentHandler().init();
+      DeepLinkHandler().init();
     });
   }
 

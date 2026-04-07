@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/add_contact/binding.dart';
 import 'package:eventjar/controller/auth_processing/binding.dart';
+import 'package:eventjar/controller/budget_track/binding.dart';
 import 'package:eventjar/controller/change_password/binding.dart';
 import 'package:eventjar/controller/checkout/binding.dart';
 import 'package:eventjar/controller/connection/binding.dart';
@@ -34,6 +35,7 @@ import 'package:eventjar/controller/splashScreen/binding.dart';
 import 'package:eventjar/controller/thank_you_message/binding.dart';
 import 'package:eventjar/page/add_contact/add_contact.dart';
 import 'package:eventjar/page/auth_processing/auth_processing.dart';
+import 'package:eventjar/page/budget_track/budget_track.dart';
 import 'package:eventjar/page/change_password/change_password.dart';
 import 'package:eventjar/page/checkout/checkout_page.dart';
 import 'package:eventjar/page/connection/connection_page.dart';
@@ -326,6 +328,14 @@ class RoutePage {
       name: RouteName.categoriesPage,
       page: () => CategoriesScreen(),
       binding: CategoriesEventBinding(),
+    ),
+
+    //budget Track
+    GetPage(
+      name: RouteName.budgetTrackPage,
+      page: () => BudgetTrackPage(),
+      binding: BudgetTrackBinding(),
+      middlewares: [LoginMiddleware()],
     ),
   ];
 }

@@ -4,8 +4,8 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 
-class BudgetTrack extends GetView<BudgetTrackController> {
-  const BudgetTrack({super.key});
+class BudgetTrackPage extends GetView<BudgetTrackController> {
+  const BudgetTrackPage({super.key});
 
   @override
   Widget build(BuildContext context) {

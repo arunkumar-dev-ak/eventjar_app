@@ -63,7 +63,10 @@ class LoginTextFormField extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.textPrimary(context), width: 2),
+              borderSide: BorderSide(
+                color: AppColors.textPrimary(context),
+                width: 2,
+              ),
               borderRadius: BorderRadius.circular(10),
             ),
             errorBorder: OutlineInputBorder(
@@ -74,7 +77,10 @@ class LoginTextFormField extends StatelessWidget {
               borderSide: BorderSide(color: Colors.red),
               borderRadius: BorderRadius.circular(10),
             ),
-            prefixIcon: Icon(_getFieldIcon(label), color: AppColors.iconMuted(context)),
+            prefixIcon: Icon(
+              _getFieldIcon(label),
+              color: AppColors.iconMuted(context),
+            ),
             suffixIcon: isPassword
                 ? IconButton(
                     onPressed: togglePasswordVisibility,
@@ -116,7 +122,11 @@ class SignInForm extends StatelessWidget {
         color: AppColors.cardBg(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: AppColors.shadow(context), blurRadius: 8, offset: Offset(0, 2)),
+          BoxShadow(
+            color: AppColors.shadow(context),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
         ],
       ),
       padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 2.hp),
@@ -186,7 +196,10 @@ class SignInForm extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Divider(color: AppColors.divider(context), thickness: 1),
+                  child: Divider(
+                    color: AppColors.divider(context),
+                    thickness: 1,
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.wp),
@@ -200,7 +213,10 @@ class SignInForm extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Divider(color: AppColors.divider(context), thickness: 1),
+                  child: Divider(
+                    color: AppColors.divider(context),
+                    thickness: 1,
+                  ),
                 ),
               ],
             ),
@@ -212,7 +228,7 @@ class SignInForm extends StatelessWidget {
               children: [
                 Expanded(
                   child: SocialButton(
-                    text: "Continue With Google",
+                    text: "Google",
                     assetPath: "assets/app_icon/google.png",
                     color: Colors.red,
                     onTap: () => AuthService().signInWithGoogle(
@@ -221,15 +237,20 @@ class SignInForm extends StatelessWidget {
                     ),
                   ),
                 ),
-                // SizedBox(width: 3.wp),
-                //     Expanded(
-                //       child: SocialButton(
-                //         text: "LinkedIn",
-                //         assetPath: "assets/app_icon/linkedin.png",
-                //         color: Colors.blue,
-                //         onTap: () {},
-                //       ),
-                //     ),
+                SizedBox(width: 3.wp),
+                Obx(() {
+                  return Expanded(
+                    child: SocialButton(
+                      text: "LinkedIn",
+                      assetPath: "assets/app_icon/linkedin.png",
+                      color: Colors.blue,
+                      isLoading: controller.state.isLinkedinLoading.value,
+                      onTap: () {
+                        controller.handleLinkedIn();
+                      },
+                    ),
+                  );
+                }),
               ],
             ),
 

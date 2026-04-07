@@ -5,6 +5,11 @@ abstract class LoginResponse {
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
     try {
+      // Mobile Required For (linkedin only)
+      if (json['status'] == 'MOBILE_REQUIRED') {
+        return MobileRequiredResponse(cacheKey: json['cacheKey']);
+      }
+
       // Handle 2FA response case
       if (json['requires2FA'] == true) {
         return Login2FAResponse(
@@ -87,6 +92,33 @@ class Login2FAResponse implements LoginResponse {
 
   @override
   String? get refreshToken => null;
+}
+
+class MobileRequiredResponse implements LoginResponse {
+  final String cacheKey;
+
+  const MobileRequiredResponse({required this.cacheKey});
+
+  @override
+  bool get requires2FA => false;
+
+  @override
+  String? get tempToken => null;
+
+  @override
+  User? get user => null;
+
+  @override
+  String? get accessToken => null;
+
+  @override
+  String? get refreshToken => null;
+
+  @override
+  Map<String, dynamic> toJson() => {
+    'status': 'MOBILE_REQUIRED',
+    'cacheKey': cacheKey,
+  };
 }
 
 class User {

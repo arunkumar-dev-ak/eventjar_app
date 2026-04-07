@@ -8,6 +8,7 @@ import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/auth/login_model.dart';
 import 'package:eventjar/page/auth_processing/widget/auth_processing_2fa_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,33 +27,50 @@ class AuthProcessingController extends GetxController {
   ];
   final TextEditingController otpController = TextEditingController();
   String _idToken = "";
+  String _provider = "";
+  String _code = "";
 
   @override
   void onInit() {
     super.onInit();
 
-    _handleArgs();
-
     _startTextAnimation();
 
+    _handleArgs();
+
     // 2. Start the API call if we have a valid token
-    if (_idToken.isNotEmpty) {
-      _verifyIdTokenWithBackend();
+    if (_idToken.isNotEmpty || _code.isNotEmpty) {
+      _processAuth();
     } else {
-      _textTimer.cancel();
-      Get.back();
-      AppSnackbar.error(
-        title: "Error",
-        message: "Invalid Google authentication token.",
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        AppSnackbar.error(
+          title: "Error",
+          message: "Invalid Authentication token.",
+        );
+
+        Navigator.pop(Get.context!);
+      });
     }
   }
 
   void _handleArgs() {
     if (Get.arguments != null) {
-      if (Get.arguments is Map && Get.arguments.containsKey('idToken')) {
-        _idToken = Get.arguments['idToken'];
+      if (Get.arguments is Map) {
+        final args = Get.arguments;
+
+        // Google
+        if (args.containsKey('idToken')) {
+          _provider = "google";
+          _idToken = args['idToken'];
+        }
+
+        // LinkedIn
+        if (args.containsKey('code')) {
+          _provider = "linkedin";
+          _code = args['code'];
+        }
       } else if (Get.arguments is String) {
+        _provider = "google";
         _idToken = Get.arguments;
       }
     }
@@ -74,18 +92,37 @@ class AuthProcessingController extends GetxController {
     state.isOtpValid.value = otp.length == 6;
   }
 
-  Future<void> _verifyIdTokenWithBackend() async {
+  Future<void> _processAuth() async {
     try {
-      final response = await AuthProcessignApi.googleSignIn(idToken: _idToken);
+      LoginResponse response;
+
+      if (_provider == "google") {
+        response = await AuthProcessignApi.googleSignIn(idToken: _idToken);
+      } else if (_provider == "linkedin") {
+        response = await AuthProcessignApi.linkedInSignIn(code: _code);
+      } else {
+        throw Exception("Unsupported provider");
+      }
 
       _textTimer.cancel();
-      // --- Success Handling ---
 
-      // 1. Check for 2FA
+      LoggerService.loggerInstance.dynamic_d(response.runtimeType);
+
+      // (LinkedIn)
+      if (response is MobileRequiredResponse) {
+        state.cacheKey.value = response.cacheKey;
+
+        state.isMobileNumberRequired.value = true;
+
+        Future.delayed(Duration.zero, () {
+          phoneFocusNode.requestFocus();
+        });
+
+        return;
+      }
+
+      // 2FA
       if (response.requires2FA) {
-        state.isSubmitLoading.value = false;
-
-        // Note: Make sure tempToken and isOtpValid exist in your AuthProcessingState
         state.tempToken = response.tempToken;
         clear2FaController();
         state.isOtpValid.value = false;
@@ -95,10 +132,10 @@ class AuthProcessingController extends GetxController {
           tempToken: state.tempToken!,
           controller: this,
         );
-
         return;
       }
 
+      // SUCCESS
       await UserStore.to.handleSetLocalData(response);
 
       AppSnackbar.success(
@@ -193,18 +230,24 @@ class AuthProcessingController extends GetxController {
         final countryCode = state.selectedCountry.value.fullCountryCode;
         final phoneNumber = "+$countryCode${state.mobileController.text}";
 
-        LoggerService.loggerInstance.dynamic_d(phoneNumber);
+        LoginResponse response;
 
-        final response = await AuthProcessignApi.googleSignIn(
-          idToken: _idToken,
-          phone: phoneNumber,
-        );
+        if (_provider == "google") {
+          response = await AuthProcessignApi.googleSignIn(
+            idToken: _idToken,
+            phone: phoneNumber,
+          );
+        } else {
+          response = await AuthProcessignApi.linkedInSignIn(
+            cacheKey: state.cacheKey.value,
+            phone: phoneNumber,
+          );
+        }
 
         // 1. Check for 2FA
         if (response.requires2FA) {
           state.isSubmitLoading.value = false;
 
-          // Note: Make sure tempToken and isOtpValid exist in your AuthProcessingState
           state.tempToken = response.tempToken;
           clear2FaController();
           state.isOtpValid.value = false;

@@ -64,4 +64,7 @@ class RouteName {
   static const reminderPage = '/reminderPage';
 
   static const categoriesPage = '/categoryPage';
+
+  //budget track
+  static const budgetTrackPage = '/budgetTrackPage';
 }

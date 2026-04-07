@@ -58,4 +58,40 @@ class AuthProcessignApi {
       rethrow;
     }
   }
+
+  static Future<LoginResponse> linkedInSignIn({
+    String? code,
+    String? cacheKey,
+    String? phone,
+  }) async {
+    try {
+      final devicePlatform = getDevicePlatform();
+      final token = await StorageService.to.getString(storageFcmToken);
+      final deviceName = await getDeviceModel();
+
+      final response = await _dio.post(
+        '/auth/mobile/linkedin',
+        data: {
+          if (code != null) 'code': code,
+          if (cacheKey != null) 'cacheKey': cacheKey,
+          if (phone != null && phone.isNotEmpty) 'phone': phone,
+          'fcmToken': token,
+        },
+        options: Options(
+          headers: {
+            'X-Client-Platform': 'mobile',
+            'Content-Type': 'application/json',
+            'X-Device-Platform': devicePlatform,
+            'User-Agent': deviceName,
+            'X-Device-Id': UserStore.to.deviceId,
+            'X-Device-Name': deviceName,
+          },
+        ),
+      );
+
+      return LoginResponse.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

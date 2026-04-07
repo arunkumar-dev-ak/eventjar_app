@@ -1,6 +1,8 @@
 import 'package:eventjar/controller/signUp/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/social_auth/google_auth.dart';
+import 'package:eventjar/global/social_auth/social_login_button.dart';
 import 'package:eventjar/page/sign_up/widgets/signup_signin.dart';
 import 'package:eventjar/page/sign_up/widgets/signup_submit_button.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +85,10 @@ class SignUpTextFormField extends StatelessWidget {
                 : InputBorder.none,
             focusedBorder: hasOuterBorder
                 ? OutlineInputBorder(
-                    borderSide: BorderSide(color: AppColors.textPrimary(context), width: 2),
+                    borderSide: BorderSide(
+                      color: AppColors.textPrimary(context),
+                      width: 2,
+                    ),
                     borderRadius: BorderRadius.circular(10),
                   )
                 : InputBorder.none,
@@ -111,7 +116,10 @@ class SignUpTextFormField extends StatelessWidget {
                   )
                 : null,
             prefixIcon: hasOuterBorder
-                ? Icon(_getFieldIcon(label), color: AppColors.iconMuted(context))
+                ? Icon(
+                    _getFieldIcon(label),
+                    color: AppColors.iconMuted(context),
+                  )
                 : null,
             errorMaxLines: 3,
           ),
@@ -178,7 +186,11 @@ class SignUpForm extends StatelessWidget {
         color: AppColors.cardBg(context),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
-          BoxShadow(color: AppColors.shadow(context), blurRadius: 8, offset: Offset(0, 2)),
+          BoxShadow(
+            color: AppColors.shadow(context),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
         ],
       ),
       padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 2.hp),
@@ -274,7 +286,10 @@ class SignUpForm extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: Divider(color: AppColors.divider(context), thickness: 1),
+                  child: Divider(
+                    color: AppColors.divider(context),
+                    thickness: 1,
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.wp),
@@ -288,12 +303,48 @@ class SignUpForm extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: Divider(color: AppColors.divider(context), thickness: 1),
+                  child: Divider(
+                    color: AppColors.divider(context),
+                    thickness: 1,
+                  ),
                 ),
               ],
             ),
 
-            SizedBox(height: 2.hp),
+            /*----- Social Logins -----*/
+            SizedBox(height: 3.hp),
+
+            Row(
+              children: [
+                Expanded(
+                  child: SocialButton(
+                    text: "Google",
+                    assetPath: "assets/app_icon/google.png",
+                    color: Colors.red,
+                    onTap: () => AuthService().signInWithGoogle(
+                      onSuccess: (idToken) =>
+                          controller.navigateToAuthProcessign(idToken),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 3.wp),
+                Obx(() {
+                  return Expanded(
+                    child: SocialButton(
+                      text: "LinkedIn",
+                      assetPath: "assets/app_icon/linkedin.png",
+                      color: Colors.blue,
+                      isLoading: controller.state.isLinkedinLoading.value,
+                      onTap: () {
+                        controller.handleLinkedIn();
+                      },
+                    ),
+                  );
+                }),
+              ],
+            ),
+
+            SizedBox(height: 4.hp),
             AuthSignIn(
               onPressed: () {
                 Navigator.pop(context);

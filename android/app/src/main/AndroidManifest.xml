@@ -55,6 +55,15 @@
                 <action android:name="android.nfc.action.TAG_DISCOVERED"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
+            <!-- Deep Link in Mobile App -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="myeventjar" android:host="auth" />
+            </intent-filter>
         </activity>
         <!-- UCrop activity for image_cropper -->
         <activity

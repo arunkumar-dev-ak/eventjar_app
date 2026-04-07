@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:eventjar/api/sign_up_api/sign_up_api.dart';
 import 'package:eventjar/global/config/google_key_config.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:google_sign_in/google_sign_in.dart';

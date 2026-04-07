@@ -13,6 +13,7 @@ class AuthProcessingState {
 
   // Animation text
   final RxString loadingText = "Connecting your account...".obs;
+  final RxString cacheKey = "".obs;
 
   // Form fields
   final mobileController = TextEditingController();
