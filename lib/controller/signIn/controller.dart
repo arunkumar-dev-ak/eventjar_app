@@ -1,13 +1,17 @@
 import 'package:dio/dio.dart';
+import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/api/signin_api/signin_api.dart';
 import 'package:eventjar/controller/signIn/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/sign_in/widgets/signin_2fa_model.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignInController extends GetxController {
   var appBarTitle = "";
@@ -16,6 +20,7 @@ class SignInController extends GetxController {
   final _emailController = TextEditingController().obs;
   final _passwordController = TextEditingController().obs;
   final isPasswordHidden = true.obs;
+  static final Dio _dio = DioClient().dio;
   bool get isLoading => state.isLoading.value;
 
   TextEditingController get emailController => _emailController.value;
@@ -160,6 +165,31 @@ class SignInController extends GetxController {
     }
   }
 
+  Future<void> handleLinkedIn() async {
+    state.isLinkedinLoading.value = true;
+    final url = "${backendBaseUrl()}auth/linkedin?platform=mobile";
+    final Uri authUri = Uri.parse(url);
+    try {
+      if (await canLaunchUrl(authUri)) {
+        await launchUrl(authUri, mode: LaunchMode.inAppBrowserView);
+      } else {
+        throw 'Could not launch browser.Kindly try again after some time.';
+      }
+    } catch (err) {
+      LoggerService.loggerInstance.dynamic_d(err);
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Authentication Failed");
+      } else {
+        AppSnackbar.error(
+          title: "Authentication Failed",
+          message: "Something went wrong",
+        );
+      }
+    } finally {
+      state.isLinkedinLoading.value = false;
+    }
+  }
+
   void clear2FaController() {
     otpController.clear();
   }
@@ -172,6 +202,17 @@ class SignInController extends GetxController {
   /*----- navigation ----*/
   void navigateToSignUp() {
     Get.toNamed('/signUpPage')?.then((result) {
+      if (result == "logged_in") {
+        Navigator.pop(Get.context!, "logged_in");
+      }
+    });
+  }
+
+  void navigateToAuthProcessign(String idToken) {
+    Get.toNamed(
+      RouteName.authProcessingPage,
+      arguments: {'idToken': idToken},
+    )?.then((result) {
       if (result == "logged_in") {
         Navigator.pop(Get.context!, "logged_in");
       }

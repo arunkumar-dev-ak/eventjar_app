@@ -67,9 +67,9 @@ class DateRangeFilter extends GetView<MeetingController> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 2.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.cardBg(context),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade400, width: 1.5),
+          border: Border.all(color: AppColors.border(context), width: 1.5),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -81,20 +81,20 @@ class DateRangeFilter extends GetView<MeetingController> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.date_range, size: 16, color: Colors.grey[600]),
+            Icon(Icons.date_range, size: 16, color: AppColors.textSecondary(context)),
             SizedBox(width: 4),
             Text(
               controller.getDisplayText(),
               style: TextStyle(
                 fontSize: 8.sp,
                 fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
+                color: AppColors.textSecondary(context),
               ),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
             SizedBox(width: 4),
-            Icon(Icons.arrow_drop_down, size: 16, color: Colors.grey[500]),
+            Icon(Icons.arrow_drop_down, size: 16, color: AppColors.textHint(context)),
           ],
         ),
       ),
@@ -113,17 +113,21 @@ class DateRangeFilter extends GetView<MeetingController> {
             end: DateTime.now(),
           ),
       builder: (context, child) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.fromSwatch().copyWith(
-              // Selected dates background (your gradient)
-              primary: AppColors.gradientDarkStart,
-
-              // Month/weekday titles
-              onSurface: Colors.black87,
-
-              // Selected date TEXT (white)
+          data: (isDark ? ThemeData.dark() : ThemeData.light()).copyWith(
+            colorScheme: (isDark
+                    ? const ColorScheme.dark()
+                    : const ColorScheme.light())
+                .copyWith(
+              primary: const Color(0xFF1A73E8),
               onPrimary: Colors.white,
+              primaryContainer: const Color(0xFF1A73E8),
+              onPrimaryContainer: Colors.white,
+              secondaryContainer: const Color(0xFF1A73E8),
+              onSecondaryContainer: Colors.white,
+              surface: isDark ? AppColors.darkCard : Colors.white,
+              onSurface: isDark ? Colors.white : Colors.black87,
             ),
           ),
           child: child!,

@@ -1,6 +1,9 @@
 import 'dart:io';
+import 'package:eventjar/api/set_2fa_api/set_2fa_api.dart';
+import 'package:eventjar/api/signin_api/signin_api.dart';
 import 'package:eventjar/model/auth/login_model.dart';
 import 'package:eventjar/model/user_profile/user_profile.dart';
+import 'package:eventjar/page/user_profile/widget/disable_2fa.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as path;
@@ -41,6 +44,7 @@ class UserProfileController extends GetxController
   RxMap<String, dynamic> get profile => UserStore.to.profile;
 
   final passwordController = TextEditingController();
+  final disablePasswordController = TextEditingController();
 
   final DashboardController dashboardController = Get.find();
 
@@ -76,6 +80,7 @@ class UserProfileController extends GetxController
       await checkDeletionStatus();
     }
     state.isDeleteLoading.value = false;
+    if (state.isLoggingOut.value) state.isLoggingOut.value = false;
   }
 
   void checkAndUpdateLocalProfileInfo() async {
@@ -147,7 +152,7 @@ class UserProfileController extends GetxController
         if (statusCode == 401) {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return; // Stop further error handling
+          return;
         }
 
         ApiErrorHandler.handleError(err, "Failed to fetch user status");
@@ -219,6 +224,14 @@ class UserProfileController extends GetxController
         onTabOpen();
       } else {
         dashboardController.state.selectedIndex.value = 0;
+      }
+    });
+  }
+
+  void navigateToTwoFaPage() {
+    Get.toNamed(RouteName.set2fa)?.then((result) {
+      if (result == "success") {
+        onTabOpen();
       }
     });
   }
@@ -701,9 +714,16 @@ class UserProfileController extends GetxController
     };
   }
 
-  void handleLogout() {
+  void handleLogout() async {
+    try {
+      state.isLoggingOut.value = true;
+      await SignInApi.logout();
+    } catch (err) {
+      LoggerService.loggerInstance.e(err);
+    } finally {
+      state.isLoggingOut.value = false;
+    }
     UserStore.to.clearStore();
-    // dashboardController.state.selectedIndex.value = 0;
     Get.offAllNamed(RouteName.dashboardpage);
     AppSnackbar.success(
       title: "Logged Out Successfully",
@@ -850,6 +870,51 @@ class UserProfileController extends GetxController
     } catch (e) {
       LoggerService.loggerInstance.e(e);
       AppSnackbar.error(title: "Error", message: "Could not open email app.");
+    }
+  }
+
+  /*----- Disable 2FA -----*/
+  void showDisable2FaDialog() {
+    disablePasswordController.clear();
+
+    Get.dialog(const Disable2faDialog(), barrierDismissible: false);
+  }
+
+  Future<void> confirmDisable2FA() async {
+    final password = disablePasswordController.text.trim();
+
+    if (password.isEmpty) {
+      AppSnackbar.error(
+        title: "Required",
+        message: "Please enter your password",
+      );
+      return;
+    }
+
+    try {
+      state.isDisabling2FA.value = true;
+
+      final success = await Set2faApi.disable2Fa(password);
+
+      if (success) {
+        Get.focusScope?.unfocus();
+        Get.back();
+
+        onTabOpen();
+
+        AppSnackbar.success(
+          title: "Success",
+          message: "Two-Factor Authentication disabled",
+        );
+      }
+    } catch (err) {
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Error");
+      } else {
+        AppSnackbar.error(title: "Error", message: "Something went wrong");
+      }
+    } finally {
+      state.isDisabling2FA.value = false;
     }
   }
 

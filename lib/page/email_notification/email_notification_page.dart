@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/email_notification/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/email_notification/widget/email_notification_form_element.dart';
 import 'package:eventjar/page/email_notification/widget/email_notification_oauth_button.dart';
@@ -17,12 +18,12 @@ class EmailNotificationPage extends GetView<EmailNotificationController> {
       appBar: AppBar(
         title: Text(
           "Email Configuration",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: AppColors.textPrimary(context)),
         ),
         centerTitle: false,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
         elevation: 4,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.cardBg(context),
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
       body: GestureDetector(
@@ -222,7 +223,7 @@ class EmailNotificationPage extends GetView<EmailNotificationController> {
                                 color: Colors.blue.shade700,
                                 width: 2,
                               ),
-                              backgroundColor: Colors.white,
+                              backgroundColor: AppColors.cardBg(context),
                               foregroundColor: Colors.blue.shade700,
                             ),
                             child: controller.state.isTesting.value

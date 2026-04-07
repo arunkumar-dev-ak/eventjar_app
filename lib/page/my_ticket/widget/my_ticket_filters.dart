@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/my_ticket/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,7 +31,7 @@ class MyTicketFilters extends GetView<MyTicketController> {
                   prefixIcon: Icon(Icons.search, size: 12.sp),
 
                   filled: true,
-                  fillColor: Colors.white,
+                  fillColor: AppColors.cardBg(context),
 
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.wp),
@@ -39,7 +40,7 @@ class MyTicketFilters extends GetView<MyTicketController> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.wp),
                     borderSide: BorderSide(
-                      color: Colors.grey.shade400,
+                      color: AppColors.border(context),
                       width: 0.3.wp,
                     ),
                   ),
@@ -47,7 +48,7 @@ class MyTicketFilters extends GetView<MyTicketController> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.wp),
                     borderSide: BorderSide(
-                      color: Colors.grey.shade500,
+                      color: AppColors.textHint(context),
                       width: 0.4.wp,
                     ),
                   ),
@@ -64,7 +65,7 @@ class MyTicketFilters extends GetView<MyTicketController> {
                             child: Icon(
                               Icons.cancel,
                               size: 13.sp,
-                              color: Colors.grey.shade400,
+                              color: AppColors.iconMuted(context),
                             ),
                           ),
                         )
@@ -86,9 +87,9 @@ class MyTicketFilters extends GetView<MyTicketController> {
             child: Container(
               padding: EdgeInsets.all(1.5.wp),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.cardBg(context),
                 borderRadius: BorderRadius.circular(3.wp),
-                border: Border.all(color: Colors.grey.shade300, width: 0.3.wp),
+                border: Border.all(color: AppColors.border(context), width: 0.3.wp),
               ),
               child: Stack(
                 clipBehavior: Clip.none,
@@ -96,7 +97,7 @@ class MyTicketFilters extends GetView<MyTicketController> {
                   Icon(
                     Icons.calendar_today,
                     size: 14.sp,
-                    color: Colors.black87,
+                    color: AppColors.textPrimary(context),
                   ),
                   Obx(() {
                     if (controller.state.selectedDateRange.value != null) {

@@ -11,13 +11,13 @@ class EventInfoBookButtonShimmer extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 5.wp),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
-        highlightColor: Colors.grey.shade100,
+        baseColor: AppColors.border(context),
+        highlightColor: AppColors.chipBg(context),
         period: const Duration(seconds: 2),
         child: Container(
           height: 56,
           decoration: BoxDecoration(
-            color: Colors.grey[300],
+            color: AppColors.border(context),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(

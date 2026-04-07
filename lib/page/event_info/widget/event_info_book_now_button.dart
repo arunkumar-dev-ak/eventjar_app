@@ -142,16 +142,16 @@ class EventInfoBookButton extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.chevron_left_rounded,
-                  color: Colors.black87, // 👈 FIXED (was white)
+                  color: AppColors.textPrimary(context), // 👈 FIXED (was white)
                   size: 22,
                 ),
                 SizedBox(width: 2.wp),
                 Text(
                   "Back to My Ticket",
                   style: TextStyle(
-                    color: Colors.black87, // 👈 FIXED (was white)
+                    color: AppColors.textPrimary(context), // 👈 FIXED (was white)
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w600,
                   ),

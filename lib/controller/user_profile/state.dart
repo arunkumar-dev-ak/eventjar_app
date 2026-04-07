@@ -8,6 +8,8 @@ class UserProfileState {
   final RxBool isLoading = false.obs;
   final RxBool isDeleteLoading = false.obs;
   final RxBool isProfileLoading = false.obs;
+  final RxBool isDisabling2FA = false.obs;
+  final RxBool isDisable2FAToggle = false.obs;
   final appVersion = ''.obs;
 
   final Rx<UserProfile?> userProfile = Rx<UserProfile?>(null);
@@ -18,6 +20,8 @@ class UserProfileState {
 
   RxBool isEditingAvatar = false.obs;
   Rx<File?> selectedAvatarFile = Rxn<File>();
+
+  RxBool isLoggingOut = false.obs;
 
   // Phone OTP verification
   RxBool isSendingOtp = false.obs;

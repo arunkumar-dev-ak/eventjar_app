@@ -1,11 +1,12 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 Widget scorecardBuildShimmerProfile() {
   return Shimmer.fromColors(
-    baseColor: Colors.grey[300]!,
-    highlightColor: Colors.grey[100]!,
+    baseColor: AppColors.borderStatic,
+    highlightColor: AppColors.chipBgStatic,
     child: Container(
       margin: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.5.hp),
       child: Column(
@@ -13,7 +14,7 @@ Widget scorecardBuildShimmerProfile() {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.cardBgStatic,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
@@ -27,7 +28,7 @@ Widget scorecardBuildShimmerProfile() {
                   width: 24.wp,
                   height: 28.wp,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.cardBgStatic,
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
@@ -40,7 +41,7 @@ Widget scorecardBuildShimmerProfile() {
                         width: 40.wp,
                         height: 1.7.hp,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.cardBgStatic,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -49,7 +50,7 @@ Widget scorecardBuildShimmerProfile() {
                         width: 30.wp,
                         height: 1.2.hp,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.cardBgStatic,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -58,7 +59,7 @@ Widget scorecardBuildShimmerProfile() {
                         width: 25.wp,
                         height: 1.2.hp,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.cardBgStatic,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -72,7 +73,7 @@ Widget scorecardBuildShimmerProfile() {
                               width: 5.5.wp,
                               height: 5.5.wp,
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: AppColors.cardBgStatic,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -90,7 +91,7 @@ Widget scorecardBuildShimmerProfile() {
             width: double.infinity,
             height: 9.hp,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.cardBgStatic,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(14),
                 bottomRight: Radius.circular(14),

@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/profile_form/location/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,12 +12,12 @@ class LocationFormPage extends GetView<LocationFormController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: AppColors.textPrimary(context)),
         ),
         centerTitle: false,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
         elevation: 4,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.cardBg(context),
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
       body: Text("hi"),

@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
@@ -86,12 +87,12 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
               textFieldPadding ??
               const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.cardBg(context),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey.shade400, width: 1.5),
+            border: Border.all(color: AppColors.border(context), width: 1.5),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: AppColors.shadow(context),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -105,7 +106,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                 style: TextStyle(
                   fontSize: selectedTextSize ?? 10.sp,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? primary : Colors.grey.shade600,
+                  color: isSelected ? primary : AppColors.textSecondary(context),
                 ),
               ),
               AnimatedRotation(
@@ -114,7 +115,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                 child: Icon(
                   Icons.keyboard_arrow_down_rounded,
                   size: dropDownIconSize ?? 24,
-                  color: isSelected ? primary : Colors.grey.shade500,
+                  color: isSelected ? primary : AppColors.textHint(context),
                 ),
               ),
             ],
@@ -144,7 +145,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
         child: Container(
           constraints: const BoxConstraints(maxHeight: 600, maxWidth: 400),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.cardBg(context),
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
@@ -222,14 +223,14 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                   decoration: InputDecoration(
                     hintText: 'Search $title...',
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: AppColors.cardBg(context),
                     contentPadding: const EdgeInsets.symmetric(
                       vertical: 12,
                       horizontal: 16,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
+                      borderSide: BorderSide(color: AppColors.border(context)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -238,7 +239,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                     prefixIcon: Icon(
                       Icons.search,
                       size: 18,
-                      color: Colors.grey.shade500,
+                      color: AppColors.textHint(context),
                     ),
                   ),
                   onChanged: (value) {
@@ -275,7 +276,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                     ? Icons.hourglass_empty
                                     : Icons.search_off,
                                 size: 40,
-                                color: Colors.grey.shade400,
+                                color: AppColors.iconMuted(context),
                               ),
                               SizedBox(height: 8),
                               Text(
@@ -285,7 +286,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                     ? 'No Data loaded'
                                     : 'No matches found',
                                 style: TextStyle(
-                                  color: Colors.grey.shade600,
+                                  color: AppColors.textSecondary(context),
                                   fontSize: 14,
                                 ),
                               ),
@@ -354,12 +355,12 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     color: isSelectedItem
                                         ? selectedShade1
-                                        : Colors.white,
+                                        : AppColors.cardBg(context),
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
                                       color: isSelectedItem
                                           ? selectedShade3
-                                          : Colors.grey.shade100,
+                                          : AppColors.divider(context),
                                       width: 1.5,
                                     ),
                                     boxShadow: isSelectedItem
@@ -391,7 +392,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                                 shape: BoxShape.circle,
                                                 color: isSelectedItem
                                                     ? headerColor
-                                                    : Colors.grey.shade200,
+                                                    : AppColors.divider(context),
                                                 border: Border.all(
                                                   color: isSelectedItem
                                                       ? Colors.white
@@ -406,7 +407,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                                           .radio_button_unchecked,
                                                 color: isSelectedItem
                                                     ? Colors.white
-                                                    : Colors.grey.shade500,
+                                                    : AppColors.textHint(context),
                                                 size: 14,
                                               ),
                                             ),
@@ -421,7 +422,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                                       : FontWeight.w500,
                                                   color: isSelectedItem
                                                       ? primary
-                                                      : Colors.grey.shade800,
+                                                      : AppColors.textPrimary(context),
                                                 ),
                                               ),
                                             ),
@@ -438,7 +439,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                             if (isListLoading)
                               Positioned.fill(
                                 child: Container(
-                                  color: Colors.white.withValues(alpha: 0.8),
+                                  color: AppColors.cardBg(context).withValues(alpha: 0.8),
                                   alignment: Alignment.center,
                                   child: CircularProgressIndicator(
                                     color: primary,

@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -54,11 +55,11 @@ class EmailNotificationFormElement extends StatelessWidget {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide(color: Colors.grey.shade400, width: 1.5),
+          borderSide: BorderSide(color: AppColors.border(context), width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide(color: Colors.blue.shade700, width: 2.0),
+          borderSide: BorderSide(color: Theme.of(context).brightness == Brightness.dark ? Colors.blue.shade300 : Colors.blue.shade700, width: 2.0),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),

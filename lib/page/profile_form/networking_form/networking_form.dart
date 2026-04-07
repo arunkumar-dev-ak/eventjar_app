@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/profile_form/networking/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/profile_form/networking_form/widget/connection_types_dropdown.dart';
 import 'package:eventjar/page/profile_form/networking_form/widget/networking_goal_dropdown.dart';
@@ -16,12 +17,12 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: AppColors.textPrimary(context)),
         ),
         centerTitle: false,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
         elevation: 4,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.cardBg(context),
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
       body: GestureDetector(
@@ -85,7 +86,7 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
                             color: Colors.blue.shade700,
                             width: 2,
                           ),
-                          backgroundColor: Colors.white,
+                          backgroundColor: AppColors.cardBg(context),
                           foregroundColor: Colors.blue.shade700,
                           elevation: 0,
                         ),

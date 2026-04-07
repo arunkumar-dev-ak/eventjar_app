@@ -8,6 +8,7 @@ import 'package:eventjar/model/home/home_model.dart';
 import 'package:eventjar/page/home/widget/home_content_shimmer.dart';
 import 'package:eventjar/page/home/widget/home_content_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../global/app_colors.dart';
@@ -17,175 +18,204 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: _buildAppBar(context),
-      body: Column(
-        children: [
-          // Date range filter chip
-          Obx(() {
-            final from = controller.state.filterFrom.value;
-            final to = controller.state.filterTo.value;
-            if (from == null && to == null) return const SizedBox.shrink();
-            String fmt(DateTime d) =>
-                '${d.day.toString().padLeft(2, '0')}-${d.month.toString().padLeft(2, '0')}-${d.year}';
-            String label;
-            if (from != null && to != null) {
-              label = '${fmt(from)} – ${fmt(to)}';
-            } else if (from != null) {
-              label = 'From ${fmt(from)}';
-            } else {
-              label = 'To ${fmt(to!)}';
-            }
-            return Container(
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.hp),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(
-                    Icons.date_range,
-                    size: 16,
-                    color: const Color(0xFF1A73E8),
-                  ),
-                  SizedBox(width: 1.5.wp),
-                  Text(
-                    'Date filter: ',
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      fontWeight: FontWeight.w600,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: isDark
+            ? AppColors.darkBackground
+            : Colors.white,
+        systemNavigationBarIconBrightness: isDark
+            ? Brightness.light
+            : Brightness.dark,
+      ),
+      child: Scaffold(
+        backgroundColor: AppColors.scaffoldBg(context),
+        appBar: _buildAppBar(context),
+        body: Column(
+          children: [
+            // Date range filter chip
+            Obx(() {
+              final from = controller.state.filterFrom.value;
+              final to = controller.state.filterTo.value;
+              if (from == null && to == null) return const SizedBox.shrink();
+              String fmt(DateTime d) =>
+                  '${d.day.toString().padLeft(2, '0')}-${d.month.toString().padLeft(2, '0')}-${d.year}';
+              String label;
+              if (from != null && to != null) {
+                label = '${fmt(from)} – ${fmt(to)}';
+              } else if (from != null) {
+                label = 'From ${fmt(from)}';
+              } else {
+                label = 'To ${fmt(to!)}';
+              }
+              return Container(
+                color: AppColors.cardBg(context),
+                padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.hp),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Icon(
+                      Icons.date_range,
+                      size: 16,
                       color: const Color(0xFF1A73E8),
                     ),
-                  ),
-                  SizedBox(width: 2.wp),
-                  GestureDetector(
-                    onTap: controller.clearDateRange,
-                    child: Icon(Icons.close, size: 18, color: Colors.grey[600]),
-                  ),
-                ],
-              ),
-            );
-          }),
-          // Category tabs (dynamic)
-          Container(
-            color: Colors.white,
-            child: SizedBox(
-              height: 5.hp,
-              child: Obx(() {
-                final selectedTab = controller.state.selectedTab.value;
-                final tabs = controller.tabs;
-                return ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(horizontal: 4.wp),
-                  itemCount: tabs.length,
-                  separatorBuilder: (_, _) => SizedBox(width: 5.wp),
-                  itemBuilder: (context, index) {
-                    final isSelected = selectedTab == index;
-                    return GestureDetector(
-                      onTap: () => controller.setSelectedTab(index),
-                      child: Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          border: isSelected
-                              ? Border(
-                                  bottom: BorderSide(
-                                    color: const Color(0xFF1A73E8),
-                                    width: 2.5,
-                                  ),
-                                )
-                              : null,
-                        ),
-                        padding: EdgeInsets.only(bottom: 0.5.hp),
-                        child: Text(
-                          tabs[index],
-                          style: TextStyle(
-                            fontSize: 9.sp,
-                            fontWeight: isSelected
-                                ? FontWeight.w700
-                                : FontWeight.w500,
-                            color: isSelected
-                                ? const Color(0xFF1A73E8)
-                                : Colors.grey[500],
+                    SizedBox(width: 1.5.wp),
+                    Text(
+                      'Date filter: ',
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textSecondary(context),
+                      ),
+                    ),
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF1A73E8),
+                      ),
+                    ),
+                    SizedBox(width: 2.wp),
+                    GestureDetector(
+                      onTap: controller.clearDateRange,
+                      child: Icon(
+                        Icons.close,
+                        size: 18,
+                        color: AppColors.textSecondary(context),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+            // Category tabs (dynamic)
+            Container(
+              color: AppColors.cardBg(context),
+              child: SizedBox(
+                height: 5.hp,
+                child: Obx(() {
+                  final selectedTab = controller.state.selectedTab.value;
+                  final tabs = controller.tabs;
+                  return ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(horizontal: 4.wp),
+                    itemCount: tabs.length,
+                    separatorBuilder: (_, _) => SizedBox(width: 5.wp),
+                    itemBuilder: (context, index) {
+                      final isSelected = selectedTab == index;
+                      return GestureDetector(
+                        onTap: () => controller.setSelectedTab(index),
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            border: isSelected
+                                ? Border(
+                                    bottom: BorderSide(
+                                      color: const Color(0xFF1A73E8),
+                                      width: 2.5,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                          padding: EdgeInsets.only(bottom: 0.5.hp),
+                          child: Text(
+                            tabs[index],
+                            style: TextStyle(
+                              fontSize: 9.sp,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                              color: isSelected
+                                  ? const Color(0xFF1A73E8)
+                                  : AppColors.textHint(context),
+                            ),
                           ),
                         ),
+                      );
+                    },
+                  );
+                }),
+              ),
+            ),
+            // Event list
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: controller.refreshPage,
+                child: Obx(() {
+                  final bottomPadding = MediaQuery.of(context).padding.bottom;
+                  if (controller.isLoading) {
+                    return ListView.builder(
+                      padding: EdgeInsets.fromLTRB(
+                        4.wp,
+                        4.wp,
+                        4.wp,
+                        4.wp + bottomPadding,
                       ),
+                      itemCount: 4,
+                      itemBuilder: (_, _) => const EventCardShimmer(),
                     );
-                  },
-                );
-              }),
-            ),
-          ),
-          // Event list
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: controller.refreshPage,
-              child: Obx(() {
-                if (controller.isLoading) {
-                  return ListView.builder(
-                    padding: EdgeInsets.all(4.wp),
-                    itemCount: 4,
-                    itemBuilder: (_, _) => const EventCardShimmer(),
-                  );
-                }
+                  }
 
-                final events = controller.filteredEvents;
+                  final events = controller.filteredEvents;
 
-                if (events.isEmpty) {
-                  return ListView(
-                    children: [
-                      SizedBox(height: 15.hp),
-                      Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.event_busy_outlined,
-                              size: 48,
-                              color: Colors.grey[400],
-                            ),
-                            SizedBox(height: 2.hp),
-                            Text(
-                              'No events found',
-                              style: TextStyle(
-                                fontSize: 10.sp,
-                                color: Colors.grey[500],
-                                fontWeight: FontWeight.w500,
+                  if (events.isEmpty) {
+                    return ListView(
+                      children: [
+                        SizedBox(height: 15.hp),
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.event_busy_outlined,
+                                size: 48,
+                                color: AppColors.iconMuted(context),
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 2.hp),
+                              Text(
+                                'No events found',
+                                style: TextStyle(
+                                  fontSize: 10.sp,
+                                  color: AppColors.textHint(context),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                }
+                      ],
+                    );
+                  }
 
-                return ListView.builder(
-                  controller: controller.scrollController,
-                  padding: EdgeInsets.all(4.wp),
-                  itemCount: events.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index < events.length) {
-                      return _buildEventCard(context, events[index]);
-                    }
-                    // Pagination shimmer
-                    return controller.state.meta.value != null &&
-                            controller.state.meta.value!.hasNext == true
-                        ? const EventCardShimmer()
-                        : const SizedBox();
-                  },
-                );
-              }),
+                  return ListView.builder(
+                    controller: controller.scrollController,
+                    padding: EdgeInsets.fromLTRB(
+                      4.wp,
+                      4.wp,
+                      4.wp,
+                      4.wp + bottomPadding,
+                    ),
+                    itemCount: events.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index < events.length) {
+                        return _buildEventCard(context, events[index]);
+                      }
+                      // Pagination shimmer
+                      return controller.state.meta.value != null &&
+                              controller.state.meta.value!.hasNext == true
+                          ? const EventCardShimmer()
+                          : const SizedBox();
+                    },
+                  );
+                }),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -220,8 +250,15 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                   ),
                 ),
           centerTitle: false,
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.cardBg(context),
           elevation: 0.5,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            systemNavigationBarColor: AppColors.scaffoldBg(context),
+            systemNavigationBarIconBrightness:
+                Theme.of(context).brightness == Brightness.dark
+                ? Brightness.light
+                : Brightness.dark,
+          ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
@@ -233,7 +270,9 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
             },
           ),
           flexibleSpace: Container(
-            decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+            decoration: BoxDecoration(
+              gradient: AppColors.appBarGradientFor(context),
+            ),
           ),
           actions: [
             _buildActionButton(
@@ -255,21 +294,36 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                               controller.state.filterTo.value ?? DateTime.now(),
                         )
                       : null,
-                  builder: (context, child) => Theme(
-                    data: Theme.of(context).copyWith(
-                      colorScheme: Theme.of(context).colorScheme.copyWith(
-                        primary: const Color(0xFF1A73E8),
-                        onPrimary: Colors.white,
-                        primaryContainer: const Color(0xFF1A73E8),
-                        onPrimaryContainer: Colors.white,
-                        secondaryContainer: const Color(0xFF1A73E8),
-                        onSecondaryContainer: Colors.white,
-                        surface: Colors.white,
-                        onSurface: Colors.black87,
-                      ),
-                    ),
-                    child: child!,
-                  ),
+                  builder: (context, child) {
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    return Theme(
+                      data: (isDark ? ThemeData.dark() : ThemeData.light())
+                          .copyWith(
+                            colorScheme:
+                                (isDark
+                                        ? const ColorScheme.dark()
+                                        : const ColorScheme.light())
+                                    .copyWith(
+                                      primary: const Color(0xFF1A73E8),
+                                      onPrimary: Colors.white,
+                                      primaryContainer: const Color(0xFF1A73E8),
+                                      onPrimaryContainer: Colors.white,
+                                      secondaryContainer: isDark
+                                          ? const Color(0xFF1A73E8)
+                                          : const Color(0xFF1A73E8),
+                                      onSecondaryContainer: Colors.white,
+                                      surface: isDark
+                                          ? AppColors.darkCard
+                                          : Colors.white,
+                                      onSurface: isDark
+                                          ? Colors.white
+                                          : Colors.black87,
+                                    ),
+                          ),
+                      child: child!,
+                    );
+                  },
                 );
                 if (result != null) {
                   controller.setDateRange(result.start, result.end);
@@ -347,11 +401,14 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
       child: Container(
         margin: EdgeInsets.only(bottom: 1.5.hp),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.cardElevatedBg(context),
           borderRadius: BorderRadius.circular(14),
+          border: Theme.of(context).brightness == Brightness.dark
+              ? Border.all(color: AppColors.border(context), width: 0.8)
+              : null,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
+              color: AppColors.shadow(context),
               blurRadius: 10,
               offset: const Offset(0, 3),
             ),
@@ -367,7 +424,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                 Container(
                   height: 160,
                   width: double.infinity,
-                  color: Colors.grey.shade100,
+                  color: AppColors.chipBg(context),
                   child:
                       (event.featuredImageUrl != null &&
                           event.featuredImageUrl!.isNotEmpty)
@@ -414,11 +471,11 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                     child: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.cardBg(context),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.25),
+                            color: AppColors.shadow(context),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -563,7 +620,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 8.5.sp,
-                  color: Colors.grey[500],
+                  color: AppColors.textHint(context),
                   height: 1.3,
                 ),
               ),
@@ -582,7 +639,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                           'Organized by',
                           style: TextStyle(
                             fontSize: 7.sp,
-                            color: Colors.grey[500],
+                            color: AppColors.textHint(context),
                           ),
                         ),
                         SizedBox(height: 0.3.hp),
@@ -592,7 +649,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 8.5.sp,
-                            color: Colors.black,
+                            color: AppColors.textPrimary(context),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -604,7 +661,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                     child: Icon(
                       Icons.arrow_forward_ios_rounded,
                       size: 14,
-                      color: Colors.grey[600],
+                      color: AppColors.textSecondary(context),
                     ),
                   ),
                 ],

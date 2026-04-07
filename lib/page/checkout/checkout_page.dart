@@ -73,6 +73,7 @@
 // }
 
 import 'package:eventjar/controller/checkout/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/checkout/widget/checkout_event_card.dart';
 import 'package:eventjar/page/checkout/widget/checkout_order_summary.dart';
@@ -88,7 +89,7 @@ class CheckoutPage extends GetView<CheckoutController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: AppColors.scaffoldBg(context),
 
       appBar: AppBar(
         title: Text(
@@ -96,12 +97,12 @@ class CheckoutPage extends GetView<CheckoutController> {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 13.sp,
-            color: Colors.black87,
+            color: AppColors.textPrimary(context),
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.cardBg(context),
         elevation: 0.5,
-        iconTheme: const IconThemeData(color: Colors.black87),
+        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
       ),
 
       body: Obx(() {

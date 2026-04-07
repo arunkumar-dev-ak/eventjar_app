@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -55,8 +56,8 @@ class CheckoutPromoCodeSection extends GetView<CheckoutController> {
                       ),
                       filled: true,
                       fillColor: isApplied
-                          ? Colors.grey.shade100
-                          : Colors.white,
+                          ? AppColors.chipBg(context)
+                          : AppColors.cardBg(context),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide(color: Colors.green.shade300),

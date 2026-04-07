@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
@@ -10,7 +11,7 @@ class EventCardShimmer extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.5.hp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBg(context),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -21,8 +22,8 @@ class EventCardShimmer extends StatelessWidget {
         ],
       ),
       child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade200,
-        highlightColor: Colors.grey.shade50,
+        baseColor: AppColors.divider(context),
+        highlightColor: AppColors.scaffoldBg(context),
         period: const Duration(milliseconds: 1500),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +35,7 @@ class EventCardShimmer extends StatelessWidget {
                   height: 180,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: AppColors.border(context),
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(24),
                     ),
@@ -48,7 +49,7 @@ class EventCardShimmer extends StatelessWidget {
                     width: 50,
                     height: 55,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: AppColors.border(context),
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
@@ -61,7 +62,7 @@ class EventCardShimmer extends StatelessWidget {
                     width: 60,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: AppColors.border(context),
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
@@ -81,7 +82,7 @@ class EventCardShimmer extends StatelessWidget {
                     width: 80,
                     margin: const EdgeInsets.only(bottom: 8),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: AppColors.border(context),
                       borderRadius: BorderRadius.circular(6),
                     ),
                   ),
@@ -91,7 +92,7 @@ class EventCardShimmer extends StatelessWidget {
                     height: 18,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: AppColors.border(context),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -100,7 +101,7 @@ class EventCardShimmer extends StatelessWidget {
                     height: 18,
                     width: 60.wp,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: AppColors.border(context),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -111,7 +112,7 @@ class EventCardShimmer extends StatelessWidget {
                     height: 14,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: AppColors.border(context),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -120,7 +121,7 @@ class EventCardShimmer extends StatelessWidget {
                     height: 14,
                     width: 75.wp,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: AppColors.border(context),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -136,7 +137,7 @@ class EventCardShimmer extends StatelessWidget {
                               width: 28,
                               height: 28,
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
+                                color: AppColors.border(context),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
@@ -145,7 +146,7 @@ class EventCardShimmer extends StatelessWidget {
                               height: 12,
                               width: 60,
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
+                                color: AppColors.border(context),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
@@ -155,7 +156,7 @@ class EventCardShimmer extends StatelessWidget {
                       Container(
                         width: 1,
                         height: 24,
-                        color: Colors.grey.shade200,
+                        color: AppColors.divider(context),
                       ),
                       Expanded(
                         child: Padding(
@@ -166,7 +167,7 @@ class EventCardShimmer extends StatelessWidget {
                                 width: 28,
                                 height: 28,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
+                                  color: AppColors.border(context),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
@@ -175,7 +176,7 @@ class EventCardShimmer extends StatelessWidget {
                                 height: 12,
                                 width: 50,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
+                                  color: AppColors.border(context),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                               ),
@@ -191,7 +192,7 @@ class EventCardShimmer extends StatelessWidget {
                   Container(
                     height: 1,
                     width: double.infinity,
-                    color: Colors.grey.shade200,
+                    color: AppColors.divider(context),
                   ),
                   SizedBox(height: 1.5.hp),
 
@@ -202,7 +203,7 @@ class EventCardShimmer extends StatelessWidget {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
+                          color: AppColors.border(context),
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
@@ -215,7 +216,7 @@ class EventCardShimmer extends StatelessWidget {
                               height: 10,
                               width: 60,
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
+                                color: AppColors.border(context),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
@@ -224,7 +225,7 @@ class EventCardShimmer extends StatelessWidget {
                               height: 14,
                               width: 100,
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
+                                color: AppColors.border(context),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
@@ -235,7 +236,7 @@ class EventCardShimmer extends StatelessWidget {
                         width: 70,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
+                          color: AppColors.border(context),
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),

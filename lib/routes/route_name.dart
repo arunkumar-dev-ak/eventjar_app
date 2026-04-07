@@ -4,6 +4,9 @@ class RouteName {
   static const signUpPage = '/signUpPage';
   static const forgotPasswordPage = '/forgotPasswordPage';
   static const splashScreen = '/splashScreen';
+  static const authProcessingPage = '/authProcessingPage';
+  static const set2fa = '/set2faPage';
+  static const changePassword = '/changePasswordPage';
 
   //home page
   static const dashboardpage = '/dashboardPage';
@@ -51,6 +54,7 @@ class RouteName {
   //Notification
   static const notificationpage = '/notificationPage';
   static const emailNotificationFormOage = '/emailNotificationFormPage';
+  static const notificationInboxPage = '/notificationInboxPage';
 
   //network page
   static const networkPage = '/networkPage';
@@ -60,4 +64,7 @@ class RouteName {
   static const reminderPage = '/reminderPage';
 
   static const categoriesPage = '/categoryPage';
+
+  //budget track
+  static const budgetTrackPage = '/budgetTrackPage';
 }

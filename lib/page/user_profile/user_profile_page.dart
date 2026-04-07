@@ -1,8 +1,7 @@
-import 'dart:ui';
-
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/store/theme_store.dart';
 import 'package:eventjar/page/user_profile/user_profile_basic_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_business_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_header.dart';
@@ -21,7 +20,7 @@ class UserProfilePage extends GetView<UserProfileController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
           "Profile",
@@ -32,9 +31,25 @@ class UserProfilePage extends GetView<UserProfileController> {
           statusBarIconBrightness: Brightness.light,
         ),
         flexibleSpace: Container(
-          decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
         ),
         elevation: 0,
+        actions: [
+          Obx(() => IconButton(
+                icon: Icon(
+                  ThemeStore.to.isDarkMode
+                      ? Icons.light_mode_rounded
+                      : Icons.dark_mode_rounded,
+                  color: Colors.white,
+                ),
+                onPressed: () => ThemeStore.to.toggleTheme(),
+                tooltip: ThemeStore.to.isDarkMode
+                    ? 'Switch to Light Mode'
+                    : 'Switch to Dark Mode',
+              )),
+        ],
       ),
       body: Obx(() {
         return RefreshIndicator(
@@ -43,66 +58,77 @@ class UserProfilePage extends GetView<UserProfileController> {
           },
           child: controller.state.isLoading.value
               ? userProfileBuildShimmerSkeleton()
-              : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      UserProfileHeader(),
-                      SizedBox(height: 2.hp),
-                      _buildSection(
-                        title: "Basic Information",
-                        child: userProfileBuildBasicInfo(),
-                        isEditEnabled: true,
-                        onEdit: () {
-                          controller.navigateToBasicInfoUpdate();
-                        },
-                      ),
-                      SizedBox(height: 2.hp),
-                      _buildSection(
-                        title: "Business Information",
-                        child: userProfileBuildBusinessInfo(),
-                        isEditEnabled: true,
-                        onEdit: () {
-                          controller.navigateToBusinessInfoUpdate();
-                        },
-                      ),
-                      SizedBox(height: 2.hp),
-                      _buildSection(
-                        title: "Networking & Interests",
-                        child: userProfileBuildNetworkInfo(),
-                        isEditEnabled: true,
-                        onEdit: () {
-                          controller.navigateToNetworkingInfoUpdate();
-                        },
-                      ),
-                      SizedBox(height: 2.hp),
-                      _buildSection(
-                        title: "Professional Summary",
-                        child: userProfilebuildSummary(),
-                        isEditEnabled: true,
-                        onEdit: () {
-                          controller.navigateToProfessionalSummaryUpdate();
-                        },
-                      ),
-                      SizedBox(height: 2.hp),
-                      _buildSection(
-                        title: "Social & Contact Links",
-                        child: userProfileBuildSocialLinks(),
-                        isEditEnabled: true,
-                        onEdit: () {
-                          controller.navigateToSocialUpdate();
-                        },
-                      ),
-                      SizedBox(height: 2.hp),
-                      _buildNotificationsSection(),
-                      SizedBox(height: 2.hp),
-                      _buildSection(
-                        title: "Security & Sessions",
-                        child: userProfileBuildSecurity(),
-                      ),
-                      // SizedBox(height: 2.hp),
-                      _buildVersionFooter(),
-                      SizedBox(height: 2.hp),
-                    ],
+              : GestureDetector(
+                  onTap: () {
+                    Get.focusScope?.unfocus();
+                  },
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        UserProfileHeader(),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          context,
+                          title: "Basic Information",
+                          child: userProfileBuildBasicInfo(),
+                          isEditEnabled: true,
+                          onEdit: () {
+                            controller.navigateToBasicInfoUpdate();
+                          },
+                        ),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          context,
+                          title: "Business Information",
+                          child: userProfileBuildBusinessInfo(),
+                          isEditEnabled: true,
+                          onEdit: () {
+                            controller.navigateToBusinessInfoUpdate();
+                          },
+                        ),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          context,
+                          title: "Networking & Interests",
+                          child: userProfileBuildNetworkInfo(),
+                          isEditEnabled: true,
+                          onEdit: () {
+                            controller.navigateToNetworkingInfoUpdate();
+                          },
+                        ),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          context,
+                          title: "Professional Summary",
+                          child: userProfilebuildSummary(),
+                          isEditEnabled: true,
+                          onEdit: () {
+                            controller.navigateToProfessionalSummaryUpdate();
+                          },
+                        ),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          context,
+                          title: "Social & Contact Links",
+                          child: userProfileBuildSocialLinks(),
+                          isEditEnabled: true,
+                          onEdit: () {
+                            controller.navigateToSocialUpdate();
+                          },
+                        ),
+                        SizedBox(height: 2.hp),
+                        _buildNotificationsSection(context),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          context,
+                          title: "Security & Sessions",
+                          child: userProfileBuildSecurity(),
+                        ),
+                        // SizedBox(height: 2.hp),
+                        _buildVersionFooter(context),
+                        SizedBox(height: 2.hp),
+                      ],
+                    ),
                   ),
                 ),
         );
@@ -110,9 +136,10 @@ class UserProfilePage extends GetView<UserProfileController> {
     );
   }
 
-  Widget _buildNotificationsSection() {
+  Widget _buildNotificationsSection(BuildContext ctx) {
     return _buildSection(
-      title: "Notifications",
+      ctx,
+      title: "Automation",
       child: GestureDetector(
         onTap: () {
           controller.navigateToConfigureNotification();
@@ -121,9 +148,9 @@ class UserProfilePage extends GetView<UserProfileController> {
           width: double.infinity,
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.blue.shade50,
+            color: AppColors.lightBlueBg(ctx),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.blue.shade100),
+            border: Border.all(color: AppColors.lightBlueBorder(ctx)),
           ),
           child: Row(
             children: [
@@ -146,17 +173,20 @@ class UserProfilePage extends GetView<UserProfileController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Click to Configure Notifications",
+                      "Click to Configure Automations",
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 10.sp,
-                        color: Colors.black87,
+                        color: AppColors.textPrimary(ctx),
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
-                      "Manage Email, WhatsApp notifications",
-                      style: TextStyle(fontSize: 8.sp, color: Colors.grey[600]),
+                      "Manage Email, WhatsApp automations",
+                      style: TextStyle(
+                        fontSize: 8.sp,
+                        color: AppColors.textSecondary(ctx),
+                      ),
                     ),
                   ],
                 ),
@@ -169,23 +199,23 @@ class UserProfilePage extends GetView<UserProfileController> {
     );
   }
 
-  Widget _buildSection({
+  Widget _buildSection(
+    BuildContext ctx, {
     required String title,
     required Widget child,
     bool? isEditEnabled,
     VoidCallback? onEdit,
   }) {
-    // Get isEditEnabled from args if not provided
     final bool editEnabled = isEditEnabled ?? false;
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 4.wp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBg(ctx),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.shade200,
+            color: AppColors.shadow(ctx),
             blurRadius: 8,
             offset: Offset(0, 2),
           ),
@@ -206,7 +236,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: AppColors.textPrimary(ctx),
                     ),
                   ),
                 ),
@@ -220,21 +250,21 @@ class UserProfilePage extends GetView<UserProfileController> {
                       child: Icon(
                         Icons.edit_outlined,
                         size: 18.sp,
-                        color: Colors.grey.shade500,
+                        color: AppColors.iconMuted(ctx),
                       ),
                     ),
                   ),
               ],
             ),
           ),
-          Divider(height: 1, color: Colors.grey.shade200),
+          Divider(height: 1, color: AppColors.divider(ctx)),
           Padding(padding: EdgeInsets.all(4.wp), child: child),
         ],
       ),
     );
   }
 
-  Widget _buildVersionFooter() {
+  Widget _buildVersionFooter(BuildContext ctx) {
     return Obx(() {
       final version = controller.state.appVersion.value;
       if (version.isEmpty) return const SizedBox.shrink();
@@ -245,7 +275,7 @@ class UserProfilePage extends GetView<UserProfileController> {
           children: [
             Divider(
               thickness: 0.6,
-              color: Colors.grey.shade300,
+              color: AppColors.divider(ctx),
               indent: 25.wp,
               endIndent: 25.wp,
             ),
@@ -254,7 +284,7 @@ class UserProfilePage extends GetView<UserProfileController> {
               'App Version $version',
               style: TextStyle(
                 fontSize: 8.5.sp,
-                color: Colors.grey.shade500,
+                color: AppColors.textHint(ctx),
                 fontWeight: FontWeight.w500,
                 letterSpacing: 0.3,
               ),
@@ -262,7 +292,10 @@ class UserProfilePage extends GetView<UserProfileController> {
             SizedBox(height: 0.5.hp),
             Text(
               '© EventJar',
-              style: TextStyle(fontSize: 7.5.sp, color: Colors.grey.shade400),
+              style: TextStyle(
+                fontSize: 7.5.sp,
+                color: AppColors.textSecondary(ctx),
+              ),
             ),
           ],
         ),

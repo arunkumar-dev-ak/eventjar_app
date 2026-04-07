@@ -5,12 +5,18 @@ extension EventInfoControllerExtensions on EventInfoController {
     final event = state.eventInfo.value;
     if (event == null) return false;
 
-    final isOneOnOneEnabled = event.isOneMeetingEnabled == true;
+    return event.isOneMeetingEnabled == true;
+  }
+
+  bool get canAccessAttendeesTab {
+    final event = state.eventInfo.value;
+    if (event == null) return false;
+
     final isRegistered =
         event.userTicketStatus?.isRegistered == true ||
         state.ticketId.value != null;
     final isOrganizerUser = isOrganizer(event.organizer.id);
 
-    return isOneOnOneEnabled && (isRegistered || isOrganizerUser);
+    return isRegistered || isOrganizerUser;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/nfc_write/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/nfc_contact_model.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +37,7 @@ class _ProfileInfo extends StatelessWidget {
       padding: EdgeInsets.all(4.wp),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        color: Colors.white,
+        color: AppColors.cardBg(context),
         boxShadow: [
           BoxShadow(
             color: Colors.lightBlue.withValues(alpha: 0.4),
@@ -83,7 +84,7 @@ class _ProfileInfo extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11.sp,
                     fontWeight: FontWeight.w700,
-                    color: Colors.black87,
+                    color: AppColors.textPrimary(context),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -94,7 +95,7 @@ class _ProfileInfo extends StatelessWidget {
                     Icon(
                       Icons.phone_rounded,
                       size: 8.sp,
-                      color: Colors.grey[600],
+                      color: AppColors.textSecondary(context),
                     ),
                     SizedBox(width: 1.wp),
                     if (profile.phoneParsed != null)
@@ -103,7 +104,7 @@ class _ProfileInfo extends StatelessWidget {
                           profile.phoneParsed?.fullNumber ?? "",
                           style: TextStyle(
                             fontSize: 8.sp,
-                            color: Colors.grey[600],
+                            color: AppColors.textSecondary(context),
                             fontWeight: FontWeight.w500,
                           ),
                           maxLines: 1,
@@ -119,7 +120,7 @@ class _ProfileInfo extends StatelessWidget {
                       Icon(
                         Icons.email_outlined,
                         size: 8.sp,
-                        color: Colors.grey[600],
+                        color: AppColors.textSecondary(context),
                       ),
                       SizedBox(width: 1.wp),
                       Expanded(
@@ -127,7 +128,7 @@ class _ProfileInfo extends StatelessWidget {
                           profile.email,
                           style: TextStyle(
                             fontSize: 8.sp,
-                            color: Colors.grey[600],
+                            color: AppColors.textSecondary(context),
                             fontWeight: FontWeight.w400,
                           ),
                           maxLines: 1,
@@ -212,7 +213,7 @@ class _SetupProfilePrompt extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w800,
-                      color: Colors.grey[900],
+                      color: AppColors.textPrimary(context),
                       letterSpacing: 0.3,
                     ),
                   ),
@@ -222,7 +223,7 @@ class _SetupProfilePrompt extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 7.sp,
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey[600],
+                      color: AppColors.textSecondary(context),
                     ),
                   ),
                 ],

@@ -7,10 +7,22 @@ class EventInfoApiAttendeeList {
   static final Dio _dio = DioClient().dio;
 
   static Future<EventAttendeeResponse> getEventAttendeeList(
-    String eventId,
-  ) async {
+    String eventId, {
+    int offset = 0,
+    int limit = 10,
+    String search = '',
+    String status = '',
+  }) async {
     try {
-      final response = await _dio.get('/networking/events/$eventId/attendees');
+      final response = await _dio.get(
+        '/mobile/networking/events/$eventId/attendees',
+        queryParameters: {
+          'offset': offset,
+          'limit': limit,
+          if (search.isNotEmpty) 'search': search,
+          if (status.isNotEmpty) 'status': status,
+        },
+      );
       if (response.statusCode == 200) {
         return EventAttendeeResponse.fromJson(response.data);
       }

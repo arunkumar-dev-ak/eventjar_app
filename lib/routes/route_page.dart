@@ -1,4 +1,7 @@
 import 'package:eventjar/controller/add_contact/binding.dart';
+import 'package:eventjar/controller/auth_processing/binding.dart';
+import 'package:eventjar/controller/budget_track/binding.dart';
+import 'package:eventjar/controller/change_password/binding.dart';
 import 'package:eventjar/controller/checkout/binding.dart';
 import 'package:eventjar/controller/connection/binding.dart';
 import 'package:eventjar/controller/contact/binding.dart';
@@ -13,6 +16,7 @@ import 'package:eventjar/controller/nfc/binding.dart';
 import 'package:eventjar/controller/nfc_read/binding.dart';
 import 'package:eventjar/controller/nfc_write/binding.dart';
 import 'package:eventjar/controller/notification/binding.dart';
+import 'package:eventjar/controller/notification_inbox/binding.dart';
 import 'package:eventjar/controller/profile_form/basic_info/binding.dart';
 import 'package:eventjar/controller/profile_form/business_info/binding.dart';
 import 'package:eventjar/controller/profile_form/location/binding.dart';
@@ -24,11 +28,15 @@ import 'package:eventjar/controller/qualify_lead/binding.dart';
 import 'package:eventjar/controller/reminder/binding.dart';
 import 'package:eventjar/controller/schedule_meeting/binding.dart';
 import 'package:eventjar/controller/scheduler/binding.dart';
+import 'package:eventjar/controller/set_2fa/binding.dart';
 import 'package:eventjar/controller/signIn/binding.dart';
 import 'package:eventjar/controller/signUp/binding.dart';
 import 'package:eventjar/controller/splashScreen/binding.dart';
 import 'package:eventjar/controller/thank_you_message/binding.dart';
 import 'package:eventjar/page/add_contact/add_contact.dart';
+import 'package:eventjar/page/auth_processing/auth_processing.dart';
+import 'package:eventjar/page/budget_track/budget_track.dart';
+import 'package:eventjar/page/change_password/change_password.dart';
 import 'package:eventjar/page/checkout/checkout_page.dart';
 import 'package:eventjar/page/connection/connection_page.dart';
 import 'package:eventjar/page/contact/contact_page.dart';
@@ -43,6 +51,7 @@ import 'package:eventjar/page/nfc/nfc_page.dart';
 import 'package:eventjar/page/nfc_read/nfc_read.dart';
 import 'package:eventjar/page/nfc_write/nfc_write.dart';
 import 'package:eventjar/page/notification/notification_page.dart';
+import 'package:eventjar/page/notification_inbox/notification_inbox_page.dart';
 import 'package:eventjar/page/profile_form/basic_info/basic_info.dart';
 import 'package:eventjar/page/profile_form/business_info/business_info.dart';
 import 'package:eventjar/page/profile_form/location_form/location_form.dart';
@@ -54,6 +63,7 @@ import 'package:eventjar/page/qualify_lead/qualify_lead.dart';
 import 'package:eventjar/page/reminder/reminder_page.dart';
 import 'package:eventjar/page/schedule_meeting/schedule_meeting.dart';
 import 'package:eventjar/page/scheduler/scheduler_page.dart';
+import 'package:eventjar/page/set_2fa/set_2fa_page.dart';
 import 'package:eventjar/page/sign_in/sign_in_page.dart';
 import 'package:eventjar/page/sign_up/sign_up_page.dart';
 import 'package:eventjar/page/splash_screen/splash_screen_page.dart';
@@ -88,11 +98,26 @@ class RoutePage {
       page: () => SignUpPage(),
       binding: SignUpBinding(),
     ),
+    GetPage(
+      name: RouteName.set2fa,
+      page: () => Set2faPage(),
+      binding: Set2faBinding(),
+    ),
     //Forgot password
     GetPage(
       name: RouteName.forgotPasswordPage,
       page: () => ForgotPasswordPage(),
       binding: ForgotPasswordBinding(),
+    ),
+    GetPage(
+      name: RouteName.authProcessingPage,
+      page: () => AuthProcessingPage(),
+      binding: AuthProcessignBinding(),
+    ),
+    GetPage(
+      name: RouteName.changePassword,
+      page: () => ChangePasswordPage(),
+      binding: ChangePasswordBinding(),
     ),
 
     /*----- Dashoard page -----*/
@@ -243,6 +268,12 @@ class RoutePage {
       middlewares: [LoginMiddleware()],
     ),
     GetPage(
+      name: RouteName.notificationInboxPage,
+      page: () => const NotificationInboxPage(),
+      binding: NotificationInboxBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
       name: RouteName.emailNotificationFormOage,
       page: () => EmailNotificationPage(),
       binding: EmailNotificationBinding(),
@@ -297,6 +328,14 @@ class RoutePage {
       name: RouteName.categoriesPage,
       page: () => CategoriesScreen(),
       binding: CategoriesEventBinding(),
+    ),
+
+    //budget Track
+    GetPage(
+      name: RouteName.budgetTrackPage,
+      page: () => BudgetTrackPage(),
+      binding: BudgetTrackBinding(),
+      middlewares: [LoginMiddleware()],
     ),
   ];
 }

@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/home/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,7 +17,7 @@ void openSearchModel(BuildContext context) {
         child: Container(
           height: MediaQuery.of(context).size.height * 0.85,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.cardBg(context),
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
             boxShadow: [
               BoxShadow(
@@ -33,7 +34,7 @@ void openSearchModel(BuildContext context) {
                 height: 5,
                 margin: EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: AppColors.border(context),
                   borderRadius: BorderRadius.circular(50),
                 ),
               ),
@@ -51,7 +52,7 @@ void openSearchModel(BuildContext context) {
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black,
+                        color: AppColors.textPrimary(context),
                       ),
                     ),
                     TextButton(
@@ -82,14 +83,14 @@ Widget homeSearchModel(HomeController controller) {
     child: Obx(() {
       return Container(
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(color: AppColors.borderStatic),
           borderRadius: BorderRadius.circular(12),
-          color: Colors.grey.shade100,
+          color: AppColors.chipBgStatic,
         ),
         child: Row(
           children: [
             const SizedBox(width: 10),
-            Icon(Icons.search, size: 22, color: Colors.grey.shade600),
+            Icon(Icons.search, size: 22, color: AppColors.textSecondaryStatic),
             const SizedBox(width: 10),
             Expanded(
               child: TextField(
@@ -98,7 +99,7 @@ Widget homeSearchModel(HomeController controller) {
                   hintText: 'Search by event name, type or location',
                   border: InputBorder.none,
                   hintStyle: TextStyle(
-                    color: Colors.grey.shade500,
+                    color: AppColors.textHintStatic,
                     fontSize: 10.sp,
                   ),
                 ),
@@ -138,7 +139,7 @@ Widget homeSearchContent(HomeController controller) {
           padding: EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            color: Colors.grey.shade50,
+            color: AppColors.scaffoldBgStatic,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.03),
@@ -166,7 +167,7 @@ Widget homeSearchContent(HomeController controller) {
                     Text(
                       "Music Festival: Presented by Yours Club",
                       style: TextStyle(
-                        color: Colors.black,
+                        color: AppColors.textPrimaryStatic,
                         fontWeight: FontWeight.w600,
                         fontSize: 10.5.sp,
                       ),
@@ -178,7 +179,7 @@ Widget homeSearchContent(HomeController controller) {
                       "Starts at 7 PM · Downtown Arena",
                       style: TextStyle(
                         fontSize: 9.5.sp,
-                        color: Colors.grey.shade600,
+                        color: AppColors.textSecondaryStatic,
                       ),
                     ),
                   ],
@@ -187,7 +188,7 @@ Widget homeSearchContent(HomeController controller) {
               Icon(
                 Icons.arrow_forward_ios,
                 size: 14,
-                color: Colors.grey.shade400,
+                color: AppColors.iconMutedStatic,
               ),
             ],
           ),

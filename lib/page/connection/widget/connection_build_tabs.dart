@@ -95,15 +95,15 @@ class ConnectionTab extends StatelessWidget {
                 )
               : LinearGradient(
                   colors: [
-                    Colors.white.withValues(alpha: 0.7),
-                    Colors.grey.shade100.withValues(alpha: 0.9),
+                    AppColors.cardBg(context).withValues(alpha: 0.7),
+                    AppColors.chipBg(context).withValues(alpha: 0.9),
                   ],
                 ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selected
                 ? AppColors.gradientDarkStart.withValues(alpha: 0.2)
-                : Colors.grey.shade300,
+                : AppColors.border(context),
             width: 1.2,
           ),
           boxShadow: selected
@@ -131,7 +131,7 @@ class ConnectionTab extends StatelessWidget {
               style: TextStyle(
                 color: selected
                     ? Colors.white
-                    : AppColors.gradientDarkStart.withValues(alpha: 0.75),
+                    : AppColors.textPrimary(context),
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                 fontSize: 8.5.sp,
                 shadows: selected

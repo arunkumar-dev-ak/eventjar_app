@@ -62,6 +62,8 @@ class DashboardController extends GetxController {
     } else if (index == 3 && isLoggedIn.value == true) {
       state.selectedIndex.value = index;
       Get.find<MyTicketController>().onTabOpen();
+    } else if (index == 4 && isLoggedIn.value == true) {
+      Get.toNamed(RouteName.budgetTrackPage);
     } else {
       navigateToSignInPage(index);
     }

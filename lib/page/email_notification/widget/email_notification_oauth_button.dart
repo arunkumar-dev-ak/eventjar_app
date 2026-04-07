@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/email_notification/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/model/notification/email_providers.dart';
@@ -50,7 +51,7 @@ Widget emailNotificationOauthButton(EmailProvider provider) {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              border: Border.all(color: Colors.grey.shade200),
+              border: Border.all(color: AppColors.dividerStatic),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: .04),
@@ -91,7 +92,7 @@ Widget emailNotificationOauthButton(EmailProvider provider) {
                     : Icon(
                         Icons.arrow_forward_ios,
                         size: 12,
-                        color: Colors.grey.shade600,
+                        color: AppColors.textSecondaryStatic,
                       ),
               ],
             ),
@@ -100,7 +101,7 @@ Widget emailNotificationOauthButton(EmailProvider provider) {
         SizedBox(height: 2.hp),
         Row(
           children: [
-            Expanded(child: Divider(color: Colors.grey.shade300)),
+            Expanded(child: Divider(color: AppColors.dividerStatic)),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 2.wp),
               child: Text(
@@ -108,11 +109,11 @@ Widget emailNotificationOauthButton(EmailProvider provider) {
                 style: TextStyle(
                   fontSize: 9.sp,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey.shade600,
+                  color: AppColors.textSecondaryStatic,
                 ),
               ),
             ),
-            Expanded(child: Divider(color: Colors.grey.shade300)),
+            Expanded(child: Divider(color: AppColors.dividerStatic)),
           ],
         ),
         SizedBox(height: 2.hp),

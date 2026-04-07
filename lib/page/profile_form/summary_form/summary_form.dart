@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/profile_form/summary/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/profile_form/summary_form/widget/summary_dropdown.dart';
 import 'package:eventjar/page/profile_form/summary_form/widget/summary_form_element.dart';
@@ -17,12 +18,12 @@ class SummaryFormPage extends GetView<SummaryFormController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: AppColors.textPrimary(context)),
         ),
         centerTitle: false,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
         elevation: 4,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.cardBg(context),
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
       body: GestureDetector(
@@ -45,7 +46,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: AppColors.textPrimary(context),
                       ),
                     ),
                   ),
@@ -53,7 +54,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                     'This will be visible in attendee lists and matchmaking cards',
                     style: TextStyle(
                       fontSize: 8.5.sp,
-                      color: Colors.grey.shade600,
+                      color: AppColors.textSecondary(context),
                     ),
                   ),
                   SizedBox(height: 1.5.hp),
@@ -81,7 +82,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: AppColors.textPrimary(context),
                         ),
                       ),
                       SizedBox(height: 1.hp),
@@ -114,7 +115,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                               color: Colors.blue.shade700,
                               width: 2,
                             ),
-                            backgroundColor: Colors.white,
+                            backgroundColor: AppColors.cardBg(context),
                             foregroundColor: Colors.blue.shade700,
                             elevation: 0,
                           ),

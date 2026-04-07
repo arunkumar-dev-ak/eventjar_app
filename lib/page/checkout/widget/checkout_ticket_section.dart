@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/checkout/widget/checkout_ticket_dropdown.dart';
 import 'package:eventjar/page/checkout/widget/checkout_ticket_selected_list.dart';
@@ -14,12 +15,12 @@ class CheckoutTicketSection extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 4.wp),
       padding: EdgeInsets.all(4.wp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBg(context),
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
             blurRadius: 12,
-            color: Colors.black.withValues(alpha: 0.05),
+            color: AppColors.shadow(context),
           ),
         ],
       ),

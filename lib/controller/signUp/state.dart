@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 class SignUpState {
   RxBool isLoading = false.obs;
+  RxBool isLinkedinLoading = false.obs;
 
   RxBool fullName = false.obs;
   RxBool gmail = false.obs;

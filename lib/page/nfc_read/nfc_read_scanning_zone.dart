@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/nfc_read/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -101,7 +102,7 @@ class NfcReadScanningZone extends GetView<NfcReadController> {
               SizedBox(height: 1.hp),
               Text(
                 'Hold your NFC card against the back of your phone',
-                style: TextStyle(fontSize: 8.sp, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 8.sp, color: AppColors.textSecondary(context)),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -153,7 +154,7 @@ class _ScanCompleteView extends StatelessWidget {
           SizedBox(height: 1.hp),
           Text(
             'Tap "Scan Another Card" to scan again',
-            style: TextStyle(fontSize: 8.sp, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 8.sp, color: AppColors.textSecondary(context)),
             textAlign: TextAlign.center,
           ),
         ],
@@ -202,7 +203,7 @@ class _ProcessingView extends StatelessWidget {
           SizedBox(height: 1.hp),
           Text(
             'Please remove the card from your phone',
-            style: TextStyle(fontSize: 8.sp, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 8.sp, color: AppColors.textSecondary(context)),
             textAlign: TextAlign.center,
           ),
         ],
@@ -244,7 +245,7 @@ class _ErrorPreview extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 4.wp),
               child: Text(
                 controller.state.errorMessage.value ?? 'Unknown error',
-                style: TextStyle(fontSize: 9.sp, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 9.sp, color: AppColors.textSecondary(context)),
                 textAlign: TextAlign.center,
               ),
             ),

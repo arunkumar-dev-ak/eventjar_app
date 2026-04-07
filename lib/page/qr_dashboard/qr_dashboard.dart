@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/qr_dashboard/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/my_qr/my_qr_page.dart';
 import 'package:eventjar/page/qr_dashboard/widget/navigation_bar.dart';
@@ -17,7 +18,7 @@ class QrCodePage extends GetView<QrDashboardController> {
           onPressed: () => Get.back(),
         ),
         elevation: 0,
-        title: Text("Share or Scan QR", style: TextStyle(color: Colors.black)),
+        title: Text("Share or Scan QR", style: TextStyle(color: AppColors.textPrimary(context))),
         // actions: [
         //   IconButton(
         //     onPressed: () {
@@ -28,7 +29,7 @@ class QrCodePage extends GetView<QrDashboardController> {
         //   SizedBox(width: 2.wp),
         // ],
       ),
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.scaffoldBg(context),
       body: SizedBox(
         width: double.infinity,
         height: double.infinity,

@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/campaign/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -33,7 +34,7 @@ class ConnectionTab extends StatelessWidget {
         duration: const Duration(milliseconds: 160),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? Colors.black : Colors.grey.shade200,
+          color: selected ? Colors.black : AppColors.divider(context),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -42,7 +43,7 @@ class ConnectionTab extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: selected ? Colors.white : Colors.black87,
+                color: selected ? Colors.white : AppColors.textPrimary(context),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -50,7 +51,7 @@ class ConnectionTab extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: selected ? Colors.white : Colors.black87,
+                color: selected ? Colors.white : AppColors.textPrimary(context),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(

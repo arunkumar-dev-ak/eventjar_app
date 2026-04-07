@@ -2,11 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/api/sign_up_api/sign_up_api.dart';
 import 'package:eventjar/controller/signUp/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignUpController extends GetxController {
   var appBarTitle = "";
@@ -84,8 +87,44 @@ class SignUpController extends GetxController {
     }
   }
 
+  Future<void> handleLinkedIn() async {
+    state.isLinkedinLoading.value = true;
+    final url = "${backendBaseUrl()}auth/linkedin?platform=mobile";
+    final Uri authUri = Uri.parse(url);
+    try {
+      if (await canLaunchUrl(authUri)) {
+        await launchUrl(authUri, mode: LaunchMode.inAppBrowserView);
+      } else {
+        throw 'Could not launch browser.Kindly try again after some time.';
+      }
+    } catch (err) {
+      LoggerService.loggerInstance.dynamic_d(err);
+      if (err is DioException) {
+        ApiErrorHandler.handleError(err, "Authentication Failed");
+      } else {
+        AppSnackbar.error(
+          title: "Authentication Failed",
+          message: "Something went wrong",
+        );
+      }
+    } finally {
+      state.isLinkedinLoading.value = false;
+    }
+  }
+
   void navigateToBackPage(BuildContext context) {
     Navigator.pop(context);
+  }
+
+  void navigateToAuthProcessign(String idToken) {
+    Get.toNamed(
+      RouteName.authProcessingPage,
+      arguments: {'idToken': idToken},
+    )?.then((result) {
+      if (result == "logged_in") {
+        Navigator.pop(Get.context!, "logged_in");
+      }
+    });
   }
 
   // Full Name validator

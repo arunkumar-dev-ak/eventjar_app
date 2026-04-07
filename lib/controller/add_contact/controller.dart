@@ -139,8 +139,9 @@ class AddContactController extends GetxController {
       );
       phone2Controller.text = cardInfo.phone2Parsed!.phoneNumber;
     } else {
-      state.selectedPhone2Country.value =
-          countries.firstWhere((c) => c.code == 'IN');
+      state.selectedPhone2Country.value = countries.firstWhere(
+        (c) => c.code == 'IN',
+      );
       phone2Controller.text = cardInfo.phone2 ?? '';
     }
     // Force IntlPhoneField to fully rebuild so it reflects the restored value
@@ -297,8 +298,9 @@ class AddContactController extends GetxController {
     } else if (contact.phone2 != null && contact.phone2!.isNotEmpty) {
       phone2Controller.text = contact.phone2!;
     } else {
-      state.selectedPhone2Country.value =
-          countries.firstWhere((c) => c.code == 'IN');
+      state.selectedPhone2Country.value = countries.firstWhere(
+        (c) => c.code == 'IN',
+      );
       phone2Controller.clear();
     }
     // Force IntlPhoneField to fully rebuild so it reflects the restored value
@@ -318,6 +320,7 @@ class AddContactController extends GetxController {
       state.isDropDownLoading.value = true;
 
       final List<TagModel> result = await AddContactApi.getTagList();
+      LoggerService.loggerInstance.dynamic_d(result);
       state.availableTags.value = result.map((tag) => tag.name).toList();
       state.filteredTags.value = state.availableTags;
     } catch (err) {
@@ -379,6 +382,7 @@ class AddContactController extends GetxController {
     websiteController.clear();
     addressController.clear();
     state.isFromCardScan.value = false;
+    state.isAdditionalInfoExpanded.value = false;
     state.selectedStage.value = {'key': 'new', 'value': 'New Contact'};
     state.additionalInfoSelection.value = {
       'phone2': false,
@@ -632,28 +636,53 @@ class AddContactController extends GetxController {
       // Build list of extracted fields to show to user
       final foundItems = <_ExtractedItem>[];
       if ((info.company ?? '').isNotEmpty) {
-        foundItems.add(_ExtractedItem(
-          'company', 'Company', info.company!, Icons.business_outlined,
-        ));
+        foundItems.add(
+          _ExtractedItem(
+            'company',
+            'Company',
+            info.company!,
+            Icons.business_outlined,
+          ),
+        );
       }
       if ((info.website ?? '').isNotEmpty) {
-        foundItems.add(_ExtractedItem(
-          'website', 'Website', info.website!, Icons.language_outlined,
-        ));
+        foundItems.add(
+          _ExtractedItem(
+            'website',
+            'Website',
+            info.website!,
+            Icons.language_outlined,
+          ),
+        );
       }
       if ((info.address ?? '').isNotEmpty) {
-        foundItems.add(_ExtractedItem(
-          'address', 'Address', info.address!, Icons.location_on_outlined,
-        ));
+        foundItems.add(
+          _ExtractedItem(
+            'address',
+            'Address',
+            info.address!,
+            Icons.location_on_outlined,
+          ),
+        );
       }
       if (info.phone2Parsed != null) {
-        foundItems.add(_ExtractedItem(
-          'phone2', 'Phone 2', info.phone2Parsed!.fullNumber, Icons.phone_outlined,
-        ));
+        foundItems.add(
+          _ExtractedItem(
+            'phone2',
+            'Phone 2',
+            info.phone2Parsed!.fullNumber,
+            Icons.phone_outlined,
+          ),
+        );
       } else if ((info.phone2 ?? '').isNotEmpty) {
-        foundItems.add(_ExtractedItem(
-          'phone2', 'Phone 2', info.phone2!, Icons.phone_outlined,
-        ));
+        foundItems.add(
+          _ExtractedItem(
+            'phone2',
+            'Phone 2',
+            info.phone2!,
+            Icons.phone_outlined,
+          ),
+        );
       }
 
       if (foundItems.isEmpty) {
@@ -704,6 +733,9 @@ class AddContactController extends GetxController {
         }
       }
 
+      // Auto-expand the additional info section so user sees the filled fields
+      state.isAdditionalInfoExpanded.value = true;
+
       AppSnackbar.success(
         title: 'Applied',
         message: 'Additional info from card has been filled.',
@@ -724,8 +756,11 @@ class AddContactController extends GetxController {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Row(
         children: [
-          Icon(Icons.document_scanner_outlined,
-              color: Colors.blue.shade700, size: 22),
+          Icon(
+            Icons.document_scanner_outlined,
+            color: Colors.blue.shade700,
+            size: 22,
+          ),
           const SizedBox(width: 8),
           const Expanded(
             child: Text(
@@ -765,8 +800,7 @@ class AddContactController extends GetxController {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        Text(item.value,
-                            style: const TextStyle(fontSize: 13)),
+                        Text(item.value, style: const TextStyle(fontSize: 13)),
                       ],
                     ),
                   ),
@@ -795,7 +829,8 @@ class AddContactController extends GetxController {
             backgroundColor: Colors.blue.shade700,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8)),
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           onPressed: () => Get.back(result: true),
           child: const Text('Apply'),

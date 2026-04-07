@@ -13,8 +13,16 @@ class EventInfoState {
 
   RxInt selectedAttendeeTab = 0.obs;
   RxString searchText = ''.obs;
+  RxString attendeeSearchQuery = ''.obs;
 
+  RxString attendeeStatusFilter = ''.obs; // '', 'sent', 'received'
+  RxInt attendeeCurrentIndex = 0.obs;
+  RxBool attendeeSearchExpanded = false.obs;
+  RxBool attendeeSearchClearing = false.obs;
   RxBool attendeeListLoading = false.obs;
+  RxBool isLoadingMoreAttendees = false.obs;
+  RxBool hasMoreAttendees = true.obs;
+  RxInt attendeeOffset = 0.obs;
   Rxn<EventAttendeeResponse> attendeeList = Rxn<EventAttendeeResponse>();
 
   RxBool attendeeRequestLoading = false.obs;

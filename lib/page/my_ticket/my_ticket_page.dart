@@ -21,7 +21,7 @@ class MyTicketPage extends GetView<MyTicketController> {
         Get.focusScope?.unfocus();
       },
       child: Scaffold(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: AppColors.scaffoldBg(context),
         appBar: _buildAppBar(context),
         body: Stack(
           children: [
@@ -110,7 +110,7 @@ class MyTicketPage extends GetView<MyTicketController> {
                     child: Container(
                       padding: const EdgeInsets.all(25),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.cardBg(context),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const CircularProgressIndicator(strokeWidth: 3),
@@ -159,7 +159,9 @@ class MyTicketPage extends GetView<MyTicketController> {
             statusBarIconBrightness: Brightness.light,
           ),
           flexibleSpace: Container(
-            decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+            decoration: BoxDecoration(
+              gradient: AppColors.appBarGradientFor(context),
+            ),
           ),
           centerTitle: false,
           elevation: 0,

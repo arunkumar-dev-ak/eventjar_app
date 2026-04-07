@@ -21,7 +21,7 @@ Widget buildOrganizerProfile(Organizer organizer) {
     child: Container(
       padding: EdgeInsets.all(4.wp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBgStatic,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -97,18 +97,18 @@ class _OrganizerDetails extends StatelessWidget {
     style: TextStyle(
       fontSize: 9.sp,
       fontWeight: FontWeight.w600,
-      color: Colors.grey.shade800,
+      color: AppColors.textPrimaryStatic,
     ),
   );
 
   Widget _buildEmail() => Row(
     children: [
-      Icon(Icons.email, size: 12, color: Colors.grey[600]),
+      Icon(Icons.email, size: 12, color: AppColors.textSecondaryStatic),
       SizedBox(width: 1.wp),
       Expanded(
         child: Text(
           organizer.email!,
-          style: TextStyle(fontSize: 7.5.sp, color: Colors.grey[600]),
+          style: TextStyle(fontSize: 7.5.sp, color: AppColors.textSecondaryStatic),
           overflow: TextOverflow.ellipsis,
         ),
       ),

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:eventjar/controller/nfc_read/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/nfc_read/nfc_read_bottom_control.dart';
@@ -17,28 +18,27 @@ class NfcReadPage extends GetView<NfcReadController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
-          statusBarIconBrightness: Brightness.dark,
-          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness:
+              Theme.of(context).brightness == Brightness.dark
+              ? Brightness.light
+              : Brightness.dark,
+          statusBarBrightness: Theme.of(context).brightness,
         ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.nfc,
-              size: 22,
-              color: Colors.blue.shade700,
-            ),
+            Icon(Icons.nfc, size: 22, color: Colors.blue.shade700),
             SizedBox(width: 8),
             Text(
               'Read Card',
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 11.sp,
-                color: Colors.black87,
+                color: AppColors.textPrimary(context),
               ),
             ),
           ],
@@ -53,7 +53,10 @@ class NfcReadPage extends GetView<NfcReadController> {
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.white, Colors.white.withValues(alpha: 0.9)],
+              colors: [
+                AppColors.cardBg(context),
+                AppColors.cardBg(context).withValues(alpha: 0.9),
+              ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -92,14 +95,18 @@ class NfcActionContainer extends GetView<NfcReadController> {
         subtitle: isIos
             ? 'NFC card writing is not supported on iOS. Use an Android device.'
             : hasProfile
-                ? 'Write your contact to NFC card'
-                : 'Set up your profile to write contact',
+            ? 'Write your contact to NFC card'
+            : 'Set up your profile to write contact',
         icon: isIos ? Icons.phone_android : Icons.nfc,
         gradientColors: isIos
             ? const [Color(0xFF9E9E9E), Color(0xFF616161)]
             : const [Color(0xFF4CAF50), Color(0xFF2E7D32)],
         enabled: !isIos && hasProfile,
-        onTap: isIos ? () {} : hasProfile ? controller.navigateToWrite : () {},
+        onTap: isIos
+            ? () {}
+            : hasProfile
+            ? controller.navigateToWrite
+            : () {},
       ),
     );
   }

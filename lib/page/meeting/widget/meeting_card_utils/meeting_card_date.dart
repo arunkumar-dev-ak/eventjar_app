@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/meeting/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
 import 'package:flutter/material.dart';
@@ -37,10 +38,11 @@ class MeetingCardDate extends GetView<MeetingController> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
+        color: isDark ? const Color(0xFF1A2A3A) : Colors.blue.shade50,
         borderRadius: BorderRadius.circular(12),
         border: Border(
           left: BorderSide(color: statusColor.withValues(alpha: 0.3), width: 4),
@@ -52,13 +54,13 @@ class MeetingCardDate extends GetView<MeetingController> {
           Container(
             padding: EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: Colors.blue.shade100,
+              color: isDark ? Colors.blue.shade900 : Colors.blue.shade100,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               Icons.calendar_today_outlined,
               size: 16,
-              color: Colors.blue.shade700,
+              color: isDark ? Colors.blue.shade300 : Colors.blue.shade700,
             ),
           ),
           SizedBox(width: 3.wp),
@@ -76,7 +78,7 @@ class MeetingCardDate extends GetView<MeetingController> {
                     style: TextStyle(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black87,
+                      color: AppColors.textPrimary(context),
                     ),
                   ),
                 ),
@@ -86,9 +88,9 @@ class MeetingCardDate extends GetView<MeetingController> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade50,
+                        color: AppColors.scaffoldBg(context),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey.shade200),
+                        border: Border.all(color: AppColors.divider(context)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -96,7 +98,7 @@ class MeetingCardDate extends GetView<MeetingController> {
                           Icon(
                             Icons.access_time,
                             size: 12,
-                            color: Colors.grey[600],
+                            color: AppColors.textSecondary(context),
                           ),
                           SizedBox(width: 2),
                           Text(
@@ -104,7 +106,7 @@ class MeetingCardDate extends GetView<MeetingController> {
                             style: TextStyle(
                               fontSize: 8.sp,
                               fontWeight: FontWeight.w600,
-                              color: Colors.grey[800],
+                              color: AppColors.textPrimary(context),
                             ),
                           ),
                         ],

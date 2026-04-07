@@ -314,11 +314,17 @@ class NotificationService {
         "CONNECTION_REJECTED",
         "CONNECTION_ACCEPTED",
         "ATTENDEE_TICKET_CONFIRMED",
+        "event_updated",
+        "CONTACT_LIST",
+        "CONTACT_LIST_MEETING_SCHEDULED",
+        "CONTACT_LIST_MEETING_RESCHEDULED",
+        "CONTACT_LIST_MEETING_ACCEPTED",
+        "CONTACT_LIST_MEETING_COMPLETED",
       ];
 
       if (!allowedTypes.contains(type)) {
         LoggerService.loggerInstance.d("Notification ignored for type: $type");
-        return; // 🚀 Do NOT show notification
+        return; //Do NOT show notification
       }
 
       final connectionId = message.data['connectionId'];
@@ -380,7 +386,7 @@ class NotificationService {
   // }
 
   void _handleBackgroundMessageNotificationTap(RemoteMessage message) {
-    LoggerService.loggerInstance.d("📱 App opened from notification");
+    LoggerService.loggerInstance.d("App opened from notification");
     final type = message.data['type'];
     if (type != null) {
       navigateBasedOnNotificationType(type);

@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/profile_form/social/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/profile_form/social_form/widget/social_form_element.dart';
 import 'package:flutter/material.dart';
@@ -17,12 +18,12 @@ class SocialFormPage extends GetView<SocialFormController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: AppColors.textPrimary(context)),
         ),
         centerTitle: false,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
         elevation: 4,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.cardBg(context),
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
       body: GestureDetector(
@@ -210,9 +211,9 @@ class SocialFormPage extends GetView<SocialFormController> {
                   Container(
                     padding: EdgeInsets.all(4.wp),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade50,
+                      color: AppColors.scaffoldBg(context),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade200),
+                      border: Border.all(color: AppColors.divider(context)),
                     ),
                     child: Row(
                       children: [
@@ -225,14 +226,14 @@ class SocialFormPage extends GetView<SocialFormController> {
                                 style: TextStyle(
                                   fontSize: 11.sp,
                                   fontWeight: FontWeight.w700,
-                                  color: Colors.black87,
+                                  color: AppColors.textPrimary(context),
                                 ),
                               ),
                               Text(
                                 'Allow other attendees to see your contact information',
                                 style: TextStyle(
                                   fontSize: 9.sp,
-                                  color: Colors.grey.shade600,
+                                  color: AppColors.textSecondary(context),
                                 ),
                               ),
                             ],
@@ -270,7 +271,7 @@ class SocialFormPage extends GetView<SocialFormController> {
                               color: Colors.blue.shade700,
                               width: 2,
                             ),
-                            backgroundColor: Colors.white,
+                            backgroundColor: AppColors.cardBg(context),
                             foregroundColor: Colors.blue.shade700,
                             elevation: 0,
                           ),

@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/contact/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/app_toast.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
@@ -62,7 +63,7 @@ Widget buildExpandedContent(
                     width: adjustedChartSize * 0.38,
                     height: adjustedChartSize * 0.38,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.cardBgStatic,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
@@ -92,7 +93,7 @@ Widget buildExpandedContent(
                           style: TextStyle(
                             fontSize: isSmallScreen ? 6 : 7,
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade600,
+                            color: AppColors.textSecondaryStatic,
                           ),
                         ),
                         Text(
@@ -200,7 +201,7 @@ Widget _buildNextActionRow(
               alignment: Alignment.center,
               children: [
                 // Line
-                Container(height: 2, color: Colors.grey.shade300),
+                Container(height: 2, color: AppColors.dividerStatic),
                 // Button ON TOP
                 NextStageActionButton(
                   currentStage: currentStage,
@@ -250,12 +251,12 @@ Widget _buildStageChip({
               ],
             )
           : null,
-      color: isActive ? null : Colors.grey.shade100,
+      color: isActive ? null : AppColors.chipBgStatic,
       borderRadius: BorderRadius.circular(12),
       border: Border.all(
         color: isActive
             ? stageColor.withValues(alpha: 0.4)
-            : Colors.grey.shade300,
+            : AppColors.borderStatic,
       ),
     ),
     child: Row(
@@ -273,7 +274,7 @@ Widget _buildStageChip({
             style: TextStyle(
               fontSize: 10,
               fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-              color: isActive ? stageColor : Colors.grey.shade700,
+              color: isActive ? stageColor : AppColors.textSecondaryStatic,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,

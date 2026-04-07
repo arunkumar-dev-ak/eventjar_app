@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/notification/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,7 +24,7 @@ class WhatsAppTokenForm extends GetView<NotificationController> {
 
           Text(
             "Paste your Mybotify WhatsApp API token below to enable notifications.",
-            style: TextStyle(fontSize: 8.sp, color: Colors.grey.shade600),
+            style: TextStyle(fontSize: 8.sp, color: AppColors.textSecondary(context)),
           ),
 
           SizedBox(height: 3.hp),
@@ -68,7 +69,7 @@ class WhatsAppTokenForm extends GetView<NotificationController> {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
+                  borderSide: BorderSide(color: AppColors.border(context)),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -95,7 +96,7 @@ class WhatsAppTokenForm extends GetView<NotificationController> {
               Expanded(
                 child: Text(
                   "Token is securely encrypted and never shared.",
-                  style: TextStyle(fontSize: 8.sp, color: Colors.grey.shade600),
+                  style: TextStyle(fontSize: 8.sp, color: AppColors.textSecondary(context)),
                 ),
               ),
             ],

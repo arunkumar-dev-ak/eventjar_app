@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -77,7 +78,7 @@ class ContactCardDeletePopup extends StatelessWidget {
         padding: EdgeInsets.all(24),
         constraints: BoxConstraints(maxWidth: 90.wp),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.cardBg(context),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -112,7 +113,7 @@ class ContactCardDeletePopup extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11.sp,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: AppColors.textPrimary(context),
               ),
               textAlign: TextAlign.center,
             ),
@@ -123,7 +124,7 @@ class ContactCardDeletePopup extends StatelessWidget {
               'Are you sure you want to delete "$contactName"?',
               style: TextStyle(
                 fontSize: 10.sp,
-                color: Colors.grey[700],
+                color: AppColors.textSecondary(context),
                 height: 1.4,
               ),
               textAlign: TextAlign.center,
@@ -168,8 +169,8 @@ class ContactCardDeletePopup extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey.shade100,
-                      foregroundColor: Colors.grey.shade700,
+                      backgroundColor: AppColors.chipBg(context),
+                      foregroundColor: AppColors.textSecondary(context),
                       padding: EdgeInsets.symmetric(vertical: 1.5.hp),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

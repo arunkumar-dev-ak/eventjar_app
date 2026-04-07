@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
@@ -75,12 +76,12 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
               textFieldPadding ??
               const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.cardBg(context),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey.shade400, width: 1.5),
+            border: Border.all(color: AppColors.border(context), width: 1.5),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: AppColors.shadow(context),
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -94,7 +95,7 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                 style: TextStyle(
                   fontSize: selectedTextSize ?? 10.sp,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? primary : Colors.grey.shade600,
+                  color: isSelected ? primary : AppColors.textSecondary(context),
                 ),
               ),
 
@@ -104,7 +105,7 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                 child: Icon(
                   Icons.keyboard_arrow_down_rounded,
                   size: dropDownIconSize ?? 24,
-                  color: isSelected ? primary : Colors.grey.shade500,
+                  color: isSelected ? primary : AppColors.textHint(context),
                 ),
               ),
             ],
@@ -132,7 +133,7 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
         child: Container(
           constraints: BoxConstraints(maxHeight: 60.hp, maxWidth: 90.wp),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.cardBg(context),
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
@@ -207,12 +208,12 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                         duration: const Duration(milliseconds: 200),
                         margin: const EdgeInsets.only(bottom: 12),
                         decoration: BoxDecoration(
-                          color: isSelectedItem ? selectedShade1 : Colors.white,
+                          color: isSelectedItem ? selectedShade1 : AppColors.cardBg(context),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: isSelectedItem
                                 ? selectedShade3
-                                : Colors.grey.shade100,
+                                : AppColors.divider(context),
                             width: 1.5,
                           ),
                           boxShadow: isSelectedItem
@@ -244,7 +245,7 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                                       shape: BoxShape.circle,
                                       color: isSelectedItem
                                           ? headerColor
-                                          : Colors.grey.shade200,
+                                          : AppColors.divider(context),
                                       border: Border.all(
                                         color: isSelectedItem
                                             ? Colors.white
@@ -258,7 +259,7 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                                           : Icons.radio_button_unchecked,
                                       color: isSelectedItem
                                           ? Colors.white
-                                          : Colors.grey.shade500,
+                                          : AppColors.textHint(context),
                                       size: 16,
                                     ),
                                   ),
@@ -273,7 +274,7 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                                             : FontWeight.w500,
                                         color: isSelectedItem
                                             ? primary
-                                            : Colors.grey.shade800,
+                                            : AppColors.textPrimary(context),
                                       ),
                                     ),
                                   ),

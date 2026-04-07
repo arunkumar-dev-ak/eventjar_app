@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/user_profile/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class UserProfileHeader extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.grey.shade50, Colors.white],
+            colors: [AppColors.scaffoldBg(context), AppColors.cardBg(context)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -128,10 +129,10 @@ class UserProfileHeader extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey, width: 3),
+            border: Border.all(color: AppColors.borderStatic, width: 3),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey,
+                color: AppColors.shadowStatic,
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -198,7 +199,7 @@ class UserProfileHeader extends StatelessWidget {
       style: TextStyle(
         fontSize: 16.sp,
         fontWeight: FontWeight.bold,
-        color: Colors.black87,
+        color: AppColors.textPrimaryStatic,
       ),
     );
   }
@@ -213,7 +214,7 @@ class UserProfileHeader extends StatelessWidget {
             controller.businessName,
             style: TextStyle(
               fontSize: 10.sp,
-              color: Colors.grey.shade700,
+              color: AppColors.textSecondaryStatic,
               fontWeight: FontWeight.w500,
             ),
           ),

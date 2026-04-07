@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/scheduler/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/dropdown/single_selected_dropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,7 +16,11 @@ class SchedulerDurationDropdown extends StatelessWidget {
       children: [
         Text(
           'Duration *',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textPrimary(context),
+          ),
         ),
         SizedBox(height: 8),
         SingleSelectFilterDropdown<Map<String, String>>(

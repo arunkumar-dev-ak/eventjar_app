@@ -66,16 +66,21 @@ class NotificationTab extends StatelessWidget {
                   end: Alignment.bottomCenter,
                 )
               : LinearGradient(
-                  colors: [
-                    Colors.white.withValues(alpha: 0.7),
-                    Colors.grey.shade100.withValues(alpha: 0.9),
-                  ],
+                  colors: Theme.of(context).brightness == Brightness.dark
+                      ? [
+                          AppColors.darkCardElevated.withValues(alpha: 0.7),
+                          AppColors.darkCard.withValues(alpha: 0.9),
+                        ]
+                      : [
+                          Colors.white.withValues(alpha: 0.7),
+                          Colors.grey.shade100.withValues(alpha: 0.9),
+                        ],
                 ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selected
                 ? AppColors.gradientDarkStart.withValues(alpha: 0.2)
-                : Colors.grey.shade300,
+                : AppColors.border(context),
             width: 1.2,
           ),
           boxShadow: selected
@@ -103,7 +108,9 @@ class NotificationTab extends StatelessWidget {
               style: TextStyle(
                 color: selected
                     ? Colors.white
-                    : AppColors.gradientDarkStart.withValues(alpha: 0.75),
+                    : Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey.shade300
+                        : AppColors.gradientDarkStart.withValues(alpha: 0.75),
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                 fontSize: 8.5.sp,
                 shadows: selected

@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/my_qr/controller.dart';
 import 'package:eventjar/controller/qr_dashboard/controller.dart';
 import 'package:eventjar/controller/qr_scan/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,16 +21,22 @@ class QrDashboardBottomNavigation extends StatelessWidget {
     return Obx(() {
       final selectedIndex = controller.state.selectedIndex.value;
 
+      final isDark = Theme.of(context).brightness == Brightness.dark;
       return Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: Offset(0, -2),
-            ),
-          ],
+          color: AppColors.cardBg(context),
+          border: isDark
+              ? Border(top: BorderSide(color: AppColors.border(context), width: 0.5))
+              : null,
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: AppColors.shadow(context),
+                    blurRadius: 10,
+                    offset: Offset(0, -2),
+                  ),
+                ],
         ),
         child: SafeArea(
           child: Padding(
@@ -89,18 +96,18 @@ class QrDashboardBottomNavigation extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           decoration: BoxDecoration(
             gradient: isSelected ? gradient : null,
-            color: isSelected ? null : Colors.grey.shade200,
+            color: isSelected ? null : AppColors.chipBgStatic,
             borderRadius: BorderRadius.circular(12),
             border: isSelected
                 ? null
-                : Border.all(color: Colors.grey.shade300, width: 1),
+                : Border.all(color: AppColors.borderStatic, width: 1),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 icon,
-                color: isSelected ? Colors.white : Colors.grey.shade600,
+                color: isSelected ? Colors.white : AppColors.textSecondaryStatic,
                 size: 20,
               ),
               SizedBox(width: 8),
@@ -109,7 +116,7 @@ class QrDashboardBottomNavigation extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
-                  color: isSelected ? Colors.white : Colors.grey.shade600,
+                  color: isSelected ? Colors.white : AppColors.textSecondaryStatic,
                 ),
               ),
             ],

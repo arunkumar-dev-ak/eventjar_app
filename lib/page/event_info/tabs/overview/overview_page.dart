@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/event_info/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -34,7 +35,7 @@ class OverViewPage extends StatelessWidget {
                   "No description available for this event.",
               style: TextStyle(
                 fontSize: 8.sp,
-                color: Colors.grey.shade600,
+                color: AppColors.textSecondaryStatic,
                 height: 1.5,
               ),
             ),

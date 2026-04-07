@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/event_info/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,7 +13,7 @@ class EventInfoConnectionSearchBar extends StatelessWidget {
     return Container(
       height: 48,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBg(context),
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
@@ -43,7 +44,7 @@ class EventInfoConnectionSearchBar extends StatelessWidget {
           ),
           contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
         ),
-        style: TextStyle(fontSize: 14, color: Colors.black87),
+        style: TextStyle(fontSize: 14, color: AppColors.textPrimary(context)),
         onChanged: (val) => {controller.state.searchText.value = val},
       ),
     );

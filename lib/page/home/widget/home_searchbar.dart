@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/home/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/home/widget/home_search_model.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +24,9 @@ class HomeSearchBar extends StatelessWidget {
               child: Container(
                 height: 40,
                 decoration: BoxDecoration(
-                  border: BoxBorder.all(color: Colors.grey),
+                  border: BoxBorder.all(color: AppColors.border(context)),
                   borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
+                  color: AppColors.cardBg(context),
                 ),
                 child: Row(
                   children: [
@@ -34,14 +35,14 @@ class HomeSearchBar extends StatelessWidget {
                       height: 40,
                       child: Align(
                         alignment: Alignment.center,
-                        child: Icon(Icons.search, size: 24, color: Colors.grey),
+                        child: Icon(Icons.search, size: 24, color: AppColors.textHint(context)),
                       ),
                     ),
                     SizedBox(width: 5),
                     Expanded(
                       child: Text(
                         "Explore events near you",
-                        style: TextStyle(color: Colors.grey),
+                        style: TextStyle(color: AppColors.textHint(context)),
                       ),
                     ),
                   ],
@@ -54,11 +55,11 @@ class HomeSearchBar extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              border: BoxBorder.all(color: Colors.grey),
+              border: BoxBorder.all(color: AppColors.border(context)),
               borderRadius: BorderRadius.circular(10),
-              color: Colors.white,
+              color: AppColors.cardBg(context),
             ),
-            child: Icon(Icons.tune, size: 24, color: Colors.grey),
+            child: Icon(Icons.tune, size: 24, color: AppColors.textHint(context)),
           ),
         ],
       ),

@@ -43,7 +43,7 @@ class ReviewsPage extends StatelessWidget {
               style: TextStyle(
                 fontSize: 9.sp,
                 fontWeight: FontWeight.w600,
-                color: Colors.grey.shade700,
+                color: AppColors.textSecondary(context),
               ),
             ),
             SizedBox(height: 1.5.hp),

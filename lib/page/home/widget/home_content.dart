@@ -5,6 +5,7 @@ import 'package:eventjar/helper/event_share_helper.dart';
 
 import 'package:eventjar/page/home/widget/home_content_shimmer.dart';
 import 'package:eventjar/page/home/widget/home_content_utils.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -150,11 +151,17 @@ class HomeContent extends StatelessWidget {
                     vertical: 1.hp,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.cardElevatedBg(context),
                     borderRadius: BorderRadius.circular(14),
+                    border: Theme.of(context).brightness == Brightness.dark
+                        ? Border.all(
+                            color: AppColors.border(context),
+                            width: 0.8,
+                          )
+                        : null,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.06),
+                        color: AppColors.shadow(context),
                         blurRadius: 10,
                         offset: const Offset(0, 3),
                       ),
@@ -170,7 +177,7 @@ class HomeContent extends StatelessWidget {
                           Container(
                             height: 160,
                             width: double.infinity,
-                            color: Colors.grey.shade100,
+                            color: AppColors.chipBg(context),
                             child:
                                 (event.featuredImageUrl != null &&
                                     event.featuredImageUrl!.isNotEmpty)
@@ -222,7 +229,7 @@ class HomeContent extends StatelessWidget {
                               child: Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: AppColors.cardBg(context),
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
@@ -384,7 +391,7 @@ class HomeContent extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 8.5.sp,
-                            color: Colors.grey[500],
+                            color: AppColors.textHint(context),
                             height: 1.3,
                           ),
                         ),
@@ -408,7 +415,7 @@ class HomeContent extends StatelessWidget {
                                     'Organized by',
                                     style: TextStyle(
                                       fontSize: 7.sp,
-                                      color: Colors.grey[500],
+                                      color: AppColors.textHint(context),
                                     ),
                                   ),
                                   SizedBox(height: 0.3.hp),
@@ -418,7 +425,7 @@ class HomeContent extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       fontSize: 8.5.sp,
-                                      color: Colors.black,
+                                      color: AppColors.textPrimary(context),
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -430,7 +437,7 @@ class HomeContent extends StatelessWidget {
                               child: Icon(
                                 Icons.arrow_forward_ios_rounded,
                                 size: 14,
-                                color: Colors.grey[600],
+                                color: AppColors.textSecondary(context),
                               ),
                             ),
                           ],

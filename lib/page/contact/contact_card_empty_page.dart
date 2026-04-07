@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -9,14 +10,14 @@ Widget buildEmptyStateForContact() {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.contact_page, size: 80, color: Colors.grey.shade400),
+          Icon(Icons.contact_page, size: 80, color: AppColors.textHintStatic),
           const SizedBox(height: 20),
           Text(
             'No contacts found',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.grey.shade600,
+              color: AppColors.textSecondaryStatic,
             ),
             textAlign: TextAlign.center,
           ),

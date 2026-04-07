@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/checkout/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/checkout/widget/checkout_promo_code_section.dart';
 import 'package:flutter/material.dart';
@@ -19,12 +20,12 @@ class CheckoutPromoSection extends StatelessWidget {
       return Container(
         margin: EdgeInsets.symmetric(horizontal: 4.wp),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.cardBg(context),
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
               blurRadius: 12,
-              color: Colors.black.withValues(alpha: 0.05),
+              color: AppColors.shadow(context),
             ),
           ],
         ),
@@ -52,7 +53,7 @@ class CheckoutPromoSection extends StatelessWidget {
                   ? Icons.keyboard_arrow_up
                   : Icons.keyboard_arrow_down,
               size: 22,
-              color: isApplied ? Colors.green : Colors.grey.shade700,
+              color: isApplied ? Colors.green : AppColors.textSecondary(context),
             ),
 
             title: Row(
@@ -60,7 +61,7 @@ class CheckoutPromoSection extends StatelessWidget {
                 Icon(
                   Icons.local_offer_outlined,
                   size: 20,
-                  color: isApplied ? Colors.green : Colors.grey.shade700,
+                  color: isApplied ? Colors.green : AppColors.textSecondary(context),
                 ),
                 SizedBox(width: 3.wp),
 
@@ -84,7 +85,7 @@ class CheckoutPromoSection extends StatelessWidget {
                           fontSize: 8.5.sp,
                           color: isApplied
                               ? Colors.green
-                              : Colors.grey.shade600,
+                              : AppColors.textSecondary(context),
                         ),
                       ),
                     ],

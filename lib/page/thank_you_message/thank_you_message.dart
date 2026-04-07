@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/thank_you_message/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/thank_you_message/thank_you_message_button.dart';
 import 'package:eventjar/page/thank_you_message/widget/thank_you_message_message_method.dart'
@@ -17,12 +18,12 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
         appBar: AppBar(
           title: Text(
             controller.appBarTitle,
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: AppColors.textPrimary(context)),
           ),
           centerTitle: false,
-          iconTheme: IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
           elevation: 4,
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.cardBg(context),
           shadowColor: Colors.black.withValues(alpha: 0.1),
         ),
         body: Obx(() {
@@ -109,7 +110,7 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                             "You can still mark this as sent after manually sending the message via the configured channels.",
                             style: TextStyle(
                               fontSize: 8.sp,
-                              color: Colors.grey.shade700,
+                              color: AppColors.textSecondaryStatic,
                             ),
                           ),
                           SizedBox(height: 1.5.hp),
@@ -239,7 +240,7 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                 Text(
                   title,
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: AppColors.textSecondaryStatic,
                     fontSize: 8.sp,
                     fontWeight: FontWeight.w500,
                   ),
@@ -250,7 +251,7 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                   style: TextStyle(
                     fontSize: 9.sp,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey[800],
+                    color: AppColors.textPrimaryStatic,
                   ),
                 ),
               ],
@@ -275,10 +276,10 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
         decoration: BoxDecoration(
           color: isSelected
               ? Colors.blue.withValues(alpha: 0.08)
-              : Colors.grey[50],
+              : AppColors.scaffoldBgStatic,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey[300]!,
+            color: isSelected ? Colors.blue : AppColors.borderStatic,
             width: 1.5,
           ),
           boxShadow: [
@@ -294,14 +295,14 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
           children: [
             Row(
               children: [
-                Icon(icon, color: isSelected ? Colors.blue : Colors.grey[600]),
+                Icon(icon, color: isSelected ? Colors.blue : AppColors.textSecondaryStatic),
                 SizedBox(width: 3.wp),
                 Text(
                   title,
                   style: TextStyle(
                     fontSize: 9.sp,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected ? Colors.blue[700] : Colors.grey[700],
+                    color: isSelected ? Colors.blue[700] : AppColors.textSecondaryStatic,
                   ),
                 ),
               ],
@@ -313,7 +314,7 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                 shape: BoxShape.circle,
                 color: isSelected ? Colors.blue : Colors.transparent,
                 border: Border.all(
-                  color: isSelected ? Colors.blue : Colors.grey[400]!,
+                  color: isSelected ? Colors.blue : AppColors.dividerStatic,
                   width: 2,
                 ),
               ),

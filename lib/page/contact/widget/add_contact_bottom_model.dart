@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/contact/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +10,7 @@ void addContactBottomModel(BuildContext context, ContactController controller) {
     builder: (context) => Container(
       margin: EdgeInsets.all(4.wp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBgStatic,
         borderRadius: BorderRadius.circular(24),
       ),
       child: SingleChildScrollView(
@@ -21,7 +22,7 @@ void addContactBottomModel(BuildContext context, ContactController controller) {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: AppColors.borderStatic,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -86,7 +87,7 @@ Widget _divider() {
     height: 1,
     indent: 20,
     endIndent: 20,
-    color: Colors.grey.shade200,
+    color: AppColors.dividerStatic,
   );
 }
 
@@ -118,17 +119,17 @@ Widget _buildMenuItem({
       style: TextStyle(
         fontWeight: FontWeight.w600,
         fontSize: 10.sp,
-        color: Colors.grey.shade800,
+        color: AppColors.textPrimaryStatic,
       ),
     ),
     subtitle: Text(
       subtitle,
-      style: TextStyle(fontSize: 8.sp, color: Colors.grey.shade500),
+      style: TextStyle(fontSize: 8.sp, color: AppColors.textHintStatic),
     ),
     trailing: Icon(
       Icons.arrow_forward_ios_rounded,
       size: 16,
-      color: Colors.grey.shade400,
+      color: AppColors.iconMutedStatic,
     ),
   );
 }

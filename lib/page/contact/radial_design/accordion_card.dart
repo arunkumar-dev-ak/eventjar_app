@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
@@ -31,7 +32,7 @@ Widget radialDesignBuildAccordionCard({
   return Container(
     margin: EdgeInsets.only(bottom: 1.5.hp),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: AppColors.cardBg(context),
       borderRadius: BorderRadius.circular(20),
       border: Border.all(
         color: isExpanded

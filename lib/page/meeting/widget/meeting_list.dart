@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/meeting/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/meeting/widget/meeting_card.dart';
 import 'package:eventjar/page/meeting/widget/meeting_shimmer.dart';
@@ -36,10 +37,10 @@ class MeetingList extends GetView<MeetingController> {
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
+                      color: AppColors.chipBgStatic,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Colors.grey.shade300,
+                        color: AppColors.dividerStatic,
                         width: 1.5,
                       ),
                       boxShadow: [
@@ -59,7 +60,7 @@ class MeetingList extends GetView<MeetingController> {
                           child: CircularProgressIndicator(
                             strokeWidth: 2.5,
                             valueColor: AlwaysStoppedAnimation(
-                              Colors.grey.shade700,
+                              AppColors.textSecondaryStatic,
                             ),
                           ),
                         ),
@@ -67,7 +68,7 @@ class MeetingList extends GetView<MeetingController> {
                         Text(
                           "Processing...",
                           style: TextStyle(
-                            color: Colors.grey.shade800,
+                            color: AppColors.textPrimaryStatic,
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.5,
@@ -99,20 +100,20 @@ class MeetingList extends GetView<MeetingController> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.event_busy, size: 64, color: Colors.grey.shade400),
+                Icon(Icons.event_busy, size: 64, color: AppColors.textHintStatic),
                 SizedBox(height: 16),
                 Text(
                   'No meetings match your filters',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey.shade600,
+                    color: AppColors.textSecondaryStatic,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 SizedBox(height: 8),
                 Text(
                   'Try adjusting your status or date range',
-                  style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+                  style: TextStyle(fontSize: 14, color: AppColors.textHintStatic),
                 ),
                 SizedBox(height: 32),
               ],

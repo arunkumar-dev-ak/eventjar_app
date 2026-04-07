@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/schedule_meeting/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,7 +27,7 @@ class ScheduleMeetingActionButtons extends StatelessWidget {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey.shade400,
-                  foregroundColor: Colors.black87,
+                  foregroundColor: AppColors.textPrimary(context),
                   padding: EdgeInsets.symmetric(vertical: 2.hp),
                   textStyle: TextStyle(fontSize: 9.sp),
                   shape: RoundedRectangleBorder(
@@ -48,10 +49,10 @@ class ScheduleMeetingActionButtons extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isButtonEnabled
                       ? Colors.blue
-                      : Colors.grey.shade300,
+                      : AppColors.dividerStatic,
                   foregroundColor: isButtonEnabled
                       ? Colors.white
-                      : Colors.grey.shade500,
+                      : AppColors.textHintStatic,
                   padding: EdgeInsets.symmetric(vertical: 2.hp),
                   textStyle: TextStyle(fontSize: 9.sp),
                   shape: RoundedRectangleBorder(

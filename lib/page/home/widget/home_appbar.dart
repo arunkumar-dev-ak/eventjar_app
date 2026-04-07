@@ -92,11 +92,81 @@ class HomeAppBar extends StatelessWidget {
                 icon: Icons.qr_code_scanner_rounded,
                 onPressed: controller.navigateToQrPage,
               ),
+              SizedBox(width: 3.wp),
+              _buildNotificationButton(),
             ],
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildNotificationButton() {
+    return Obx(() {
+      final count = controller.state.userProfile.value?.notificationCount ?? 0;
+      final label = count <= 0
+          ? null
+          : count > 9
+          ? '9+'
+          : '$count';
+
+      return GestureDetector(
+        onTap: controller.navigateToNotificationPage,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.4),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.notifications_outlined,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ),
+            if (label != null)
+              Positioned(
+                top: -5,
+                right: -5,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 1,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.white, width: 1.2),
+                  ),
+                  child: Text(
+                    label,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildActionButton({
@@ -110,8 +180,8 @@ class HomeAppBar extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
-            width: 42,
-            height: 42,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.25),
               borderRadius: BorderRadius.circular(12),
@@ -120,7 +190,7 @@ class HomeAppBar extends StatelessWidget {
                 width: 1.5,
               ),
             ),
-            child: Icon(icon, color: Colors.white, size: 22),
+            child: Icon(icon, color: Colors.white, size: 18),
           ),
         ),
       ),
@@ -132,9 +202,14 @@ class HomeAppBar extends StatelessWidget {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        margin: EdgeInsets.all(4.wp),
+        margin: EdgeInsets.fromLTRB(
+          4.wp,
+          4.wp,
+          4.wp,
+          4.wp + MediaQuery.of(context).padding.bottom,
+        ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.cardBg(context),
           borderRadius: BorderRadius.circular(24),
         ),
         child: Column(
@@ -145,7 +220,7 @@ class HomeAppBar extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: AppColors.border(context),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -164,7 +239,7 @@ class HomeAppBar extends StatelessWidget {
               height: 1,
               indent: 20,
               endIndent: 20,
-              color: Colors.grey.shade200,
+              color: AppColors.divider(context),
             ),
             _buildMenuItem(
               icon: Icons.nfc_rounded,
@@ -181,7 +256,7 @@ class HomeAppBar extends StatelessWidget {
               height: 1,
               indent: 20,
               endIndent: 20,
-              color: Colors.grey.shade200,
+              color: AppColors.divider(context),
             ),
             _buildMenuItem(
               icon: Icons.qr_code_scanner_rounded,
@@ -197,7 +272,7 @@ class HomeAppBar extends StatelessWidget {
               height: 1,
               indent: 20,
               endIndent: 20,
-              color: Colors.grey.shade200,
+              color: AppColors.divider(context),
             ),
             _buildMenuItem(
               icon: Icons.document_scanner,
@@ -247,12 +322,12 @@ class HomeAppBar extends StatelessWidget {
         style: TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: 10.sp,
-          color: Colors.grey.shade800,
+          color: AppColors.textPrimaryStatic,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(fontSize: 8.sp, color: Colors.grey.shade500),
+        style: TextStyle(fontSize: 8.sp, color: AppColors.textHintStatic),
       ),
       trailing: Icon(
         Icons.arrow_forward_ios_rounded,

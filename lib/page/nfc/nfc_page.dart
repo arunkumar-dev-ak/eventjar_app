@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/nfc/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/nfc/widget/nfc_page_action_container.dart';
 import 'package:eventjar/page/nfc/widget/nfc_page_header.dart';
@@ -11,7 +12,7 @@ class NfcPage extends GetView<NfcController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.blueGrey),

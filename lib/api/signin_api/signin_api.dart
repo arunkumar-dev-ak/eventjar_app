@@ -3,12 +3,13 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/global/device_helper.dart';
 import 'package:eventjar/global/global_values.dart';
-import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/model/auth/login_model.dart';
 import 'package:eventjar/storage/storage_service.dart';
 
 class SignInApi {
   static final Dio _dio = DioClient().dio;
+  static final devicePlatform = getDevicePlatform();
 
   static String getDevicePlatform() {
     if (Platform.isAndroid) return 'android';
@@ -22,12 +23,7 @@ class SignInApi {
   }) async {
     final token = await StorageService.to.getString(storageFcmToken);
     final deviceName = await getDeviceModel();
-    LoggerService.loggerInstance.dynamic_d("--------Token------- is $token");
-    LoggerService.loggerInstance.dynamic_d(
-      "--------Device Name  ------- is $deviceName",
-    );
     try {
-      final devicePlatform = getDevicePlatform();
       final response = await _dio.post(
         '/auth/login',
         data: {'email': email, 'password': password, 'fcmToken': token},
@@ -37,6 +33,8 @@ class SignInApi {
             'Content-Type': 'application/json',
             'X-Device-Platform': devicePlatform,
             'User-Agent': deviceName,
+            'X-Device-Id': UserStore.to.deviceId,
+            'X-Device-Name': deviceName,
           },
         ),
       );
@@ -59,20 +57,68 @@ class SignInApi {
     required String tempToken,
     required String otp,
   }) async {
+    final deviceName = await getDeviceModel();
     try {
       final response = await _dio.post(
         '/auth/verify-2fa',
         data: {'tempToken': tempToken, 'token': otp},
         options: Options(
           headers: {
-            'X-Client-Type': 'mobile',
+            'X-Client-Platform': 'mobile',
             'Content-Type': 'application/json',
+            'X-Device-Platform': devicePlatform,
+            'User-Agent': deviceName,
+            'X-Device-Id': UserStore.to.deviceId,
+            'X-Device-Name': deviceName,
           },
         ),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return LoginResponse.fromJson(response.data);
+      }
+
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        error: "Something went wrong",
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<bool> changePassword(Map<String, dynamic> data) async {
+    try {
+      final response = await _dio.post('/auth/change-password', data: data);
+
+      return response.statusCode == 200 || response.statusCode == 201;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<bool> logout() async {
+    final deviceName = await getDeviceModel();
+    try {
+      final devicePlatform = getDevicePlatform();
+      final response = await _dio.post(
+        '/auth/logout-mobile',
+        data: {'refreshToken': UserStore.to.refreshToken},
+        options: Options(
+          headers: {
+            'X-Client-Platform': 'mobile',
+            'Content-Type': 'application/json',
+            'X-Device-Platform': devicePlatform,
+            'User-Agent': deviceName,
+            'X-Device-Id': UserStore.to.deviceId,
+            'X-Device-Name': deviceName,
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
       }
 
       throw DioException(

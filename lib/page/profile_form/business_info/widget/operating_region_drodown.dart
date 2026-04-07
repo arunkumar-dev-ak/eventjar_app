@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/profile_form/business_info/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,10 +15,10 @@ class OperatingRegionsDropdown extends GetView<BusinessInfoFormController> {
         child: Container(
           padding: EdgeInsets.all(3.wp),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.cardBg(context),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Colors.black.withValues(alpha: 0.2),
+              color: AppColors.border(context),
               width: 1.5,
             ),
           ),
@@ -29,7 +30,7 @@ class OperatingRegionsDropdown extends GetView<BusinessInfoFormController> {
                   controller.state.selectedOperatingRegions.isEmpty
                       ? "Select Operating Regions"
                       : "${controller.state.selectedOperatingRegions.length} region${controller.state.selectedOperatingRegions.length != 1 ? 's' : ''} selected",
-                  style: TextStyle(fontSize: 9.5.sp, color: Colors.black),
+                  style: TextStyle(fontSize: 9.5.sp, color: AppColors.textPrimary(context)),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -68,7 +69,7 @@ void showOperatingRegionsDialog(BusinessInfoFormController controller) {
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: AppColors.textPrimaryStatic,
                   ),
                 ),
                 IconButton(
@@ -111,10 +112,10 @@ Widget _buildRegionItem(String region, BusinessInfoFormController controller) {
       margin: EdgeInsets.only(bottom: 2.hp),
       padding: EdgeInsets.all(3.5.wp),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.green.shade50 : Colors.grey.shade50,
+        color: isSelected ? Colors.green.shade50 : AppColors.scaffoldBgStatic,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isSelected ? Colors.green.shade400 : Colors.grey.shade300,
+          color: isSelected ? Colors.green.shade400 : AppColors.borderStatic,
           width: isSelected ? 2 : 1,
         ),
       ),
@@ -146,7 +147,7 @@ Widget _buildRegionItem(String region, BusinessInfoFormController controller) {
               style: TextStyle(
                 fontSize: 9.5.sp,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                color: isSelected ? Colors.green.shade900 : Colors.black87,
+                color: isSelected ? Colors.green.shade900 : AppColors.textPrimaryStatic,
               ),
             ),
           ),

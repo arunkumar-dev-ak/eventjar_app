@@ -4,6 +4,7 @@ class SignInState {
   RxBool isLoading = false.obs;
   RxBool is2FaLoading = false.obs;
   RxBool isOtpValid = false.obs;
+  RxBool isLinkedinLoading = false.obs;
 
   RxBool userName = false.obs;
   RxBool password = false.obs;

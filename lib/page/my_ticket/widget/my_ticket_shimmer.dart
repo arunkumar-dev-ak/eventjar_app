@@ -1,17 +1,18 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 Widget myTicketShimmer() {
   return Shimmer.fromColors(
-    baseColor: Colors.grey.shade300,
-    highlightColor: Colors.grey.shade100,
+    baseColor: AppColors.borderStatic,
+    highlightColor: AppColors.chipBgStatic,
     child: Container(
       margin: EdgeInsets.only(bottom: 3.hp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBgStatic,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200, width: 2),
+        border: Border.all(color: AppColors.dividerStatic, width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

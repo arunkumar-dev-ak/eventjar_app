@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/checkout/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:flutter/material.dart';
@@ -26,14 +27,14 @@ class CheckoutTicketDropDown extends GetView<CheckoutController> {
           padding: EdgeInsets.all(3.wp),
           decoration: BoxDecoration(
             color: isCheckingEligibility
-                ? Colors.grey.shade100
+                ? AppColors.chipBg(context)
                 : totalItems > 0
                 ? Colors.green.shade50
                 : Colors.green.shade50.withValues(alpha: 0.7),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isCheckingEligibility
-                  ? Colors.grey.shade300
+                  ? AppColors.border(context)
                   : totalItems > 0
                   ? Colors.green.shade200
                   : Colors.green.shade200.withValues(alpha: 0.7),
@@ -92,7 +93,7 @@ class CheckoutTicketDropDown extends GetView<CheckoutController> {
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w600,
                           color: isCheckingEligibility
-                              ? Colors.grey.shade600
+                              ? AppColors.textSecondary(context)
                               : Colors.green.shade900,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -104,7 +105,7 @@ class CheckoutTicketDropDown extends GetView<CheckoutController> {
               Icon(
                 Icons.arrow_drop_down,
                 color: isCheckingEligibility
-                    ? Colors.grey.shade400
+                    ? AppColors.iconMuted(context)
                     : Colors.green.shade700,
                 size: 24,
               ),
@@ -136,7 +137,7 @@ void _showTicketSelectionDialog(List<TicketTier> ticketTiers) {
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: AppColors.textPrimaryStatic,
                   ),
                 ),
                 IconButton(
@@ -185,10 +186,10 @@ Widget _buildSelectionOnlyTicket(TicketTier ticket) {
       margin: EdgeInsets.only(bottom: 2.hp),
       padding: EdgeInsets.all(3.5.wp),
       decoration: BoxDecoration(
-        color: isInCart ? Colors.green.shade50 : Colors.grey.shade50,
+        color: isInCart ? Colors.green.shade50 : AppColors.scaffoldBgStatic,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isInCart ? Colors.green.shade400 : Colors.grey.shade300,
+          color: isInCart ? Colors.green.shade400 : AppColors.borderStatic,
           width: isInCart ? 2 : 1,
         ),
       ),
@@ -201,7 +202,7 @@ Widget _buildSelectionOnlyTicket(TicketTier ticket) {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: isInCart ? Colors.green.shade600 : Colors.grey.shade400,
+                color: isInCart ? Colors.green.shade600 : AppColors.dividerStatic,
                 width: 2,
               ),
               color: isInCart ? Colors.green.shade600 : Colors.transparent,
@@ -222,7 +223,7 @@ Widget _buildSelectionOnlyTicket(TicketTier ticket) {
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: AppColors.textPrimaryStatic,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -231,7 +232,7 @@ Widget _buildSelectionOnlyTicket(TicketTier ticket) {
                   "${ticket.quantity - ticket.sold} tickets available • ₹${ticket.price}",
                   style: TextStyle(
                     fontSize: 8.5.sp,
-                    color: Colors.grey.shade600,
+                    color: AppColors.textSecondaryStatic,
                   ),
                 ),
               ],

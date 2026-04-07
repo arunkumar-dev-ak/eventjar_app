@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/contact/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,14 +28,14 @@ class ContactsSearchAndFilters extends GetView<ContactController> {
                         vertical: 12,
                       ),
                       filled: true,
-                      fillColor: Colors.white,
-                      prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+                      fillColor: AppColors.cardBg(context),
+                      prefixIcon: Icon(Icons.search, color: AppColors.textSecondary(context)),
                       suffixIcon: controller.state.searchQuery.value.isNotEmpty
                           ? IconButton(
                               icon: Icon(
                                 Icons.clear,
                                 size: 20,
-                                color: Colors.grey[600],
+                                color: AppColors.textSecondary(context),
                               ),
                               onPressed: () {
                                 controller.searchController.clear();
@@ -44,14 +45,14 @@ class ContactsSearchAndFilters extends GetView<ContactController> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
-                          color: Colors.grey.shade400,
+                          color: AppColors.border(context),
                           width: 1.5,
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
-                          color: Colors.grey.shade400,
+                          color: AppColors.border(context),
                           width: 1.5,
                         ),
                       ),

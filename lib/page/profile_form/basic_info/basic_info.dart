@@ -53,12 +53,12 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: const TextStyle(color: Colors.black),
+          style: TextStyle(color: AppColors.textPrimary(context)),
         ),
         centerTitle: false,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
         elevation: 4,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.cardBg(context),
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
       body: GestureDetector(
@@ -101,7 +101,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
                           borderSide: BorderSide(
-                            color: Colors.grey.shade400,
+                            color: AppColors.border(context),
                             width: 1.5,
                           ),
                         ),
@@ -263,7 +263,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                               color: Colors.blue.shade700,
                               width: 2,
                             ),
-                            backgroundColor: Colors.white,
+                            backgroundColor: AppColors.cardBg(context),
                             foregroundColor: Colors.blue.shade700,
                             elevation: 0,
                           ),

@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/add_contact/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,9 +26,9 @@ class AddMultiSelectTagsInput extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(2.wp),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade400),
+        border: Border.all(color: AppColors.border(context)),
         borderRadius: BorderRadius.circular(14),
-        color: Colors.grey.shade50,
+        color: AppColors.scaffoldBg(context),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,7 +44,7 @@ class AddMultiSelectTagsInput extends StatelessWidget {
                 duration: const Duration(milliseconds: 200),
                 padding: EdgeInsets.symmetric(vertical: 2.hp, horizontal: 3.wp),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.cardBg(context),
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
@@ -124,9 +125,9 @@ class TagSearchPopup extends StatelessWidget {
       expand: false,
       builder: (context, scrollController) {
         return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          decoration: BoxDecoration(
+            color: AppColors.cardBg(context),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Column(
             children: [
@@ -137,7 +138,7 @@ class TagSearchPopup extends StatelessWidget {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: AppColors.border(context),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -176,7 +177,7 @@ class TagSearchPopup extends StatelessWidget {
                     hintText: 'Search or create tag',
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
-                    fillColor: Colors.grey.shade100,
+                    fillColor: AppColors.inputBg(context),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(14),
                       borderSide: BorderSide.none,
@@ -297,7 +298,7 @@ class TagSearchPopup extends StatelessWidget {
                           Icon(
                             Icons.label_outline,
                             size: 48,
-                            color: Colors.grey.shade400,
+                            color: AppColors.textHint(context),
                           ),
                           const SizedBox(height: 12),
                           const Text('No tags found'),

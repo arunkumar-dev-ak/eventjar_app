@@ -260,8 +260,8 @@ void _showPhoneOtpDialog(BuildContext context) async {
                 right: 6.wp,
                 bottom: 3.hp,
               ),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: AppColors.cardBg(ctx),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(25),
                   topRight: Radius.circular(25),
@@ -275,7 +275,7 @@ void _showPhoneOtpDialog(BuildContext context) async {
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade900,
+                      color: AppColors.textPrimaryStatic,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -304,12 +304,12 @@ void _showPhoneOtpDialog(BuildContext context) async {
                       textStyle: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade900,
+                        color: AppColors.textPrimaryStatic,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade50,
+                        color: AppColors.scaffoldBgStatic,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade300),
+                        border: Border.all(color: AppColors.borderStatic),
                       ),
                     ),
                     focusedPinTheme: PinTheme(
@@ -318,10 +318,10 @@ void _showPhoneOtpDialog(BuildContext context) async {
                       textStyle: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade900,
+                        color: AppColors.textPrimaryStatic,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.cardBgStatic,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: AppColors.gradientDarkStart,
@@ -521,8 +521,8 @@ void _showEmailVerifyDialog(BuildContext context) async {
               right: 6.wp,
               bottom: 3.hp,
             ),
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: AppColors.cardBg(ctx),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(25),
                 topRight: Radius.circular(25),
@@ -536,7 +536,7 @@ void _showEmailVerifyDialog(BuildContext context) async {
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade900,
+                    color: AppColors.textPrimaryStatic,
                   ),
                   textAlign: TextAlign.center,
                 ),

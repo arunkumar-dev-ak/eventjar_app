@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/contact/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/page/contact/contact_card_empty_page.dart';
@@ -38,9 +39,9 @@ class ContactCardPage extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
+                  color: AppColors.chipBg(context),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade300, width: 1.5),
+                  border: Border.all(color: AppColors.border(context), width: 1.5),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.1),
@@ -58,7 +59,7 @@ class ContactCardPage extends StatelessWidget {
                       child: CircularProgressIndicator(
                         strokeWidth: 2.5,
                         valueColor: AlwaysStoppedAnimation(
-                          Colors.grey.shade700,
+                          AppColors.textSecondary(context),
                         ),
                       ),
                     ),
@@ -66,7 +67,7 @@ class ContactCardPage extends StatelessWidget {
                     Text(
                       "Processing...",
                       style: TextStyle(
-                        color: Colors.grey.shade800,
+                        color: AppColors.textPrimary(context),
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
@@ -111,7 +112,7 @@ class ContactCardPage extends StatelessWidget {
     return Container(
       width: 100.wp,
       height: 100.hp,
-      color: Colors.grey.shade200,
+      color: AppColors.dividerStatic,
       child: ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         controller: controller.contactScrollController,

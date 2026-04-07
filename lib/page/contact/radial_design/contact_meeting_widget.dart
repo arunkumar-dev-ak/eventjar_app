@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:flutter/material.dart';
@@ -128,7 +129,7 @@ class ContactMeetingSection {
       child: Text(
         isConfirmed ? 'Confirmed' : 'Pending',
         style: TextStyle(
-          color: Colors.black87,
+          color: AppColors.textPrimaryStatic,
           fontSize: 8.sp,
           fontWeight: FontWeight.w600,
         ),

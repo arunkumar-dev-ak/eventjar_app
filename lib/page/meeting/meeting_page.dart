@@ -12,14 +12,16 @@ class MeetingPage extends GetView<MeetingController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         flexibleSpace: Container(
-          decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
         ),
         elevation: 0,
         actions: [
