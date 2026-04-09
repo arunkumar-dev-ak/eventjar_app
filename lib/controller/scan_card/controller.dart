@@ -165,17 +165,18 @@ class ScanCardController extends GetxController
       uniqueEmails.add(email);
     }
 
-    // Check for different email domains - this is the ONLY reliable indicator of multiple cards
+    // Check for different email domains as an indicator of multiple cards.
     // Business cards often have multiple phone numbers (landline, mobile, support, fax)
-    // but they typically have only one email domain per company/person
-    if (uniqueEmails.length > 1) {
+    // and it's common for a single card to have 2 emails on different domains
+    // (e.g. personal yahoo/gmail + company email). Only flag as multiple cards
+    // when there are 3+ distinct domains, which strongly suggests multiple cards.
+    if (uniqueEmails.length > 2) {
       final domains = uniqueEmails.map((email) {
         final atIndex = email.indexOf('@');
         return atIndex > 0 ? email.substring(atIndex + 1) : '';
       }).toSet();
 
-      // Different email domains = definitely multiple cards
-      if (domains.length > 1) return true;
+      if (domains.length > 2) return true;
     }
 
     return false;
@@ -402,9 +403,21 @@ class ScanCardController extends GetxController
   }
 
   List<String> _extractPotentialNumbers(String text) {
-    final List<String> potentialNumbers = [];
+    final List<String> mobileNumbers = []; // Numbers from "M:" lines or mobile-looking
+    final List<String> otherNumbers = []; // Landline / unknown numbers
     final Set<String> addedNumbers = {}; // Track to avoid duplicates
     final lines = text.split('\n');
+
+    // Pattern to detect mobile-prefixed lines: "M:", "M :", "Mob:", "Mobile:", "Cell:"
+    final mobilePrefixRegex = RegExp(
+      r'^\s*(?:M|Mob(?:ile)?|Cell)\s*[:.]',
+      caseSensitive: false,
+    );
+    // Pattern to detect landline-prefixed lines: "T:", "Tel:", "Ph:", "F:", "Fax:", "O:"
+    final landlinePrefixRegex = RegExp(
+      r'^\s*(?:T|Tel(?:ephone)?|Ph(?:one)?|F(?:ax)?|O(?:ffice)?)\s*[:.]',
+      caseSensitive: false,
+    );
 
     for (final line in lines) {
       final trimmedLine = line.trim();
@@ -419,14 +432,10 @@ class ScanCardController extends GetxController
         continue;
       }
 
-      // Extract all digit sequences with common phone number separators
-      // Pattern 1: International format with + or 00
-      final internationalMatches = RegExp(
-        r'(?:\+|00)\s*\d{1,4}[\s\-\(\)\.]*\d[\d\s\-\(\)\.]{6,}',
-      ).allMatches(trimmedLine);
+      final isMobileLine = mobilePrefixRegex.hasMatch(trimmedLine);
+      final isLandlineLine = landlinePrefixRegex.hasMatch(trimmedLine);
 
-      for (final match in internationalMatches) {
-        String potentialNumber = match.group(0)?.trim() ?? '';
+      void addNumber(String potentialNumber) {
         final digitCount = potentialNumber
             .replaceAll(RegExp(r'[^\d]'), '')
             .length;
@@ -434,10 +443,37 @@ class ScanCardController extends GetxController
         if (digitCount >= 7 && digitCount <= 15) {
           final digitsOnly = potentialNumber.replaceAll(RegExp(r'[^\d+]'), '');
           if (!addedNumbers.contains(digitsOnly)) {
-            potentialNumbers.add(potentialNumber);
             addedNumbers.add(digitsOnly);
+
+            if (isMobileLine) {
+              // Explicitly marked as mobile
+              mobileNumbers.add(potentialNumber);
+            } else if (isLandlineLine) {
+              // Explicitly marked as landline — add to other
+              otherNumbers.add(potentialNumber);
+            } else {
+              // No prefix — check if digits look like an Indian mobile (starts with 6-9, 10 digits)
+              final digits = potentialNumber.replaceAll(RegExp(r'[^\d]'), '');
+              final looksLikeMobile = (digits.length == 10 &&
+                  RegExp(r'^[6-9]').hasMatch(digits));
+              if (looksLikeMobile) {
+                mobileNumbers.add(potentialNumber);
+              } else {
+                otherNumbers.add(potentialNumber);
+              }
+            }
           }
         }
+      }
+
+      // Extract all digit sequences with common phone number separators
+      // Pattern 1: International format with + or 00
+      final internationalMatches = RegExp(
+        r'(?:\+|00)\s*\d{1,4}[\s\-\(\)\.]*\d[\d\s\-\(\)\.]{6,}',
+      ).allMatches(trimmedLine);
+
+      for (final match in internationalMatches) {
+        addNumber(match.group(0)?.trim() ?? '');
       }
 
       // Pattern 2: Phone numbers starting with digits (10 digit mobile, etc.)
@@ -446,19 +482,7 @@ class ScanCardController extends GetxController
       ).allMatches(trimmedLine);
 
       for (final match in localMatches) {
-        String potentialNumber = match.group(0)?.trim() ?? '';
-        final digitCount = potentialNumber
-            .replaceAll(RegExp(r'[^\d]'), '')
-            .length;
-
-        // Accept 7-15 digits
-        if (digitCount >= 7 && digitCount <= 15) {
-          final digitsOnly = potentialNumber.replaceAll(RegExp(r'[^\d]'), '');
-          if (!addedNumbers.contains(digitsOnly)) {
-            potentialNumbers.add(potentialNumber);
-            addedNumbers.add(digitsOnly);
-          }
-        }
+        addNumber(match.group(0)?.trim() ?? '');
       }
 
       // Pattern 3: Digits with spaces/dashes (like "98765 43210" or "9876-543-210")
@@ -467,29 +491,25 @@ class ScanCardController extends GetxController
       ).allMatches(trimmedLine);
 
       for (final match in spacedMatches) {
-        String potentialNumber = match.group(0)?.trim() ?? '';
-        final digitCount = potentialNumber
-            .replaceAll(RegExp(r'[^\d]'), '')
-            .length;
-
-        if (digitCount >= 7 && digitCount <= 15) {
-          final digitsOnly = potentialNumber.replaceAll(RegExp(r'[^\d]'), '');
-          if (!addedNumbers.contains(digitsOnly)) {
-            potentialNumbers.add(potentialNumber);
-            addedNumbers.add(digitsOnly);
-          }
-        }
+        addNumber(match.group(0)?.trim() ?? '');
       }
     }
 
-    return potentialNumbers;
+    // Return mobile numbers first, then other numbers
+    return [...mobileNumbers, ...otherNumbers];
   }
 
   Future<PhoneParsed?> _parsePhoneWithLibrary(
     String phoneNumber,
     List<String> regionsToTry,
   ) async {
-    final String cleaned = phoneNumber.trim();
+    String cleaned = phoneNumber.trim();
+
+    // Remove trunk prefix pattern "(0)" common in international formats.
+    // OCR may read "0" as "O" or "o", so match all variants.
+    // e.g. "+94 (0) 70 472 5630" → "+94 70 472 5630"
+    //       "+44 (O)20 7946 0958" → "+44 20 7946 0958"
+    cleaned = cleaned.replaceAll(RegExp(r'\([0Oo]\)\s*'), '');
 
     // For numbers that already carry a country code (+XX or 00XX),
     // detect the exact region from the dial code so we never call the
@@ -512,6 +532,14 @@ class ScanCardController extends GetxController
     } else {
       // No country code — try all regions in priority order
       regions = regionsToTry;
+    }
+
+    // Build a reverse map: region → expected dial code, so we can verify
+    // that the library returns the correct country code for the region we asked.
+    final regionToDialCode = <String, String>{};
+    for (final entry in ScanCardState.dialCodeToRegion.entries) {
+      // Only keep the first (longest/most-specific) dial code per region
+      regionToDialCode.putIfAbsent(entry.value, () => entry.key);
     }
 
     for (final region in regions) {
@@ -539,10 +567,19 @@ class ScanCardController extends GetxController
 
         // Sanity check: for international numbers (+XX...), the library must
         // return the same country code we detected from the prefix.
-        // If they disagree (library returns +91 for a +94 number), reject it
-        // and let the fallback handle it correctly.
         if (expectedDialCode != null && countryCode != expectedDialCode) {
           continue;
+        }
+
+        // Sanity check: for local numbers (no + prefix), verify that the
+        // returned country code matches the region we asked the library to
+        // parse for. Without this, the library can return +62 (Indonesia)
+        // when asked to parse an Indian number with region "IN".
+        if (expectedDialCode == null) {
+          final expectedForRegion = regionToDialCode[region];
+          if (expectedForRegion != null && countryCode != expectedForRegion) {
+            continue;
+          }
         }
 
         // Derive national number from e164, NOT from 'national' field.
@@ -584,8 +621,10 @@ class ScanCardController extends GetxController
   }
 
   PhoneParsed? _fallbackPhoneParsing(String phoneNumber) {
+    // Remove trunk prefix "(0)" / "(O)" before cleaning
+    String withoutTrunk = phoneNumber.replaceAll(RegExp(r'\([0Oo]\)\s*'), '');
     // Clean the phone number - keep only digits and +
-    String cleaned = phoneNumber.replaceAll(RegExp(r'[^\d+]'), '');
+    String cleaned = withoutTrunk.replaceAll(RegExp(r'[^\d+]'), '');
 
     if (cleaned.isEmpty) return null;
 
@@ -656,14 +695,22 @@ class ScanCardController extends GetxController
         .where((line) => line.trim().isNotEmpty)
         .toList();
 
-    // Collect all valid name candidates with their cleaned versions
-    final nameCandidates = <String>[];
+    // Collect all valid name candidates with their line index (for position scoring)
+    final nameCandidates = <MapEntry<int, String>>[];
 
-    for (final line in lines) {
+    for (int lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+      final line = lines[lineIndex];
       String trimmedLine = line.trim();
 
       // Skip lines starting with dash/hyphen (like "-TALLY INSTITUTE")
       if (trimmedLine.startsWith('-') || trimmedLine.startsWith('–')) {
+        continue;
+      }
+
+      // Skip QR code / label texts that start with "For" (e.g. "For Location",
+      // "For New Updates"). OCR may misread these (e.g. "For Locallon") so
+      // match the prefix rather than exact text.
+      if (RegExp(r'^for\s+', caseSensitive: false).hasMatch(trimmedLine)) {
         continue;
       }
 
@@ -690,8 +737,10 @@ class ScanCardController extends GetxController
         continue;
       }
 
-      // Skip common business terms and designations
-      if (_isCommonBusinessTerm(trimmedLine) || _isDesignation(trimmedLine)) {
+      // Skip common business terms, designations, and educational qualifications
+      if (_isCommonBusinessTerm(trimmedLine) ||
+          _isDesignation(trimmedLine) ||
+          _isEducationalQualification(trimmedLine)) {
         continue;
       }
 
@@ -700,9 +749,12 @@ class ScanCardController extends GetxController
         continue;
       }
 
+      // Strip trailing qualifications (e.g. "Krishnakumar B.E" → "Krishnakumar")
+      final cleaned = _stripTrailingQualifications(trimmedLine);
+
       // Check if it looks like a name
-      if (_looksLikeName(trimmedLine)) {
-        nameCandidates.add(trimmedLine);
+      if (_looksLikeName(cleaned)) {
+        nameCandidates.add(MapEntry(lineIndex, cleaned));
       }
     }
 
@@ -715,17 +767,17 @@ class ScanCardController extends GetxController
     int bestScore = -1;
 
     for (final candidate in nameCandidates) {
-      int score = _scoreNameCandidate(candidate);
+      int score = _scoreNameCandidate(candidate.value, candidate.key, lines.length);
       if (score > bestScore) {
         bestScore = score;
-        bestCandidate = candidate;
+        bestCandidate = candidate.value;
       }
     }
 
     return bestCandidate;
   }
 
-  int _scoreNameCandidate(String name) {
+  int _scoreNameCandidate(String name, int lineIndex, int totalLines) {
     int score = 0;
 
     final words = name
@@ -738,8 +790,11 @@ class ScanCardController extends GetxController
     if (words.length == 3) score += 8;
     if (words.length == 1) score += 3;
 
-    // Names with initials like "S.THIYAGARAJAN" or "K. RAJ" are common
-    if (name.contains('.')) score += 2;
+    // Names with initials like "S.THIYAGARAJAN" or "K. RAJ" are common,
+    // but only give a bonus if it looks like an initial (single letter before dot).
+    // Avoid boosting qualifications like "B.ARCH" or "M.B.A".
+    final initialPattern = RegExp(r'^[A-Z]\.');
+    if (initialPattern.hasMatch(name) && words.length >= 2) score += 2;
 
     // All caps names are common on business cards
     if (name == name.toUpperCase()) score += 3;
@@ -749,6 +804,17 @@ class ScanCardController extends GetxController
 
     // Longer names (but not too long) are more likely to be real names
     if (name.length >= 10 && name.length <= 30) score += 2;
+
+    // Position bonus: name is typically in the top portion of the card.
+    // Lines near the top get a higher bonus.
+    if (totalLines > 0) {
+      final positionRatio = lineIndex / totalLines;
+      if (positionRatio < 0.25) {
+        score += 6;
+      } else if (positionRatio < 0.4) {
+        score += 3;
+      }
+    }
 
     return score;
   }
@@ -776,6 +842,74 @@ class ScanCardController extends GetxController
     }
 
     return false;
+  }
+
+  /// Regex matching common educational degree/qualification abbreviations.
+  /// Used both for filtering full-qualification lines and stripping trailing
+  /// qualifications from name candidates.
+  static final _qualificationRegex = RegExp(
+    r'\b(?:B\.?\s*ARCH|B\.?\s*E|B\.?\s*TECH|B\.?\s*SC|B\.?\s*COM|B\.?\s*A'
+    r'|B\.?\s*B\.?\s*A|B\.?\s*C\.?\s*A|B\.?\s*DES|B\.?\s*ED|B\.?\s*PHARM'
+    r'|M\.?\s*ARCH|M\.?\s*E|M\.?\s*TECH|M\.?\s*SC|M\.?\s*COM|M\.?\s*A'
+    r'|M\.?\s*B\.?\s*A|M\.?\s*B\.?\s*M|M\.?\s*B\.?\s*B\.?\s*S|M\.?\s*D'
+    r'|M\.?\s*S|M\.?\s*C\.?\s*A|M\.?\s*DES|M\.?\s*ED|M\.?\s*PHIL|M\.?\s*PHARM'
+    r'|PH\.?\s*D|PHD|D\.?\s*LITT|PGDM|PGDBA|PG|DIP|DME|DCE'
+    r'|FRCS|FRCP|MRCP|MRCS|FICS|FACS'
+    r'|FCA|ACA|CPA|CMA|CFA|ACCA'
+    r'|LLB|LLM|BL|ML'
+    r'|MBBS|BDS|BAMS|BHMS|BUMS|BPT|BOT'
+    r'|MDS|DM|MCH'
+    r'|MSCE|MICS|AMIE|FICE|FIE)\b\.?',
+    caseSensitive: false,
+  );
+
+  bool _isEducationalQualification(String text) {
+    final trimmed = text.trim();
+    // If most of the line is qualifications/dots/commas/spaces, it's not a name
+    // e.g. "B.ARCH., MBM", "MBBS, MD", "B.E., M.Tech", "Ph.D"
+    final matches = _qualificationRegex.allMatches(trimmed);
+    if (matches.isEmpty) return false;
+    // Calculate how much of the line is covered by qualifications
+    int coveredChars = 0;
+    for (final match in matches) {
+      coveredChars += match.end - match.start;
+    }
+    // Also count dots, commas, spaces as qualification separators
+    final separators = trimmed.replaceAll(RegExp(r'[^.,\s]'), '').length;
+    final totalCovered = coveredChars + separators;
+    // If qualifications + separators cover 70%+ of the line, it's a qualification line
+    return totalCovered >= trimmed.length * 0.7;
+  }
+
+  /// Strips trailing educational qualifications from a name candidate.
+  /// e.g. "Krishnakumar B.E" → "Krishnakumar", "Dr. Ravi MBBS, MD" → "Dr. Ravi"
+  String _stripTrailingQualifications(String name) {
+    // Remove trailing qualifications separated by comma/space
+    // Repeatedly strip from the end until no more qualifications remain
+    String result = name;
+    bool changed = true;
+    while (changed) {
+      changed = false;
+      // Try removing a trailing qualification (with optional leading comma/space)
+      final trailingMatch = RegExp(
+        r'[,\s]+' + _qualificationRegex.pattern + r'\s*$',
+        caseSensitive: false,
+      ).firstMatch(result);
+      if (trailingMatch != null) {
+        result = result.substring(0, trailingMatch.start).trim();
+        changed = true;
+      }
+    }
+    // Also handle case where the qualification is right after the name without comma
+    // e.g. "Sharang Satish B.ARCH."
+    final suffixMatch = RegExp(
+      r'\s+' + _qualificationRegex.pattern + r'\s*$',
+      caseSensitive: false,
+    ).firstMatch(result);
+    if (suffixMatch != null) {
+      result = result.substring(0, suffixMatch.start).trim();
+    }
+    return result.isEmpty ? name : result;
   }
 
   bool _isCommonBusinessTerm(String text) {
@@ -829,14 +963,16 @@ class ScanCardController extends GetxController
   }
 
   Future<void> navigateToAddContact(BuildContext context) async {
-    Get.toNamed(
+    final result = await Get.toNamed(
       RouteName.addContactPage,
       arguments: {"cardInfo": cardInfo.value, "imageFile": selectedImage.value},
-    )?.then((result) async {
-      if (result == "refresh") {
-        Navigator.pop(Get.context!, "refresh");
+    );
+    if (result == "refresh") {
+      final ctx = Get.context;
+      if (ctx != null && ctx.mounted) {
+        Navigator.pop(ctx, "refresh");
       }
-    });
+    }
   }
 
   @override

@@ -43,6 +43,15 @@ class ScanCardState {
     'institute', 'institution', 'academy', 'school', 'college',
     'university', 'training', 'tally', 'online', 'coaching',
     'tuition', 'classes', 'centre', 'center',
+    'scan here', 'scan me', 'scan to', 'scan this', 'qr code', 'barcode',
+    'follow us', 'visit us', 'contact us', 'call us', 'connect with us',
+    'like us', 'find us', 'for new', 'for location', 'for update',
+    'sarees', 'saree', 'suits', 'lehenga', 'dresses', 'dress',
+    'kurta', 'kurti', 'salwar', 'churidar', 'sherwani', 'dupatta',
+    'fabrics', 'fabric', 'silk', 'cotton', 'embroidery',
+    'boutique', 'fashion', 'clothing', 'apparel', 'wear',
+    'store', 'shop', 'showroom', 'emporium', 'mart', 'bazaar',
+    'since', 'established', 'est.',
   ];
 
   static const List<String> designations = [

@@ -97,20 +97,14 @@ class ScanCard extends GetView<ScanCardController> {
       final image = controller.selectedImage.value;
       final isLoading = controller.isLoading.value;
 
+      // When no image selected, show combined placeholder with tips
+      if (image == null) {
+        return _buildPlaceholder();
+      }
+
       return Container(
         height: 220,
         decoration: BoxDecoration(
-          color: image == null ? AppColors.cardBgStatic : null,
-          gradient: image == null
-              ? LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    controller.primaryColor.withValues(alpha: 0.08),
-                    controller.secondaryColor.withValues(alpha: 0.08),
-                  ],
-                )
-              : null,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: controller.primaryColor.withValues(alpha: 0.2),
@@ -128,15 +122,12 @@ class ScanCard extends GetView<ScanCardController> {
           borderRadius: BorderRadius.circular(18),
           child: Stack(
             children: [
-              if (image != null)
-                Image.file(
-                  image,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                )
-              else
-                _buildPlaceholder(),
+              Image.file(
+                image,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
               if (isLoading) _buildScanningOverlay(),
             ],
           ),
@@ -146,9 +137,37 @@ class ScanCard extends GetView<ScanCardController> {
   }
 
   Widget _buildPlaceholder() {
-    return Center(
+    final tipStyle = TextStyle(
+      fontSize: 9.sp,
+      color: Colors.amber.shade900,
+      fontWeight: FontWeight.w600,
+    );
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            controller.primaryColor.withValues(alpha: 0.08),
+            controller.secondaryColor.withValues(alpha: 0.08),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: controller.primaryColor.withValues(alpha: 0.2),
+          width: 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: controller.primaryColor.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           ShaderMask(
             shaderCallback: (bounds) => LinearGradient(
@@ -156,20 +175,20 @@ class ScanCard extends GetView<ScanCardController> {
             ).createShader(bounds),
             child: const Icon(
               Icons.credit_card_rounded,
-              size: 72,
+              size: 64,
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 2.hp),
+          SizedBox(height: 1.5.hp),
           Text(
-            'Scan a Visting card to begin',
+            'Scan a Visiting Card to begin',
             style: TextStyle(
               color: AppColors.textHintStatic,
               fontSize: 10.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 2.hp),
+          SizedBox(height: 1.hp),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
@@ -192,8 +211,51 @@ class ScanCard extends GetView<ScanCardController> {
               ],
             ),
           ),
+          SizedBox(height: 2.hp),
+          Divider(color: Colors.amber.shade200, thickness: 1),
+          SizedBox(height: 1.hp),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.lightbulb_outline_rounded,
+                size: 18,
+                color: Colors.amber.shade800,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'Tips for best results',
+                style: TextStyle(
+                  fontSize: 9.5.sp,
+                  color: Colors.amber.shade900,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 1.hp),
+          _buildTipItem('Hold the card close & zoom in', tipStyle),
+          const SizedBox(height: 6),
+          _buildTipItem('Scan one visiting card at a time', tipStyle),
+          const SizedBox(height: 6),
+          _buildTipItem('Ensure good lighting on the card', tipStyle),
         ],
       ),
+    );
+  }
+
+  Widget _buildTipItem(String text, TextStyle style) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Icon(Icons.circle, size: 6, color: Colors.amber.shade700),
+        ),
+        const SizedBox(width: 8),
+        Text(text, style: style),
+      ],
     );
   }
 
