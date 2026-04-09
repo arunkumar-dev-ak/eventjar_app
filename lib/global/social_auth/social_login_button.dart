@@ -21,6 +21,7 @@ class SocialButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final dimmedColor = color.withValues(alpha: isLoading ? 0.04 : 0.08);
     final borderColor = color.withValues(alpha: isLoading ? 0.15 : 0.3);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Opacity(
       opacity: isLoading ? 0.7 : 1.0,
@@ -62,9 +63,11 @@ class SocialButton extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87.withValues(
-                      alpha: isLoading ? 0.6 : 1.0,
-                    ),
+                    color: isDark
+                        ? Colors.white
+                        : Colors.black87.withValues(
+                            alpha: isLoading ? 0.6 : 1.0,
+                          ),
                     letterSpacing: 0.5,
                   ),
                 ),

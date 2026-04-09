@@ -20,7 +20,7 @@ class AuthProcessingPage extends GetView<AuthProcessingController> {
       child: GestureDetector(
         onTap: () => Get.focusScope?.unfocus(),
         child: Scaffold(
-          backgroundColor: Colors.transparent,
+          backgroundColor: isDark ? Colors.black : Colors.transparent,
           body: Obx(() {
             if (controller.state.isMobileNumberRequired.value) {
               return AuthProcessignMobileNumber();

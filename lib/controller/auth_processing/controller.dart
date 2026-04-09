@@ -157,7 +157,10 @@ class AuthProcessingController extends GetxController {
           phoneFocusNode.requestFocus();
         });
       } else {
-        ApiErrorHandler.handleError(e, "Google Authentication Failed");
+        ApiErrorHandler.handleError(
+          e,
+          "${_provider == "google" ? "Google" : "Linkedin"} Authentication Failed",
+        );
         Navigator.pop(Get.context!);
       }
     } catch (e) {

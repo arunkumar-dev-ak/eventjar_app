@@ -318,7 +318,7 @@ class SignUpForm extends StatelessWidget {
               children: [
                 Expanded(
                   child: SocialButton(
-                    text: "Google",
+                    text: "Continue With Google",
                     assetPath: "assets/app_icon/google.png",
                     color: Colors.red,
                     onTap: () => AuthService().signInWithGoogle(
@@ -327,20 +327,20 @@ class SignUpForm extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 3.wp),
-                Obx(() {
-                  return Expanded(
-                    child: SocialButton(
-                      text: "LinkedIn",
-                      assetPath: "assets/app_icon/linkedin.png",
-                      color: Colors.blue,
-                      isLoading: controller.state.isLinkedinLoading.value,
-                      onTap: () {
-                        controller.handleLinkedIn();
-                      },
-                    ),
-                  );
-                }),
+                // SizedBox(width: 3.wp),
+                // Obx(() {
+                //   return Expanded(
+                //     child: SocialButton(
+                //       text: "LinkedIn",
+                //       assetPath: "assets/app_icon/linkedin.png",
+                //       color: Colors.blue,
+                //       isLoading: controller.state.isLinkedinLoading.value,
+                //       onTap: () {
+                //         controller.handleLinkedIn();
+                //       },
+                //     ),
+                //   );
+                // }),
               ],
             ),
 

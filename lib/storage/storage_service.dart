@@ -1,26 +1,29 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService extends GetxService {
   static StorageService get to => Get.find<StorageService>();
-  late final SharedPreferences _prefs;
+  // late final SharedPreferences _prefs;
+
+  late final FlutterSecureStorage _storage;
+
   Future<StorageService> init() async {
-    _prefs = await SharedPreferences.getInstance();
+    _storage = const FlutterSecureStorage();
     return this;
   }
 
   //set
-  Future<bool> setString(String key, String value) async {
-    return await _prefs.setString(key, value);
+  Future<void> setString(String key, String value) async {
+    return await _storage.write(key: key, value: value);
   }
 
   //get
   Future<String?> getString(String key) async {
-    return _prefs.getString(key) ?? "";
+    return await _storage.read(key: key);
   }
 
   //delete
-  Future<bool> deleteString(String key) async {
-    return await _prefs.remove(key);
+  Future<void> deleteString(String key) async {
+    return await _storage.delete(key: key);
   }
 }

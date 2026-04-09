@@ -24,6 +24,7 @@ const String storageAccessToken = "myEventJar_accessToken";
 const String storageRefreshToken = "myEventJar_refreshToken";
 const String storageProfile = "myEventJar_profile";
 const String storageFcmToken = "myEventJar_fcmToken";
+const String pkceCodeVerifier = "pkce_code_verifier";
 String backendBaseUrl() {
   return "https://myeventjar.com/api";
   // return "http://10.0.2.2:4000/";
