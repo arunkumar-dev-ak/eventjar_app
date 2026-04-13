@@ -6,4 +6,6 @@ class BudgetTrackState {
   final RxInt selectedMainTab = 0.obs;
 
   final RxString selectedFilter = 'All'.obs;
+
+  RxBool isOwedSelected = true.obs;
 }

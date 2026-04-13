@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/budget_track/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/budget_track/balances/balances_tab.dart';
 import 'package:eventjar/page/budget_track/expenses/expenses_tab.dart';
 import 'package:eventjar/page/budget_track/friends/friends_tab.dart';
 import 'package:eventjar/page/budget_track/trips/trips_tab.dart';
@@ -100,7 +101,7 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
                 FriendsTab(),
                 TripsTab(),
                 ExpensesTab(),
-                Center(child: Text("Balances")),
+                BalancesTab(),
                 Center(child: Text("Settle Ups")),
               ],
             ),

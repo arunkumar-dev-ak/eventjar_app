@@ -49,7 +49,16 @@ class BudgetTrackController extends GetxController
     }
   }
 
-  /// MOCK API METHODS
+  /*----- Balances Tab ------*/
+  void selectOwed() {
+    state.isOwedSelected.value = true;
+  }
+
+  void selectOwe() {
+    state.isOwedSelected.value = false;
+  }
+
+  // MOCK API METHODS
   void fetchFriends() {
     LoggerService.loggerInstance.dynamic_d("Fetching Friends...");
   }

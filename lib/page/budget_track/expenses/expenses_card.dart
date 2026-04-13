@@ -20,109 +20,139 @@ class ExpenseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.cardBg(context),
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// 🔥 Top Row (Title + Amount)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// Title + Paid By
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 9.5.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary(context),
-                      ),
-                    ),
-                    SizedBox(height: 0.3.hp),
-                    Text(
-                      "Paid by $paidBy",
-                      style: TextStyle(
-                        fontSize: 7.5.sp,
-                        color: AppColors.textSecondary(context),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              /// Amount
-              Text(
-                "₹$amount",
-                style: TextStyle(
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.gradientDarkStart,
-                ),
+    return Stack(
+      children: [
+        /// 🔥 MAIN CARD
+        Container(
+          margin: EdgeInsets.only(left: 1.5.wp), // space for border
+          padding: EdgeInsets.all(3.wp),
+          decoration: BoxDecoration(
+            color: AppColors.cardBg(context),
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: Offset(0, 1.5.hp),
               ),
             ],
           ),
 
-          SizedBox(height: 1.hp),
-
-          /// 🔥 Bottom Row
-          Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Location Badge
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 1.sp),
-                decoration: BoxDecoration(
-                  color: AppColors.lightBlueBg(context),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  location,
-                  style: TextStyle(
-                    fontSize: 7.5.sp,
-                    color: AppColors.textPrimary(context),
+              /// 🔥 TOP ROW
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Title + Paid By
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary(context),
+                          ),
+                        ),
+                        SizedBox(height: 0.4.hp),
+                        Text(
+                          "Paid by $paidBy",
+                          style: TextStyle(
+                            fontSize: 8.sp,
+                            color: AppColors.textSecondary(context),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+
+                  /// Amount
+                  Text(
+                    "₹$amount",
+                    style: TextStyle(
+                      fontSize: 10.5.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.gradientDarkStart,
+                    ),
+                  ),
+                ],
               ),
 
-              SizedBox(width: 2.wp),
+              SizedBox(height: 1.2.hp),
 
-              /// Split Info
+              /// 🔥 BOTTOM ROW
               Row(
                 children: [
-                  Icon(
-                    Icons.group,
-                    size: 14,
-                    color: AppColors.iconMuted(context),
-                  ),
-                  SizedBox(width: 1.wp),
-                  Text(
-                    "Split between $splitCount",
-                    style: TextStyle(
-                      fontSize: 7.5.sp,
-                      color: AppColors.textSecondary(context),
+                  /// Location Badge
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 3.wp,
+                      vertical: 0.7.hp,
                     ),
+                    decoration: BoxDecoration(
+                      color: AppColors.lightBlueBg(context),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      location,
+                      style: TextStyle(
+                        fontSize: 8.sp,
+                        color: AppColors.textPrimary(context),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(width: 3.wp),
+
+                  /// Split Info
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.group,
+                        size: 4.5.wp,
+                        color: AppColors.iconMuted(context),
+                      ),
+                      SizedBox(width: 1.5.wp),
+                      Text(
+                        "Split $splitCount",
+                        style: TextStyle(
+                          fontSize: 8.sp,
+                          color: AppColors.textSecondary(context),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ],
           ),
-        ],
-      ),
+        ),
+
+        /// 🔥 LEFT GRADIENT STRIP
+        Positioned(
+          left: 0,
+          top: 0,
+          bottom: 0,
+          child: Container(
+            width: 1.5.wp,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.gradientDarkStart,
+                  AppColors.gradientDarkEnd,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

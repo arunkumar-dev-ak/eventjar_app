@@ -9,17 +9,21 @@ class ExpensesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.hp),
+      padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.5.hp),
       children: [
-        /// 🔥 Top Row (Filter + Add)
+        /// 🔥 Top Row
         Row(
           children: [
-            /// Filter Dropdown
+            /// Filter
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 1.5.sp),
+              padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.hp),
               decoration: BoxDecoration(
-                color: AppColors.chipBg(context),
+                color: Colors.white, // 🔥 changed here
                 borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: AppColors.border(context),
+                  width: 0.3.wp,
+                ),
               ),
               child: Row(
                 children: [
@@ -27,14 +31,14 @@ class ExpensesTab extends StatelessWidget {
                     "All Trips",
                     style: TextStyle(
                       fontSize: 8.5.sp,
-                      color: AppColors.textPrimary(context),
                       fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary(context),
                     ),
                   ),
-                  SizedBox(width: 1.wp),
+                  SizedBox(width: 1.5.wp),
                   Icon(
                     Icons.keyboard_arrow_down_rounded,
-                    size: 16,
+                    size: 4.5.wp,
                     color: AppColors.iconMuted(context),
                   ),
                 ],
@@ -43,13 +47,19 @@ class ExpensesTab extends StatelessWidget {
 
             const Spacer(),
 
-            // Add Expense Button
+            /// Add Button
             ElevatedButton.icon(
               onPressed: () {},
-              icon: const Icon(Icons.add, size: 16),
-              label: Text("Add", style: TextStyle(fontSize: 8.5.sp)),
+              icon: Icon(Icons.add, size: 4.5.wp, color: Colors.white),
+              label: Text(
+                "Add",
+                style: TextStyle(fontSize: 8.5.sp, color: Colors.white),
+              ),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 1.5.sp),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 4.wp,
+                  vertical: 0.8.hp,
+                ),
                 backgroundColor: AppColors.gradientDarkStart,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(18),
@@ -66,8 +76,8 @@ class ExpensesTab extends StatelessWidget {
         ...List.generate(
           8,
           (index) => Padding(
-            padding: EdgeInsets.only(bottom: 1.5.hp),
-            child: ExpenseCard(
+            padding: EdgeInsets.only(bottom: 2.5.hp),
+            child: const ExpenseCard(
               title: "Dinner at Cafe",
               amount: 2400,
               paidBy: "Arun",
