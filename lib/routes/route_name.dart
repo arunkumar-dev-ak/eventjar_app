@@ -67,4 +67,7 @@ class RouteName {
 
   //budget track
   static const budgetTrackPage = '/budgetTrackPage';
+
+  //more page
+  static const morePage = '/morePage';
 }

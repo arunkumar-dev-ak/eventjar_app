@@ -2,6 +2,7 @@ import 'package:eventjar/controller/dashboard/controller.dart';
 import 'package:eventjar/global/app_toast.dart';
 import 'package:eventjar/page/dashboard/widget/navigation_bar.dart';
 import 'package:eventjar/page/home/home.dart';
+import 'package:eventjar/page/more/more_page.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_page.dart';
 import 'package:eventjar/page/network/network_page.dart';
 import 'package:eventjar/page/user_profile/user_profile_page.dart';
@@ -52,6 +53,7 @@ class DashboardPage extends GetView<DashboardController> {
                 NetworkPage(),
                 UserProfilePage(),
                 MyTicketPage(),
+                MorePage(),
               ],
             );
           }),

@@ -72,6 +72,8 @@ import 'package:eventjar/routes/route_auth.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:get/get.dart';
 
+import 'package:eventjar/page/more/more_page.dart';
+
 import '../controller/categories_event/binding.dart';
 import '../controller/scan_card/binding.dart';
 import '../page/category_events/event_list.dart';
@@ -335,6 +337,13 @@ class RoutePage {
       name: RouteName.budgetTrackPage,
       page: () => BudgetTrackPage(),
       binding: BudgetTrackBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+
+    //more page
+    GetPage(
+      name: RouteName.morePage,
+      page: () => const MorePage(),
       middlewares: [LoginMiddleware()],
     ),
   ];

@@ -26,7 +26,12 @@ class MeetingController extends GetxController {
     ) {
       _debouncedFetchMeetings();
     });
-    state.selectedStatus.value = MeetingStatus.ALL;
+    final args = Get.arguments;
+    if (args != null && args is Map<String, dynamic> && args['status'] != null) {
+      state.selectedStatus.value = args['status'] as MeetingStatus;
+    } else {
+      state.selectedStatus.value = MeetingStatus.ALL;
+    }
     fetchMeetings(forceRefresh: true);
   }
 

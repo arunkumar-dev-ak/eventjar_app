@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/dashboard/controller.dart';
 import 'package:eventjar/controller/home/controller.dart';
+import 'package:eventjar/controller/more/controller.dart';
 import 'package:eventjar/controller/my_ticket/controller.dart';
 import 'package:eventjar/controller/network/controller.dart';
 import 'package:eventjar/controller/user_profile/controller.dart';
@@ -13,5 +14,6 @@ class DashboardBinding extends Bindings {
     Get.lazyPut<UserProfileController>(() => UserProfileController());
     Get.lazyPut<NetworkScreenController>(() => NetworkScreenController());
     Get.lazyPut<MyTicketController>(() => MyTicketController());
+    Get.lazyPut<MoreController>(() => MoreController());
   }
 }
