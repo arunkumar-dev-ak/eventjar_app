@@ -26,13 +26,13 @@ class SocialFormPage extends GetView<SocialFormController> {
         backgroundColor: AppColors.cardBg(context),
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
-      body: GestureDetector(
-        onTap: () => Get.focusScope?.unfocus(),
-        child: SizedBox(
-          width: 100.wp,
-          height: MediaQuery.of(context).size.height,
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 3.hp),
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => Get.focusScope?.unfocus(),
+          child: SizedBox(
+            width: 100.wp,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 3.hp),
             child: Form(
               key: controller.formKey,
               child: Column(
@@ -337,6 +337,7 @@ class SocialFormPage extends GetView<SocialFormController> {
               ),
             ),
           ),
+        ),
         ),
       ),
     );

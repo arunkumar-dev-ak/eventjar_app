@@ -236,17 +236,7 @@ class ConnectionController extends GetxController {
   }
 
   Future<void> refreshConnections() async {
-    // isLoading.value = true;
-    // // Simulate API
-    // await Future.delayed(const Duration(seconds: 1));
-    // state.sentRequests.value = _generateDummyRequests(10, true);
-    // state.receivedRequests.value = _generateDummyRequests(15, false);
-    // state.sentTotalPages.value = 3;
-    // state.receivedTotalPages.value = 4;
-    // state.pendingReceivedCount.value = state.receivedRequests
-    //     .where((r) => r.status == 'pending')
-    //     .length;
-    // isLoading.value = false;
+    await fetchConnections();
   }
 
   void navigateToSignInPage() {

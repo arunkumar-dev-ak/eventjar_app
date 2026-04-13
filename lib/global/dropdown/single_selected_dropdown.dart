@@ -204,22 +204,31 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                           selected != null &&
                           getKeyValue(item) == getKeyValue(selected);
 
+                      final isDark = Theme.of(context).brightness == Brightness.dark;
                       return AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         margin: const EdgeInsets.only(bottom: 12),
                         decoration: BoxDecoration(
-                          color: isSelectedItem ? selectedShade1 : AppColors.cardBg(context),
+                          color: isSelectedItem
+                              ? (isDark
+                                  ? headerColor.withValues(alpha: 0.15)
+                                  : selectedShade1)
+                              : AppColors.cardBg(context),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: isSelectedItem
-                                ? selectedShade3
+                                ? (isDark
+                                    ? headerColor.withValues(alpha: 0.5)
+                                    : selectedShade3)
                                 : AppColors.divider(context),
                             width: 1.5,
                           ),
                           boxShadow: isSelectedItem
                               ? [
                                   BoxShadow(
-                                    color: selectedShade1,
+                                    color: isDark
+                                        ? headerColor.withValues(alpha: 0.2)
+                                        : selectedShade1,
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),

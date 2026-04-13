@@ -26,10 +26,10 @@ class HomeContent extends StatelessWidget {
         );
       }
       if (controller.state.events.isEmpty) {
-        return SliverToBoxAdapter(
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: noEventsFoundWidget(),
+        return SliverFillRemaining(
+          hasScrollBody: false,
+          child: noEventsFoundWidget(
+            onRefresh: () => controller.onTabOpen(),
           ),
         );
       }

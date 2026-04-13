@@ -141,27 +141,27 @@ Widget homeContentPaidOrFreeButton({required String label}) {
   );
 }
 
-Widget noEventsFoundWidget() {
+Widget noEventsFoundWidget({VoidCallback? onRefresh}) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 60),
+    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
     child: Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         // SVG icon with container
         Container(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: AppColors.gradientDarkStart.withValues(alpha: 0.05),
             shape: BoxShape.circle,
           ),
           child: SvgPicture.asset(
             'assets/expressing-icons/no_event_found.svg',
-            height: 30.hp,
-            width: 120,
+            height: 15.hp,
+            width: 100,
             fit: BoxFit.contain,
           ),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 24),
         ShaderMask(
           shaderCallback: (bounds) =>
               AppColors.buttonGradient.createShader(bounds),
@@ -185,36 +185,41 @@ Widget noEventsFoundWidget() {
           ),
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: 32),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          decoration: BoxDecoration(
-            gradient: AppColors.buttonGradient,
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.gradientDarkEnd.withValues(alpha: 0.3),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
+        if (onRefresh != null) ...[
+          const SizedBox(height: 24),
+          GestureDetector(
+            onTap: onRefresh,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              decoration: BoxDecoration(
+                gradient: AppColors.buttonGradient,
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.gradientDarkEnd.withValues(alpha: 0.3),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.refresh_rounded, color: Colors.white, size: 18),
-              const SizedBox(width: 8),
-              Text(
-                'Pull to Refresh',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w600,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.refresh_rounded, color: Colors.white, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Refresh',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ],
     ),
   );

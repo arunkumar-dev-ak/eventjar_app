@@ -185,8 +185,14 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
   Widget _buildSwipeStack(List<Attendee> attendees, int totalCount) {
     _currentAttendees = attendees;
     return Obx(() {
-      final currentIndex = controller.state.attendeeCurrentIndex.value;
+      var currentIndex = controller.state.attendeeCurrentIndex.value;
       final searchExpanded = controller.state.attendeeSearchExpanded.value;
+
+      // Safety: clamp index within bounds
+      if (attendees.isNotEmpty && currentIndex >= attendees.length) {
+        currentIndex = attendees.length - 1;
+        controller.state.attendeeCurrentIndex.value = currentIndex;
+      }
 
       return Column(
         children: [

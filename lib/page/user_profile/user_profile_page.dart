@@ -148,7 +148,11 @@ class UserProfilePage extends GetView<UserProfileController> {
                         ),
                         // SizedBox(height: 2.hp),
                         _buildVersionFooter(context),
-                        SizedBox(height: 2.hp),
+                        SizedBox(
+                          height: kBottomNavigationBarHeight +
+                              MediaQuery.of(context).viewPadding.bottom +
+                              2.hp,
+                        ),
                       ],
                     ),
                   ),

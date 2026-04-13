@@ -25,10 +25,11 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
         backgroundColor: AppColors.cardBg(context),
         shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
-      body: GestureDetector(
-        onTap: () => Get.focusScope?.unfocus(),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 3.hp),
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => Get.focusScope?.unfocus(),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 3.hp),
           child: Form(
             key: controller.formKey,
             child: Column(
@@ -153,6 +154,7 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
               ],
             ),
           ),
+        ),
         ),
       ),
     );
