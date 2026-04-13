@@ -222,38 +222,37 @@ class SignInForm extends StatelessWidget {
             ),
 
             /*----- Social Logins -----*/
-            SizedBox(height: 3.hp),
+            // SizedBox(height: 3.hp),
 
-            Row(
-              children: [
-                Expanded(
-                  child: SocialButton(
-                    text: "Google",
-                    assetPath: "assets/app_icon/google.png",
-                    color: Colors.red,
-                    onTap: () => AuthService().signInWithGoogle(
-                      onSuccess: (idToken) =>
-                          controller.navigateToAuthProcessign(idToken),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 3.wp),
-                Obx(() {
-                  return Expanded(
-                    child: SocialButton(
-                      text: "LinkedIn",
-                      assetPath: "assets/app_icon/linkedin.png",
-                      color: Colors.blue,
-                      isLoading: controller.state.isLinkedinLoading.value,
-                      onTap: () {
-                        controller.handleLinkedIn();
-                      },
-                    ),
-                  );
-                }),
-              ],
-            ),
-
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: SocialButton(
+            //         text: "Continue With Google",
+            //         assetPath: "assets/app_icon/google.png",
+            //         color: Colors.red,
+            //         onTap: () => AuthService().signInWithGoogle(
+            //           onSuccess: (idToken) =>
+            //               controller.navigateToAuthProcessign(idToken),
+            //         ),
+            //       ),
+            //     ),
+            //     SizedBox(width: 3.wp),
+            //     Obx(() {
+            //       return Expanded(
+            //         child: SocialButton(
+            //           text: "LinkedIn",
+            //           assetPath: "assets/app_icon/linkedin.png",
+            //           color: Colors.blue,
+            //           isLoading: controller.state.isLinkedinLoading.value,
+            //           onTap: () {
+            //             controller.handleLinkedIn();
+            //           },
+            //         ),
+            //       );
+            //     }),
+            //   ],
+            // ),
             SizedBox(height: 4.hp),
             AuthSignUp(
               onPressed: () {

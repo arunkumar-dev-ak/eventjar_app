@@ -63,12 +63,12 @@ class CustomBottomNavigationBar extends StatelessWidget {
             isSelected: selectedIndex == 3,
             isFontAwesome: true,
           ),
-          // _createBottomNavigationItem(
-          //   filledIcon: Icons.account_balance_wallet,
-          //   outlinedIcon: Icons.account_balance_wallet_outlined,
-          //   label: "Budget",
-          //   isSelected: selectedIndex == 4,
-          // ),
+          _createBottomNavigationItem(
+            filledIcon: Icons.account_balance_wallet,
+            outlinedIcon: Icons.account_balance_wallet_outlined,
+            label: "Budget",
+            isSelected: selectedIndex == 4,
+          ),
         ],
         currentIndex: selectedIndex,
         onTap: (index) {

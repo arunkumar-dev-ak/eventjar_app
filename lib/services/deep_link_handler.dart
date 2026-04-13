@@ -35,16 +35,14 @@ class DeepLinkHandler {
     LoggerService.loggerInstance.dynamic_d("uriPath: ${uri.path}");
 
     if (uri.path == '/linkedin') {
-      final code = uri.queryParameters['code'];
+      final authSessionId = uri.queryParameters['auth_session_id'];
 
-      LoggerService.loggerInstance.dynamic_d("code: $code");
+      LoggerService.loggerInstance.dynamic_d("authSessionId: $authSessionId");
 
-      if (code != null) {
-        // 👉 Navigate using GetX
-        // Get.offAllNamed(RouteName.linkedinAuthHandlerPage, arguments: code);
+      if (authSessionId != null) {
         Get.toNamed(
           RouteName.authProcessingPage,
-          arguments: {'provider': 'linkedin', 'code': code},
+          arguments: {'provider': 'linkedin', 'authSessionId': authSessionId},
         )?.then((result) {
           if (result == "logged_in") {
             Navigator.pop(Get.context!, "logged_in");

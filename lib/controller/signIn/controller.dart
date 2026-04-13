@@ -171,7 +171,7 @@ class SignInController extends GetxController {
     final codeChallenge = await generateCodeChallenge();
     LoggerService.loggerInstance.dynamic_d(codeChallenge);
     final url =
-        "${backendBaseUrl()}auth/mobile/linkedin?platform=mobile&code_challenge=$codeChallenge";
+        "${backendBaseUrl()}auth/linkedin?platform=mobile&code_challenge=$codeChallenge";
     final Uri authUri = Uri.parse(url);
     try {
       if (await canLaunchUrl(authUri)) {

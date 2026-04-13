@@ -5,7 +5,6 @@ import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/global/device_helper.dart';
 import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/global/store/user_store.dart' show UserStore;
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/auth/login_model.dart';
 import 'package:eventjar/storage/storage_service.dart';
 
@@ -61,7 +60,7 @@ class AuthProcessignApi {
   }
 
   static Future<LoginResponse> linkedInSignIn({
-    String? code,
+    String? authSessionId,
     String? cacheKey,
     String? phone,
   }) async {
@@ -69,14 +68,13 @@ class AuthProcessignApi {
       final devicePlatform = getDevicePlatform();
       final token = await StorageService.to.getString(storageFcmToken);
       final deviceName = await getDeviceModel();
-      final codeVerifier = await StorageService.to.getString(pkceCodeVerifier);
 
-      LoggerService.loggerInstance.dynamic_d(codeVerifier);
+      final codeVerifier = await StorageService.to.getString(pkceCodeVerifier);
 
       final response = await _dio.post(
         '/auth/mobile/linkedin/verify',
         data: {
-          if (code != null) 'code': code,
+          if (authSessionId != null) 'authSessionId': authSessionId,
           if (codeVerifier != null) 'codeVerifier': codeVerifier,
           if (cacheKey != null) 'cacheKey': cacheKey,
           if (phone != null && phone.isNotEmpty) 'phone': phone,
