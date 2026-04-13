@@ -6,7 +6,7 @@ class BalanceCard extends StatelessWidget {
   final String name;
   final String email;
   final int amount;
-  final bool isOwed; // true = they owe you
+  final bool isOwed;
 
   const BalanceCard({
     super.key,
@@ -28,6 +28,7 @@ class BalanceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           /// 🔥 Avatar
           Container(
@@ -56,11 +57,12 @@ class BalanceCard extends StatelessWidget {
 
           SizedBox(width: 3.wp),
 
-          /// 🔥 Name + Email
+          /// 🔥 LEFT CONTENT (Name + Email + Actions)
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// Name
                 Text(
                   name,
                   style: TextStyle(
@@ -69,7 +71,10 @@ class BalanceCard extends StatelessWidget {
                     color: AppColors.textPrimary(context),
                   ),
                 ),
+
                 SizedBox(height: 0.4.hp),
+
+                /// Email
                 Text(
                   email,
                   style: TextStyle(
@@ -77,11 +82,50 @@ class BalanceCard extends StatelessWidget {
                     color: AppColors.textSecondary(context),
                   ),
                 ),
+
+                SizedBox(height: 0.8.hp),
+
+                /// 🔥 ACTION BADGES
+                Row(
+                  children: [
+                    /// 🔥 Remind (only if owed)
+                    if (isOwed) ...[
+                      _buildBadge(
+                        icon: Icons.notifications_none,
+                        label: "Remind",
+                        colors: [
+                          Colors.grey.withValues(alpha: 0.2),
+                          Colors.grey.withValues(alpha: 0.05),
+                        ],
+                        textColor: Colors.black,
+                        onTap: () {},
+                      ),
+                      SizedBox(width: 2.wp),
+                    ],
+
+                    /// 🔥 Record
+                    _buildBadge(
+                      icon: Icons.check_circle_outline,
+                      label: "Record",
+                      colors: isOwed
+                          ? [
+                              Colors.green.withValues(alpha: 0.2),
+                              Colors.green.withValues(alpha: 0.05),
+                            ]
+                          : [
+                              Colors.red.withValues(alpha: 0.2),
+                              Colors.red.withValues(alpha: 0.05),
+                            ],
+                      textColor: isOwed ? Colors.green : Colors.red,
+                      onTap: () {},
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
 
-          /// 🔥 Amount
+          /// 🔥 RIGHT (Amount only)
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -92,11 +136,13 @@ class BalanceCard extends StatelessWidget {
                   color: AppColors.textSecondary(context),
                 ),
               ),
+
               SizedBox(height: 0.4.hp),
+
               Text(
                 "₹$amount",
                 style: TextStyle(
-                  fontSize: 9.5.sp,
+                  fontSize: 10.sp,
                   fontWeight: FontWeight.bold,
                   color: isOwed ? Colors.green : Colors.red,
                 ),
@@ -104,6 +150,44 @@ class BalanceCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  /// 🔥 Reusable Badge Widget
+  Widget _buildBadge({
+    required IconData icon,
+    required String label,
+    required List<Color> colors,
+    required Color textColor,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 2.5.wp, vertical: 0.6.hp),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: colors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 10.sp, color: textColor),
+            SizedBox(width: 1.wp),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 7.sp,
+                fontWeight: FontWeight.w600,
+                color: textColor,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

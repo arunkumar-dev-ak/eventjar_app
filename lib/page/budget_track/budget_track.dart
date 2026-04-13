@@ -15,7 +15,7 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 5,
+      length: 4,
       child: Scaffold(
         backgroundColor: AppColors.scaffoldBg(context),
 
@@ -102,7 +102,6 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
                 TripsTab(),
                 ExpensesTab(),
                 BalancesTab(),
-                Center(child: Text("Settle Ups")),
               ],
             ),
           ),

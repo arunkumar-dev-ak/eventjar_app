@@ -10,7 +10,7 @@ class BudgetTrackController extends GetxController
 
   late TabController tabController;
 
-  final tabs = const ["Friends", "Trips", "Expenses", "Balances", "Settle Ups"];
+  final tabs = const ["Friends", "Trips", "Expenses", "Balances"];
 
   @override
   void onInit() {
