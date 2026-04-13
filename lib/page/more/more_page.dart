@@ -44,6 +44,7 @@ class MorePage extends GetView<MoreController> {
                         ),
                       ),
                       ShaderMask(
+                        blendMode: BlendMode.srcIn,
                         shaderCallback: (bounds) => const LinearGradient(
                           colors: [
                             AppColors.gradientDarkStart,
@@ -57,7 +58,6 @@ class MorePage extends GetView<MoreController> {
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
                             letterSpacing: -0.5,
-                            height: 1.2,
                           ),
                         ),
                       ),
@@ -239,7 +239,7 @@ class MorePage extends GetView<MoreController> {
                         _buildIconGrid(context, isDark, [
                           _GridItem(
                             icon: Icons.event_outlined,
-                            label: "Event",
+                            label: "Events",
                             onTap: controller.navigateToCategoryEvent,
                           ),
                         ]),

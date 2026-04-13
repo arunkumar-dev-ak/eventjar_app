@@ -23,9 +23,10 @@ class UserProfilePage extends GetView<UserProfileController> {
       backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
-          "Profile",
+          "My Profile",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
+        centerTitle: false,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.light,
@@ -37,18 +38,39 @@ class UserProfilePage extends GetView<UserProfileController> {
         ),
         elevation: 0,
         actions: [
-          Obx(() => IconButton(
-                icon: Icon(
-                  ThemeStore.to.isDarkMode
-                      ? Icons.light_mode_rounded
-                      : Icons.dark_mode_rounded,
-                  color: Colors.white,
+          Obx(() {
+            final mode = ThemeStore.to.themeMode;
+            final IconData icon = switch (mode) {
+              ThemeMode.light => Icons.light_mode_rounded,
+              ThemeMode.dark => Icons.dark_mode_rounded,
+              ThemeMode.system => Icons.phone_android_rounded,
+            };
+            return PopupMenuButton<ThemeMode>(
+              icon: Icon(icon, color: Colors.white),
+              tooltip: 'Theme',
+              onSelected: (selected) => ThemeStore.to.setThemeMode(selected),
+              itemBuilder: (_) => [
+                _buildThemeMenuItem(
+                  ThemeMode.light,
+                  Icons.light_mode_rounded,
+                  'Light',
+                  mode,
                 ),
-                onPressed: () => ThemeStore.to.toggleTheme(),
-                tooltip: ThemeStore.to.isDarkMode
-                    ? 'Switch to Light Mode'
-                    : 'Switch to Dark Mode',
-              )),
+                _buildThemeMenuItem(
+                  ThemeMode.dark,
+                  Icons.dark_mode_rounded,
+                  'Dark',
+                  mode,
+                ),
+                _buildThemeMenuItem(
+                  ThemeMode.system,
+                  Icons.phone_android_rounded,
+                  'System Default',
+                  mode,
+                ),
+              ],
+            );
+          }),
         ],
       ),
       body: Obx(() {
@@ -301,5 +323,38 @@ class UserProfilePage extends GetView<UserProfileController> {
         ),
       );
     });
+  }
+
+  PopupMenuItem<ThemeMode> _buildThemeMenuItem(
+    ThemeMode mode,
+    IconData icon,
+    String label,
+    ThemeMode currentMode,
+  ) {
+    final isSelected = mode == currentMode;
+    return PopupMenuItem<ThemeMode>(
+      value: mode,
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 20,
+            color: isSelected ? AppColors.gradientDarkStart : Colors.grey,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+              color: isSelected ? AppColors.gradientDarkStart : null,
+            ),
+          ),
+          if (isSelected) ...[
+            const Spacer(),
+            Icon(Icons.check, size: 18, color: AppColors.gradientDarkStart),
+          ],
+        ],
+      ),
+    );
   }
 }

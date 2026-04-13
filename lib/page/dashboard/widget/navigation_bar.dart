@@ -58,8 +58,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
                 ),
                 _buildNavItem(
                   context: context,
-                  filledIcon: LucideIcons.network,
-                  outlinedIcon: LucideIcons.network,
+                  filledIcon: Icons.groups_rounded,
+                  outlinedIcon: Icons.groups_outlined,
                   label: "Network",
                   index: 1,
                   selectedIndex: selectedIndex,
@@ -115,25 +115,9 @@ class CustomBottomNavigationBar extends StatelessWidget {
     final color = isSelected ? activeColor : inactiveColor;
     final icon = isSelected ? filledIcon : outlinedIcon;
 
-    Widget iconWidget;
-    if (isFontAwesome) {
-      iconWidget = FaIcon(icon, size: 26, color: color);
-    } else if (isSelected && icon == LucideIcons.network) {
-      // Lucide icons have no filled variant — simulate fill with stacked strokes
-      iconWidget = SizedBox(
-        width: 28,
-        height: 28,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Icon(icon, size: 28, color: color.withValues(alpha: 0.3)),
-            Icon(icon, size: 26, color: color),
-          ],
-        ),
-      );
-    } else {
-      iconWidget = Icon(icon, size: 28, color: color);
-    }
+    final Widget iconWidget = isFontAwesome
+        ? FaIcon(icon, size: 26, color: color)
+        : Icon(icon, size: 28, color: color);
 
     return GestureDetector(
       onTap: () => controller.changeTab(index),
