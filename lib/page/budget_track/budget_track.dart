@@ -4,6 +4,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/budget_track/balances/balances_tab.dart';
 import 'package:eventjar/page/budget_track/expenses/expenses_tab.dart';
 import 'package:eventjar/page/budget_track/friends/friends_tab.dart';
+import 'package:eventjar/page/budget_track/transactions/transaction_tab.dart';
 import 'package:eventjar/page/budget_track/trips/trips_tab.dart';
 import 'package:eventjar/page/budget_track/widget/budget_tabs.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         backgroundColor: AppColors.scaffoldBg(context),
 
@@ -24,59 +25,65 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
                 // ── SLIVER 1: Title (collapses on scroll) ──
-                SliverAppBar(
-                  backgroundColor: Colors.white,
-                  surfaceTintColor: Colors.transparent,
-                  elevation: 0,
-                  pinned: false, // <-- allows it to collapse
-                  floating: true,
-                  snap: true,
-                  expandedHeight: 70, // give it explicit height
-                  automaticallyImplyLeading: false,
+                Obx(() {
+                  final header = controller.getHeader(
+                    controller.state.selectedMainTab.value,
+                  );
 
-                  flexibleSpace: FlexibleSpaceBar(
-                    collapseMode: CollapseMode.pin,
-                    background: SafeArea(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                Icons.arrow_back,
-                                color: AppColors.textPrimary(context),
+                  return SliverAppBar(
+                    backgroundColor: Colors.white,
+                    surfaceTintColor: Colors.transparent,
+                    elevation: 0,
+                    floating: true,
+                    snap: true,
+                    expandedHeight: 70,
+                    automaticallyImplyLeading: false,
+
+                    flexibleSpace: FlexibleSpaceBar(
+                      collapseMode: CollapseMode.pin,
+                      background: SafeArea(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.arrow_back,
+                                  color: AppColors.textPrimary(context),
+                                ),
+                                onPressed: () => Navigator.pop(context),
                               ),
-                              onPressed: () => Navigator.pop(context),
-                            ),
-                            const SizedBox(width: 4),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Friends",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12.sp,
-                                    color: AppColors.textPrimary(context),
+                              const SizedBox(width: 4),
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    header["title"]!,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12.sp,
+                                      color: AppColors.textPrimary(context),
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  "Manage your social circle",
-                                  style: TextStyle(
-                                    fontSize: 8.sp,
-                                    color: AppColors.textSecondary(context),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    header["subtitle"]!,
+                                    style: TextStyle(
+                                      fontSize: 8.sp,
+                                      color: AppColors.textSecondary(context),
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                }),
 
                 // ── SLIVER 2: Tabs (always pinned) ──
                 SliverPersistentHeader(
@@ -102,6 +109,7 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
                 TripsTab(),
                 ExpensesTab(),
                 BalancesTab(),
+                TransactionTab(),
               ],
             ),
           ),

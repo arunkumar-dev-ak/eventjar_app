@@ -10,7 +10,13 @@ class BudgetTrackController extends GetxController
 
   late TabController tabController;
 
-  final tabs = const ["Friends", "Trips", "Expenses", "Balances"];
+  final tabs = const [
+    "Friends",
+    "Trips",
+    "Expenses",
+    "Balances",
+    "Transactions",
+  ];
 
   @override
   void onInit() {
@@ -46,6 +52,29 @@ class BudgetTrackController extends GetxController
       case 4:
         fetchSettlements();
         break;
+    }
+  }
+
+  Map<String, String> getHeader(int index) {
+    switch (index) {
+      case 0:
+        return {"title": "Friends", "subtitle": "Manage your social circle"};
+      case 1:
+        return {"title": "Trips", "subtitle": "Manage your social circle"};
+      case 2:
+        return {"title": "Expenses", "subtitle": "Manage and split trip costs"};
+      case 3:
+        return {
+          "title": "Balances",
+          "subtitle": "Track your shared expenses and settle up",
+        };
+      case 4:
+        return {
+          "title": "Transactions",
+          "subtitle": "View and manage all your payment activity",
+        };
+      default:
+        return {"title": "", "subtitle": ""};
     }
   }
 
