@@ -20,6 +20,7 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
   final Color? selectedShade2;
   final Color? selectedShade3;
   final Color? headerColor;
+  final Color? selectedDisplayColor;
   final double? borderWidth;
   final double? height;
   final double? selectedTextSize;
@@ -41,6 +42,7 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
     this.selectedShade2,
     this.selectedShade3,
     this.headerColor,
+    this.selectedDisplayColor,
     this.borderWidth,
     this.height,
     this.selectedTextSize,
@@ -95,7 +97,9 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                 style: TextStyle(
                   fontSize: selectedTextSize ?? 10.sp,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? primary : AppColors.textSecondary(context),
+                  color: isSelected
+                      ? selectedDisplayColor ?? primary
+                      : AppColors.textSecondary(context),
                 ),
               ),
 
@@ -105,7 +109,9 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                 child: Icon(
                   Icons.keyboard_arrow_down_rounded,
                   size: dropDownIconSize ?? 24,
-                  color: isSelected ? primary : AppColors.textHint(context),
+                  color: isSelected
+                      ? selectedDisplayColor ?? primary
+                      : AppColors.textHint(context),
                 ),
               ),
             ],
@@ -204,22 +210,23 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                           selected != null &&
                           getKeyValue(item) == getKeyValue(selected);
 
-                      final isDark = Theme.of(context).brightness == Brightness.dark;
+                      final isDark =
+                          Theme.of(context).brightness == Brightness.dark;
                       return AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         margin: const EdgeInsets.only(bottom: 12),
                         decoration: BoxDecoration(
                           color: isSelectedItem
                               ? (isDark
-                                  ? headerColor.withValues(alpha: 0.15)
-                                  : selectedShade1)
+                                    ? headerColor.withValues(alpha: 0.15)
+                                    : selectedShade1)
                               : AppColors.cardBg(context),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: isSelectedItem
                                 ? (isDark
-                                    ? headerColor.withValues(alpha: 0.5)
-                                    : selectedShade3)
+                                      ? headerColor.withValues(alpha: 0.5)
+                                      : selectedShade3)
                                 : AppColors.divider(context),
                             width: 1.5,
                           ),

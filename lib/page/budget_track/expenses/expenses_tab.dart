@@ -1,9 +1,11 @@
+import 'package:eventjar/controller/budget_track/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/budget_track/expenses/expenses_card.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class ExpensesTab extends StatelessWidget {
+class ExpensesTab extends GetView<BudgetTrackController> {
   const ExpensesTab({super.key});
 
   @override
@@ -18,7 +20,7 @@ class ExpensesTab extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.hp),
               decoration: BoxDecoration(
-                color: Colors.white, // 🔥 changed here
+                color: Colors.grey.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: AppColors.border(context),
@@ -48,23 +50,34 @@ class ExpensesTab extends StatelessWidget {
             const Spacer(),
 
             /// Add Button
-            ElevatedButton.icon(
-              onPressed: () {},
-              icon: Icon(Icons.add, size: 4.5.wp, color: Colors.white),
-              label: Text(
-                "Add",
-                style: TextStyle(fontSize: 8.5.sp, color: Colors.white),
+            Container(
+              decoration: BoxDecoration(
+                gradient: AppColors.buttonGradientFor(context),
+                borderRadius: BorderRadius.circular(18),
               ),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 4.wp,
-                  vertical: 0.8.hp,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  controller.navigateToCreateExpense();
+                },
+                icon: Icon(Icons.add, size: 4.5.wp, color: Colors.white),
+                label: Text(
+                  "Add",
+                  style: TextStyle(fontSize: 8.5.sp, color: Colors.white),
                 ),
-                backgroundColor: AppColors.gradientDarkStart,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 4.wp,
+                    vertical: 0.8.hp,
+                  ),
+
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  elevation: 0,
                 ),
-                elevation: 0,
               ),
             ),
           ],

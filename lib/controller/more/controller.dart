@@ -21,9 +21,9 @@ class MoreController extends GetxController {
   }
 
   // Budget
-  void navigateToBudgetTrack() {
-    _requireLogin(() => Get.toNamed(RouteName.budgetTrackPage));
-  }
+  // void navigateToBudgetTrack() {
+  //   _requireLogin(() => Get.toNamed(RouteName.budgetTrackPage));
+  // }
 
   // Contact
   void navigateToAddContact() {
@@ -44,7 +44,10 @@ class MoreController extends GetxController {
 
   // Network — each item passes the correct statusCard filter
   void navigateToTotalContacts() {
-    _requireLogin(() => Get.toNamed(RouteName.contactPage, arguments: {
+    _requireLogin(
+      () => Get.toNamed(
+        RouteName.contactPage,
+        arguments: {
           'statusCard': const NetworkStatusCardData(
             key: 'totalContacts',
             label: 'Total Contacts',
@@ -52,11 +55,16 @@ class MoreController extends GetxController {
             icon: Icons.people,
             color: Colors.blue,
           ),
-        }));
+        },
+      ),
+    );
   }
 
   void navigateToNewContacts() {
-    _requireLogin(() => Get.toNamed(RouteName.contactPage, arguments: {
+    _requireLogin(
+      () => Get.toNamed(
+        RouteName.contactPage,
+        arguments: {
           'statusCard': const NetworkStatusCardData(
             key: 'new',
             label: 'New',
@@ -64,11 +72,16 @@ class MoreController extends GetxController {
             icon: Icons.fiber_new,
             color: Colors.green,
           ),
-        }));
+        },
+      ),
+    );
   }
 
   void navigateTo24hFollowup() {
-    _requireLogin(() => Get.toNamed(RouteName.contactPage, arguments: {
+    _requireLogin(
+      () => Get.toNamed(
+        RouteName.contactPage,
+        arguments: {
           'statusCard': const NetworkStatusCardData(
             key: 'followup24h',
             label: '24H Followup',
@@ -76,11 +89,16 @@ class MoreController extends GetxController {
             icon: Icons.access_time,
             color: Colors.orange,
           ),
-        }));
+        },
+      ),
+    );
   }
 
   void navigateTo7dFollowup() {
-    _requireLogin(() => Get.toNamed(RouteName.contactPage, arguments: {
+    _requireLogin(
+      () => Get.toNamed(
+        RouteName.contactPage,
+        arguments: {
           'statusCard': const NetworkStatusCardData(
             key: 'followup7d',
             label: '7D Followup',
@@ -88,11 +106,16 @@ class MoreController extends GetxController {
             icon: Icons.calendar_view_week,
             color: Colors.purple,
           ),
-        }));
+        },
+      ),
+    );
   }
 
   void navigateTo30dFollowup() {
-    _requireLogin(() => Get.toNamed(RouteName.contactPage, arguments: {
+    _requireLogin(
+      () => Get.toNamed(
+        RouteName.contactPage,
+        arguments: {
           'statusCard': const NetworkStatusCardData(
             key: 'followup30d',
             label: '30D Followup',
@@ -100,11 +123,16 @@ class MoreController extends GetxController {
             icon: Icons.calendar_month,
             color: Colors.teal,
           ),
-        }));
+        },
+      ),
+    );
   }
 
   void navigateToQualifiedContacts() {
-    _requireLogin(() => Get.toNamed(RouteName.contactPage, arguments: {
+    _requireLogin(
+      () => Get.toNamed(
+        RouteName.contactPage,
+        arguments: {
           'statusCard': const NetworkStatusCardData(
             key: 'qualified',
             label: 'Qualified',
@@ -112,7 +140,9 @@ class MoreController extends GetxController {
             icon: Icons.verified,
             color: Colors.indigo,
           ),
-        }));
+        },
+      ),
+    );
   }
 
   // Connections
@@ -130,52 +160,66 @@ class MoreController extends GetxController {
 
   // Meeting
   void navigateToAllMeetings() {
-    _requireLogin(() => Get.toNamed(
-          RouteName.meetingPage,
-          arguments: {'status': MeetingStatus.ALL},
-        ));
+    _requireLogin(
+      () => Get.toNamed(
+        RouteName.meetingPage,
+        arguments: {'status': MeetingStatus.ALL},
+      ),
+    );
   }
 
   void navigateToScheduledMeetings() {
-    _requireLogin(() => Get.toNamed(
-          RouteName.meetingPage,
-          arguments: {'status': MeetingStatus.SCHEDULED},
-        ));
+    _requireLogin(
+      () => Get.toNamed(
+        RouteName.meetingPage,
+        arguments: {'status': MeetingStatus.SCHEDULED},
+      ),
+    );
   }
 
   void navigateToConfirmedMeetings() {
-    _requireLogin(() => Get.toNamed(
-          RouteName.meetingPage,
-          arguments: {'status': MeetingStatus.CONFIRMED},
-        ));
+    _requireLogin(
+      () => Get.toNamed(
+        RouteName.meetingPage,
+        arguments: {'status': MeetingStatus.CONFIRMED},
+      ),
+    );
   }
 
   void navigateToDeclinedMeetings() {
-    _requireLogin(() => Get.toNamed(
-          RouteName.meetingPage,
-          arguments: {'status': MeetingStatus.DECLINED},
-        ));
+    _requireLogin(
+      () => Get.toNamed(
+        RouteName.meetingPage,
+        arguments: {'status': MeetingStatus.DECLINED},
+      ),
+    );
   }
 
   void navigateToCancelledMeetings() {
-    _requireLogin(() => Get.toNamed(
-          RouteName.meetingPage,
-          arguments: {'status': MeetingStatus.CANCELLED},
-        ));
+    _requireLogin(
+      () => Get.toNamed(
+        RouteName.meetingPage,
+        arguments: {'status': MeetingStatus.CANCELLED},
+      ),
+    );
   }
 
   void navigateToCompletedMeetings() {
-    _requireLogin(() => Get.toNamed(
-          RouteName.meetingPage,
-          arguments: {'status': MeetingStatus.COMPLETED},
-        ));
+    _requireLogin(
+      () => Get.toNamed(
+        RouteName.meetingPage,
+        arguments: {'status': MeetingStatus.COMPLETED},
+      ),
+    );
   }
 
   void navigateToNoShowMeetings() {
-    _requireLogin(() => Get.toNamed(
-          RouteName.meetingPage,
-          arguments: {'status': MeetingStatus.NO_SHOW},
-        ));
+    _requireLogin(
+      () => Get.toNamed(
+        RouteName.meetingPage,
+        arguments: {'status': MeetingStatus.NO_SHOW},
+      ),
+    );
   }
 
   // Others

@@ -69,7 +69,7 @@ class RouteName {
   static const budgetTrackPage = '/budgetTrackPage';
   static const addFriendPage = '/addFriendPage';
   static const createTripPage = '/createTripPage';
-  static const addExpensePage = '/addExpensePage';
+  static const createExpensePage = '/createExpensePage';
 
   //more page
   static const morePage = '/morePage';

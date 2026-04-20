@@ -1,6 +1,8 @@
 import 'package:eventjar/controller/budget_track/state.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_ticket_provider_mixin.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
@@ -106,6 +108,37 @@ class BudgetTrackController extends GetxController
 
   void fetchSettlements() {
     LoggerService.loggerInstance.dynamic_d("Fetching Settle Ups...");
+  }
+
+  //navigation
+  void navigateToAddFriend() {
+    Get.toNamed(RouteName.addFriendPage)?.then((result) async {
+      // if (result == "logged_in") {
+      //   await fetchContactsOnFirstLoad();
+      // } else {
+      //   Get.back();
+      // }
+    });
+  }
+
+  void navigateToCreateTrip() {
+    Get.toNamed(RouteName.createTripPage)?.then((result) async {
+      // if (result == "logged_in") {
+      //   await fetchContactsOnFirstLoad();
+      // } else {
+      //   Get.back();
+      // }
+    });
+  }
+
+  void navigateToCreateExpense() {
+    Get.toNamed(RouteName.createExpensePage)?.then((result) async {
+      // if (result == "logged_in") {
+      //   await fetchContactsOnFirstLoad();
+      // } else {
+      //   Get.back();
+      // }
+    });
   }
 
   @override

@@ -17,7 +17,7 @@ class FriendsTab extends GetView<BudgetTrackController> {
           Container(
             padding: EdgeInsets.symmetric(horizontal: 2.wp, vertical: 1.hp),
             decoration: BoxDecoration(
-              color: AppColors.cardBg(context),
+              color: AppColors.scaffoldBg(context),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -56,7 +56,9 @@ class FriendsTab extends GetView<BudgetTrackController> {
                 const Spacer(),
 
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    controller.navigateToAddFriend();
+                  },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 160),
                     padding: EdgeInsets.symmetric(

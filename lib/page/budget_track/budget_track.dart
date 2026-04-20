@@ -31,7 +31,7 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
                   );
 
                   return SliverAppBar(
-                    backgroundColor: Colors.white,
+                    backgroundColor: AppColors.scaffoldBg(context),
                     surfaceTintColor: Colors.transparent,
                     elevation: 0,
                     floating: true,
@@ -90,7 +90,7 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
                   pinned: true,
                   delegate: _TabBarDelegate(
                     child: Container(
-                      color: Colors.white,
+                      color: AppColors.scaffoldBg(context),
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: BudgetTabs(),

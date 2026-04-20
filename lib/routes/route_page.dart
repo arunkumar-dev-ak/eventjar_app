@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/add_contact/binding.dart';
+import 'package:eventjar/controller/add_friend/binding.dart';
 import 'package:eventjar/controller/auth_processing/binding.dart';
 import 'package:eventjar/controller/budget_track/binding.dart';
 import 'package:eventjar/controller/change_password/binding.dart';
@@ -6,6 +7,8 @@ import 'package:eventjar/controller/checkout/binding.dart';
 import 'package:eventjar/controller/connection/binding.dart';
 import 'package:eventjar/controller/contact/binding.dart';
 import 'package:eventjar/controller/contact_list_meeting/binding.dart';
+import 'package:eventjar/controller/create_expense/binding.dart';
+import 'package:eventjar/controller/create_trip/binding.dart';
 import 'package:eventjar/controller/dashboard/binding.dart';
 import 'package:eventjar/controller/email_notification/binding.dart';
 import 'package:eventjar/controller/event_info/binding.dart';
@@ -34,6 +37,7 @@ import 'package:eventjar/controller/signUp/binding.dart';
 import 'package:eventjar/controller/splashScreen/binding.dart';
 import 'package:eventjar/controller/thank_you_message/binding.dart';
 import 'package:eventjar/page/add_contact/add_contact.dart';
+import 'package:eventjar/page/add_friend/add_friend_page.dart';
 import 'package:eventjar/page/auth_processing/auth_processing.dart';
 import 'package:eventjar/page/budget_track/budget_track.dart';
 import 'package:eventjar/page/change_password/change_password.dart';
@@ -41,6 +45,8 @@ import 'package:eventjar/page/checkout/checkout_page.dart';
 import 'package:eventjar/page/connection/connection_page.dart';
 import 'package:eventjar/page/contact/contact_page.dart';
 import 'package:eventjar/page/contact_list_meeting/contact_list_meeting.dart';
+import 'package:eventjar/page/create_expense/create_expense_page.dart';
+import 'package:eventjar/page/create_trip/create_trip_page.dart';
 import 'package:eventjar/page/dashboard/dashboard_page.dart';
 import 'package:eventjar/page/email_notification/email_notification_page.dart';
 import 'package:eventjar/page/event_info/event_info.dart';
@@ -337,6 +343,24 @@ class RoutePage {
       name: RouteName.budgetTrackPage,
       page: () => BudgetTrackPage(),
       binding: BudgetTrackBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.addFriendPage,
+      page: () => AddFriendPage(),
+      binding: AddFriendBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.createTripPage,
+      page: () => CreateTripPage(),
+      binding: CreateTripBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.createExpensePage,
+      page: () => CreateExpensePage(),
+      binding: CreateExpenseBinding(),
       middlewares: [LoginMiddleware()],
     ),
 

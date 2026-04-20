@@ -106,22 +106,22 @@ class AppColors {
   /// AppBar gradient for dark mode
   static LinearGradient appBarGradientFor(BuildContext context) =>
       _isDark(context)
-          ? const LinearGradient(
-              colors: [Color(0xFF1A3A6B), Color(0xFF1A5A3A)],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            )
-          : appBarGradient;
+      ? const LinearGradient(
+          colors: [Color(0xFF1A3A6B), Color(0xFF1A5A3A)],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        )
+      : appBarGradient;
 
   /// Button gradient for dark mode
   static LinearGradient buttonGradientFor(BuildContext context) =>
       _isDark(context)
-          ? const LinearGradient(
-              colors: [Color(0xFF2A66CF), Color(0xFF1E8B5D)],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            )
-          : buttonGradient;
+      ? const LinearGradient(
+          colors: [Color(0xFF2A66CF), Color(0xFF1E8B5D)],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        )
+      : buttonGradient;
 
   static bool _isDark(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark;
@@ -131,19 +131,30 @@ class AppColors {
 
   // ── Static getters (no context needed, uses Get.isDarkMode) ──
 
-  static Color get scaffoldBgStatic => isDark ? darkBackground : Colors.grey.shade50;
+  static Color get scaffoldBgStatic =>
+      isDark ? darkBackground : Colors.grey.shade50;
   static Color get cardBgStatic => isDark ? darkCard : Colors.white;
-  static Color get cardElevatedBgStatic => isDark ? darkCardElevated : Colors.white;
+  static Color get cardElevatedBgStatic =>
+      isDark ? darkCardElevated : Colors.white;
   static Color get textPrimaryStatic => isDark ? Colors.white : Colors.black87;
-  static Color get textSecondaryStatic => isDark ? Colors.grey.shade400 : Colors.grey.shade600;
-  static Color get textHintStatic => isDark ? Colors.grey.shade500 : Colors.grey.shade500;
+  static Color get textSecondaryStatic =>
+      isDark ? Colors.grey.shade400 : Colors.grey.shade600;
+  static Color get textHintStatic =>
+      isDark ? Colors.grey.shade500 : Colors.grey.shade500;
   static Color get dividerStatic => isDark ? darkDivider : Colors.grey.shade200;
   static Color get borderStatic => isDark ? darkBorder : Colors.grey.shade300;
-  static Color get shadowStatic => isDark ? Colors.transparent : Colors.grey.shade200;
-  static Color get iconMutedStatic => isDark ? Colors.grey.shade400 : Colors.grey.shade500;
-  static Color get lightBlueBgStatic => isDark ? const Color(0xFF1A2A3A) : Colors.blue.shade50;
-  static Color get lightBlueBorderStatic => isDark ? const Color(0xFF2A3A4A) : Colors.blue.shade100;
-  static Color get chipBgStatic => isDark ? darkCardElevated : Colors.grey.shade100;
-  static Color get inputBgStatic => isDark ? darkCardElevated : Colors.grey.shade100;
-  static Color get greyBgStatic => isDark ? darkCardElevated : Colors.grey.shade200;
+  static Color get shadowStatic =>
+      isDark ? Colors.transparent : Colors.grey.shade200;
+  static Color get iconMutedStatic =>
+      isDark ? Colors.grey.shade400 : Colors.grey.shade500;
+  static Color get lightBlueBgStatic =>
+      isDark ? const Color(0xFF1A2A3A) : Colors.blue.shade50;
+  static Color get lightBlueBorderStatic =>
+      isDark ? const Color(0xFF2A3A4A) : Colors.blue.shade100;
+  static Color get chipBgStatic =>
+      isDark ? darkCardElevated : Colors.grey.shade100;
+  static Color get inputBgStatic =>
+      isDark ? darkCardElevated : Colors.grey.shade100;
+  static Color get greyBgStatic =>
+      isDark ? darkCardElevated : Colors.grey.shade200;
 }

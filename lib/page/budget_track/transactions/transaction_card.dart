@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -78,7 +79,7 @@ class TransactionCard extends StatelessWidget {
       padding: EdgeInsets.all(3.wp),
       margin: EdgeInsets.only(bottom: 1.2.hp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBg(context),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(

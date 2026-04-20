@@ -74,37 +74,37 @@ class MorePage extends GetView<MoreController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Budget Section
-                        _buildSectionTitle(context, "BUDGET"),
-                        SizedBox(height: 1.5.hp),
-                        _buildIconGrid(context, isDark, [
-                          _GridItem(
-                            icon: Icons.people_outline,
-                            label: "Friends",
-                            onTap: controller.navigateToBudgetTrack,
-                          ),
-                          _GridItem(
-                            icon: Icons.flight_outlined,
-                            label: "Trips",
-                            onTap: controller.navigateToBudgetTrack,
-                          ),
-                          _GridItem(
-                            icon: Icons.receipt_long_outlined,
-                            label: "Expenses",
-                            onTap: controller.navigateToBudgetTrack,
-                          ),
-                          _GridItem(
-                            icon: Icons.account_balance_wallet_outlined,
-                            label: "Balance",
-                            onTap: controller.navigateToBudgetTrack,
-                          ),
-                          _GridItem(
-                            icon: Icons.handshake_outlined,
-                            label: "Settle Ups",
-                            onTap: controller.navigateToBudgetTrack,
-                          ),
-                        ]),
+                        // _buildSectionTitle(context, "BUDGET"),
+                        // SizedBox(height: 1.5.hp),
+                        // _buildIconGrid(context, isDark, [
+                        //   _GridItem(
+                        //     icon: Icons.people_outline,
+                        //     label: "Friends",
+                        //     onTap: controller.navigateToBudgetTrack,
+                        //   ),
+                        //   _GridItem(
+                        //     icon: Icons.flight_outlined,
+                        //     label: "Trips",
+                        //     onTap: controller.navigateToBudgetTrack,
+                        //   ),
+                        //   _GridItem(
+                        //     icon: Icons.receipt_long_outlined,
+                        //     label: "Expenses",
+                        //     onTap: controller.navigateToBudgetTrack,
+                        //   ),
+                        //   _GridItem(
+                        //     icon: Icons.account_balance_wallet_outlined,
+                        //     label: "Balance",
+                        //     onTap: controller.navigateToBudgetTrack,
+                        //   ),
+                        //   _GridItem(
+                        //     icon: Icons.handshake_outlined,
+                        //     label: "Settle Ups",
+                        //     onTap: controller.navigateToBudgetTrack,
+                        //   ),
+                        // ]),
 
-                        SizedBox(height: 3.hp),
+                        // SizedBox(height: 3.hp),
 
                         // Your Contact Section
                         _buildSectionTitle(context, "CONTACT"),

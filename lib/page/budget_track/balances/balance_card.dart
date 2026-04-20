@@ -21,6 +21,7 @@ class BalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: EdgeInsets.all(3.wp),
       decoration: BoxDecoration(
@@ -94,10 +95,15 @@ class BalanceCard extends StatelessWidget {
                         icon: Icons.notifications_none,
                         label: "Remind",
                         colors: [
-                          Colors.grey.withValues(alpha: 0.2),
-                          Colors.grey.withValues(alpha: 0.05),
+                          isDark
+                              ? Colors.white.withValues(alpha: 0.15)
+                              : Colors.grey.withValues(alpha: 0.2),
+                          isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.grey.withValues(alpha: 0.05),
                         ],
-                        textColor: Colors.black,
+
+                        textColor: isDark ? Colors.white : Colors.black,
                         onTap: () {},
                       ),
                       SizedBox(width: 2.wp),
