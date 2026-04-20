@@ -87,6 +87,7 @@ dependencies:
   animate_do: ^4.2.0
   clarity_flutter: ^1.7.1
   crypto: ^3.0.7
+  home_widget: ^0.7.0
 
 dev_dependencies:
   flutter_test:

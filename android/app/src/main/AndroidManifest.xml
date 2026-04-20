@@ -64,7 +64,28 @@
 
                 <data android:scheme="myeventjar" android:host="auth" />
             </intent-filter>
+            <!-- Home screen widget deep link -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="myeventjar" android:host="widget" />
+            </intent-filter>
         </activity>
+
+        <!-- Home screen widget -->
+        <receiver
+            android:name=".EventjarWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/eventjar_widget_info" />
+        </receiver>
         <!-- UCrop activity for image_cropper -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"

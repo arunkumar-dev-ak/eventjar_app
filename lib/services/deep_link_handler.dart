@@ -34,6 +34,11 @@ class DeepLinkHandler {
     LoggerService.loggerInstance.dynamic_d("DeepLinkHandler: $uri");
     LoggerService.loggerInstance.dynamic_d("uriPath: ${uri.path}");
 
+    if (uri.host == 'widget') {
+      _handleWidgetAction(uri.queryParameters['action']);
+      return;
+    }
+
     if (uri.path == '/linkedin') {
       final authSessionId = uri.queryParameters['auth_session_id'];
 
@@ -49,6 +54,24 @@ class DeepLinkHandler {
           }
         });
       }
+    }
+  }
+
+  void _handleWidgetAction(String? action) {
+    LoggerService.loggerInstance.dynamic_d("Widget action: $action");
+    switch (action) {
+      case 'scan_qr':
+        Get.toNamed(RouteName.qrDashboardPage);
+        break;
+      case 'add_contact':
+        Get.toNamed(RouteName.addContactPage);
+        break;
+      case 'nfc_tap':
+        Get.toNamed(RouteName.nfcReadPage);
+        break;
+      case 'scan_card':
+        Get.toNamed(RouteName.scanCardPage);
+        break;
     }
   }
 }
