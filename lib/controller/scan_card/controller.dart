@@ -1,11 +1,14 @@
 import 'dart:io';
 
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/storage/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
+import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:showcaseview/showcaseview.dart';
 import '../../model/card_info.dart';
 import '../../model/contact/mobile_contact_model.dart';
 import '../../routes/route_name.dart';
@@ -25,6 +28,45 @@ class ScanCardController extends GetxController
 
   Color primaryColor = Color(0xFF1C56BF);
   Color secondaryColor = Color(0xFF167B4D);
+
+  // Tour / showcase
+  static const String _tourSeenStorageKey = 'scan_card_tour_seen_v1';
+  final GlobalKey tourTipsKey = GlobalKey();
+  final GlobalKey tourCameraKey = GlobalKey();
+  final GlobalKey tourGalleryKey = GlobalKey();
+  final GlobalKey tourHelpKey = GlobalKey();
+
+  Future<bool> isTourSeen() async {
+    final value = await StorageService.to.getString(_tourSeenStorageKey);
+    return value == '1';
+  }
+
+  Future<void> markTourSeen() async {
+    await StorageService.to.setString(_tourSeenStorageKey, '1');
+  }
+
+  Future<void> maybeStartTour(BuildContext context) async {
+    if (await isTourSeen()) return;
+    if (!context.mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!context.mounted) return;
+      ShowCaseWidget.of(context).startShowCase([
+        tourTipsKey,
+        tourCameraKey,
+        tourGalleryKey,
+        tourHelpKey,
+      ]);
+    });
+  }
+
+  void startTourNow(BuildContext context) {
+    ShowCaseWidget.of(context).startShowCase([
+      tourTipsKey,
+      tourCameraKey,
+      tourGalleryKey,
+      tourHelpKey,
+    ]);
+  }
 
   AnimationController? _scanLineController;
   AnimationController? _fadeController;
@@ -82,7 +124,32 @@ class ScanCardController extends GetxController
   }
 
   Future<void> pickImageFromCamera() async {
-    await _pickAndProcessImage(ImageSource.camera);
+    try {
+      errorMessage.value = '';
+
+      // Native doc scanner: auto-detects the card edges, lets the user nudge
+      // corners if needed, perspective-corrects, and returns a cropped image.
+      // iOS is pinned to max-quality JPG so the saved image stays sharp and
+      // all text on the card remains readable.
+      final paths = await CunningDocumentScanner.getPictures(
+        noOfPages: 1,
+        isGalleryImportAllowed: false,
+        iosScannerOptions: IosScannerOptions(
+          imageFormat: IosImageFormat.jpg,
+          jpgCompressionQuality: 1.0,
+        ),
+      );
+
+      if (paths == null || paths.isEmpty) return;
+
+      isLoading.value = true;
+      selectedImage.value = File(paths.first);
+      await _processImage(paths.first);
+    } catch (e) {
+      errorMessage.value = 'Error capturing image: $e';
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> pickImageFromGallery() async {
@@ -419,18 +486,31 @@ class ScanCardController extends GetxController
       caseSensitive: false,
     );
 
-    for (final line in lines) {
-      final trimmedLine = line.trim();
+    for (final rawLine in lines) {
+      final rawTrimmed = rawLine.trim();
 
       // Skip empty lines
-      if (trimmedLine.isEmpty) continue;
+      if (rawTrimmed.isEmpty) continue;
 
       // Skip lines with email or website
-      if (trimmedLine.contains('@') ||
-          trimmedLine.toLowerCase().contains('www') ||
-          trimmedLine.toLowerCase().contains('http')) {
+      if (rawTrimmed.contains('@') ||
+          rawTrimmed.toLowerCase().contains('www') ||
+          rawTrimmed.toLowerCase().contains('http')) {
         continue;
       }
+
+      // Normalize OCR-read trunk prefix "(0)" / "(O)" / "(o)" BEFORE the
+      // number-extraction regexes run. Without this, lines like
+      // "+94 (O) 70 472 5630" don't match the international pattern (the "O"
+      // breaks the digit-only run), so the regex falls back to grabbing just
+      // "70 472 5630" — losing "+94" — and the phonenumber library then
+      // mis-parses the naked 9-digit national as Australia (+61). The same
+      // stripper exists in _parsePhoneWithLibrary but runs too late, after
+      // the prefix has already been dropped.
+      final trimmedLine = rawTrimmed.replaceAll(
+        RegExp(r'\([0Oo]\)\s*'),
+        '',
+      );
 
       final isMobileLine = mobilePrefixRegex.hasMatch(trimmedLine);
       final isLandlineLine = landlinePrefixRegex.hasMatch(trimmedLine);

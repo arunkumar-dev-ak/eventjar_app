@@ -5,11 +5,13 @@ import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/model/contact/qr_contact_model.dart';
 import 'package:eventjar/services/encryption_service.dart';
+import 'package:eventjar/storage/storage_service.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../../routes/route_name.dart';
 
@@ -21,6 +23,48 @@ class QrScanScreenController extends GetxController
   MobileScannerController? scannerController;
 
   final QrDashboardController qrDashboard = Get.find();
+
+  // Tour / showcase
+  static const String _tourSeenStorageKey = 'scan_qr_tour_seen_v1';
+  final GlobalKey tourCameraKey = GlobalKey();
+  final GlobalKey tourGalleryKey = GlobalKey();
+  // Attached inside ScanQrPage under its ShowCaseWidget. Used by the
+  // QrCodePage AppBar (which is outside this ShowCaseWidget) so
+  // replayTour() can resolve a descendant context.
+  final GlobalKey scanQrTourScopeKey = GlobalKey();
+
+  List<GlobalKey> get _tourSequence => [tourCameraKey, tourGalleryKey];
+
+  Future<bool> isTourSeen() async {
+    final value = await StorageService.to.getString(_tourSeenStorageKey);
+    return value == '1';
+  }
+
+  Future<void> markTourSeen() async {
+    await StorageService.to.setString(_tourSeenStorageKey, '1');
+  }
+
+  Future<void> maybeStartTour(BuildContext context) async {
+    if (await isTourSeen()) return;
+    if (!context.mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!context.mounted) return;
+      ShowCaseWidget.of(context).startShowCase(_tourSequence);
+    });
+  }
+
+  void startTourNow(BuildContext context) {
+    ShowCaseWidget.of(context).startShowCase(_tourSequence);
+  }
+
+  /// Replays the tour using a descendant context captured via
+  /// [scanQrTourScopeKey]. Safe to call from outside the ShowCaseWidget
+  /// subtree (e.g. the QrCodePage AppBar).
+  void replayTour() {
+    final ctx = scanQrTourScopeKey.currentContext;
+    if (ctx == null || !ctx.mounted) return;
+    ShowCaseWidget.of(ctx).startShowCase(_tourSequence);
+  }
 
   @override
   void onInit() {

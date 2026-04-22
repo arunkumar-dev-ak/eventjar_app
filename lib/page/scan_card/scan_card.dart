@@ -5,6 +5,7 @@ import '../../global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../../global/responsive/responsive.dart';
 
@@ -13,6 +14,18 @@ class ScanCard extends GetView<ScanCardController> {
 
   @override
   Widget build(BuildContext context) {
+    return ShowCaseWidget(
+      onFinish: () => controller.markTourSeen(),
+      disableMovingAnimation: false,
+      blurValue: 1,
+      builder: (ctx) => _TourAutoStart(
+        start: () => controller.maybeStartTour(ctx),
+        child: _buildScaffold(ctx),
+      ),
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -27,6 +40,30 @@ class ScanCard extends GetView<ScanCardController> {
           icon: const Icon(Icons.close_rounded, color: Colors.blueGrey),
           onPressed: () => Get.back(),
         ),
+        actions: [
+          Showcase(
+            key: controller.tourHelpKey,
+            title: 'Replay',
+            description: 'Tap anytime to see the tour again.',
+            targetShapeBorder: const CircleBorder(),
+            tooltipBackgroundColor: controller.primaryColor,
+            textColor: Colors.white,
+            titleTextStyle: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
+            ),
+            descTextStyle: const TextStyle(color: Colors.white, fontSize: 12),
+            child: IconButton(
+              icon: const Icon(
+                Icons.help_outline_rounded,
+                color: Colors.blueGrey,
+              ),
+              tooltip: 'Replay tour',
+              onPressed: () => controller.startTourNow(context),
+            ),
+          ),
+        ],
       ),
       body: Stack(
         children: [
@@ -99,7 +136,22 @@ class ScanCard extends GetView<ScanCardController> {
 
       // When no image selected, show combined placeholder with tips
       if (image == null) {
-        return _buildPlaceholder();
+        return Showcase(
+          key: controller.tourTipsKey,
+          title: 'Scan a visiting card',
+          description: 'Snap or upload — we extract name, phone & email.',
+          tooltipBackgroundColor: controller.primaryColor,
+          textColor: Colors.white,
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+          ),
+          descTextStyle: const TextStyle(color: Colors.white, fontSize: 12.5),
+          targetBorderRadius: BorderRadius.circular(20),
+          targetPadding: const EdgeInsets.all(4),
+          child: _buildPlaceholder(),
+        );
       }
 
       return Container(
@@ -355,22 +407,56 @@ class ScanCard extends GetView<ScanCardController> {
       return Row(
         children: [
           Expanded(
-            child: _buildAnimatedButton(
-              icon: Icons.camera_alt_rounded,
-              label: 'Camera',
-              onPressed: isLoading ? null : controller.pickImageFromCamera,
-              isPrimary: true,
-              delay: 0,
+            child: Showcase(
+              key: controller.tourCameraKey,
+              title: 'Use Camera',
+              description: 'Scan live. Edges auto-detected.',
+              tooltipBackgroundColor: controller.primaryColor,
+              textColor: Colors.white,
+              titleTextStyle: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+              ),
+              descTextStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 12.5,
+              ),
+              targetBorderRadius: BorderRadius.circular(16),
+              child: _buildAnimatedButton(
+                icon: Icons.camera_alt_rounded,
+                label: 'Camera',
+                onPressed: isLoading ? null : controller.pickImageFromCamera,
+                isPrimary: true,
+                delay: 0,
+              ),
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
-            child: _buildAnimatedButton(
-              icon: Icons.photo_library_rounded,
-              label: 'Gallery',
-              onPressed: isLoading ? null : controller.pickImageFromGallery,
-              isPrimary: false,
-              delay: 100,
+            child: Showcase(
+              key: controller.tourGalleryKey,
+              title: 'Use Gallery',
+              description: 'Pick an existing photo of the card.',
+              tooltipBackgroundColor: controller.secondaryColor,
+              textColor: Colors.white,
+              titleTextStyle: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+              ),
+              descTextStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 12.5,
+              ),
+              targetBorderRadius: BorderRadius.circular(16),
+              child: _buildAnimatedButton(
+                icon: Icons.photo_library_rounded,
+                label: 'Gallery',
+                onPressed: isLoading ? null : controller.pickImageFromGallery,
+                isPrimary: false,
+                delay: 100,
+              ),
             ),
           ),
         ],
@@ -919,6 +1005,31 @@ class ScanCard extends GetView<ScanCardController> {
       },
     );
   }
+}
+
+class _TourAutoStart extends StatefulWidget {
+  final Widget child;
+  final Future<void> Function() start;
+
+  const _TourAutoStart({required this.child, required this.start});
+
+  @override
+  State<_TourAutoStart> createState() => _TourAutoStartState();
+}
+
+class _TourAutoStartState extends State<_TourAutoStart> {
+  bool _triggered = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_triggered) return;
+    _triggered = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) => widget.start());
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 class _FloatingIconData {

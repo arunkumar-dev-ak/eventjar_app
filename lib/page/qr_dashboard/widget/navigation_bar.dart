@@ -5,6 +5,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class QrDashboardBottomNavigation extends StatelessWidget {
   final QrDashboardController controller = Get.find();
@@ -18,6 +19,7 @@ class QrDashboardBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final myQr = Get.find<MyQrScreenController>();
     return Obx(() {
       final selectedIndex = controller.state.selectedIndex.value;
 
@@ -44,30 +46,64 @@ class QrDashboardBottomNavigation extends StatelessWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: _buildNavButton(
-                    icon: Icons.qr_code,
-                    label: "My QR",
-                    isSelected: selectedIndex == 0,
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF00C853), Color(0xFF1DE9B6)],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
+                  child: Showcase(
+                    key: myQr.tourMyQrTabKey,
+                    title: 'My QR',
+                    description:
+                        'Your shareable QR lives here — show it to save your contact in others\' phones.',
+                    tooltipBackgroundColor: const Color(0xFF00C853),
+                    textColor: Colors.white,
+                    titleTextStyle: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
                     ),
-                    onTap: () => _onTabTap(0),
+                    descTextStyle: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                    child: _buildNavButton(
+                      icon: Icons.qr_code,
+                      label: "My QR",
+                      isSelected: selectedIndex == 0,
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF00C853), Color(0xFF1DE9B6)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      onTap: () => _onTabTap(0),
+                    ),
                   ),
                 ),
                 SizedBox(width: 12),
                 Expanded(
-                  child: _buildNavButton(
-                    icon: Icons.qr_code_scanner,
-                    label: "Scan QR",
-                    isSelected: selectedIndex == 1,
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF2196F3), Color(0xFF00BCD4)],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
+                  child: Showcase(
+                    key: myQr.tourScanQrTabKey,
+                    title: 'Scan QR',
+                    description:
+                        'Switch here to point your camera at someone else\'s QR and instantly add them.',
+                    tooltipBackgroundColor: const Color(0xFF2196F3),
+                    textColor: Colors.white,
+                    titleTextStyle: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
                     ),
-                    onTap: () => _onTabTap(1),
+                    descTextStyle: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                    child: _buildNavButton(
+                      icon: Icons.qr_code_scanner,
+                      label: "Scan QR",
+                      isSelected: selectedIndex == 1,
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF2196F3), Color(0xFF00BCD4)],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      onTap: () => _onTabTap(1),
+                    ),
                   ),
                 ),
               ],

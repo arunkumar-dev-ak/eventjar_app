@@ -3,6 +3,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class ScanQrBottomSection extends StatelessWidget {
   final ColorScheme colorScheme;
@@ -112,11 +113,24 @@ class ScanQrBottomSection extends StatelessWidget {
           SizedBox(height: 1.5.hp),
 
           // Scan from Gallery button (same as before)
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: Container(
-              decoration: BoxDecoration(
+          Showcase(
+            key: controller.tourGalleryKey,
+            title: 'From Gallery',
+            description: 'Pick an image containing a QR.',
+            tooltipBackgroundColor: AppColors.gradientLightStart,
+            textColor: Colors.white,
+            titleTextStyle: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
+            ),
+            descTextStyle: const TextStyle(color: Colors.white, fontSize: 12),
+            targetBorderRadius: BorderRadius.circular(16),
+            child: SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: Container(
+                decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
                     AppColors.gradientLightStart,
@@ -149,6 +163,7 @@ class ScanQrBottomSection extends StatelessWidget {
                 ),
               ),
             ),
+          ),
           ),
         ],
       ),

@@ -3,6 +3,7 @@ import 'package:eventjar/page/scan_qr/scan_qr_corner_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class ScanQrCameraSection extends StatelessWidget {
   final QrScanScreenController controller = Get.find();
@@ -59,16 +60,31 @@ class ScanQrCameraSection extends StatelessWidget {
 
           // Scan frame
           Center(
-            child: SizedBox(
-              width: size.width * 0.7,
-              height: size.width * 0.7,
-              child: Stack(
-                children: const [
-                  ScanQrCorner(alignment: Alignment.topLeft),
-                  ScanQrCorner(alignment: Alignment.topRight),
-                  ScanQrCorner(alignment: Alignment.bottomLeft),
-                  ScanQrCorner(alignment: Alignment.bottomRight),
-                ],
+            child: Showcase(
+              key: controller.tourCameraKey,
+              title: 'Scan a QR',
+              description: 'Hold the QR inside the frame.',
+              tooltipBackgroundColor: Colors.black87,
+              textColor: Colors.white,
+              titleTextStyle: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+              ),
+              descTextStyle: const TextStyle(color: Colors.white, fontSize: 12),
+              targetBorderRadius: BorderRadius.circular(12),
+              targetPadding: const EdgeInsets.all(4),
+              child: SizedBox(
+                width: size.width * 0.7,
+                height: size.width * 0.7,
+                child: Stack(
+                  children: const [
+                    ScanQrCorner(alignment: Alignment.topLeft),
+                    ScanQrCorner(alignment: Alignment.topRight),
+                    ScanQrCorner(alignment: Alignment.bottomLeft),
+                    ScanQrCorner(alignment: Alignment.bottomRight),
+                  ],
+                ),
               ),
             ),
           ),

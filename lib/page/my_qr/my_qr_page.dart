@@ -7,6 +7,7 @@ import 'package:eventjar/page/my_qr/my_qr_rotating_ring.dart';
 import 'package:eventjar/page/my_qr/my_qr_share_location.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 class MyQrCodePage extends GetView<MyQrScreenController> {
   const MyQrCodePage({super.key});
@@ -34,23 +35,51 @@ class MyQrCodePage extends GetView<MyQrScreenController> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Animated QR Code Container
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                // Rotating gradient ring
-                MyQrRotatingGradientBorder(size: size),
-                // Pulsing glow effect
-                MyQrGlowingPulse(size: size),
-                // QR container
-                MyQrCard(size: size),
-              ],
+            Showcase(
+              key: controller.tourQrKey,
+              title: 'Your QR Code',
+              description:
+                  'Show this to someone so they can scan and instantly save your contact in Eventjar.',
+              tooltipBackgroundColor: AppColors.gradientLightStart,
+              textColor: Colors.white,
+              titleTextStyle: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+              ),
+              descTextStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  MyQrRotatingGradientBorder(size: size),
+                  MyQrGlowingPulse(size: size),
+                  MyQrCard(size: size),
+                ],
+              ),
             ),
             SizedBox(height: 5.hp),
-            // Share Button
-            MyQrShareButton(),
+            Showcase(
+              key: controller.tourShareKey,
+              title: 'Share your QR',
+              description:
+                  'Tap to send the QR as an image via any app — WhatsApp, email, AirDrop, and more.',
+              tooltipBackgroundColor: AppColors.gradientLightEnd,
+              textColor: Colors.white,
+              titleTextStyle: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+              ),
+              descTextStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+              ),
+              child: MyQrShareButton(),
+            ),
             SizedBox(height: 3.hp),
-            // Hint Text
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Text(

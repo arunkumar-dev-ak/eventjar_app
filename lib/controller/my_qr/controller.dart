@@ -4,11 +4,13 @@ import 'package:eventjar/controller/my_qr/state.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/services/encryption_service.dart';
+import 'package:eventjar/storage/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'dart:ui' as ui;
 import 'package:share_plus/share_plus.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import 'package:path_provider/path_provider.dart';
 
@@ -22,6 +24,52 @@ class MyQrScreenController extends GetxController
   final GlobalKey qrKey = GlobalKey();
   final state = MyQrScreenState();
   final selectedTab = 0.obs;
+
+  // Tour / showcase
+  static const String _tourSeenStorageKey = 'my_qr_tour_seen_v1';
+  final GlobalKey tourQrKey = GlobalKey();
+  final GlobalKey tourShareKey = GlobalKey();
+  final GlobalKey tourMyQrTabKey = GlobalKey();
+  final GlobalKey tourScanQrTabKey = GlobalKey();
+  final GlobalKey tourHelpKey = GlobalKey();
+  // Attached inside QrCodePage under the ShowCaseWidget. Used by actions
+  // outside the showcase subtree (not needed currently, but kept so
+  // replayTour() can also be called from anywhere).
+  final GlobalKey myQrTourScopeKey = GlobalKey();
+
+  List<GlobalKey> get _tourSequence => [
+    tourQrKey,
+    tourShareKey,
+    tourMyQrTabKey,
+    tourScanQrTabKey,
+    tourHelpKey,
+  ];
+
+  Future<bool> isTourSeen() async {
+    final value = await StorageService.to.getString(_tourSeenStorageKey);
+    return value == '1';
+  }
+
+  Future<void> markTourSeen() async {
+    await StorageService.to.setString(_tourSeenStorageKey, '1');
+  }
+
+  Future<void> maybeStartTour(BuildContext context) async {
+    if (await isTourSeen()) return;
+    if (!context.mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!context.mounted) return;
+      ShowCaseWidget.of(context).startShowCase(_tourSequence);
+    });
+  }
+
+  /// Re-plays the tour from any context (e.g. QrCodePage AppBar) by resolving
+  /// a descendant context via [myQrTourScopeKey].
+  void replayTour() {
+    final ctx = myQrTourScopeKey.currentContext;
+    if (ctx == null || !ctx.mounted) return;
+    ShowCaseWidget.of(ctx).startShowCase(_tourSequence);
+  }
 
   @override
   void onInit() {
