@@ -6,4 +6,5 @@ class ViewTripState {
   RxInt expenseOpenedIndex = (-1).obs;
   RxSet<int> expenseSelectedIndexes = <int>{}.obs;
   RxInt selectedTab = 0.obs;
+  RxBool showLongPressHint = true.obs;
 }

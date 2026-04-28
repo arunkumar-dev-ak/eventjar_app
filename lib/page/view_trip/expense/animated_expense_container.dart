@@ -13,7 +13,7 @@ class ExpenseAnimatedBorderCard extends GetView<ViewTripController> {
     final baseColor = Colors.grey.shade400;
     return AnimatedBuilder(
       animation: controller.animation,
-      builder: (_, __) {
+      builder: (_, _) {
         return Container(
           margin: EdgeInsets.symmetric(vertical: 1.hp),
           padding: EdgeInsets.all(0.3.wp),

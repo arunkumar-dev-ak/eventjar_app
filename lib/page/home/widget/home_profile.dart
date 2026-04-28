@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/home/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/page/home/widget/scorecard/networking_scorecard.dart';
@@ -179,6 +180,7 @@ class HomeProfile extends GetView<HomeController> {
   Widget _buildSignInCard() {
     return GestureDetector(
       onTap: () {
+        HapticHelper.light();
         Get.toNamed(RouteName.signInPage);
       },
       child: Container(

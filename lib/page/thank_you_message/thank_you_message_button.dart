@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/thank_you_message/controller.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,7 +30,10 @@ class ThankYouMessageActionButtons extends StatelessWidget {
               ),
               onPressed: controller.state.isLoading.value
                   ? null
-                  : () => controller.resetForm(),
+                  : () {
+                      HapticHelper.light();
+                      controller.resetForm();
+                    },
               child: Text('Reset', style: TextStyle(fontSize: 10.sp)),
             ),
           ),
@@ -59,6 +63,7 @@ class ThankYouMessageActionButtons extends StatelessWidget {
                 ),
                 onPressed: isButtonEnabled
                     ? () async {
+                        HapticHelper.medium();
                         if (controller.formKey.currentState?.validate() ??
                             false) {
                           Get.focusScope?.unfocus();

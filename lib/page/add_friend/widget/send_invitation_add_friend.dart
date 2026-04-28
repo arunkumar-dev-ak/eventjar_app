@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/add_friend/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,7 +17,11 @@ class SendInvitationAddFriend extends GetView<AddFriendController> {
           // TITLE
           Text(
             "Send Invitation Via",
-            style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: 10.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary(context),
+            ),
           ),
 
           SizedBox(height: 1.5.hp),
@@ -27,6 +32,7 @@ class SendInvitationAddFriend extends GetView<AddFriendController> {
               // PHONE
               Expanded(
                 child: _sendViaCard(
+                  context: context,
                   title: "Phone",
                   icon: Icons.phone,
                   value: controller.state.sendViaPhone.value,
@@ -39,6 +45,7 @@ class SendInvitationAddFriend extends GetView<AddFriendController> {
               // EMAIL
               Expanded(
                 child: _sendViaCard(
+                  context: context,
                   title: "Email",
                   icon: Icons.email_outlined,
                   value: controller.state.sendViaEmail.value,
@@ -53,11 +60,17 @@ class SendInvitationAddFriend extends GetView<AddFriendController> {
   }
 
   Widget _sendViaCard({
+    required BuildContext context,
     required String title,
     required IconData icon,
     required bool value,
     required Function(bool) onChanged,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = isDark
+        ? const Color(0xFF5B9BEF)
+        : AppColors.gradientDarkStart;
+
     return GestureDetector(
       onTap: () {},
       child: Container(
@@ -66,13 +79,11 @@ class SendInvitationAddFriend extends GetView<AddFriendController> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: value
-                ? AppColors.gradientDarkStart.withValues(alpha: 0.5)
-                : Colors.grey.withValues(alpha: 0.4),
+                ? accent.withValues(alpha: 0.5)
+                : AppColors.border(context),
             width: 1.5,
           ),
-          color: value
-              ? AppColors.gradientDarkStart.withValues(alpha: 0.05)
-              : Colors.transparent,
+          color: value ? accent.withValues(alpha: 0.08) : Colors.transparent,
         ),
         child: Row(
           children: [
@@ -80,7 +91,7 @@ class SendInvitationAddFriend extends GetView<AddFriendController> {
             Icon(
               icon,
               size: 18,
-              color: value ? AppColors.gradientDarkStart : Colors.grey.shade600,
+              color: value ? accent : AppColors.iconMuted(context),
             ),
 
             SizedBox(width: 2.wp),
@@ -92,9 +103,7 @@ class SendInvitationAddFriend extends GetView<AddFriendController> {
                 style: TextStyle(
                   fontSize: 9.sp,
                   fontWeight: FontWeight.w500,
-                  color: value
-                      ? AppColors.gradientDarkStart
-                      : Colors.grey.shade700,
+                  color: value ? accent : AppColors.textPrimary(context),
                 ),
               ),
             ),
@@ -104,13 +113,18 @@ class SendInvitationAddFriend extends GetView<AddFriendController> {
               scale: 0.8,
               child: Switch(
                 value: value,
-                onChanged: onChanged,
+                onChanged: (val) {
+                  HapticHelper.selection();
+                  onChanged(val);
+                },
                 activeThumbColor: Colors.white,
-                activeTrackColor: AppColors.gradientDarkStart.withValues(
-                  alpha: 0.8,
-                ),
-                inactiveThumbColor: Colors.white,
-                inactiveTrackColor: Colors.grey.shade400,
+                activeTrackColor: accent.withValues(alpha: 0.8),
+                inactiveThumbColor: isDark
+                    ? Colors.grey.shade300
+                    : Colors.white,
+                inactiveTrackColor: isDark
+                    ? Colors.grey.shade700
+                    : Colors.grey.shade400,
               ),
             ),
           ],

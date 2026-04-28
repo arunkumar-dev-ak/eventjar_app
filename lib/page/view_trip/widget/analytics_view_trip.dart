@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/view_trip/controller.dart';
 import 'package:eventjar/global/app_colors.dart' show AppColors;
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,7 +11,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBg(context),
         border: Border.all(color: AppColors.budgetTabColor, width: 1.sp),
         borderRadius: BorderRadius.circular(12.sp),
       ),
@@ -41,26 +42,56 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      color: AppColors.textPrimary(context),
                     ),
                   ),
                 ],
               ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 3.wp,
-                  vertical: 0.8.hp,
-                ),
-                decoration: BoxDecoration(
-                  gradient: AppColors.buttonGradient,
+              Material(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(10.sp),
+                child: InkWell(
                   borderRadius: BorderRadius.circular(10.sp),
-                ),
-                child: Text(
-                  "Settle Up",
-                  style: TextStyle(
-                    fontSize: 7.sp,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+                  onTap: () {
+                    HapticHelper.medium();
+                    // TODO: settle up logic
+                  },
+                  child: Ink(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 3.5.wp,
+                      vertical: 0.9.hp,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.buttonGradientFor(context),
+                      borderRadius: BorderRadius.circular(10.sp),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.15),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.handshake_outlined,
+                          size: 10.sp,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 1.5.wp),
+                        Text(
+                          "Settle Up",
+                          style: TextStyle(
+                            fontSize: 8.sp,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -72,10 +103,17 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
           // Amount
           Row(
             children: [
-              Expanded(child: _amountCard("YOU OWE", "₹2,000", isOwe: true)),
+              Expanded(
+                child: _amountCard(context, "YOU OWE", "₹2,000", isOwe: true),
+              ),
               SizedBox(width: 2.wp),
               Expanded(
-                child: _amountCard("YOU RECEIVE", "₹5,000", isOwe: false),
+                child: _amountCard(
+                  context,
+                  "YOU RECEIVE",
+                  "₹5,000",
+                  isOwe: false,
+                ),
               ),
             ],
           ),
@@ -85,10 +123,16 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
   }
 }
 
-Widget _amountCard(String title, String amount, {required bool isOwe}) {
+Widget _amountCard(
+  BuildContext context,
+  String title,
+  String amount, {
+  required bool isOwe,
+}) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
   final Color accentColor = isOwe
-      ? const Color(0xFF8B1E1E)
-      : const Color(0xFF1E6B3A);
+      ? (isDark ? const Color(0xFFE57373) : const Color(0xFF8B1E1E))
+      : (isDark ? const Color(0xFF66BB6A) : const Color(0xFF1E6B3A));
 
   return Container(
     padding: EdgeInsets.all(3.wp),

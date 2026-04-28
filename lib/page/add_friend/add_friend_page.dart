@@ -14,6 +14,7 @@ class AddFriendPage extends GetView<AddFriendController> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg(context),
 
@@ -78,11 +79,14 @@ class AddFriendPage extends GetView<AddFriendController> {
                   headerColor: AppColors.gradientDarkStart,
                   themeColor: AppColors.gradientDarkStart,
 
-                  selectedShade1: Colors.grey.withValues(alpha: 0.15),
-                  selectedShade2: Colors.grey.withValues(alpha: 0.25),
-                  selectedShade3: Colors.grey.withValues(alpha: 0.4),
+                  selectedShade1: (isDark ? Colors.white : Colors.grey)
+                      .withValues(alpha: 0.15),
+                  selectedShade2: (isDark ? Colors.white : Colors.grey)
+                      .withValues(alpha: 0.25),
+                  selectedShade3: (isDark ? Colors.white : Colors.grey)
+                      .withValues(alpha: 0.4),
 
-                  selectedDisplayColor: Colors.black.withValues(alpha: 0.6),
+                  selectedDisplayColor: AppColors.textPrimary(context),
                   dropdownIcon: Icons.keyboard_arrow_down_rounded,
                 ),
                 SizedBox(height: 2.hp),

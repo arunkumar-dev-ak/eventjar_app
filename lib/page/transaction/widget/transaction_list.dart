@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/transaction/widget/dummy_model.dart';
 import 'package:eventjar/page/transaction/widget/transaction_card.dart';
@@ -8,6 +9,10 @@ class TransactionHistoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryText = AppColors.textPrimary(context);
+    final mutedText = AppColors.textSecondary(context);
+    final mutedIcon = AppColors.iconMuted(context);
+
     /// 🔥 Dummy Data
     final transactions = [
       TransactionModel(
@@ -60,7 +65,11 @@ class TransactionHistoryList extends StatelessWidget {
             /// 🔥 YEAR HEADER
             Text(
               year,
-              style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 10.sp,
+                fontWeight: FontWeight.bold,
+                color: primaryText,
+              ),
             ),
 
             SizedBox(height: 1.hp),
@@ -90,6 +99,9 @@ class TransactionHistoryList extends StatelessWidget {
                         month: "$month ${index + 1}", // optional differentiate
                         sent: sent,
                         received: received,
+                        primaryText: primaryText,
+                        mutedText: mutedText,
+                        mutedIcon: mutedIcon,
                       ),
 
                       SizedBox(height: 1.hp),
@@ -122,6 +134,9 @@ class TransactionHistoryList extends StatelessWidget {
     required String month,
     required int sent,
     required int received,
+    required Color primaryText,
+    required Color mutedText,
+    required Color mutedIcon,
   }) {
     return Padding(
       padding: EdgeInsets.only(bottom: 1.hp),
@@ -131,7 +146,11 @@ class TransactionHistoryList extends StatelessWidget {
           /// Month
           Text(
             month,
-            style: TextStyle(fontSize: 9.sp, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w600,
+              color: primaryText,
+            ),
           ),
 
           /// Summary (Icons + Amounts)
@@ -140,11 +159,11 @@ class TransactionHistoryList extends StatelessWidget {
               /// 🔻 SENT
               Row(
                 children: [
-                  Icon(Icons.arrow_upward, size: 10.sp, color: Colors.grey),
+                  Icon(Icons.arrow_upward, size: 10.sp, color: mutedIcon),
                   SizedBox(width: 1.wp),
                   Text(
                     "₹$sent",
-                    style: TextStyle(fontSize: 8.sp, color: Colors.grey),
+                    style: TextStyle(fontSize: 8.sp, color: mutedText),
                   ),
                 ],
               ),

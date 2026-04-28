@@ -1,4 +1,5 @@
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
@@ -71,7 +72,10 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
       children: [
         /// 🔥 TRIGGER BOX
         GestureDetector(
-          onTap: () => _showDialog(context, headColor, primary, isDark),
+          onTap: () {
+            HapticHelper.light();
+            _showDialog(context, headColor, primary, isDark);
+          },
           child: Container(
             height: height,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -228,6 +232,7 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
                           activeColor: primary,
                           title: Text(getDisplayValue(item)),
                           onChanged: (_) {
+                            HapticHelper.selection();
                             if (selected) {
                               selectedItemsMap.remove(key);
                             } else {

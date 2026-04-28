@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/budget_track/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/widget/appbar_button.dart';
 import 'package:eventjar/page/budget_track/widget/trip_list.dart';
@@ -37,7 +38,9 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
         ),
         centerTitle: false,
         flexibleSpace: Container(
-          decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
         ),
         actions: [
           Row(
@@ -69,6 +72,7 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          HapticHelper.medium();
           controller.navigateToCreateTrip();
         },
         child: const Icon(Icons.add),

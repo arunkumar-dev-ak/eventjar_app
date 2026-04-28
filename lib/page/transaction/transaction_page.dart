@@ -31,8 +31,11 @@ class TransactionPage extends GetView<TransactionController> {
           ),
         ),
         flexibleSpace: Container(
-          decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
         ),
+        centerTitle: false,
       ),
 
       /// BODY

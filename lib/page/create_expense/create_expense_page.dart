@@ -2,6 +2,7 @@ import 'package:eventjar/controller/create_expense/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/dropdown/multi_select_paginated_dropdown.dart';
 import 'package:eventjar/global/dropdown/single_selected_dropdown.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/widget/form_submit_button.dart';
 import 'package:eventjar/page/add_contact/add_contact_form_element.dart';
@@ -13,6 +14,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg(context),
 
@@ -73,11 +75,14 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   headerColor: AppColors.gradientDarkStart,
                   themeColor: AppColors.gradientDarkStart,
 
-                  selectedShade1: Colors.grey.withValues(alpha: 0.15),
-                  selectedShade2: Colors.grey.withValues(alpha: 0.25),
-                  selectedShade3: Colors.grey.withValues(alpha: 0.4),
+                  selectedShade1: (isDark ? Colors.white : Colors.grey)
+                      .withValues(alpha: 0.15),
+                  selectedShade2: (isDark ? Colors.white : Colors.grey)
+                      .withValues(alpha: 0.25),
+                  selectedShade3: (isDark ? Colors.white : Colors.grey)
+                      .withValues(alpha: 0.4),
 
-                  selectedDisplayColor: Colors.black.withValues(alpha: 0.6),
+                  selectedDisplayColor: AppColors.textPrimary(context),
                   dropdownIcon: Icons.keyboard_arrow_down_rounded,
                 ),
 
@@ -97,17 +102,21 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   isLoadMoreLoading: controller.state.isMembersLoadMoreLoading,
                   hintText: "Select Members",
 
-                  selectedShade1: Colors.grey.withValues(alpha: 0.15),
-                  selectedShade2: Colors.grey.withValues(alpha: 0.25),
-                  selectedShade3: Colors.grey.withValues(alpha: 0.4),
+                  selectedShade1: (isDark ? Colors.white : Colors.grey)
+                      .withValues(alpha: 0.15),
+                  selectedShade2: (isDark ? Colors.white : Colors.grey)
+                      .withValues(alpha: 0.25),
+                  selectedShade3: (isDark ? Colors.white : Colors.grey)
+                      .withValues(alpha: 0.4),
 
-                  selectedDisplayColor: Colors.black.withValues(alpha: 0.6),
+                  selectedDisplayColor: AppColors.textPrimary(context),
                 ),
 
                 SizedBox(height: 0.5.hp),
 
                 InkWell(
                   onTap: () {
+                    HapticHelper.light();
                     controller.navigateToAddFriend();
                   },
                   child: Padding(

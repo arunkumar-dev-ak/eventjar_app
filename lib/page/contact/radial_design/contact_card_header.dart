@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
@@ -38,7 +39,10 @@ class ContactCardHeader extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => {controller.state.expandedIndex.value = index},
+        onTap: () {
+          HapticHelper.light();
+          controller.state.expandedIndex.value = index;
+        },
         splashColor: stageColor.withValues(alpha: 0.3),
         highlightColor: stageColor.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),

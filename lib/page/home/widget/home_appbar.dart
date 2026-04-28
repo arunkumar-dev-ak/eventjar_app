@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:eventjar/controller/home/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -111,7 +112,10 @@ class HomeAppBar extends StatelessWidget {
           : '$count';
 
       return GestureDetector(
-        onTap: controller.navigateToNotificationPage,
+        onTap: () {
+          HapticHelper.light();
+          controller.navigateToNotificationPage();
+        },
         child: Stack(
           clipBehavior: Clip.none,
           children: [
@@ -174,7 +178,10 @@ class HomeAppBar extends StatelessWidget {
     required VoidCallback onPressed,
   }) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: () {
+        HapticHelper.light();
+        onPressed();
+      },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: BackdropFilter(
@@ -302,7 +309,10 @@ class HomeAppBar extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return ListTile(
-      onTap: onTap,
+      onTap: () {
+        HapticHelper.light();
+        onTap();
+      },
       contentPadding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 1.hp),
       leading: Container(
         width: 48,

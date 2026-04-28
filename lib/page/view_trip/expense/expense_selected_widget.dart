@@ -1,3 +1,5 @@
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/page/view_trip/expense/animated_expense_container.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +17,10 @@ class ExpenseSelectedWidget extends GetView<ViewTripController> {
       // Hide when nothing selected
       if (count == 0) return const SizedBox.shrink();
 
+      final primaryText = AppColors.textPrimary(context);
+      final mutedIcon = AppColors.iconMuted(context);
+      final dividerColor = AppColors.divider(context);
+
       return AnimatedSwitcher(
         duration: const Duration(milliseconds: 500),
         child: ExpenseAnimatedBorderCard(
@@ -31,7 +37,7 @@ class ExpenseSelectedWidget extends GetView<ViewTripController> {
                     Icon(
                       Icons.check_circle_outline,
                       size: 12.sp,
-                      color: Colors.grey.shade700,
+                      color: mutedIcon,
                     ),
                     SizedBox(width: 1.wp),
                     Text(
@@ -39,7 +45,7 @@ class ExpenseSelectedWidget extends GetView<ViewTripController> {
                       style: TextStyle(
                         fontSize: 8.5.sp,
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade800,
+                        color: primaryText,
                       ),
                     ),
                   ],
@@ -49,6 +55,7 @@ class ExpenseSelectedWidget extends GetView<ViewTripController> {
 
                 _actionIcon(
                   icon: Icons.account_balance_wallet_outlined,
+                  color: mutedIcon,
                   onTap: () {
                     // TODO: settle logic
                   },
@@ -59,6 +66,7 @@ class ExpenseSelectedWidget extends GetView<ViewTripController> {
                 // EDIT
                 _actionIcon(
                   icon: Icons.edit,
+                  color: mutedIcon,
                   onTap: () {
                     // TODO: edit logic
                   },
@@ -69,6 +77,7 @@ class ExpenseSelectedWidget extends GetView<ViewTripController> {
                 // DELETE
                 _actionIcon(
                   icon: Icons.delete,
+                  color: mutedIcon,
                   onTap: () {
                     // TODO: delete logic
                   },
@@ -80,7 +89,7 @@ class ExpenseSelectedWidget extends GetView<ViewTripController> {
                   padding: EdgeInsets.all(1.wp),
                   height: 20,
                   width: 1,
-                  color: Colors.grey.shade300,
+                  color: dividerColor,
                 ),
 
                 SizedBox(width: 3.wp),
@@ -88,6 +97,7 @@ class ExpenseSelectedWidget extends GetView<ViewTripController> {
                 // CLEAR SELECTION
                 _actionIcon(
                   icon: Icons.close,
+                  color: mutedIcon,
                   onTap: () {
                     controller.clearSelection();
                   },
@@ -100,33 +110,21 @@ class ExpenseSelectedWidget extends GetView<ViewTripController> {
     });
   }
 
-  /// ================= BUTTON =================
-  Widget _actionButton({required String label, required VoidCallback onTap}) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(8),
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 0.8.hp),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 9.sp,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey.shade800,
-          ),
-        ),
-      ),
-    );
-  }
-
   /// 🔘 ICON BUTTON
-  Widget _actionIcon({required IconData icon, required VoidCallback onTap}) {
+  Widget _actionIcon({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
-      onTap: onTap,
+      onTap: () {
+        HapticHelper.light();
+        onTap();
+      },
       child: Padding(
         padding: EdgeInsets.all(1.wp),
-        child: Icon(icon, size: 20, color: Colors.grey.shade700),
+        child: Icon(icon, size: 20, color: color),
       ),
     );
   }

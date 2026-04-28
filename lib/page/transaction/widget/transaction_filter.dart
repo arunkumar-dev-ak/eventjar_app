@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -17,18 +18,28 @@ class TransactionFilterBar extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 1.hp),
               decoration: BoxDecoration(
-                color: Colors.grey.withValues(alpha: 0.1),
+                color: AppColors.chipBg(context),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: Colors.grey.withValues(alpha: 0.3),
+                  color: AppColors.border(context),
                   width: 0.3.wp,
                 ),
               ),
               child: Row(
                 children: [
-                  Text(e, style: TextStyle(fontSize: 8.sp)),
+                  Text(
+                    e,
+                    style: TextStyle(
+                      fontSize: 8.sp,
+                      color: AppColors.textPrimary(context),
+                    ),
+                  ),
                   SizedBox(width: 1.wp),
-                  Icon(Icons.keyboard_arrow_down, size: 12.sp),
+                  Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 12.sp,
+                    color: AppColors.iconMuted(context),
+                  ),
                 ],
               ),
             ),

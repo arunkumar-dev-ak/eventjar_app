@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/signIn/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/social_auth/google_auth.dart';
 import 'package:eventjar/global/social_auth/social_login_button.dart';
@@ -178,6 +179,7 @@ class SignInForm extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async {
+                    HapticHelper.light();
                     controller.navigateToForgotPassword();
                   },
                   child: const Text(
@@ -256,6 +258,7 @@ class SignInForm extends StatelessWidget {
             SizedBox(height: 4.hp),
             AuthSignUp(
               onPressed: () {
+                HapticHelper.light();
                 controller.navigateToSignUp();
               },
             ),

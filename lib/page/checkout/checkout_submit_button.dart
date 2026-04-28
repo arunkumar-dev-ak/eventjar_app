@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/checkout/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -43,6 +44,7 @@ Widget buildCheckoutContinueButton() {
           onTap: isDisabled
               ? null
               : () {
+                  HapticHelper.medium();
                   controller.proceedToCheckout();
                 },
           borderRadius: BorderRadius.circular(12),

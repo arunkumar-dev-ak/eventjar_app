@@ -11,6 +11,7 @@ class ViewTripController extends GetxController
   final state = ViewTripState();
 
   late AnimationController animation;
+  late PageController pageController;
 
   @override
   void onInit() {
@@ -19,6 +20,7 @@ class ViewTripController extends GetxController
       vsync: this,
       duration: const Duration(seconds: 10),
     )..repeat();
+    pageController = PageController(initialPage: state.selectedTab.value);
   }
 
   void toggleToOpen(int index) {
@@ -35,6 +37,11 @@ class ViewTripController extends GetxController
     } else {
       state.expenseSelectedIndexes.add(index);
     }
+    state.showLongPressHint.value = false;
+  }
+
+  void dismissLongPressHint() {
+    state.showLongPressHint.value = false;
   }
 
   void clearSelection() {
@@ -42,6 +49,26 @@ class ViewTripController extends GetxController
   }
 
   void changeTab(int index) {
+    if (state.selectedTab.value != index &&
+        state.expenseSelectedIndexes.isNotEmpty) {
+      state.expenseSelectedIndexes.clear();
+    }
+    state.selectedTab.value = index;
+    if (pageController.hasClients &&
+        pageController.page?.round() != index) {
+      pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  void onPageSwiped(int index) {
+    if (state.selectedTab.value == index) return;
+    if (state.expenseSelectedIndexes.isNotEmpty) {
+      state.expenseSelectedIndexes.clear();
+    }
     state.selectedTab.value = index;
   }
 
@@ -70,6 +97,7 @@ class ViewTripController extends GetxController
   void onClose() {
     LoggerService.loggerInstance.dynamic_d("In Onclose");
     animation.dispose();
+    pageController.dispose();
     super.onClose();
   }
 }

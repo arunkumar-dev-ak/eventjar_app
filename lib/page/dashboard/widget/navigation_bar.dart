@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:eventjar/controller/dashboard/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,10 @@ class CustomBottomNavigationBar extends StatelessWidget {
                   isLoggedIn: isLoggedIn,
                   profileData: profileData,
                   isDark: isDark,
-                  onTap: () => controller.changeTab(2),
+                  onTap: () {
+                    HapticHelper.selection();
+                    controller.changeTab(2);
+                  },
                 ),
                 _buildNavItem(
                   context: context,
@@ -120,7 +124,10 @@ class CustomBottomNavigationBar extends StatelessWidget {
         : Icon(icon, size: 28, color: color);
 
     return GestureDetector(
-      onTap: () => controller.changeTab(index),
+      onTap: () {
+        HapticHelper.selection();
+        controller.changeTab(index);
+      },
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
         width: 60,

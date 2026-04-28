@@ -25,6 +25,7 @@ class ConnectionPage extends GetView<ConnectionController> {
           ),
         ),
         elevation: 0,
+        centerTitle: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

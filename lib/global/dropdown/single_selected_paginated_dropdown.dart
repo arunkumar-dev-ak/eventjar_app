@@ -1,4 +1,5 @@
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
@@ -73,14 +74,17 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
           : (hintText ?? 'Select option');
 
       return GestureDetector(
-        onTap: () => _showModernDialog(
-          context: context,
-          headerColor: headColor,
-          primary: primary,
-          selectedShade1: selectedShade1 ?? Colors.blue.shade50,
-          selectedShade2: selectedShade2 ?? Colors.blue.shade100,
-          selectedShade3: selectedShade3 ?? Colors.blue.shade200,
-        ),
+        onTap: () {
+          HapticHelper.light();
+          _showModernDialog(
+            context: context,
+            headerColor: headColor,
+            primary: primary,
+            selectedShade1: selectedShade1 ?? Colors.blue.shade50,
+            selectedShade2: selectedShade2 ?? Colors.blue.shade100,
+            selectedShade3: selectedShade3 ?? Colors.blue.shade200,
+          );
+        },
         child: Container(
           height: height,
           padding:
@@ -378,6 +382,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                     child: InkWell(
                                       borderRadius: BorderRadius.circular(16),
                                       onTap: () {
+                                        HapticHelper.selection();
                                         onSelected(item);
                                         Navigator.pop(context);
                                       },

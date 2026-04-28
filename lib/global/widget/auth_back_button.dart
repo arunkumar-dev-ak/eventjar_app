@@ -1,3 +1,4 @@
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +13,7 @@ class AuthBackButton extends StatelessWidget {
       padding: const EdgeInsets.only(top: 12, left: 12),
       child: GestureDetector(
         onTap: () {
+          HapticHelper.light();
           Get.focusScope?.unfocus();
           Get.back();
         },

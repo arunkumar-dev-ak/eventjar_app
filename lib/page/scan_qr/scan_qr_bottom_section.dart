@@ -117,14 +117,21 @@ class ScanQrBottomSection extends StatelessWidget {
             key: controller.tourGalleryKey,
             title: 'From Gallery',
             description: 'Pick an image containing a QR.',
-            tooltipBackgroundColor: AppColors.gradientLightStart,
+            tooltipBackgroundColor: Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFF1E293B)
+                : AppColors.gradientDarkStart,
             textColor: Colors.white,
             titleTextStyle: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w700,
               fontSize: 14,
             ),
-            descTextStyle: const TextStyle(color: Colors.white, fontSize: 12),
+            descTextStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              height: 1.4,
+            ),
+            tooltipBorderRadius: const BorderRadius.all(Radius.circular(12)),
             targetBorderRadius: BorderRadius.circular(16),
             child: SizedBox(
               width: double.infinity,

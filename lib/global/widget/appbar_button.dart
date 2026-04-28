@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:flutter/material.dart';
 
 class AppbarButton extends StatelessWidget {
@@ -10,7 +11,10 @@ class AppbarButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: () {
+        HapticHelper.light();
+        onPressed();
+      },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: BackdropFilter(

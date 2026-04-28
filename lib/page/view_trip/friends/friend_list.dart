@@ -22,12 +22,13 @@ class FriendsList extends StatelessWidget {
   Widget _friendItem(BuildContext context, FriendModel f) {
     final isOwe = f.youOwe && !f.isSettled;
     final isReceive = !f.youOwe && !f.isSettled;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       margin: EdgeInsets.only(top: 1.hp),
       padding: EdgeInsets.all(4.wp),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.cardBg(context),
         border: Border.all(color: AppColors.budgetTabColor, width: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
@@ -39,9 +40,11 @@ class FriendsList extends StatelessWidget {
               Container(
                 height: 42,
                 width: 42,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color(0xFFE0E0E0),
+                  color: isDark
+                      ? AppColors.darkCardElevated
+                      : const Color(0xFFE0E0E0),
                 ),
               ),
 
@@ -56,13 +59,13 @@ class FriendsList extends StatelessWidget {
                       vertical: 1,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black,
+                      color: isDark ? Colors.white : Colors.black,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Text(
+                    child: Text(
                       "ME",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: isDark ? Colors.black : Colors.white,
                         fontSize: 8,
                         fontWeight: FontWeight.w600,
                       ),
@@ -85,30 +88,41 @@ class FriendsList extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 10.sp,
+                    color: AppColors.textPrimary(context),
                   ),
                 ),
 
                 SizedBox(height: 0.3.hp),
 
                 /// STATUS TEXT
-                _statusText(f, isOwe, isReceive),
+                _statusText(context, f, isOwe, isReceive),
               ],
             ),
           ),
 
           // RIGHT ACTION
-          _actionButton(f),
+          _actionButton(context, f),
         ],
       ),
     );
   }
 
   /// ================= STATUS TEXT =================
-  Widget _statusText(FriendModel f, bool isOwe, bool isReceive) {
+  Widget _statusText(
+    BuildContext context,
+    FriendModel f,
+    bool isOwe,
+    bool isReceive,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     if (f.isSettled) {
       return Text(
         "No dues",
-        style: TextStyle(color: Colors.grey, fontSize: 8.5.sp),
+        style: TextStyle(
+          color: AppColors.textSecondary(context),
+          fontSize: 8.5.sp,
+        ),
       );
     }
 
@@ -116,7 +130,7 @@ class FriendsList extends StatelessWidget {
       return Text(
         "You owe ₹${f.amount.toStringAsFixed(0)}",
         style: TextStyle(
-          color: Colors.red.shade700,
+          color: isDark ? Colors.red.shade300 : Colors.red.shade700,
           fontSize: 8.5.sp,
           fontWeight: FontWeight.w500,
         ),
@@ -126,7 +140,7 @@ class FriendsList extends StatelessWidget {
     return Text(
       "You receive ₹${f.amount.toStringAsFixed(0)}",
       style: TextStyle(
-        color: Colors.green.shade700,
+        color: isDark ? Colors.green.shade300 : Colors.green.shade700,
         fontSize: 8.5.sp,
         fontWeight: FontWeight.w500,
       ),
@@ -134,12 +148,14 @@ class FriendsList extends StatelessWidget {
   }
 
   /// ================= ACTION =================
-  Widget _actionButton(FriendModel f) {
+  Widget _actionButton(BuildContext context, FriendModel f) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     /// ✅ SETTLED
     if (f.isSettled) {
       return Icon(
         Icons.check_circle_outline,
-        color: Colors.green.shade600,
+        color: isDark ? Colors.green.shade400 : Colors.green.shade600,
         size: 22,
       );
     }
@@ -152,7 +168,7 @@ class FriendsList extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 3.5.wp, vertical: 0.8.hp),
           decoration: BoxDecoration(
-            gradient: AppColors.buttonGradient, // ✅ YOUR GRADIENT
+            gradient: AppColors.buttonGradientFor(context),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -174,13 +190,13 @@ class FriendsList extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 3.5.wp, vertical: 0.8.hp),
         decoration: BoxDecoration(
-          color: Colors.blue.withValues(alpha: 0.1), // light blue bg
+          color: Colors.blue.withValues(alpha: isDark ? 0.2 : 0.1),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
           "Remind",
           style: TextStyle(
-            color: Colors.blue.shade700,
+            color: isDark ? Colors.blue.shade300 : Colors.blue.shade700,
             fontSize: 8.5.sp,
             fontWeight: FontWeight.w600,
           ),

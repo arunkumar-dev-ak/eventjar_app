@@ -1,8 +1,10 @@
 import 'package:eventjar/controller/more/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/store/theme_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 class MorePage extends GetView<MoreController> {
@@ -31,36 +33,44 @@ class MorePage extends GetView<MoreController> {
                 // Header text
                 Padding(
                   padding: EdgeInsets.only(left: 1.wp),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        "explore",
-                        style: TextStyle(
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textSecondary(context),
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      ShaderMask(
-                        blendMode: BlendMode.srcIn,
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [
-                            AppColors.gradientDarkStart,
-                            AppColors.gradientDarkEnd,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "explore",
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textSecondary(context),
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            ShaderMask(
+                              blendMode: BlendMode.srcIn,
+                              shaderCallback: (bounds) => const LinearGradient(
+                                colors: [
+                                  AppColors.gradientDarkStart,
+                                  AppColors.gradientDarkEnd,
+                                ],
+                              ).createShader(bounds),
+                              child: Text(
+                                "MyEventJar",
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.white,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                            ),
                           ],
-                        ).createShader(bounds),
-                        child: Text(
-                          "MyEventJar",
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                            letterSpacing: -0.5,
-                          ),
                         ),
                       ),
+                      _buildThemeToggle(context, isDark),
                     ],
                   ),
                 ),
@@ -78,29 +88,19 @@ class MorePage extends GetView<MoreController> {
                         SizedBox(height: 1.5.hp),
                         _buildIconGrid(context, isDark, [
                           _GridItem(
-                            icon: Icons.people_outline,
-                            label: "Friends",
-                            onTap: controller.navigateToBudgetTrack,
-                          ),
-                          _GridItem(
                             icon: Icons.flight_outlined,
                             label: "Trips",
                             onTap: controller.navigateToBudgetTrack,
                           ),
                           _GridItem(
+                            icon: Icons.people_outline,
+                            label: "Friends",
+                            onTap: controller.navigateToFriendList,
+                          ),
+                          _GridItem(
                             icon: Icons.receipt_long_outlined,
-                            label: "Expenses",
-                            onTap: controller.navigateToBudgetTrack,
-                          ),
-                          _GridItem(
-                            icon: Icons.account_balance_wallet_outlined,
-                            label: "Balance",
-                            onTap: controller.navigateToBudgetTrack,
-                          ),
-                          _GridItem(
-                            icon: Icons.handshake_outlined,
-                            label: "Settle Ups",
-                            onTap: controller.navigateToBudgetTrack,
+                            label: "Transactions",
+                            onTap: controller.navigateToTransaction,
                           ),
                         ]),
 
@@ -233,6 +233,25 @@ class MorePage extends GetView<MoreController> {
 
                         SizedBox(height: 3.hp),
 
+                        // Automation Section
+                        _buildSectionTitle(context, "AUTOMATION"),
+                        SizedBox(height: 1.5.hp),
+                        _buildIconGrid(context, isDark, [
+                          _GridItem(
+                            icon: Icons.email_outlined,
+                            label: "Email",
+                            onTap: controller.navigateToEmailAutomation,
+                          ),
+                          _GridItem(
+                            icon: FontAwesomeIcons.whatsapp,
+                            label: "WhatsApp",
+                            isFontAwesome: true,
+                            onTap: controller.navigateToWhatsAppAutomation,
+                          ),
+                        ]),
+
+                        SizedBox(height: 3.hp),
+
                         // Others Section
                         _buildSectionTitle(context, "OTHERS"),
                         SizedBox(height: 1.5.hp),
@@ -241,6 +260,16 @@ class MorePage extends GetView<MoreController> {
                             icon: Icons.event_outlined,
                             label: "Events",
                             onTap: controller.navigateToCategoryEvent,
+                          ),
+                          _GridItem(
+                            icon: Icons.shield_outlined,
+                            label: "2FA",
+                            onTap: controller.navigateToSet2FA,
+                          ),
+                          _GridItem(
+                            icon: Icons.lock_reset_outlined,
+                            label: "Change\nPassword",
+                            onTap: controller.navigateToChangePassword,
                           ),
                         ]),
 
@@ -316,7 +345,10 @@ class MorePage extends GetView<MoreController> {
               color: bgColor,
               border: Border.all(color: borderColor, width: 1.5),
             ),
-            child: Icon(item.icon, size: 24, color: iconColor),
+            alignment: Alignment.center,
+            child: item.isFontAwesome
+                ? Center(child: FaIcon(item.icon, size: 22, color: iconColor))
+                : Icon(item.icon, size: 24, color: iconColor),
           ),
           SizedBox(height: 0.8.hp),
           Text(
@@ -335,12 +367,90 @@ class MorePage extends GetView<MoreController> {
       ),
     );
   }
+
+  Widget _buildThemeToggle(BuildContext context, bool isDark) {
+    final iconColor = isDark
+        ? const Color(0xFF5B9BEF)
+        : AppColors.gradientDarkStart;
+    return Obx(() {
+      final mode = ThemeStore.to.themeMode;
+      final IconData icon = switch (mode) {
+        ThemeMode.light => Icons.light_mode_rounded,
+        ThemeMode.dark => Icons.dark_mode_rounded,
+        ThemeMode.system => Icons.phone_android_rounded,
+      };
+      return PopupMenuButton<ThemeMode>(
+        icon: Icon(icon, color: iconColor),
+        tooltip: 'Theme',
+        onSelected: (selected) => ThemeStore.to.setThemeMode(selected),
+        itemBuilder: (_) => [
+          _buildThemeMenuItem(
+            ThemeMode.light,
+            Icons.light_mode_rounded,
+            'Light',
+            mode,
+          ),
+          _buildThemeMenuItem(
+            ThemeMode.dark,
+            Icons.dark_mode_rounded,
+            'Dark',
+            mode,
+          ),
+          _buildThemeMenuItem(
+            ThemeMode.system,
+            Icons.phone_android_rounded,
+            'System Default',
+            mode,
+          ),
+        ],
+      );
+    });
+  }
+
+  PopupMenuItem<ThemeMode> _buildThemeMenuItem(
+    ThemeMode mode,
+    IconData icon,
+    String label,
+    ThemeMode currentMode,
+  ) {
+    final isSelected = mode == currentMode;
+    return PopupMenuItem<ThemeMode>(
+      value: mode,
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 20,
+            color: isSelected ? AppColors.gradientDarkStart : Colors.grey,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+              color: isSelected ? AppColors.gradientDarkStart : null,
+            ),
+          ),
+          if (isSelected) ...[
+            const Spacer(),
+            Icon(Icons.check, size: 18, color: AppColors.gradientDarkStart),
+          ],
+        ],
+      ),
+    );
+  }
 }
 
 class _GridItem {
   final IconData icon;
   final String label;
   final VoidCallback? onTap;
+  final bool isFontAwesome;
 
-  const _GridItem({required this.icon, required this.label, this.onTap});
+  const _GridItem({
+    required this.icon,
+    required this.label,
+    this.onTap,
+    this.isFontAwesome = false,
+  });
 }

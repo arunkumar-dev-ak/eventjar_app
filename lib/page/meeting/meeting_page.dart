@@ -6,6 +6,8 @@ import 'package:eventjar/page/meeting/widget/meeting_list.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../global/widget/appbar_button.dart';
+
 class MeetingPage extends GetView<MeetingController> {
   const MeetingPage({super.key});
 
@@ -24,21 +26,13 @@ class MeetingPage extends GetView<MeetingController> {
           ),
         ),
         elevation: 0,
+        centerTitle: false,
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: GestureDetector(
-              onTap: () => controller.navigateToSchedulePage(),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.add, color: Colors.white, size: 24),
-              ),
-            ),
+          AppbarButton(
+            icon: Icons.add,
+            onPressed: controller.navigateToSchedulePage,
           ),
+          SizedBox(width: 3.wp),
         ],
       ),
       body: Padding(

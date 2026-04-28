@@ -25,6 +25,7 @@ class NotificationPage extends GetView<NotificationController> {
           ),
         ),
         elevation: 0,
+        centerTitle: false,
       ),
       body: Column(
         children: [

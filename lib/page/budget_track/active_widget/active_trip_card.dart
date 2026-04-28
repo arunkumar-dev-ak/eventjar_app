@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/budget_track/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/budget_track/trip_model.dart';
 import 'package:eventjar/page/budget_track/active_widget/active_animate_border.dart';
@@ -211,12 +212,12 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                 borderRadius: BorderRadius.circular(6.sp),
                 child: Container(
                   height: 1.hp,
-                  color: Color(0xFFF2F0FC),
+                  color: AppColors.divider(context),
                   child: Stack(
                     children: [
                       Container(
                         width: double.infinity,
-                        color: Color(0xFFF2F0FC),
+                        color: AppColors.divider(context),
                       ),
 
                       FractionallySizedBox(
@@ -276,7 +277,10 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                     SizedBox(height: 0.3.hp),
 
                     GestureDetector(
-                      onTap: () => controller.toggleNotes(index),
+                      onTap: () {
+                        HapticHelper.light();
+                        controller.toggleNotes(index);
+                      },
                       child: Text(
                         isExpanded ? "Show less" : "Read more",
                         style: TextStyle(

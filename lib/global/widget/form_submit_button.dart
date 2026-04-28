@@ -1,4 +1,5 @@
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -65,7 +66,7 @@ class FormButton extends StatelessWidget {
     // OUTLINE BUTTON
     if (type == FormButtonType.outline) {
       return OutlinedButton(
-        onPressed: isLoading ? null : onPressed,
+        onPressed: isLoading ? null : HapticHelper.wrap(onPressed),
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.symmetric(horizontal: 6.wp, vertical: 1.8.hp),
           shape: RoundedRectangleBorder(
@@ -84,7 +85,7 @@ class FormButton extends StatelessWidget {
 
     // PRIMARY BUTTON
     return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,
+      onPressed: isLoading ? null : HapticHelper.wrap(onPressed),
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.symmetric(horizontal: 6.wp, vertical: 1.8.hp),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

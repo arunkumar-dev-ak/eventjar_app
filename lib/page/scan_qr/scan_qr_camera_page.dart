@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/qr_scan/controller.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/page/scan_qr/scan_qr_corner_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -64,14 +65,21 @@ class ScanQrCameraSection extends StatelessWidget {
               key: controller.tourCameraKey,
               title: 'Scan a QR',
               description: 'Hold the QR inside the frame.',
-              tooltipBackgroundColor: Colors.black87,
+              tooltipBackgroundColor: Theme.of(context).brightness == Brightness.dark
+                  ? const Color(0xFF1E293B)
+                  : AppColors.gradientDarkStart,
               textColor: Colors.white,
               titleTextStyle: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
               ),
-              descTextStyle: const TextStyle(color: Colors.white, fontSize: 12),
+              descTextStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                height: 1.4,
+              ),
+              tooltipBorderRadius: const BorderRadius.all(Radius.circular(12)),
               targetBorderRadius: BorderRadius.circular(12),
               targetPadding: const EdgeInsets.all(4),
               child: SizedBox(

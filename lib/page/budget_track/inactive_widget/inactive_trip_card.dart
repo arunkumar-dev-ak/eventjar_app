@@ -122,6 +122,7 @@ class InactiveTripCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary(context),
                       ),
                     ),
                     SizedBox(height: 0.4.hp),
@@ -172,7 +173,7 @@ class InactiveTripCard extends StatelessWidget {
                   vertical: 0.5.hp,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE4E8FF),
+                  color: AppColors.lightBlueBg(context),
                   borderRadius: BorderRadius.circular(20.sp),
                 ),
                 child: Text(
@@ -180,7 +181,9 @@ class InactiveTripCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 7.sp,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.gradientDarkStart,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF5B9BEF)
+                        : AppColors.gradientDarkStart,
                   ),
                 ),
               ),
@@ -194,7 +197,7 @@ class InactiveTripCard extends StatelessWidget {
                   vertical: 0.5.hp,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF2F0FC),
+                  color: AppColors.chipBg(context),
                   borderRadius: BorderRadius.circular(20.sp),
                 ),
                 child: Text(

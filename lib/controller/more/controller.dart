@@ -25,6 +25,14 @@ class MoreController extends GetxController {
     _requireLogin(() => Get.toNamed(RouteName.budgetTrackPage));
   }
 
+  void navigateToFriendList() {
+    _requireLogin(() => Get.toNamed(RouteName.friendListPage));
+  }
+
+  void navigateToTransaction() {
+    _requireLogin(() => Get.toNamed(RouteName.transactionPage));
+  }
+
   // Contact
   void navigateToAddContact() {
     _requireLogin(() => Get.toNamed(RouteName.addContactPage));
@@ -225,5 +233,25 @@ class MoreController extends GetxController {
   // Others
   void navigateToCategoryEvent() {
     Get.toNamed(RouteName.categoriesPage);
+  }
+
+  // Automation
+  void navigateToEmailAutomation() {
+    _requireLogin(() => Get.toNamed(RouteName.notificationpage));
+  }
+
+  void navigateToWhatsAppAutomation() {
+    _requireLogin(
+      () => Get.toNamed(RouteName.notificationpage, arguments: "whatsapp"),
+    );
+  }
+
+  // Security shortcuts
+  void navigateToSet2FA() {
+    _requireLogin(() => Get.toNamed(RouteName.set2fa));
+  }
+
+  void navigateToChangePassword() {
+    _requireLogin(() => Get.toNamed(RouteName.forgotPasswordPage));
   }
 }

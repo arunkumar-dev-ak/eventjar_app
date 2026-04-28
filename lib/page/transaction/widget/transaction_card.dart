@@ -2,61 +2,6 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
-Widget buildMonthHeader({
-  required String month,
-  required int sent,
-  required int received,
-}) {
-  return Padding(
-    padding: EdgeInsets.only(bottom: 1.hp),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        /// 🔥 Month
-        Text(
-          month,
-          style: TextStyle(fontSize: 9.sp, fontWeight: FontWeight.w600),
-        ),
-
-        /// 🔥 Summary (Icons + Amounts)
-        Row(
-          children: [
-            /// 🔻 SENT
-            Row(
-              children: [
-                Icon(Icons.arrow_upward, size: 10.sp, color: Colors.grey),
-                SizedBox(width: 1.wp),
-                Text(
-                  "₹$sent",
-                  style: TextStyle(fontSize: 8.sp, color: Colors.grey),
-                ),
-              ],
-            ),
-
-            SizedBox(width: 3.wp),
-
-            /// 🔺 RECEIVED
-            Row(
-              children: [
-                Icon(Icons.arrow_downward, size: 10.sp, color: Colors.green),
-                SizedBox(width: 1.wp),
-                Text(
-                  "+₹$received",
-                  style: TextStyle(
-                    fontSize: 8.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.green,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
 class TransactionCard extends StatelessWidget {
   final String name;
   final String subtitle;
@@ -75,6 +20,9 @@ class TransactionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryText = AppColors.textPrimary(context);
+    final mutedText = AppColors.textSecondary(context);
+
     return Container(
       padding: EdgeInsets.all(3.wp),
       margin: EdgeInsets.only(bottom: 1.2.hp),
@@ -96,17 +44,21 @@ class TransactionCard extends StatelessWidget {
               children: [
                 Text(
                   isReceived ? "Received from $name" : "Paid to $name",
-                  style: TextStyle(fontSize: 9.sp, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 9.sp,
+                    fontWeight: FontWeight.w600,
+                    color: primaryText,
+                  ),
                 ),
                 SizedBox(height: 0.3.hp),
                 Text(
                   subtitle,
-                  style: TextStyle(fontSize: 8.sp, color: Colors.grey),
+                  style: TextStyle(fontSize: 8.sp, color: mutedText),
                 ),
                 SizedBox(height: 0.3.hp),
                 Text(
                   date,
-                  style: TextStyle(fontSize: 7.sp, color: Colors.grey),
+                  style: TextStyle(fontSize: 7.sp, color: mutedText),
                 ),
               ],
             ),
@@ -118,7 +70,7 @@ class TransactionCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 9.5.sp,
               fontWeight: FontWeight.bold,
-              color: isReceived ? Colors.green : Colors.black,
+              color: isReceived ? Colors.green : primaryText,
             ),
           ),
         ],

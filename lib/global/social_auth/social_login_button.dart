@@ -1,3 +1,4 @@
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +30,12 @@ class SocialButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
-          onTap: isLoading ? null : onTap,
+          onTap: isLoading
+              ? null
+              : () {
+                  HapticHelper.light();
+                  onTap();
+                },
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 1.2.hp, horizontal: 3.wp),
             decoration: BoxDecoration(

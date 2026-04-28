@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/friends/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/budget_track/friend_model.dart';
 import 'package:flutter/material.dart';
@@ -30,8 +31,11 @@ class FriendsPage extends GetView<FriendsController> {
           ),
         ),
         flexibleSpace: Container(
-          decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
         ),
+        centerTitle: false,
       ),
 
       /// BODY
@@ -50,7 +54,10 @@ class FriendsPage extends GetView<FriendsController> {
 
                 Padding(
                   padding: EdgeInsets.only(left: 60),
-                  child: Divider(thickness: 0.6, color: Colors.grey.shade300),
+                  child: Divider(
+                    thickness: 0.6,
+                    color: AppColors.divider(context),
+                  ),
                 ),
               ],
             );
@@ -60,6 +67,7 @@ class FriendsPage extends GetView<FriendsController> {
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          HapticHelper.medium();
           controller.navigateToAddFriend();
         },
         child: const Icon(Icons.add),
@@ -68,14 +76,20 @@ class FriendsPage extends GetView<FriendsController> {
   }
 
   PopupMenuItem<FriendAction> _menuItem(
+    BuildContext context,
     IconData icon,
     String text,
     FriendAction action,
   ) {
+    final color = AppColors.textPrimary(context);
     return PopupMenuItem(
       value: action,
       child: Row(
-        children: [Icon(icon, size: 18), SizedBox(width: 8), Text(text)],
+        children: [
+          Icon(icon, size: 18, color: color),
+          SizedBox(width: 8),
+          Text(text, style: TextStyle(color: color)),
+        ],
       ),
     );
   }
@@ -84,6 +98,7 @@ class FriendsPage extends GetView<FriendsController> {
   Widget _friendItem(BuildContext context, FriendModel f) {
     final isOwe = f.youOwe && !f.isSettled;
     final isReceive = !f.youOwe && !f.isSettled;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 1.2.hp),
@@ -92,8 +107,13 @@ class FriendsPage extends GetView<FriendsController> {
           /// LEFT - AVATAR
           CircleAvatar(
             radius: 22,
-            backgroundColor: Colors.grey.shade300,
-            child: Text(f.name[0], style: const TextStyle(color: Colors.black)),
+            backgroundColor: isDark
+                ? AppColors.darkCardElevated
+                : Colors.grey.shade300,
+            child: Text(
+              f.name[0],
+              style: TextStyle(color: AppColors.textPrimary(context)),
+            ),
           ),
 
           SizedBox(width: 3.wp),
@@ -108,6 +128,7 @@ class FriendsPage extends GetView<FriendsController> {
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 10.sp,
+                    color: AppColors.textPrimary(context),
                   ),
                 ),
 
@@ -115,12 +136,15 @@ class FriendsPage extends GetView<FriendsController> {
 
                 Text(
                   f.email,
-                  style: TextStyle(fontSize: 8.sp, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 8.sp,
+                    color: AppColors.textSecondary(context),
+                  ),
                 ),
 
                 SizedBox(height: 0.4.hp),
 
-                _statusText(f, isOwe, isReceive),
+                _statusText(context, f, isOwe, isReceive),
               ],
             ),
           ),
@@ -133,21 +157,36 @@ class FriendsPage extends GetView<FriendsController> {
 
               if (f.youOwe && !f.isSettled) {
                 menu.add(
-                  _menuItem(Icons.list, "View Trips", FriendAction.viewTrips),
+                  _menuItem(
+                    context,
+                    Icons.list,
+                    "View Trips",
+                    FriendAction.viewTrips,
+                  ),
                 );
               }
 
               if (!f.youOwe && !f.isSettled) {
                 menu.add(
-                  _menuItem(Icons.notifications, "Remind", FriendAction.remind),
+                  _menuItem(
+                    context,
+                    Icons.notifications,
+                    "Remind",
+                    FriendAction.remind,
+                  ),
                 );
               }
 
-              menu.add(_menuItem(Icons.delete, "Remove", FriendAction.remove));
+              menu.add(
+                _menuItem(context, Icons.delete, "Remove", FriendAction.remove),
+              );
 
               return menu;
             },
-            onSelected: (action) => controller.handleAction(context, action, f),
+            onSelected: (action) {
+              HapticHelper.selection();
+              controller.handleAction(context, action, f);
+            },
           ),
         ],
       ),
@@ -155,16 +194,23 @@ class FriendsPage extends GetView<FriendsController> {
   }
 
   /// ================= STATUS =================
-  Widget _statusText(FriendModel f, bool isOwe, bool isReceive) {
+  Widget _statusText(
+    BuildContext context,
+    FriendModel f,
+    bool isOwe,
+    bool isReceive,
+  ) {
     if (f.isSettled) {
       return SizedBox.shrink();
     }
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (isOwe) {
       return Text(
         "You owe ₹${f.amount.toStringAsFixed(0)}",
         style: TextStyle(
-          color: Colors.red.shade700,
+          color: isDark ? Colors.red.shade300 : Colors.red.shade700,
           fontSize: 8.5.sp,
           fontWeight: FontWeight.w500,
         ),
@@ -174,7 +220,7 @@ class FriendsPage extends GetView<FriendsController> {
     return Text(
       "You receive ₹${f.amount.toStringAsFixed(0)}",
       style: TextStyle(
-        color: Colors.green.shade700,
+        color: isDark ? Colors.green.shade300 : Colors.green.shade700,
         fontSize: 8.5.sp,
         fontWeight: FontWeight.w500,
       ),

@@ -27,9 +27,11 @@ class Set2faPage extends GetView<Set2faController> {
           controller.appBarTitle,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
-        centerTitle: true,
+        centerTitle: false,
         flexibleSpace: Container(
-          decoration: BoxDecoration(gradient: AppColors.appBarGradientFor(context)),
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
         ),
       ),
       body: GestureDetector(
