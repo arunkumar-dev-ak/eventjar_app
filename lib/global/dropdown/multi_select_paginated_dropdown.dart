@@ -18,8 +18,9 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
 
   final RxBool isLoading;
   final RxBool isLoadMoreLoading;
+  final Color? selectedDisplayColor;
 
-  /// 🔥 NEW OPTIONALS
+  // NEW OPTIONALS
   final String? hintText;
   final Color? themeColor;
   final Color? headerColor;
@@ -45,7 +46,7 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
     required this.isLoading,
     required this.isLoadMoreLoading,
 
-    /// 🔥 optional
+    // optional
     this.hintText,
     this.themeColor,
     this.headerColor,
@@ -56,6 +57,7 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
     this.borderWidth,
     this.selectedTextSize,
     this.dropDownIconSize,
+    this.selectedDisplayColor,
   });
 
   @override
@@ -108,7 +110,7 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
                             ? FontWeight.w600
                             : FontWeight.w500,
                         color: hasValue
-                            ? primary
+                            ? selectedDisplayColor ?? primary
                             : AppColors.textSecondary(context),
                       ),
                     );

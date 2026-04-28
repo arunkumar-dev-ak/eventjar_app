@@ -1,7 +1,7 @@
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:get/get.dart';
 
-enum AddFriendType { contact, email, phone }
+enum AddFriendType { contact, newFriend }
 
 class AddFriendState {
   final RxBool isLoading = false.obs;
@@ -12,4 +12,7 @@ class AddFriendState {
   Rxn<MobileContact> selectedContact = Rxn<MobileContact>();
   RxBool isContactDropdownLoading = false.obs;
   RxBool isContactDropdownLoadMoreLoading = false.obs;
+
+  final RxBool sendViaEmail = false.obs;
+  final RxBool sendViaPhone = false.obs;
 }

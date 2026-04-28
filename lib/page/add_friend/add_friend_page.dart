@@ -2,11 +2,10 @@ import 'package:eventjar/controller/add_friend/controller.dart';
 import 'package:eventjar/controller/add_friend/state.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/dropdown/single_selected_dropdown.dart';
-import 'package:eventjar/global/dropdown/single_selected_paginated_dropdown.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/global/widget/form_element.dart';
 import 'package:eventjar/global/widget/form_submit_button.dart';
-import 'package:eventjar/model/contact/mobile_contact_model.dart';
+import 'package:eventjar/page/add_friend/widget/contact_add_friend.dart';
+import 'package:eventjar/page/add_friend/widget/new_add_friend.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -60,12 +59,10 @@ class AddFriendPage extends GetView<AddFriendController> {
 
                   getDisplayValue: (type) {
                     switch (type) {
+                      case AddFriendType.newFriend:
+                        return "New Friend";
                       case AddFriendType.contact:
                         return "From My Contacts";
-                      case AddFriendType.email:
-                        return "Invite by Email";
-                      case AddFriendType.phone:
-                        return "Invite by Phone";
                     }
                   },
 
@@ -77,7 +74,7 @@ class AddFriendPage extends GetView<AddFriendController> {
 
                   hintText: "Choose how to add friend",
 
-                  /// 🔥 Optional theming (nice touch)
+                  // Optional theming (nice touch)
                   headerColor: AppColors.gradientDarkStart,
                   themeColor: AppColors.gradientDarkStart,
 
@@ -85,21 +82,18 @@ class AddFriendPage extends GetView<AddFriendController> {
                   selectedShade2: Colors.grey.withValues(alpha: 0.25),
                   selectedShade3: Colors.grey.withValues(alpha: 0.4),
 
-                  selectedDisplayColor: AppColors.textSecondary(context),
+                  selectedDisplayColor: Colors.black.withValues(alpha: 0.6),
+                  dropdownIcon: Icons.keyboard_arrow_down_rounded,
                 ),
-
                 SizedBox(height: 2.hp),
 
-                // DYNAMIC FORM
                 Obx(() {
-                  switch (controller.state.selectedType.value ??
-                      AddFriendType.contact) {
-                    case AddFriendType.contact:
-                      return _contactView();
-                    case AddFriendType.email:
-                      return _emailView();
-                    case AddFriendType.phone:
-                      return _phoneView();
+                  final type = controller.state.selectedType.value;
+
+                  if (type == AddFriendType.contact) {
+                    return const ContactAddFriendContactView();
+                  } else {
+                    return const NewAddFriend();
                   }
                 }),
 
@@ -109,7 +103,7 @@ class AddFriendPage extends GetView<AddFriendController> {
                 SafeArea(
                   child: Row(
                     children: [
-                      /// 🔥 CLEAR
+                      // CLEAR
                       Expanded(
                         child: Obx(() {
                           final isLoading = controller.state.isLoading.value;
@@ -125,7 +119,7 @@ class AddFriendPage extends GetView<AddFriendController> {
 
                       SizedBox(width: 3.wp),
 
-                      /// 🔥 SUBMIT
+                      // SUBMIT
                       Expanded(
                         child: Obx(() {
                           final isLoading = controller.state.isLoading.value;
@@ -155,63 +149,6 @@ class AddFriendPage extends GetView<AddFriendController> {
           ),
         ),
       ),
-    );
-  }
-
-  // CONTACT VIEW
-  Widget _contactView() {
-    return SingleSelectPaginatedFilterDropdown<MobileContact>(
-      title: "Select Qualified Contact",
-      items: controller.state.contacts,
-      selectedItem: controller.state.selectedContact,
-      getDefaultItem: () => controller.state.contacts.first,
-      getDisplayValue: (item) {
-        return item.id.isNotEmpty
-            ? "${item.name} - ${item.email}"
-            : "Choose a qualified contact";
-      },
-      getKeyValue: (item) => item,
-      onSelected: (item) {},
-      hintText: "Choose a qualified contact",
-      onChanged: controller.onSearchChanged,
-      onRefresh: controller.onRefreshClicked,
-      onClickedLoadMore: controller.onLoadMoreClicked,
-      onLoadMoreLoading: controller.state.isContactDropdownLoadMoreLoading,
-      onDropdownListLoading: controller.state.isContactDropdownLoading,
-    );
-  }
-
-  // EMAIL VIEW
-  Widget _emailView() {
-    return Column(
-      children: [
-        FormElement(
-          controller: controller.emailController,
-          label: "Email",
-          keyboardType: TextInputType.emailAddress,
-          validator: (val) =>
-              val == null || !val.contains("@") ? "Enter valid email" : null,
-        ),
-        SizedBox(height: 2.hp),
-        FormElement(controller: controller.nameController, label: "Name"),
-      ],
-    );
-  }
-
-  // PHONE VIEW
-  Widget _phoneView() {
-    return Column(
-      children: [
-        FormElement(
-          controller: controller.phoneController,
-          label: "Phone Number *",
-          keyboardType: TextInputType.phone,
-          validator: (val) =>
-              val == null || val.length < 10 ? "Invalid phone" : null,
-        ),
-        SizedBox(height: 2.hp),
-        FormElement(controller: controller.nameController, label: "Name"),
-      ],
     );
   }
 }

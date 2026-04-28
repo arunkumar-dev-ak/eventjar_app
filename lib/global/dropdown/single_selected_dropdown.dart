@@ -25,6 +25,7 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
   final double? height;
   final double? selectedTextSize;
   final double? dropDownIconSize;
+  final IconData? dropdownIcon;
   final EdgeInsetsGeometry? textFieldPadding;
 
   const SingleSelectFilterDropdown({
@@ -48,6 +49,7 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
     this.selectedTextSize,
     this.dropDownIconSize,
     this.textFieldPadding,
+    this.dropdownIcon,
   });
 
   @override
@@ -105,9 +107,9 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
 
               AnimatedRotation(
                 duration: const Duration(milliseconds: 200),
-                turns: isSelected ? 0.25 : 0,
+                turns: isSelected && dropDownIconSize != null ? 0.25 : 0,
                 child: Icon(
-                  Icons.keyboard_arrow_down_rounded,
+                  dropdownIcon ?? Icons.keyboard_arrow_down_rounded,
                   size: dropDownIconSize ?? 24,
                   color: isSelected
                       ? selectedDisplayColor ?? primary

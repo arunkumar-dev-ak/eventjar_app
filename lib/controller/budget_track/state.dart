@@ -8,4 +8,6 @@ class BudgetTrackState {
   final RxString selectedFilter = 'All'.obs;
 
   RxBool isOwedSelected = true.obs;
+
+  RxMap expandedNotes = <int, bool>{}.obs;
 }

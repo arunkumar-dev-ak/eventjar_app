@@ -122,9 +122,6 @@ class ContactController extends GetxController
 
   /*----- fetch contacts ------*/
   String getEndpoint({bool onRefresh = false}) {
-    LoggerService.loggerInstance.dynamic_d(
-      "ffffff ---- ${state.selectedTab.value}",
-    );
     final searchQuery = state.searchQuery.value.trim();
     final stageKey = state.selectedTab.value!.enumKey;
     final page = onRefresh ? _currentPage : _getNextPage();

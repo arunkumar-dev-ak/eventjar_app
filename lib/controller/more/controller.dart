@@ -21,9 +21,9 @@ class MoreController extends GetxController {
   }
 
   // Budget
-  // void navigateToBudgetTrack() {
-  //   _requireLogin(() => Get.toNamed(RouteName.budgetTrackPage));
-  // }
+  void navigateToBudgetTrack() {
+    _requireLogin(() => Get.toNamed(RouteName.budgetTrackPage));
+  }
 
   // Contact
   void navigateToAddContact() {

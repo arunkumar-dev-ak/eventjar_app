@@ -1,7 +1,12 @@
 import 'package:eventjar/controller/create_expense/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/dropdown/multi_select_paginated_dropdown.dart';
+import 'package:eventjar/global/dropdown/single_selected_dropdown.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/widget/form_submit_button.dart';
+import 'package:eventjar/page/add_contact/add_contact_form_element.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
+import 'package:get/get.dart';
 
 class CreateExpensePage extends GetView<CreateExpenseController> {
   const CreateExpensePage({super.key});
@@ -9,6 +14,8 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffoldBg(context),
+
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
@@ -18,9 +25,176 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
         iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
         elevation: 4,
         backgroundColor: AppColors.cardBg(context),
-        shadowColor: Colors.black.withValues(alpha: 0.5),
       ),
-      body: Text("Hi"),
+
+      body: GestureDetector(
+        onTap: () => Get.focusScope?.unfocus(),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(4.wp),
+          child: Form(
+            key: controller.formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                // TITLE
+                ContactFormElement(
+                  controller: controller.titleController,
+                  label: "Expense Title *",
+                  validator: (val) =>
+                      val == null || val.isEmpty ? "Required" : null,
+                ),
+
+                SizedBox(height: 2.hp),
+
+                // AMOUNT
+                ContactFormElement(
+                  controller: controller.amountController,
+                  label: "Amount *",
+                  keyboardType: TextInputType.number,
+                  validator: (val) =>
+                      val == null || val.isEmpty ? "Enter amount" : null,
+                ),
+
+                SizedBox(height: 2.hp),
+
+                // CATEGORY DROPDOWN
+                SingleSelectFilterDropdown<String>(
+                  title: "Trip Category",
+                  items: controller.state.categories,
+                  selectedItem: controller.state.selectedCategory,
+                  getDefaultItem: () => "Shopping",
+                  getDisplayValue: (item) => item,
+                  getKeyValue: (item) => item,
+                  onSelected: (val) =>
+                      controller.state.selectedCategory.value = val,
+                  hintText: "Select Category",
+
+                  headerColor: AppColors.gradientDarkStart,
+                  themeColor: AppColors.gradientDarkStart,
+
+                  selectedShade1: Colors.grey.withValues(alpha: 0.15),
+                  selectedShade2: Colors.grey.withValues(alpha: 0.25),
+                  selectedShade3: Colors.grey.withValues(alpha: 0.4),
+
+                  selectedDisplayColor: Colors.black.withValues(alpha: 0.6),
+                  dropdownIcon: Icons.keyboard_arrow_down_rounded,
+                ),
+
+                SizedBox(height: 2.hp),
+
+                // SPLIT WITH
+                MultiSelectPaginatedDropdown<String>(
+                  title: "Split With",
+                  items: controller.state.members,
+                  selectedItemsMap: controller.state.selectedMembers,
+                  getDisplayValue: (item) => item,
+                  getKeyValue: (item) => item,
+                  onChanged: controller.onSearchMembers,
+                  onLoadMore: controller.onLoadMoreMembers,
+                  onRefresh: controller.onRefreshMembers,
+                  isLoading: controller.state.isMembersLoading,
+                  isLoadMoreLoading: controller.state.isMembersLoadMoreLoading,
+                  hintText: "Select Members",
+
+                  selectedShade1: Colors.grey.withValues(alpha: 0.15),
+                  selectedShade2: Colors.grey.withValues(alpha: 0.25),
+                  selectedShade3: Colors.grey.withValues(alpha: 0.4),
+
+                  selectedDisplayColor: Colors.black.withValues(alpha: 0.6),
+                ),
+
+                SizedBox(height: 0.5.hp),
+
+                InkWell(
+                  onTap: () {
+                    controller.navigateToAddFriend();
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 2.wp,
+                      horizontal: 1.wp,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.add_circle_outline,
+                          color: AppColors.textSecondary(context),
+                          size: 18,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          "Click To Add New Member",
+                          style: TextStyle(
+                            color: AppColors.textSecondary(context),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 2.hp),
+
+                // DESCRIPTION
+                ContactFormElement(
+                  controller: controller.descriptionController,
+                  label: "Description",
+                  maxLines: 3,
+                ),
+
+                SizedBox(height: 3.hp),
+
+                // BUTTONS
+                SafeArea(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Obx(() {
+                          final isLoading = controller.state.isLoading.value;
+
+                          return FormButton(
+                            text: "Clear",
+                            isLoading: isLoading,
+                            type: FormButtonType.outline,
+                            onPressed: () {},
+                          );
+                        }),
+                      ),
+
+                      SizedBox(width: 3.wp),
+
+                      // SUBMIT
+                      Expanded(
+                        child: Obx(() {
+                          final isLoading = controller.state.isLoading.value;
+
+                          return FormButton(
+                            text: isLoading ? "Creating..." : "Create Expense",
+                            isLoading: isLoading,
+                            type: FormButtonType.primary,
+                            icon: Icons.receipt_long,
+                            onPressed: () {
+                              if (isLoading) return;
+
+                              if (controller.formKey.currentState?.validate() ??
+                                  false) {
+                                Get.focusScope?.unfocus();
+                                controller.submit();
+                              }
+                            },
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

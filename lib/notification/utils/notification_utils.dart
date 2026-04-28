@@ -76,6 +76,23 @@ void navigateBasedOnNotificationType(String type) {
       args = {"initialTab": 3, "isLoginRequired": true};
       break;
 
+    //Need to handle
+    /*---
+    NotificationEventType.EVENT_UPDATED
+    NotificationEventType.EVENT_CANCELLED_BY_ORGANIZER,
+    NotificationEventType.TICKET_CONFIRMATION
+    NotificationEventType.TICKET_CANCELLED
+    NotificationEventType.EVENT_REMINDER_1_DAY
+    NotificationEventType.EVENT_REMINDER_1_HOUR
+    NotificationEventType.EVENT_REMINDER_2_HOUR
+    NotificationEventType.WEEKLY_UPCOMING_EVENTS_DIGEST
+    NotificationEventType.PROFILE_INCOMPLETE
+    NotificationEventType.ADD_CONTACT_REMINDER
+    NotificationEventType.OVERDUE_CONTACT
+    ONBOARDING
+    Type: email_integration, calendar_feature, whatsapp_integration, networking_card, scan_card
+    ---*/
+
     default:
       LoggerService.loggerInstance.d("Unhandled notification type: $type");
       return;

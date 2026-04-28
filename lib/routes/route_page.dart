@@ -13,6 +13,7 @@ import 'package:eventjar/controller/dashboard/binding.dart';
 import 'package:eventjar/controller/email_notification/binding.dart';
 import 'package:eventjar/controller/event_info/binding.dart';
 import 'package:eventjar/controller/forgotPassword/binding.dart';
+import 'package:eventjar/controller/friends/binding.dart';
 import 'package:eventjar/controller/image_viewer/binding.dart';
 import 'package:eventjar/controller/meeting/binding.dart';
 import 'package:eventjar/controller/nfc/binding.dart';
@@ -36,6 +37,8 @@ import 'package:eventjar/controller/signIn/binding.dart';
 import 'package:eventjar/controller/signUp/binding.dart';
 import 'package:eventjar/controller/splashScreen/binding.dart';
 import 'package:eventjar/controller/thank_you_message/binding.dart';
+import 'package:eventjar/controller/transaction/binding.dart';
+import 'package:eventjar/controller/view_trip/binding.dart';
 import 'package:eventjar/page/add_contact/add_contact.dart';
 import 'package:eventjar/page/add_friend/add_friend_page.dart';
 import 'package:eventjar/page/auth_processing/auth_processing.dart';
@@ -51,6 +54,7 @@ import 'package:eventjar/page/dashboard/dashboard_page.dart';
 import 'package:eventjar/page/email_notification/email_notification_page.dart';
 import 'package:eventjar/page/event_info/event_info.dart';
 import 'package:eventjar/page/forgot_password/forgot_password.dart';
+import 'package:eventjar/page/friends/friends_page.dart';
 import 'package:eventjar/page/image_viewer/image_viewer.dart';
 import 'package:eventjar/page/meeting/meeting_page.dart';
 import 'package:eventjar/page/nfc/nfc_page.dart';
@@ -74,6 +78,8 @@ import 'package:eventjar/page/sign_in/sign_in_page.dart';
 import 'package:eventjar/page/sign_up/sign_up_page.dart';
 import 'package:eventjar/page/splash_screen/splash_screen_page.dart';
 import 'package:eventjar/page/thank_you_message/thank_you_message.dart';
+import 'package:eventjar/page/transaction/transaction_page.dart';
+import 'package:eventjar/page/view_trip/view_trip.dart';
 import 'package:eventjar/routes/route_auth.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:get/get.dart';
@@ -345,6 +351,7 @@ class RoutePage {
       binding: BudgetTrackBinding(),
       middlewares: [LoginMiddleware()],
     ),
+    //friend
     GetPage(
       name: RouteName.addFriendPage,
       page: () => AddFriendPage(),
@@ -352,15 +359,35 @@ class RoutePage {
       middlewares: [LoginMiddleware()],
     ),
     GetPage(
+      name: RouteName.friendListPage,
+      page: () => FriendsPage(),
+      binding: FriendsBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    //trip
+    GetPage(
       name: RouteName.createTripPage,
       page: () => CreateTripPage(),
       binding: CreateTripBinding(),
       middlewares: [LoginMiddleware()],
     ),
     GetPage(
+      name: RouteName.viewTripPage,
+      page: () => ViewTripPage(),
+      binding: ViewTripBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
       name: RouteName.createExpensePage,
       page: () => CreateExpensePage(),
       binding: CreateExpenseBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    //transaction
+    GetPage(
+      name: RouteName.transactionPage,
+      page: () => TransactionPage(),
+      binding: TransactionBinding(),
       middlewares: [LoginMiddleware()],
     ),
 

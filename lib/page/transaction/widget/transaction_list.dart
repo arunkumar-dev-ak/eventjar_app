@@ -1,6 +1,6 @@
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/page/budget_track/transactions/dummy_model.dart';
-import 'package:eventjar/page/budget_track/transactions/transaction_card.dart';
+import 'package:eventjar/page/transaction/widget/dummy_model.dart';
+import 'package:eventjar/page/transaction/widget/transaction_card.dart';
 import 'package:flutter/material.dart';
 
 class TransactionHistoryList extends StatelessWidget {

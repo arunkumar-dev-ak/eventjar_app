@@ -1,60 +1,30 @@
 import 'package:eventjar/controller/budget_track/state.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/budget_track/trip_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_ticket_provider_mixin.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 class BudgetTrackController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final state = BudgetTrackState();
-
-  late TabController tabController;
-
-  final tabs = const [
-    "Friends",
-    "Trips",
-    "Expenses",
-    "Balances",
-    "Transactions",
-  ];
+  late AnimationController animation;
 
   @override
   void onInit() {
-    tabController = TabController(length: tabs.length, vsync: this);
-
-    tabController.addListener(() {
-      if (!tabController.indexIsChanging) {
-        final index = tabController.index;
-
-        state.selectedMainTab.value = index;
-
-        _handleTabChange(index);
-      }
-    });
-
     super.onInit();
+    animation = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 10),
+    )..repeat();
   }
 
-  void _handleTabChange(int index) {
-    switch (index) {
-      case 0:
-        fetchFriends();
-        break;
-      case 1:
-        fetchTrips();
-        break;
-      case 2:
-        fetchExpenses();
-        break;
-      case 3:
-        fetchBalances();
-        break;
-      case 4:
-        fetchSettlements();
-        break;
-    }
+  void toggleNotes(int index) {
+    state.expandedNotes[index] = !(state.expandedNotes[index] ?? false);
+  }
+
+  bool isExpanded(int index) {
+    return state.expandedNotes[index] ?? false;
   }
 
   Map<String, String> getHeader(int index) {
@@ -111,6 +81,26 @@ class BudgetTrackController extends GetxController
   }
 
   //navigation
+  void navigateToFriendList() {
+    Get.toNamed(RouteName.friendListPage)?.then((result) async {
+      // if (result == "logged_in") {
+      //   await fetchContactsOnFirstLoad();
+      // } else {
+      //   Get.back();
+      // }
+    });
+  }
+
+  void navigateToTransaction() {
+    Get.toNamed(RouteName.transactionPage)?.then((result) async {
+      // if (result == "logged_in") {
+      //   await fetchContactsOnFirstLoad();
+      // } else {
+      //   Get.back();
+      // }
+    });
+  }
+
   void navigateToAddFriend() {
     Get.toNamed(RouteName.addFriendPage)?.then((result) async {
       // if (result == "logged_in") {
@@ -141,9 +131,16 @@ class BudgetTrackController extends GetxController
     });
   }
 
+  void navigateToViewTrip(TripModel trip) {
+    Get.toNamed(
+      RouteName.viewTripPage,
+      arguments: {trip},
+    )?.then((result) async {});
+  }
+
   @override
   void onClose() {
-    tabController.dispose();
+    animation.dispose();
     super.onClose();
   }
 }
