@@ -62,7 +62,17 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
+                <!-- Linkedin -->
                 <data android:scheme="myeventjar" android:host="auth" />
+
+                <data android:scheme="https" android:host="myeventjar.com" android:pathPrefix="/invite/" />
+                <data android:scheme="https" android:host="myeventjar.com" android:pathPrefix="/events/" />
+                <data android:scheme="https" android:host="myeventjar.com" android:pathPrefix="/staff-invite/" />
+                <data android:scheme="https" android:host="myeventjar.com" android:pathPrefix="/trips/join/" />
+                <data android:scheme="https" android:host="myeventjar.com" android:pathPrefix="/my-tickets" />
+                <data android:scheme="https" android:host="myeventjar.com" android:pathPrefix="/network" />
+                <data android:scheme="https" android:host="myeventjar.com" android:pathPrefix="/connections" />
+                <data android:scheme="https" android:host="myeventjar.com" android:pathPrefix="/find-events" />
             </intent-filter>
             <!-- Home screen widget deep link -->
             <intent-filter>

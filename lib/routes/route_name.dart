@@ -7,6 +7,7 @@ class RouteName {
   static const authProcessingPage = '/authProcessingPage';
   static const set2fa = '/set2faPage';
   static const changePassword = '/changePasswordPage';
+  static const staffInvitePage = '/staffInvitePage';
 
   //home page
   static const dashboardpage = '/dashboardPage';

@@ -39,21 +39,117 @@ class DeepLinkHandler {
       return;
     }
 
-    if (uri.path == '/linkedin') {
-      final authSessionId = uri.queryParameters['auth_session_id'];
+    // if (uri.path == '/linkedin') {
+    //   final authSessionId = uri.queryParameters['auth_session_id'];
 
-      LoggerService.loggerInstance.dynamic_d("authSessionId: $authSessionId");
+    //   LoggerService.loggerInstance.dynamic_d("authSessionId: $authSessionId");
 
-      if (authSessionId != null) {
-        Get.toNamed(
-          RouteName.authProcessingPage,
-          arguments: {'provider': 'linkedin', 'authSessionId': authSessionId},
-        )?.then((result) {
-          if (result == "logged_in") {
-            Navigator.pop(Get.context!, "logged_in");
-          }
-        });
-      }
+    //   if (authSessionId != null) {
+    //     Get.toNamed(
+    //       RouteName.authProcessingPage,
+    //       arguments: {'provider': 'linkedin', 'authSessionId': authSessionId},
+    //     )?.then((result) {
+    //       if (result == "logged_in") {
+    //         Navigator.pop(Get.context!, "logged_in");
+    //       }
+    //     });
+    //   }
+    // }
+
+    final segments = uri.pathSegments;
+
+    if (segments.isEmpty) return;
+
+    switch (segments[0]) {
+      //invite/{token} 🔴
+      case 'invite':
+        if (segments.length > 1) {
+          final token = segments[1];
+          Get.offAllNamed(RouteName.signUpPage, arguments: {'token': token});
+        }
+        break;
+
+      // events/{slug}
+      case 'events':
+        if (segments.length > 1) {
+          final slug = segments[1];
+
+          Get.toNamed(RouteName.eventInfoPage, arguments: {'eventId': slug});
+        }
+        break;
+
+      // staff-invite/{token} 🔴
+      case 'staff-invite':
+        if (segments.length > 1) {
+          final token = segments[1];
+
+          Get.toNamed(RouteName.staffInvitePage, arguments: {'token': token});
+        }
+        break;
+
+      // trips/join/{token} 🔴
+      case 'trips':
+        if (segments.length > 2 && segments[1] == 'join') {
+          final token = segments[2];
+
+          // Get.toNamed(RouteName.tripJoinPage, arguments: {'token': token});
+          Get.offAllNamed(RouteName.dashboardpage);
+        }
+        break;
+
+      // my-tickets
+      case 'my-tickets':
+        Get.offAllNamed(
+          RouteName.dashboardpage,
+          arguments: {"initialTab": 3, "isLoginRequired": true},
+        );
+        break;
+
+      // network
+      case 'network':
+        Get.offAllNamed(
+          RouteName.dashboardpage,
+          arguments: {
+            "initialTab": 1,
+            "openSubPage": "contact",
+            "isLoginRequired": true,
+          },
+        );
+        break;
+
+      // connections
+      case 'connections':
+        Get.offAllNamed(
+          RouteName.connectionPage,
+          arguments: {
+            "initialTab": 1,
+            "openSubPage": "connection",
+            "connectionTab": 1,
+            "isLoginRequired": true,
+          },
+        );
+        break;
+
+      // find-events
+      case 'find-events':
+        Get.offAllNamed(RouteName.dashboardpage);
+        break;
+
+      // linkedin handling
+      case 'linkedin':
+        final authSessionId = uri.queryParameters['auth_session_id'];
+
+        if (authSessionId != null) {
+          Get.toNamed(
+            RouteName.authProcessingPage,
+            arguments: {'provider': 'linkedin', 'authSessionId': authSessionId},
+          )?.then((result) {
+            if (result == "logged_in") {
+              Navigator.pop(Get.context!, "logged_in");
+            }
+          });
+        }
+        break;
     }
   }
 

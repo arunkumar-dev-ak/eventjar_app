@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import '../../controller/scan_card/controller.dart';
 import '../../global/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
 
