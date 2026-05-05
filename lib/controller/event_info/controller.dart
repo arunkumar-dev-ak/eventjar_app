@@ -61,6 +61,7 @@ class EventInfoController extends GetxController
   void onInit() async {
     UserStore.cancelAllRequests();
     final args = Get.arguments;
+    LoggerService.loggerInstance.dynamic_d(args);
     if (args is Map && args['ticketId'] != null) {
       state.ticketId.value = args['ticketId'];
     } else {
@@ -145,10 +146,10 @@ class EventInfoController extends GetxController
     try {
       final attendeeResponse =
           await EventInfoApiAttendeeList.getEventAttendeeList(
-        finalEventId,
-        offset: 0,
-        limit: limit,
-      );
+            finalEventId,
+            offset: 0,
+            limit: limit,
+          );
 
       state.attendeeList.value = attendeeResponse;
       final newLength = attendeeResponse.attendee?.length ?? 0;

@@ -19,6 +19,14 @@ class MainActivity : FlutterActivity() {
     private val CHANNEL = "com.myeventjar.eventjar_app/nfc"
     private var methodChannel: MethodChannel? = null
 
+    // Never let the platform forward the launching intent's URI as the
+    // Flutter initial route. If we did, GetMaterialApp would try to
+    // resolve "/invite/<token>" against `getPages` before splash mounts
+    // and crash inside `initialRoutesGenerate`. The URI is delivered to
+    // Dart through the app_links MethodChannel instead, where
+    // DeepLinkHandler dispatches it from SplashScreenController.
+    override fun getInitialRoute(): String? = null
+
     // Store NFC intents - can be initial or from onNewIntent
     private var pendingNfcIntent: Intent? = null
 

@@ -28,6 +28,19 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <!--
+              Disable Flutter's built-in deep-link handling so the intent URI
+              is NOT forwarded as the initial route name. If it were, GetX
+              would try to resolve "/invite/<token>" against `getPages` before
+              splash has mounted and crash inside `initialRoutesGenerate`
+              (Null check operator used on a null value in PageRedirect.page).
+              The URI is instead delivered through the app_links MethodChannel
+              and dispatched by DeepLinkHandler from SplashScreenController —
+              the same pattern used for FCM notifications via getInitialMessage().
+            -->
+            <meta-data
+              android:name="flutter_deeplinking_enabled"
+              android:value="false" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

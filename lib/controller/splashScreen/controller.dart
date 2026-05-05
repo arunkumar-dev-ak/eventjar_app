@@ -5,6 +5,7 @@ import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/controller/splashScreen/state.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
+import 'package:eventjar/services/deep_link_handler.dart';
 import 'package:eventjar/services/nfc_intent_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -169,7 +170,19 @@ class SplashScreenController extends GetxController
   void _navigateToHome() async {
     await Future.delayed(const Duration(milliseconds: 2000));
 
-    await _resolveInstallFlow();
+    // 1. Cold-start deep link (Universal Links / App Links, plus the
+    //    Android Play Install Referrer fallback). If we have one, it
+    //    decides where to land — no other navigation should override it.
+    final initialUri = await DeepLinkHandler().resolveInitialUri();
+    if (initialUri != null) {
+      await DeepLinkHandler().handleColdStartUri(initialUri);
+    } else {
+      // 2. Otherwise: iOS deferred install token, else dashboard.
+      await _resolveInstallFlow();
+    }
+
+    // 3. Listen for warm-state links (app already running / in background).
+    DeepLinkHandler().listenForLinks();
 
     // Notify NFC after navigation settles
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -187,8 +200,8 @@ class SplashScreenController extends GetxController
       }
     }
 
-    // Default fallback
-    Get.offNamed(RouteName.dashboardpage);
+    // Default fallback. Use offAllNamed so splash leaves the back stack.
+    Get.offAllNamed(RouteName.dashboardpage);
   }
 
   Future<String?> getInviteTokenIfAny() async {
