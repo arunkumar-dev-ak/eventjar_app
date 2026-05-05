@@ -56,14 +56,14 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
             <!-- Deep Link in Mobile App -->
-            <!-- <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="myeventjar" android:host="auth" />
-            </intent-filter> -->
+            </intent-filter>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
