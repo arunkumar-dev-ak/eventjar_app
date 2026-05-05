@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/splashScreen/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/widget/full_screen_loader.dart';
 import 'package:eventjar/page/splash_screen/widget/network_animation_binder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -131,6 +132,14 @@ class SplashScreenPage extends GetView<SplashScreenController> {
                     ],
                   );
                 },
+              ),
+            ),
+
+            // loader for deeplink
+            Obx(
+              () => FullScreenLoader(
+                isLoading: controller.state.isResolvingDeepLink.value,
+                message: "Preparing your experience...",
               ),
             ),
           ],

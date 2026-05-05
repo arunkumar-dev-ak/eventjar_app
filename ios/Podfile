@@ -1,4 +1,4 @@
-platform :ios, '15.5'  # 🔥 Firebase 12.8.0 + ML Kit + device_info_plus
+platform :ios, '16.0'
 
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
@@ -41,7 +41,7 @@ post_install do |installer|
     
     target.build_configurations.each do |config|
       # 🔥 FORCE iOS 15.5 FOR ALL PODS (Firebase/ML Kit/device_info_plus)
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.5'
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
       
       # 🔥 FORCE dSYM for ALL targets (crash reporting)
       config.build_settings['DEBUG_INFORMATION_FORMAT'] = 'dwarf-with-dsym'

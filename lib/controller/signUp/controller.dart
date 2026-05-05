@@ -23,6 +23,7 @@ class SignUpController extends GetxController {
 
   final isPasswordHidden = true.obs;
   bool get isLoading => state.isLoading.value;
+  String? invitationToken;
 
   TextEditingController get emailController => _emailController.value;
   TextEditingController get passwordController => _passwordController.value;
@@ -34,6 +35,13 @@ class SignUpController extends GetxController {
   void onInit() {
     UserStore.cancelAllRequests();
     super.onInit();
+
+    final args = Get.arguments;
+
+    if (args != null && args['token'] != null) {
+      invitationToken = args['token'];
+      _resolveInvitation(invitationToken!);
+    }
   }
 
   void navigateToLogin() {
@@ -47,6 +55,7 @@ class SignUpController extends GetxController {
       "name": fullNameController.text.trim(),
       "phone": mobileNumberController.text.trim(),
       "countryCode": state.selectedCountry.value.code,
+      if (invitationToken != null) "invitationToken": invitationToken,
     };
   }
 
@@ -84,6 +93,49 @@ class SignUpController extends GetxController {
       }
     } finally {
       state.isLoading.value = false;
+    }
+  }
+
+  /* Handle Invitation */
+  Future<void> _resolveInvitation(String token) async {
+    try {
+      state.isFetchigInvitation.value = true;
+
+      final response = await SignUpApi.resolveInvitation(token);
+      final data = response.data;
+
+      // Prefill fields
+      if (data.name != null) {
+        fullNameController.text = data.name!;
+      }
+
+      if (data.email != null) {
+        emailController.text = data.email!;
+      }
+
+      if (data.phone != null) {
+        mobileNumberController.text = data.phone!;
+      }
+    } catch (err) {
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 404) {
+          AppSnackbar.error(
+            title: "Invalid Invite",
+            message: "Invitation not found",
+          );
+        } else if (statusCode == 410) {
+          AppSnackbar.error(
+            title: "Expired Invite",
+            message: "This invitation has expired",
+          );
+        } else {
+          ApiErrorHandler.handleError(err, "Invite Error");
+        }
+      }
+    } finally {
+      state.isFetchigInvitation.value = false;
     }
   }
 

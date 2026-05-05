@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/signUp/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/widget/full_screen_loader.dart';
 import 'package:eventjar/page/sign_up/widgets/signup_back_button.dart';
 import 'package:eventjar/page/sign_up/widgets/signup_form.dart';
 import 'package:eventjar/page/sign_up/widgets/signup_header.dart';
@@ -13,59 +14,76 @@ class SignUpPage extends GetView<SignUpController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          Get.focusScope?.unfocus();
-        },
-        child: Container(
-          width: 100.wp,
-          decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
-          child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /*----- back button -----*/
-                SignUpBackButton(),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SignUpHeader(),
-                      SizedBox(height: 3.hp),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.cardBg(context),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(50),
-                            topRight: Radius.circular(50),
-                          ),
-                        ),
-                        width: 100.wp,
-                        height: 40,
-                      ),
-                      /*----- Form -----*/
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(color: AppColors.cardBg(context)),
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              left: 5.wp,
-                              right: 5.wp,
-                              bottom: 5.wp,
+      body: Stack(
+        children: [
+          GestureDetector(
+            onTap: () {
+              Get.focusScope?.unfocus();
+            },
+            child: Container(
+              width: 100.wp,
+              decoration: const BoxDecoration(
+                gradient: AppColors.appBarGradient,
+              ),
+              child: SafeArea(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    /*----- back button -----*/
+                    SignUpBackButton(),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SignUpHeader(),
+                          SizedBox(height: 3.hp),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.cardBg(context),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(50),
+                                topRight: Radius.circular(50),
+                              ),
                             ),
-                            child: SingleChildScrollView(child: SignUpForm()),
+                            width: 100.wp,
+                            height: 40,
                           ),
-                        ),
+                          /*----- Form -----*/
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.cardBg(context),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  left: 5.wp,
+                                  right: 5.wp,
+                                  bottom: 5.wp,
+                                ),
+                                child: SingleChildScrollView(
+                                  child: SignUpForm(),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+          // Overlay Loader
+          Obx(
+            () => FullScreenLoader(
+              isLoading: controller.state.isFetchigInvitation.value,
+              message: "Fetching invitation...",
+            ),
+          ),
+        ],
       ),
     );
   }

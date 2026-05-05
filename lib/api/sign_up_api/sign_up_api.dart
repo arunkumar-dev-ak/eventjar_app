@@ -6,6 +6,7 @@ import 'package:eventjar/global/device_helper.dart';
 import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/auth/invitation_model.dart';
 import 'package:eventjar/model/auth/login_model.dart';
 import 'package:eventjar/storage/storage_service.dart';
 
@@ -82,6 +83,34 @@ class SignUpApi {
       );
     } catch (e) {
       LoggerService.loggerInstance.e("Error Response: $e");
+      rethrow;
+    }
+  }
+
+  static Future<InvitationResolveResponse> resolveInvitation(
+    String token,
+  ) async {
+    try {
+      final response = await _dio.get(
+        '/invitations/$token/resolve',
+        options: Options(
+          headers: {
+            'X-Client-Platform': 'mobile',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return InvitationResolveResponse.fromJson(response.data);
+      }
+
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        error: "Failed to resolve invitation",
+      );
+    } catch (e) {
       rethrow;
     }
   }

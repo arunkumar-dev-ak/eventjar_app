@@ -1,6 +1,7 @@
 import 'package:app_links/app_links.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
+import 'package:eventjar/services/referrer_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 
@@ -14,12 +15,32 @@ class DeepLinkHandler {
   bool _isInitialized = false;
 
   Future<void> init() async {
+    LoggerService.loggerInstance.dynamic_d("In deeplink onInit");
     if (_isInitialized) return;
 
     // App opened from closed state
     final initialUri = await _appLinks.getInitialLink();
     if (initialUri != null) {
       _handleUri(initialUri);
+    } else {
+      // ANDROID fallback
+      final androidToken = await ReferrerService.getInviteTokenIfAny();
+
+      if (androidToken != null) {
+        //Conversion to URL
+        final uri = Uri.parse("https://myeventjar.com/invite/$androidToken");
+        _handleUri(uri);
+      }
+      // else {
+      // IOS fallback
+      // final iosToken = await IOSDeepLinkService.getInviteTokenIfAny();
+
+      // //Conversion to URL
+      // if (iosToken != null) {
+      //   final uri = Uri.parse("https://myeventjar.com/invite/$iosToken");
+      //   _handleUri(uri);
+      // }
+      // }
     }
 
     // App already running
@@ -58,10 +79,10 @@ class DeepLinkHandler {
 
     final segments = uri.pathSegments;
 
-    if (segments.isEmpty) return;
+    if (segments.isEmpty || segments[0].isEmpty) return;
 
     switch (segments[0]) {
-      //invite/{token} 🔴
+      //invite/{token}
       case 'invite':
         if (segments.length > 1) {
           final token = segments[1];
@@ -120,7 +141,7 @@ class DeepLinkHandler {
       // connections
       case 'connections':
         Get.offAllNamed(
-          RouteName.connectionPage,
+          RouteName.dashboardpage,
           arguments: {
             "initialTab": 1,
             "openSubPage": "connection",
