@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 
 class StorageService extends GetxService {
   static StorageService get to => Get.find<StorageService>();
-  // late final SharedPreferences _prefs;
 
   late final FlutterSecureStorage _storage;
 
@@ -12,18 +11,26 @@ class StorageService extends GetxService {
     return this;
   }
 
-  //set
   Future<void> setString(String key, String value) async {
-    return await _storage.write(key: key, value: value);
+    try {
+      await _storage.write(key: key, value: value);
+    } catch (_) {
+      // Swallow plugin-attachment race / keystore errors so a single
+      // storage failure can't crash the app at startup.
+    }
   }
 
-  //get
   Future<String?> getString(String key) async {
-    return await _storage.read(key: key);
+    try {
+      return await _storage.read(key: key);
+    } catch (_) {
+      return null;
+    }
   }
 
-  //delete
   Future<void> deleteString(String key) async {
-    return await _storage.delete(key: key);
+    try {
+      await _storage.delete(key: key);
+    } catch (_) {}
   }
 }
