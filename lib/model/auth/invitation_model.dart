@@ -1,3 +1,5 @@
+import 'package:eventjar/model/contact/mobile_contact_model.dart';
+
 class InvitationResolveResponse {
   final bool success;
   final InvitationData data;
@@ -15,7 +17,7 @@ class InvitationResolveResponse {
 class InvitationData {
   final String? name;
   final String? email;
-  final String? phone;
+  final PhoneParsed? phoneParsed;
   final String? role;
   final String? type;
   final String? inviterName;
@@ -25,7 +27,7 @@ class InvitationData {
   InvitationData({
     this.name,
     this.email,
-    this.phone,
+    this.phoneParsed,
     this.role,
     this.type,
     this.inviterName,
@@ -37,7 +39,9 @@ class InvitationData {
     return InvitationData(
       name: json['name'],
       email: json['email'],
-      phone: json['phone'],
+      phoneParsed: json['phoneParsed'] != null
+          ? PhoneParsed.fromJson(json['phoneParsed'])
+          : null,
       role: json['role'],
       type: json['type'],
       inviterName: json['inviter_name'],

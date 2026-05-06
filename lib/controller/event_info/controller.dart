@@ -61,7 +61,6 @@ class EventInfoController extends GetxController
   void onInit() async {
     UserStore.cancelAllRequests();
     final args = Get.arguments;
-    LoggerService.loggerInstance.dynamic_d(args);
     if (args is Map && args['ticketId'] != null) {
       state.ticketId.value = args['ticketId'];
     } else {

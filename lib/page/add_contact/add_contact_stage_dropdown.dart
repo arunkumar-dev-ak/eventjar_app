@@ -64,7 +64,9 @@ class ContactStageDropdown extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          backgroundColor: Colors.blue.shade50,
+                          backgroundColor: AppColors.isDark
+                              ? Colors.white.withValues(alpha: 0.12)
+                              : Colors.blue.shade50,
                         ),
                         onPressed: () => Navigator.pop(context),
                         child: const Text(

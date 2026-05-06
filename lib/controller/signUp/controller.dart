@@ -8,6 +8,7 @@ import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_intl_phone_field/countries.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -113,8 +114,16 @@ class SignUpController extends GetxController {
         emailController.text = data.email!;
       }
 
-      if (data.phone != null) {
-        mobileNumberController.text = data.phone!;
+      if (data.phoneParsed != null) {
+        mobileNumberController.text = data.phoneParsed!.phoneNumber;
+
+        //country code
+        final selectedCountryCode = data.phoneParsed?.countryCode ?? "+91";
+        final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
+        state.selectedCountry.value = countries.firstWhere(
+          (country) => country.fullCountryCode == cleanCountryCode,
+          orElse: () => countries.first,
+        );
       }
     } catch (err) {
       if (err is DioException) {
@@ -142,6 +151,7 @@ class SignUpController extends GetxController {
   Future<void> handleLinkedIn() async {
     state.isLinkedinLoading.value = true;
     final url = "${backendBaseUrl()}auth/linkedin?platform=mobile";
+    LoggerService.loggerInstance.dynamic_d(url);
     final Uri authUri = Uri.parse(url);
     try {
       if (await canLaunchUrl(authUri)) {

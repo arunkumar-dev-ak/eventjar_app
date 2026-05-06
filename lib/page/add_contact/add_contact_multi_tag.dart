@@ -91,7 +91,9 @@ class AddMultiSelectTagsInput extends StatelessWidget {
                       ) {
                         return Chip(
                           label: Text(tag, style: TextStyle(fontSize: 9.sp)),
-                          backgroundColor: Colors.blue.shade50,
+                          backgroundColor: AppColors.isDark
+                              ? Colors.white.withValues(alpha: 0.12)
+                              : Colors.blue.shade50,
                           deleteIcon: const Icon(Icons.close, size: 16),
                           onDeleted: () {
                             final lowerKey = tag.toLowerCase();
@@ -160,7 +162,10 @@ class TagSearchPopup extends StatelessWidget {
                     ),
                     IconButton(
                       icon: const Icon(Icons.close),
-                      onPressed: Get.back,
+                      onPressed: () {
+                        Get.focusScope?.unfocus();
+                        Get.back();
+                      },
                     ),
                   ],
                 ),
