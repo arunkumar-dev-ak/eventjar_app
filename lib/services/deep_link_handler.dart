@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:app_links/app_links.dart';
+import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/services/referrer_service.dart';
@@ -25,9 +26,6 @@ class DeepLinkHandler {
     try {
       final initialUri = await _appLinks.getInitialLink();
       if (initialUri != null) {
-        LoggerService.loggerInstance.dynamic_d(
-          "DeepLinkHandler initial: $initialUri",
-        );
         return initialUri;
       }
     } catch (e) {
@@ -87,10 +85,6 @@ class DeepLinkHandler {
   }
 
   Future<bool> _dispatch(Uri uri, {required bool isCold}) async {
-    LoggerService.loggerInstance.dynamic_d(
-      "DeepLinkHandler dispatch (cold=$isCold): $uri",
-    );
-
     // Custom scheme: myeventjar://widget?action=...
     if (uri.scheme == 'myeventjar' && uri.host == 'widget') {
       await _handleWidgetAction(uri.queryParameters['action'], isCold: isCold);
@@ -99,40 +93,72 @@ class DeepLinkHandler {
 
     final segments = uri.pathSegments;
     if (segments.isEmpty || segments.first.isEmpty) return false;
+    // LoggerService.loggerInstance.dynamic_d(segments.first);
 
     switch (segments.first) {
       case 'invite':
-        if (segments.length > 1) {
-          final token = segments[1];
-          Get.offAllNamed(RouteName.signUpPage, arguments: {'token': token});
-          return true;
+        final token = segments.length > 1 ? segments[1].trim() : null;
+
+        if (token == null || token.isEmpty) {
+          AppSnackbar.warning(
+            title: "Invalid Invite",
+            message: "Please try another link.",
+          );
+          return false;
         }
-        return false;
+
+        Get.offAllNamed(
+          RouteName.dashboardpage,
+          arguments: {
+            "initialTab": 0,
+            "openSubPage": "signUpPage",
+            "token": token,
+          },
+        );
+        return true;
 
       case 'events':
-        if (segments.length > 1) {
-          final slug = segments[1];
-          await _openOnDashboard(
-            isCold: isCold,
-            route: RouteName.eventInfoPage,
-            // arguments: {'eventId': slug},
-            parameters: {'eventId': slug},
+        final slug = segments.length > 1 ? segments[1].trim() : null;
+
+        if (slug == null || slug.isEmpty) {
+          AppSnackbar.warning(
+            title: "Invalid Event",
+            message: "Event link is not valid.",
           );
-          return true;
+          return false;
         }
-        return false;
+
+        Get.offAllNamed(
+          RouteName.dashboardpage,
+          arguments: {
+            "initialTab": 0,
+            "openSubPage": "eventInfo",
+            "isLoginRequired": true,
+            "parameters": {"eventId": slug},
+          },
+        );
+        return true;
 
       case 'staff-invite':
-        if (segments.length > 1) {
-          final token = segments[1];
-          await _openOnDashboard(
-            isCold: isCold,
-            route: RouteName.staffInvitePage,
-            arguments: {'token': token},
+        final token = segments.length > 1 ? segments[1].trim() : null;
+
+        if (token == null || token.isEmpty) {
+          AppSnackbar.warning(
+            title: "Invalid Invite",
+            message: "Please try another link.",
           );
-          return true;
+          return false;
         }
-        return false;
+
+        Get.offAllNamed(
+          RouteName.dashboardpage,
+          arguments: {
+            "initialTab": 0,
+            "openSubPage": "signUpPage",
+            "token": token,
+          },
+        );
+        return true;
 
       case 'trips':
         if (segments.length > 2 && segments[1] == 'join') {
@@ -196,22 +222,13 @@ class DeepLinkHandler {
     return false;
   }
 
-  /// Sub-page deep links (events, staff-invite, etc.).
-  ///
-  /// On cold start we navigate directly to the target page with
-  /// [Get.offAllNamed]. Trying to layer the dashboard underneath ran into
-  /// a timing race: the dashboard's bindings hadn't finished by the time
-  /// we pushed the sub-page on top, which surfaced as a black screen.
-  /// Direct navigation removes that race entirely.
-  ///
-  /// Warm start (app already past splash) keeps the original behaviour:
-  /// just push on top of the current stack.
   Future<void> _openOnDashboard({
     required bool isCold,
     required String route,
     Map<String, dynamic>? arguments,
     Map<String, String>? parameters,
   }) async {
+    LoggerService.loggerInstance.dynamic_d("in _openOnDashboard");
     if (isCold || Get.currentRoute == RouteName.splashScreen) {
       Get.offAllNamed(route, arguments: arguments, parameters: parameters);
       return;

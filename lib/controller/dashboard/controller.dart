@@ -24,11 +24,13 @@ class DashboardController extends GetxController {
 
     final args = Get.arguments;
 
-    if (args != null && args is Map<String, dynamic>) {
-      _handleNotificationNavigation(args);
-    } else {
-      state.selectedIndex.value = 0;
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (args != null && args is Map<String, dynamic>) {
+        _handleNotificationNavigation(args);
+      } else {
+        state.selectedIndex.value = 0;
+      }
+    });
   }
 
   bool shouldExit() {
@@ -87,7 +89,7 @@ class DashboardController extends GetxController {
     });
   }
 
-  /*----- Notification Handling  -----*/
+  /*----- Notification and Deeplink Handling  -----*/
   void _triggerTabController(int index) {
     if (index == 1) {
       Get.find<NetworkScreenController>().onTabOpen();
@@ -99,17 +101,31 @@ class DashboardController extends GetxController {
   }
 
   Future<void> _handleNotificationNavigation(Map<String, dynamic> args) async {
-    final initialTab = args["initialTab"];
     final isLoginRequired = args["isLoginRequired"] == true;
 
-    if (((isLoginRequired && isLoggedIn.value) || !isLoginRequired) &&
-        initialTab != null) {
+    // If login required but NOT logged in → go to login first
+    if (isLoginRequired && !isLoggedIn.value) {
+      final result = await Get.toNamed(RouteName.signInPage);
+
+      if (result == "logged_in") {
+        // After login → continue navigation
+        _resumeNotificationNavigation(args);
+      }
+
+      return;
+    }
+
+    _resumeNotificationNavigation(args);
+  }
+
+  Future<void> _resumeNotificationNavigation(Map<String, dynamic> args) async {
+    final initialTab = args["initialTab"];
+
+    if (initialTab != null) {
       state.selectedIndex.value = initialTab;
 
-      //small delay
       await Future.delayed(const Duration(milliseconds: 300));
 
-      // open Notification page
       await _openSubPage(args);
     }
   }
@@ -121,6 +137,22 @@ class DashboardController extends GetxController {
       case "contact":
         await Get.toNamed(
           RouteName.contactPage,
+        )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
+      case "signUpPage":
+        final token = args["token"];
+
+        await Get.toNamed(
+          RouteName.signUpPage,
+          arguments: {"token": token},
+        )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
+      case "eventInfo":
+        await Get.toNamed(
+          RouteName.eventInfoPage,
+          parameters: args['parameters'],
         )?.then((_) => _triggerTabController(state.selectedIndex.value));
         break;
 
