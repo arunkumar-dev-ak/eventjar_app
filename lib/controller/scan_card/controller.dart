@@ -23,6 +23,7 @@ class ScanCardController extends GetxController
   final Rx<File?> selectedImage = Rx<File?>(null);
   final ImagePicker _picker = ImagePicker();
   final TextRecognizer _textRecognizer = TextRecognizer();
+  bool enableTour = false;
 
   final Rx<VisitingCardInfo> cardInfo = VisitingCardInfo().obs;
 
@@ -46,7 +47,10 @@ class ScanCardController extends GetxController
   }
 
   Future<void> maybeStartTour(BuildContext context) async {
-    if (await isTourSeen()) return;
+    final seen = await isTourSeen();
+
+    if (seen && !enableTour) return;
+
     if (!context.mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!context.mounted) return;
@@ -60,12 +64,9 @@ class ScanCardController extends GetxController
   }
 
   void startTourNow(BuildContext context) {
-    ShowCaseWidget.of(context).startShowCase([
-      tourTipsKey,
-      tourCameraKey,
-      tourGalleryKey,
-      tourHelpKey,
-    ]);
+    ShowCaseWidget.of(
+      context,
+    ).startShowCase([tourTipsKey, tourCameraKey, tourGalleryKey, tourHelpKey]);
   }
 
   AnimationController? _scanLineController;
@@ -86,6 +87,11 @@ class ScanCardController extends GetxController
   void onInit() {
     UserStore.cancelAllRequests();
     super.onInit();
+
+    final args = Get.arguments;
+    if (args != null && args["enableTour"] == true) {
+      enableTour = true;
+    }
 
     // Initialize flutter_libphonenumber
     _initPhoneNumberLibrary();
@@ -470,7 +476,8 @@ class ScanCardController extends GetxController
   }
 
   List<String> _extractPotentialNumbers(String text) {
-    final List<String> mobileNumbers = []; // Numbers from "M:" lines or mobile-looking
+    final List<String> mobileNumbers =
+        []; // Numbers from "M:" lines or mobile-looking
     final List<String> otherNumbers = []; // Landline / unknown numbers
     final Set<String> addedNumbers = {}; // Track to avoid duplicates
     final lines = text.split('\n');
@@ -507,10 +514,7 @@ class ScanCardController extends GetxController
       // mis-parses the naked 9-digit national as Australia (+61). The same
       // stripper exists in _parsePhoneWithLibrary but runs too late, after
       // the prefix has already been dropped.
-      final trimmedLine = rawTrimmed.replaceAll(
-        RegExp(r'\([0Oo]\)\s*'),
-        '',
-      );
+      final trimmedLine = rawTrimmed.replaceAll(RegExp(r'\([0Oo]\)\s*'), '');
 
       final isMobileLine = mobilePrefixRegex.hasMatch(trimmedLine);
       final isLandlineLine = landlinePrefixRegex.hasMatch(trimmedLine);
@@ -534,8 +538,8 @@ class ScanCardController extends GetxController
             } else {
               // No prefix — check if digits look like an Indian mobile (starts with 6-9, 10 digits)
               final digits = potentialNumber.replaceAll(RegExp(r'[^\d]'), '');
-              final looksLikeMobile = (digits.length == 10 &&
-                  RegExp(r'^[6-9]').hasMatch(digits));
+              final looksLikeMobile =
+                  (digits.length == 10 && RegExp(r'^[6-9]').hasMatch(digits));
               if (looksLikeMobile) {
                 mobileNumbers.add(potentialNumber);
               } else {
@@ -595,7 +599,8 @@ class ScanCardController extends GetxController
     // detect the exact region from the dial code so we never call the
     // plugin with the wrong region and get garbage back.
     List<String> regions;
-    String? expectedDialCode; // the dial-code we expect from the prefix (+94 etc.)
+    String?
+    expectedDialCode; // the dial-code we expect from the prefix (+94 etc.)
 
     if (cleaned.startsWith('+') || cleaned.startsWith('00')) {
       final plusForm = cleaned.startsWith('00')
@@ -847,7 +852,11 @@ class ScanCardController extends GetxController
     int bestScore = -1;
 
     for (final candidate in nameCandidates) {
-      int score = _scoreNameCandidate(candidate.value, candidate.key, lines.length);
+      int score = _scoreNameCandidate(
+        candidate.value,
+        candidate.key,
+        lines.length,
+      );
       if (score > bestScore) {
         bestScore = score;
         bestCandidate = candidate.value;
