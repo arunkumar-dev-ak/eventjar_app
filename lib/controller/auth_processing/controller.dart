@@ -108,8 +108,6 @@ class AuthProcessingController extends GetxController {
 
       _textTimer.cancel();
 
-      LoggerService.loggerInstance.dynamic_d(response.runtimeType);
-
       // (LinkedIn)
       if (response is MobileRequiredResponse) {
         state.cacheKey.value = response.cacheKey;
@@ -217,7 +215,7 @@ class AuthProcessingController extends GetxController {
       navigateToBackPage();
     } catch (err) {
       state.is2FaLoading.value = false;
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
         ApiErrorHandler.handleError(err, "2FA Error");
       } else {

@@ -30,8 +30,6 @@ class ContactListMeetingApi {
     try {
       final response = await _dio.patch('/network-meetings/$id/complete');
 
-      LoggerService.loggerInstance.dynamic_d(response.statusCode);
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       }

@@ -150,8 +150,7 @@ class SignUpController extends GetxController {
 
   Future<void> handleLinkedIn() async {
     state.isLinkedinLoading.value = true;
-    final url = "${backendBaseUrl()}auth/linkedin?platform=mobile";
-    LoggerService.loggerInstance.dynamic_d(url);
+    final url = "${backendBaseUrl()}/auth/linkedin?platform=mobile";
     final Uri authUri = Uri.parse(url);
     try {
       if (await canLaunchUrl(authUri)) {
@@ -160,7 +159,7 @@ class SignUpController extends GetxController {
         throw 'Could not launch browser.Kindly try again after some time.';
       }
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
         ApiErrorHandler.handleError(err, "Authentication Failed");
       } else {

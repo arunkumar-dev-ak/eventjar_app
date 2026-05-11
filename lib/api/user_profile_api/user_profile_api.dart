@@ -110,7 +110,10 @@ class UserProfileApi {
   static Future<bool> uploadAvatar(File file) async {
     final ext = file.path.split('.').last.toLowerCase();
     final formData = FormData.fromMap({
-      'avatar': await MultipartFile.fromFile(file.path, filename: 'avatar.$ext'),
+      'avatar': await MultipartFile.fromFile(
+        file.path,
+        filename: 'avatar.$ext',
+      ),
     });
 
     try {
@@ -121,8 +124,6 @@ class UserProfileApi {
           // Optional: expose to progress widget
         },
       );
-
-      LoggerService.loggerInstance.dynamic_d(response.statusCode);
 
       // Assume backend returns: { success: true, data: { url: '...' } }
       if (response.statusCode == 200 || response.statusCode == 201) {

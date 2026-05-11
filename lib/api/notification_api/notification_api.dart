@@ -41,7 +41,7 @@ class NotificationApi {
         error: "Something went wrong",
       );
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       rethrow;
     }
   }
@@ -96,7 +96,7 @@ class NotificationApi {
         error: "Something went wrong",
       );
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       rethrow;
     }
   }
@@ -105,7 +105,7 @@ class NotificationApi {
     try {
       await _dio.patch('/notification-log/markRead/$id');
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
     }
   }
 
@@ -113,7 +113,7 @@ class NotificationApi {
     try {
       await _dio.patch('/notification-log/markAllRead');
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
     }
   }
 
@@ -137,7 +137,7 @@ class NotificationApi {
         error: "Something went wrong",
       );
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       rethrow;
     }
   }

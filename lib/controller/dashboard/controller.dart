@@ -74,7 +74,6 @@ class DashboardController extends GetxController {
   }
 
   void navigateToSignInPage(int index) {
-    LoggerService.loggerInstance.dynamic_d(index);
     Get.toNamed(RouteName.signInPage)?.then((result) async {
       if (result == "logged_in") {
         state.selectedIndex.value = index;

@@ -196,7 +196,6 @@ class HomeController extends GetxController {
       if (state.meta.value != null &&
           state.meta.value!.hasNext == true &&
           !state.isFetching.value) {
-        LoggerService.loggerInstance.dynamic_d("triggering");
         fetchEventsOnScroll();
       }
     }

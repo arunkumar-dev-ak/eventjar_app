@@ -132,8 +132,6 @@ class ScheduleMeetingController extends GetxController {
 
       final dto = _buildMeetingDto();
 
-      LoggerService.loggerInstance.dynamic_d(dto);
-
       final response = await ScheduleMeetingApi.createMeeting(dto: dto);
       if (response == true) {
         AppSnackbar.success(

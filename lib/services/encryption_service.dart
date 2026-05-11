@@ -152,16 +152,12 @@ class EncryptionService {
   static Map<String, dynamic>? decryptJson(String qrText) {
     try {
       final decoded = utf8.decode(base64Decode(qrText));
-      LoggerService.loggerInstance.dynamic_d("decoded $decoded ");
       final payload = jsonDecode(decoded);
-      LoggerService.loggerInstance.dynamic_d("payload $payload ");
 
       final iv = encrypt.IV.fromBase64(payload['iv']);
       final encrypted = encrypt.Encrypted.fromBase64(payload['data']);
-      LoggerService.loggerInstance.dynamic_d("encrypted payload $encrypted ");
 
       final decrypted = _encrypter.decrypt(encrypted, iv: iv);
-      LoggerService.loggerInstance.dynamic_d("decrypted payload $decrypted ");
 
       return jsonDecode(decrypted);
     } catch (_) {

@@ -21,8 +21,6 @@ class NotificationController extends GetxController {
     super.onInit();
     final args = Get.arguments;
 
-    LoggerService.loggerInstance.dynamic_d(args);
-
     if (args != null && args == "whatsapp") {
       changeTab(1);
     } else {

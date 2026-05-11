@@ -9,7 +9,6 @@ class EventInfoApi {
   static final Dio _dio = DioClient().dio;
 
   static Future<EventInfo> getEventInfo(String eventId) async {
-    // LoggerService.loggerInstance.dynamic_d(eventId);
     final response = await _dio.get('/mobile/events/$eventId');
     if (response.statusCode == 200) {
       return EventInfo.fromJson(response.data);
@@ -20,7 +19,6 @@ class EventInfoApi {
   static Future<TicketRegistrationEventModel> getEventByTicketId(
     String ticketId,
   ) async {
-    LoggerService.loggerInstance.dynamic_d(ticketId);
     try {
       String url =
           "${backendBaseUrl()}/mobile/tickets/my-registrations/event/$ticketId";

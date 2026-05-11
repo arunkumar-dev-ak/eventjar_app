@@ -54,8 +54,7 @@ class ViewTripController extends GetxController
       state.expenseSelectedIndexes.clear();
     }
     state.selectedTab.value = index;
-    if (pageController.hasClients &&
-        pageController.page?.round() != index) {
+    if (pageController.hasClients && pageController.page?.round() != index) {
       pageController.animateToPage(
         index,
         duration: const Duration(milliseconds: 250),
@@ -95,7 +94,6 @@ class ViewTripController extends GetxController
 
   @override
   void onClose() {
-    LoggerService.loggerInstance.dynamic_d("In Onclose");
     animation.dispose();
     pageController.dispose();
     super.onClose();

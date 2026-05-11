@@ -77,7 +77,6 @@ class ThankYouMessageController extends GetxController {
       state.isLoading.value = true;
 
       final data = _buildThankYouMessageData();
-      LoggerService.loggerInstance.dynamic_d(data);
 
       final response = await ThankYouMessageApi.sendThankYouMessage(
         data: data,

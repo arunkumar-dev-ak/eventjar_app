@@ -80,7 +80,7 @@ Future<void> contactCardAddContactToPhone(
       ),
     );
   } catch (e, s) {
-    LoggerService.loggerInstance.dynamic_d('$e\n$s');
+    LoggerService.loggerInstance.e('$e\n$s');
 
     if (context.mounted) {
       AppSnackbar.error(title: "Failed", message: "Could not save contact");

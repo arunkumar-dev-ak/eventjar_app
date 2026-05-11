@@ -39,8 +39,6 @@ class UserStore extends GetxController {
 
   @override
   void onInit() async {
-    LoggerService.loggerInstance.dynamic_d("In UserStore");
-
     _accessToken.value =
         await StorageService.to.getString(storageAccessToken) ?? "";
     _refreshToken.value =
@@ -66,7 +64,6 @@ class UserStore extends GetxController {
   }
 
   Future<void> handleSetLocalData(LoginResponse loginData) async {
-    LoggerService.loggerInstance.dynamic_d(loginData);
     _isLogin.value = true;
     await setAccessToken(loginData.accessToken!);
     _accessToken.value = loginData.accessToken!;
@@ -89,7 +86,6 @@ class UserStore extends GetxController {
   Future<void> handleSetLocalDataForRefreshToken(
     RefreshTokenResponse loginData,
   ) async {
-    LoggerService.loggerInstance.dynamic_d(loginData);
     _isLogin.value = true;
     await setAccessToken(loginData.accessToken);
     _accessToken.value = loginData.accessToken;

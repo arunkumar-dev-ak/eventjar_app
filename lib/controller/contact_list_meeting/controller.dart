@@ -97,7 +97,6 @@ class ContactListMeetingController extends GetxController {
   }
 
   Future<void> onAcceptMeeting(String meetingId) async {
-    LoggerService.loggerInstance.dynamic_d(meetingId);
     state.isLoading.value = true;
     try {
       await ContactListMeetingApi.confirmMeeting(id: meetingId);

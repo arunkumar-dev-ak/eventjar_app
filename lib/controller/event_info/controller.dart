@@ -163,7 +163,7 @@ class EventInfoController extends GetxController
       // Also refresh request list
       await fetchEventAttendeeRequestList(finalEventId);
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
     }
   }
 
@@ -274,7 +274,7 @@ class EventInfoController extends GetxController
       state.attendeeOffset.value = offset + (response.attendee?.length ?? 0);
       state.hasMoreAttendees.value = (response.attendee?.length ?? 0) >= 10;
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
 
@@ -316,7 +316,7 @@ class EventInfoController extends GetxController
           await EventInfoApiAttendeeRequestList.getAttendeeRequestList(eventId);
       state.attendeeRequests.value = response;
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
 

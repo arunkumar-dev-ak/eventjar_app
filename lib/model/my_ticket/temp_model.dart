@@ -102,7 +102,6 @@ class MyTicket {
   });
 
   factory MyTicket.fromJson(Map<String, dynamic> json) {
-    LoggerService.loggerInstance.dynamic_d(json);
     try {
       return MyTicket(
         id: json['id'],

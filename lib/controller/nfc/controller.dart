@@ -101,9 +101,6 @@ class NfcController extends GetxController
       return;
     }
     Get.toNamed(RouteName.nfcReadPage)?.then((result) {
-      LoggerService.loggerInstance.dynamic_d(
-        "Result in  navigateToNfc $result",
-      );
       if (result == "refresh") {
         final statusCard = NetworkStatusCardData(
           key: 'totalContacts',

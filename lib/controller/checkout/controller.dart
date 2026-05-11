@@ -52,7 +52,6 @@ class CheckoutController extends GetxController {
   @override
   void onInit() {
     UserStore.cancelAllRequests();
-    // LoggerService.loggerInstance.dynamic_d("In oninit");
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _onError);
@@ -61,7 +60,6 @@ class CheckoutController extends GetxController {
       if (eventData == null) return;
       if (state.cartLines.isNotEmpty) return;
       if (eventData.ticketTiers.isEmpty) return;
-      LoggerService.loggerInstance.dynamic_d(eventData);
 
       final firstTier = eventData.ticketTiers.first;
 
@@ -146,10 +144,6 @@ class CheckoutController extends GetxController {
       final response = await CheckoutApi.validateBadge(eventId: eventInfo.id);
 
       state.badgeValidationResponse.value = response;
-
-      LoggerService.loggerInstance.dynamic_d(
-        "Badge validation result: ${response.toJson()}",
-      );
     } catch (err) {
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
@@ -217,10 +211,6 @@ class CheckoutController extends GetxController {
       TicketPaymentModel paymentResponse =
           await TicketBookingApi.createTicketPayment(paymentPayload);
 
-      LoggerService.loggerInstance.dynamic_d(
-        "Payment Response: ${paymentResponse.toJson()}",
-      );
-
       if (!paymentResponse.success) {
         AppSnackbar.error(
           title: "Payment Error",
@@ -262,7 +252,6 @@ class CheckoutController extends GetxController {
   }
 
   Future<void> _handleFreeTicket() async {
-    LoggerService.loggerInstance.dynamic_d("in handleFree ticket");
     final eventInfo = state.eventInfo.value;
     if (eventInfo == null) {
       AppSnackbar.error(title: "Error", message: "Event not found");
@@ -278,10 +267,6 @@ class CheckoutController extends GetxController {
       state.isRegistering.value = true;
 
       final freeTicketPayload = _buildFreeTicketPayload(eventInfo);
-
-      LoggerService.loggerInstance.dynamic_d(
-        "Free Ticket Payload: ${freeTicketPayload.toString()}",
-      );
 
       // Call your free registration API
       await TicketBookingApi.createFreeEventRegistration(freeTicketPayload);
@@ -483,9 +468,6 @@ class CheckoutController extends GetxController {
   }
 
   void _onError(PaymentFailureResponse response) {
-    // LoggerService.loggerInstance.dynamic_d("failure");
-    LoggerService.loggerInstance.dynamic_d(response);
-    // Get.snackbar("Payment Failed", response.message ?? "Error");
     AppSnackbar.error(
       title: "Payment Failed",
       message: "Payment Failed Please try again",
@@ -515,8 +497,6 @@ class CheckoutController extends GetxController {
         userId: UserStore.to.profile['id'].toString(),
         subtotal: subtotal,
       );
-
-      LoggerService.loggerInstance.dynamic_d(response.toJson());
 
       state.promoCodeResponse.value = response;
 

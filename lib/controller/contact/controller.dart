@@ -92,8 +92,6 @@ class ContactController extends GetxController
     final currentScroll = contactScrollController.position.pixels;
     const double prefetchThreshold = 200.0;
 
-    // LoggerService.loggerInstance.dynamic_d("$maxScroll, $currentScroll");
-
     if (maxScroll - currentScroll <= prefetchThreshold) {
       if (state.meta.value != null &&
           state.meta.value!.hasNext == true &&
@@ -258,7 +256,7 @@ class ContactController extends GetxController
 
       await fetchContactsOnFirstLoad();
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
 
@@ -354,7 +352,6 @@ class ContactController extends GetxController
   }
 
   void navigateToUpdateContact(MobileContact contact) {
-    LoggerService.loggerInstance.dynamic_d(contact);
     Get.toNamed(RouteName.addContactPage, arguments: contact)?.then(
       (result) async => {
         if (result == 'refresh')
@@ -421,7 +418,6 @@ class ContactController extends GetxController
 
   void navigateToQrPage() {
     Get.toNamed(RouteName.qrDashboardPage)?.then((result) async {
-      LoggerService.loggerInstance.dynamic_d(result);
       if (result == "refresh") {
         await fetchContactsOnFirstLoad();
       }

@@ -178,7 +178,6 @@ class EmailNotificationController extends GetxController {
         Uri.parse(res.authUrl),
         mode: LaunchMode.inAppBrowserView,
       );
-      LoggerService.loggerInstance.dynamic_d("runned after");
 
       await _fetchGoogleStatus(showSnackbar: false);
 

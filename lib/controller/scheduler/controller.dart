@@ -118,8 +118,6 @@ class SchedulerController extends GetxController {
         ),
       );
 
-      LoggerService.loggerInstance.dynamic_d(time);
-
       if (time != null) {
         state.scheduledAt.value = DateTime(
           picked.year,
@@ -418,8 +416,6 @@ class SchedulerController extends GetxController {
 
       if (isRescheduleMode) {
         final dto = _buildRescheduleDto();
-        // LoggerService.loggerInstance.dynamic_d(dto);
-        // LoggerService.loggerInstance.dynamic_d(state.selectedMeeting.value!.id);
 
         if (dto.isEmpty) {
           Navigator.pop(context);

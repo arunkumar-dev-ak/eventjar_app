@@ -320,7 +320,6 @@ class AddContactController extends GetxController {
       state.isDropDownLoading.value = true;
 
       final List<TagModel> result = await AddContactApi.getTagList();
-      LoggerService.loggerInstance.dynamic_d(result);
       state.availableTags.value = result.map((tag) => tag.name).toList();
       state.filteredTags.value = state.availableTags;
     } catch (err) {

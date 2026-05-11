@@ -21,8 +21,6 @@ Future<String> generateCodeChallenge() async {
   final codeChallenge = base64UrlEncode(digest.bytes).replaceAll('=', '');
 
   await StorageService.to.setString(pkceCodeVerifier, verifier);
-  LoggerService.loggerInstance.dynamic_d(
-    await StorageService.to.getString(pkceCodeVerifier),
-  );
+
   return codeChallenge;
 }

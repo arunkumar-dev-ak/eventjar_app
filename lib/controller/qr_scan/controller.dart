@@ -97,7 +97,7 @@ class QrScanScreenController extends GetxController
       state.isScanning.value = true;
       state.hasNavigated.value = false;
     } catch (e) {
-      LoggerService.loggerInstance.dynamic_d('Error starting camera: $e');
+      LoggerService.loggerInstance.e('Error starting camera: $e');
     }
   }
 
@@ -108,7 +108,7 @@ class QrScanScreenController extends GetxController
       state.isCameraActive.value = false;
       state.isScanning.value = false;
     } catch (e) {
-      LoggerService.loggerInstance.dynamic_d('Error stopping camera: $e');
+      LoggerService.loggerInstance.e('Error stopping camera: $e');
     }
   }
 
@@ -124,7 +124,7 @@ class QrScanScreenController extends GetxController
         state.isCameraAccessGranted.value = false;
       }
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d('error: $err');
+      LoggerService.loggerInstance.e('error: $err');
     } finally {
       state.isRequesting.value = false;
     }
@@ -143,20 +143,18 @@ class QrScanScreenController extends GetxController
 
       await openAppSettings();
     } catch (e) {
-      LoggerService.loggerInstance.dynamic_d('error: $e');
+      LoggerService.loggerInstance.e('error: $e');
     } finally {
       state.isRequesting.value = false;
     }
   }
 
   void processScannedData(String rawData) {
-    LoggerService.loggerInstance.dynamic_d("in processscanner data");
     if (!state.isScanning.value || state.hasNavigated.value) return;
 
     state.isScanning.value = false;
     state.hasNavigated.value = true;
 
-    LoggerService.loggerInstance.dynamic_d("Before encryption");
     // Try to decrypt the QR data
     final jsonData = EncryptionService.decryptJson(rawData);
 
@@ -199,10 +197,6 @@ class QrScanScreenController extends GetxController
 
   // Handle barcode detection
   void onDetect(BarcodeCapture capture) {
-    LoggerService.loggerInstance.dynamic_d(
-      "in on detect - isCameraActive: ${state.isCameraActive.value}, isScanning: ${state.isScanning.value}, hasNavigated: ${state.hasNavigated.value}",
-    );
-
     // Only process if camera is active and scanning is enabled
     if (!state.isCameraActive.value ||
         !state.isScanning.value ||
@@ -210,13 +204,9 @@ class QrScanScreenController extends GetxController
       return;
 
     final List<Barcode> barcodes = capture.barcodes;
-    LoggerService.loggerInstance.dynamic_d(
-      "Barcodes found: ${barcodes.length}",
-    );
 
     for (final barcode in barcodes) {
       final String? rawValue = barcode.rawValue;
-      LoggerService.loggerInstance.dynamic_d("Barcode value: $rawValue");
       if (rawValue != null && rawValue.isNotEmpty) {
         processScannedData(rawValue);
         break;

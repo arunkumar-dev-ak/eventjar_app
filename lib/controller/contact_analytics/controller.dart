@@ -60,7 +60,6 @@ class ContactAnalyticsController extends GetxController {
       if (result == "logged_in") {
         await fetchContactAnalytics();
       } else {
-        LoggerService.loggerInstance.dynamic_d("in back");
         // dashboardController.state.selectedIndex.value = 0;
         Get.offAllNamed(RouteName.dashboardpage);
       }

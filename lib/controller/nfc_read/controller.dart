@@ -53,7 +53,6 @@ class NfcReadController extends GetxController
   }
 
   Future<void> _loadData() async {
-    LoggerService.loggerInstance.dynamic_d("In _lodaDtaa");
     state.isLoading.value = true;
     try {
       _loadProfile();
@@ -84,7 +83,6 @@ class NfcReadController extends GetxController
   }
 
   Future<void> _loadProfile() async {
-    LoggerService.loggerInstance.dynamic_d("In _loadProfile");
     final profile = UserStore.to.profile;
 
     // Convert phoneParsed from Map to PhoneParsed object if it exists
@@ -100,7 +98,6 @@ class NfcReadController extends GetxController
       phoneParsed: phoneParsed,
       email: profile['email'] ?? '',
     );
-    LoggerService.loggerInstance.dynamic_d(nfcProfile);
     state.profile.value = nfcProfile;
   }
 

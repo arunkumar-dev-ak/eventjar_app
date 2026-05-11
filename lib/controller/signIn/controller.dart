@@ -157,7 +157,7 @@ class SignInController extends GetxController {
       navigateToBackPage(context);
     } catch (err) {
       state.is2FaLoading.value = false;
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
         ApiErrorHandler.handleError(err, "2FA Error");
       } else {
@@ -180,7 +180,7 @@ class SignInController extends GetxController {
         throw 'Could not launch browser.Kindly try again after some time.';
       }
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
         ApiErrorHandler.handleError(err, "Authentication Failed");
       } else {

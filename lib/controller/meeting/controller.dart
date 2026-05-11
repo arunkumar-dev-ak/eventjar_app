@@ -27,7 +27,9 @@ class MeetingController extends GetxController {
       _debouncedFetchMeetings();
     });
     final args = Get.arguments;
-    if (args != null && args is Map<String, dynamic> && args['status'] != null) {
+    if (args != null &&
+        args is Map<String, dynamic> &&
+        args['status'] != null) {
       state.selectedStatus.value = args['status'] as MeetingStatus;
     } else {
       state.selectedStatus.value = MeetingStatus.ALL;
@@ -110,7 +112,6 @@ class MeetingController extends GetxController {
 
       // query params
       final queryParams = gatherQueryData();
-      LoggerService.loggerInstance.dynamic_d('Query params: $queryParams');
 
       final response = await MeetingApi.getConnectionResponse(
         queryParams: queryParams,

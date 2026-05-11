@@ -43,10 +43,6 @@ class CheckoutApi {
     required String eventId,
   }) async {
     try {
-      LoggerService.loggerInstance.dynamic_d(
-        "Validating badge for eventId: $eventId",
-      );
-
       final response = await _dio.get(
         '/attendee/tickets/badge-validation/$eventId',
       );

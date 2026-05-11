@@ -228,7 +228,6 @@ class DeepLinkHandler {
     Map<String, dynamic>? arguments,
     Map<String, String>? parameters,
   }) async {
-    LoggerService.loggerInstance.dynamic_d("in _openOnDashboard");
     if (isCold || Get.currentRoute == RouteName.splashScreen) {
       Get.offAllNamed(route, arguments: arguments, parameters: parameters);
       return;
@@ -240,7 +239,6 @@ class DeepLinkHandler {
     String? action, {
     required bool isCold,
   }) async {
-    LoggerService.loggerInstance.dynamic_d("Widget action: $action");
     if (action == null) return;
 
     String? target;
