@@ -87,6 +87,11 @@ class QrScanScreenController extends GetxController
     }
 
     await startCamera();
+
+    final ctx = scanQrTourScopeKey.currentContext;
+    if (ctx != null && ctx.mounted) {
+      maybeStartTour(ctx);
+    }
   }
 
   Future<void> startCamera() async {

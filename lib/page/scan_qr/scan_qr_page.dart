@@ -13,9 +13,8 @@ class ScanQrPage extends GetView<QrScanScreenController> {
     return ShowCaseWidget(
       onFinish: () => controller.markTourSeen(),
       blurValue: 1,
-      builder: (ctx) => _ScanQrTourAutoStart(
+      builder: (ctx) => KeyedSubtree(
         key: controller.scanQrTourScopeKey,
-        start: () => controller.maybeStartTour(ctx),
         child: _buildContent(ctx),
       ),
     );
@@ -32,33 +31,4 @@ class ScanQrPage extends GetView<QrScanScreenController> {
       ],
     );
   }
-}
-
-class _ScanQrTourAutoStart extends StatefulWidget {
-  final Widget child;
-  final Future<void> Function() start;
-
-  const _ScanQrTourAutoStart({
-    super.key,
-    required this.child,
-    required this.start,
-  });
-
-  @override
-  State<_ScanQrTourAutoStart> createState() => _ScanQrTourAutoStartState();
-}
-
-class _ScanQrTourAutoStartState extends State<_ScanQrTourAutoStart> {
-  bool _triggered = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_triggered) return;
-    _triggered = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) => widget.start());
-  }
-
-  @override
-  Widget build(BuildContext context) => widget.child;
 }

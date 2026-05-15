@@ -16,10 +16,13 @@ import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/user_profile/user_profile_security/user_profile_security_info.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/routes/route_name.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:typed_data';
@@ -31,7 +34,7 @@ import '../../api/verify_api/phone.dart';
 import '../../global/image_process.dart';
 
 class UserProfileController extends GetxController
-    with GetSingleTickerProviderStateMixin {
+    with GetSingleTickerProviderStateMixin, WidgetsBindingObserver {
   var appBarTitle = "EventJar";
   final state = UserProfileState();
   final formKey = GlobalKey<FormState>();
@@ -54,7 +57,9 @@ class UserProfileController extends GetxController
   void onInit() async {
     UserStore.cancelAllRequests();
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
     loadAppInfo();
+    refreshPermissions();
     // shakeController = AnimationController(
     //   duration: Duration(milliseconds: 800),
     //   vsync: this,
@@ -81,6 +86,116 @@ class UserProfileController extends GetxController
     }
     state.isDeleteLoading.value = false;
     if (state.isLoggingOut.value) state.isLoggingOut.value = false;
+    refreshPermissions();
+  }
+
+  Future<void> refreshPermissions() async {
+    state.cameraGranted.value = await Permission.camera.isGranted;
+    state.notificationGranted.value = await Permission.notification.isGranted;
+  }
+
+  Future<void> toggleCameraPermission() async {
+    final status = await Permission.camera.status;
+    if (status.isGranted) {
+      _showSettingsDialog(
+        title: 'Disable Camera',
+        message:
+            'To disable camera access, you need to turn it off in your device settings.',
+      );
+      return;
+    }
+    if (status.isPermanentlyDenied || status.isRestricted) {
+      _showSettingsDialog(
+        title: 'Enable Camera',
+        message:
+            'Camera permission was previously denied. Please enable it in your device settings to use QR scan and card scan.',
+      );
+      return;
+    }
+    await Permission.camera.request();
+    await refreshPermissions();
+  }
+
+  Future<void> toggleNotificationPermission() async {
+    final status = await Permission.notification.status;
+    if (status.isGranted) {
+      _showSettingsDialog(
+        title: 'Disable Notifications',
+        message:
+            'To disable notifications, you need to turn them off in your device settings.',
+      );
+      return;
+    }
+    if (status.isPermanentlyDenied || status.isRestricted) {
+      _showSettingsDialog(
+        title: 'Enable Notifications',
+        message:
+            'Notification permission was previously denied. Please enable it in your device settings to stay updated.',
+      );
+      return;
+    }
+    await Permission.notification.request();
+    await refreshPermissions();
+  }
+
+  void _showSettingsDialog({
+    required String title,
+    required String message,
+  }) {
+    final context = Get.context;
+    if (context == null) return;
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => Platform.isIOS
+          ? CupertinoAlertDialog(
+              title: Text(title),
+              content: Text(message),
+              actions: [
+                CupertinoDialogAction(
+                  child: const Text('Cancel'),
+                  onPressed: () => Navigator.pop(ctx),
+                ),
+                CupertinoDialogAction(
+                  isDefaultAction: true,
+                  child: const Text('Open Settings'),
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    openAppSettings();
+                  },
+                ),
+              ],
+            )
+          : AlertDialog(
+              title: Text(title),
+              content: Text(message),
+              backgroundColor: isDark ? const Color(0xFF1E293B) : null,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: AppColors.textSecondary(ctx)),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    openAppSettings();
+                  },
+                  child: Text(
+                    'Open Settings',
+                    style: TextStyle(color: AppColors.gradientLightStart),
+                  ),
+                ),
+              ],
+            ),
+    );
   }
 
   void checkAndUpdateLocalProfileInfo() async {
@@ -919,7 +1034,15 @@ class UserProfileController extends GetxController
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      refreshPermissions();
+    }
+  }
+
+  @override
   void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
     _resendTimer?.cancel();
     // shakeController.dispose();
     super.onClose();

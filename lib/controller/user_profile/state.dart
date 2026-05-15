@@ -28,4 +28,8 @@ class UserProfileState {
   RxBool isVerifyingOtp = false.obs;
   RxString otpError = ''.obs;
   RxInt resendCooldown = 0.obs;
+
+  // App permissions
+  RxBool cameraGranted = false.obs;
+  RxBool notificationGranted = false.obs;
 }

@@ -6,6 +6,7 @@ import 'package:eventjar/page/user_profile/user_profile_basic_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_business_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_header.dart';
 import 'package:eventjar/page/user_profile/user_profile_network_info.dart';
+import 'package:eventjar/page/user_profile/user_profile_permissions.dart';
 import 'package:eventjar/page/user_profile/user_profile_security/user_profile_security_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_shimmer.dart';
 import 'package:eventjar/page/user_profile/user_profile_social_links.dart';
@@ -140,6 +141,12 @@ class UserProfilePage extends GetView<UserProfileController> {
                         ),
                         SizedBox(height: 2.hp),
                         _buildNotificationsSection(context),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          context,
+                          title: "App Permissions",
+                          child: const UserProfilePermissions(),
+                        ),
                         SizedBox(height: 2.hp),
                         _buildSection(
                           context,

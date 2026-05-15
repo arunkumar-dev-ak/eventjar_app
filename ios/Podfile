@@ -65,6 +65,13 @@ post_install do |installer|
         config.build_settings['SWIFT_DEBUG_INFORMATION_FORMAT'] = 'DWARF-with-dSYM'
       end
       
+      # 🔥 Enable permission_handler permissions on iOS
+      if target.name == 'permission_handler_apple'
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_CAMERA=1'
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'PERMISSION_NOTIFICATIONS=1'
+      end
+
       # 🔥 General Flutter optimizations
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'POD_CONFIGURATION_$(CONFIGURATION)=1'

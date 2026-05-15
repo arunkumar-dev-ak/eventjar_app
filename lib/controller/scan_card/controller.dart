@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/storage/storage_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
 import 'package:get/get.dart';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 import 'package:showcaseview/showcaseview.dart';
 import '../../model/card_info.dart';
@@ -129,28 +131,67 @@ class ScanCardController extends GetxController
     }
   }
 
+  static final MethodChannel _scannerChannel =
+      MethodChannel('cunning_document_scanner');
+
+  static const int _maxImageWidth = 1800;
+  static const int _maxFileSizeBytes = 3 * 1024 * 1024; // 3 MB
+
+  Future<List<String>?> _scanDocumentIOS() async {
+    final List<dynamic>? pictures =
+        await _scannerChannel.invokeMethod('getPictures', {
+      'noOfPages': 1,
+      'isGalleryImportAllowed': false,
+      'iosScannerOptions': {
+        'imageFormat': IosImageFormat.jpg.name,
+        'jpgCompressionQuality': 0.85,
+      },
+    });
+    return pictures?.map((e) => e as String).toList();
+  }
+
+  Future<String> _compressIfNeeded(String imagePath) async {
+    final file = File(imagePath);
+    final fileSize = await file.length();
+    if (fileSize <= _maxFileSizeBytes) return imagePath;
+
+    final bytes = await file.readAsBytes();
+    final decoded = img.decodeImage(bytes);
+    if (decoded == null) return imagePath;
+
+    var result = decoded;
+    if (result.width > _maxImageWidth) {
+      result = img.copyResize(result, width: _maxImageWidth);
+    }
+
+    final compressed = img.encodeJpg(result, quality: 80);
+    final compressedFile = File(
+      '${file.parent.path}/compressed_${file.uri.pathSegments.last}',
+    );
+    await compressedFile.writeAsBytes(compressed);
+    return compressedFile.path;
+  }
+
   Future<void> pickImageFromCamera() async {
     try {
       errorMessage.value = '';
 
-      // Native doc scanner: auto-detects the card edges, lets the user nudge
-      // corners if needed, perspective-corrects, and returns a cropped image.
-      // iOS is pinned to max-quality JPG so the saved image stays sharp and
-      // all text on the card remains readable.
-      final paths = await CunningDocumentScanner.getPictures(
-        noOfPages: 1,
-        isGalleryImportAllowed: false,
-        iosScannerOptions: IosScannerOptions(
-          imageFormat: IosImageFormat.jpg,
-          jpgCompressionQuality: 1.0,
-        ),
-      );
+      List<String>? paths;
+      if (Platform.isIOS) {
+        paths = await _scanDocumentIOS();
+      } else {
+        paths = await CunningDocumentScanner.getPictures(
+          noOfPages: 1,
+          isGalleryImportAllowed: false,
+        );
+      }
 
       if (paths == null || paths.isEmpty) return;
 
       isLoading.value = true;
-      selectedImage.value = File(paths.first);
-      await _processImage(paths.first);
+      final compressedPath = await _compressIfNeeded(paths.first);
+      selectedImage.value = File(compressedPath);
+      await _processImage(compressedPath);
     } catch (e) {
       errorMessage.value = 'Error capturing image: $e';
     } finally {
@@ -169,7 +210,7 @@ class ScanCardController extends GetxController
 
       final XFile? image = await _picker.pickImage(
         source: source,
-        imageQuality: 100,
+        imageQuality: 85,
       );
 
       if (image == null) {
@@ -177,8 +218,9 @@ class ScanCardController extends GetxController
         return;
       }
 
-      selectedImage.value = File(image.path);
-      await _processImage(image.path);
+      final compressedPath = await _compressIfNeeded(image.path);
+      selectedImage.value = File(compressedPath);
+      await _processImage(compressedPath);
     } catch (e) {
       errorMessage.value = 'Error picking image: $e';
     } finally {

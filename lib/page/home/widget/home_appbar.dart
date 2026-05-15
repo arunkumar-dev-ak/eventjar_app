@@ -232,67 +232,76 @@ class HomeAppBar extends StatelessWidget {
               ),
             ),
             SizedBox(height: 2.hp),
-            _buildMenuItem(
-              icon: Icons.person_add_alt_1_rounded,
-              title: 'Add Contact',
-              subtitle: 'Add a new contact manually',
-              gradientColors: [Colors.blue.shade400, Colors.blue.shade600],
-              onTap: () {
-                Navigator.pop(context);
-                controller.navigateToAddContact();
-              },
-            ),
-            Divider(
-              height: 1,
-              indent: 20,
-              endIndent: 20,
-              color: AppColors.divider(context),
-            ),
-            _buildMenuItem(
-              icon: Icons.nfc_rounded,
-              title: 'NFC',
-              subtitle: 'Scan NFC tag to add contact',
-              gradientColors: [Colors.green.shade400, Colors.green.shade600],
-              onTap: () {
-                Navigator.pop(context);
-                //controller.navigateToNfc();
-                controller.navigateToReceive();
-              },
-            ),
-            Divider(
-              height: 1,
-              indent: 20,
-              endIndent: 20,
-              color: AppColors.divider(context),
-            ),
-            _buildMenuItem(
-              icon: Icons.qr_code_scanner_rounded,
-              title: 'QR Scanner',
-              subtitle: 'Scan QR code to add contact',
-              gradientColors: [Colors.purple.shade400, Colors.purple.shade600],
-              onTap: () {
-                Navigator.pop(context);
-                controller.navigateToQrPage();
-              },
-            ),
-            Divider(
-              height: 1,
-              indent: 20,
-              endIndent: 20,
-              color: AppColors.divider(context),
-            ),
-            _buildMenuItem(
-              icon: Icons.document_scanner,
-              title: 'Scan Visiting card',
-              subtitle: 'Scan Visiting card to add contact',
-              gradientColors: [
-                Colors.orangeAccent.shade400,
-                Colors.orangeAccent.shade700,
-              ],
-              onTap: () {
-                Navigator.pop(context);
-                controller.navigateToScanPage();
-              },
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildMenuItem(
+                      icon: Icons.person_add_alt_1_rounded,
+                      title: 'Add Contact',
+                      subtitle: 'Add a new contact manually',
+                      gradientColors: [Colors.blue.shade400, Colors.blue.shade600],
+                      onTap: () {
+                        Navigator.pop(context);
+                        controller.navigateToAddContact();
+                      },
+                    ),
+                    Divider(
+                      height: 1,
+                      indent: 20,
+                      endIndent: 20,
+                      color: AppColors.divider(context),
+                    ),
+                    _buildMenuItem(
+                      icon: Icons.nfc_rounded,
+                      title: 'NFC',
+                      subtitle: 'Scan NFC tag to add contact',
+                      gradientColors: [Colors.green.shade400, Colors.green.shade600],
+                      onTap: () {
+                        Navigator.pop(context);
+                        //controller.navigateToNfc();
+                        controller.navigateToReceive();
+                      },
+                    ),
+                    Divider(
+                      height: 1,
+                      indent: 20,
+                      endIndent: 20,
+                      color: AppColors.divider(context),
+                    ),
+                    _buildMenuItem(
+                      icon: Icons.qr_code_scanner_rounded,
+                      title: 'QR Scanner',
+                      subtitle: 'Scan QR code to add contact',
+                      gradientColors: [Colors.purple.shade400, Colors.purple.shade600],
+                      onTap: () {
+                        Navigator.pop(context);
+                        controller.navigateToQrPage();
+                      },
+                    ),
+                    Divider(
+                      height: 1,
+                      indent: 20,
+                      endIndent: 20,
+                      color: AppColors.divider(context),
+                    ),
+                    _buildMenuItem(
+                      icon: Icons.document_scanner,
+                      title: 'Scan Visiting card',
+                      subtitle: 'Scan Visiting card to add contact',
+                      gradientColors: [
+                        Colors.orangeAccent.shade400,
+                        Colors.orangeAccent.shade700,
+                      ],
+                      onTap: () {
+                        Navigator.pop(context);
+                        controller.navigateToScanPage();
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
             SizedBox(height: 3.hp),
           ],
