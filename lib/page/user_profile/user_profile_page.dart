@@ -1,7 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/store/theme_store.dart';
+import 'package:eventjar/global/utils/helpers.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/page/user_profile/user_profile_basic_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_business_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_header.dart';
@@ -140,6 +144,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                           },
                         ),
                         SizedBox(height: 2.hp),
+                        _buildGallerySection(context),
                         _buildNotificationsSection(context),
                         SizedBox(height: 2.hp),
                         _buildSection(
@@ -156,7 +161,8 @@ class UserProfilePage extends GetView<UserProfileController> {
                         // SizedBox(height: 2.hp),
                         _buildVersionFooter(context),
                         SizedBox(
-                          height: kBottomNavigationBarHeight +
+                          height:
+                              kBottomNavigationBarHeight +
                               MediaQuery.of(context).viewPadding.bottom +
                               2.hp,
                         ),
@@ -167,6 +173,122 @@ class UserProfilePage extends GetView<UserProfileController> {
         );
       }),
     );
+  }
+
+  Widget _buildGallerySection(BuildContext ctx) {
+    return Obx(() {
+      final images = controller.galleryImages;
+      final hasImages = images.isNotEmpty;
+      return Column(
+        children: [
+          _buildSection(
+            ctx,
+            title: hasImages ? "Gallery (${images.length})" : "Gallery",
+            isEditEnabled: true,
+            onEdit: () {
+              controller.navigateToGalleryUpdate();
+            },
+            editIcon: hasImages ? Icons.edit_outlined : Icons.add_rounded,
+            child: hasImages
+                ? Column(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: CarouselSlider.builder(
+                          itemCount: images.length,
+                          options: CarouselOptions(
+                            height: 24.hp,
+                            viewportFraction: 1,
+                            enableInfiniteScroll: images.length > 1,
+                            autoPlay: images.length > 1,
+                            autoPlayInterval: const Duration(seconds: 5),
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            enlargeCenterPage: false,
+                            onPageChanged: (index, _) {
+                              controller.state.galleryIndex.value = index;
+                            },
+                          ),
+                          itemBuilder: (context, index, _) {
+                            return GestureDetector(
+                              onTap: () => Get.toNamed(
+                                RouteName.imageViewerPage,
+                                arguments: {
+                                  "fileUrl": getFileUrl(images[index]),
+                                  "header": controller.displayName,
+                                },
+                              ),
+                              child: CachedNetworkImage(
+                                imageUrl: getFileUrl(images[index]),
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                placeholder: (context, url) => Container(
+                                  color: Colors.grey.shade200,
+                                  child: const Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  color: Colors.grey.shade200,
+                                  child: Icon(
+                                    Icons.broken_image_outlined,
+                                    size: 40,
+                                    color: Colors.grey.shade400,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      if (images.length > 1) ...[
+                        SizedBox(height: 1.2.hp),
+                        Obx(
+                          () => Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(images.length, (index) {
+                              final isActive =
+                                  controller.state.galleryIndex.value == index;
+                              return AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 3,
+                                ),
+                                width: isActive ? 20 : 7,
+                                height: 7,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  color: isActive
+                                      ? AppColors.gradientDarkStart
+                                      : AppColors.gradientDarkStart.withValues(
+                                          alpha: 0.25,
+                                        ),
+                                ),
+                              );
+                            }),
+                          ),
+                        ),
+                      ],
+                    ],
+                  )
+                : Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 2.hp),
+                      child: Text(
+                        "No gallery images yet",
+                        style: TextStyle(
+                          fontSize: 9.sp,
+                          color: AppColors.textSecondary(ctx),
+                        ),
+                      ),
+                    ),
+                  ),
+          ),
+          SizedBox(height: 2.hp),
+        ],
+      );
+    });
   }
 
   Widget _buildNotificationsSection(BuildContext ctx) {
@@ -238,8 +360,10 @@ class UserProfilePage extends GetView<UserProfileController> {
     required Widget child,
     bool? isEditEnabled,
     VoidCallback? onEdit,
+    IconData? editIcon,
   }) {
     final bool editEnabled = isEditEnabled ?? false;
+    final IconData actionIcon = editIcon ?? Icons.edit_outlined;
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 4.wp),
@@ -281,7 +405,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                     child: Padding(
                       padding: EdgeInsets.all(1.5.wp),
                       child: Icon(
-                        Icons.edit_outlined,
+                        actionIcon,
                         size: 18.sp,
                         color: AppColors.iconMuted(ctx),
                       ),

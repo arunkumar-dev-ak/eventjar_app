@@ -141,6 +141,7 @@ class ExtendedProfile {
   final String? linkedinProfile;
   final SocialMediaLinks socialMediaLinks;
   final List<String> eventInterests;
+  final List<String> galleryImages;
   final PhoneParsed? businessPhoneParsed;
 
   ExtendedProfile({
@@ -170,6 +171,7 @@ class ExtendedProfile {
     this.linkedinProfile,
     required this.socialMediaLinks,
     required this.eventInterests,
+    required this.galleryImages,
     this.businessPhoneParsed,
   });
 
@@ -207,6 +209,7 @@ class ExtendedProfile {
             ? SocialMediaLinks.fromJson(json['socialMediaLinks'])
             : SocialMediaLinks.empty(),
         eventInterests: (json['eventInterests'] as List?)?.cast<String>() ?? [],
+        galleryImages: (json['galleryImages'] as List?)?.cast<String>() ?? [],
         businessPhoneParsed: json['businessPhoneParsed'] != null
             ? PhoneParsed.fromJson(json['businessPhoneParsed'])
             : null,
@@ -244,6 +247,7 @@ class ExtendedProfile {
     'linkedinProfile': linkedinProfile,
     'socialMediaLinks': socialMediaLinks.toJson(),
     'eventInterests': eventInterests,
+    'galleryImages': galleryImages,
   };
 }
 

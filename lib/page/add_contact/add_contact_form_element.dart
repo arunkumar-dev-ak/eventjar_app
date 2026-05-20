@@ -54,7 +54,11 @@ class ContactFormElement extends StatelessWidget {
       style: TextStyle(fontSize: defaultFontSize),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: labelStyle ?? TextStyle(fontSize: defaultFontSize),
+        labelStyle: labelStyle ??
+            TextStyle(
+              fontSize: defaultFontSize,
+              color: AppColors.textPrimary(context).withValues(alpha: 0.6),
+            ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),

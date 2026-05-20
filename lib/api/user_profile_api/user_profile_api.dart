@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/dio_client.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/auth/delete_request_model.dart';
 import 'package:eventjar/model/user_profile/user_profile.dart';
@@ -101,6 +102,78 @@ class UserProfileApi {
         requestOptions: response.requestOptions,
         response: response,
         error: "Failed to fetch deletion request status",
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static String _detectMimeType(File file) {
+    final bytes = file.openSync()..setPositionSync(0);
+    final header = bytes.readSync(12);
+    bytes.closeSync();
+
+    if (header.length >= 3 &&
+        header[0] == 0xFF && header[1] == 0xD8 && header[2] == 0xFF) {
+      return 'image/jpeg';
+    }
+    if (header.length >= 8 &&
+        header[0] == 0x89 && header[1] == 0x50 && header[2] == 0x4E &&
+        header[3] == 0x47 && header[4] == 0x0D && header[5] == 0x0A &&
+        header[6] == 0x1A && header[7] == 0x0A) {
+      return 'image/png';
+    }
+    if (header.length >= 12 &&
+        header[0] == 0x52 && header[1] == 0x49 && header[2] == 0x46 &&
+        header[3] == 0x46 && header[8] == 0x57 && header[9] == 0x45 &&
+        header[10] == 0x42 && header[11] == 0x50) {
+      return 'image/webp';
+    }
+    return 'application/octet-stream';
+  }
+
+  static String _mimeToExt(String mime) {
+    switch (mime) {
+      case 'image/jpeg': return 'jpg';
+      case 'image/png': return 'png';
+      case 'image/webp': return 'webp';
+      default: return 'bin';
+    }
+  }
+
+  static Future<String> uploadFile(File file) async {
+    final mimeType = _detectMimeType(file);
+    final ext = _mimeToExt(mimeType);
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(
+        file.path,
+        filename: 'upload.$ext',
+        contentType: MediaType.parse(mimeType),
+      ),
+    });
+
+    try {
+      final response = await _dio.post(
+        '/storage/upload',
+        data: formData,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+        if (data['success'] == true && data['data'] != null) {
+          return data['data']['url'] as String;
+        }
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: 'Invalid upload response',
+        );
+      }
+
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        error: 'Upload failed',
       );
     } catch (e) {
       rethrow;

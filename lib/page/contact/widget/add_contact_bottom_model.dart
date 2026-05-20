@@ -63,8 +63,8 @@ void addContactBottomModel(BuildContext context, ContactController controller) {
             _divider(),
             _buildMenuItem(
               icon: Icons.document_scanner,
-              title: 'Scan Visiting card',
-              subtitle: 'Scan Visiting card to add contact',
+              title: 'Scan Business Card',
+              subtitle: 'Scan Business Card to add contact',
               gradientColors: [
                 Colors.orangeAccent.shade400,
                 Colors.orangeAccent.shade700,

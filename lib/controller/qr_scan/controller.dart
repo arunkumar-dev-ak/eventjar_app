@@ -17,7 +17,7 @@ import '../../routes/route_name.dart';
 
 class QrScanScreenController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  var appBarTitle = "Network";
+  // var appBarTitle = "Network";
   final state = QrScanScreenState();
   final ImagePicker _imagePicker = ImagePicker();
   MobileScannerController? scannerController;
@@ -32,6 +32,8 @@ class QrScanScreenController extends GetxController
   // QrCodePage AppBar (which is outside this ShowCaseWidget) so
   // replayTour() can resolve a descendant context.
   final GlobalKey scanQrTourScopeKey = GlobalKey();
+
+  final RxBool isTourActive = false.obs;
 
   List<GlobalKey> get _tourSequence => [tourCameraKey, tourGalleryKey];
 
@@ -49,11 +51,19 @@ class QrScanScreenController extends GetxController
     if (!context.mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!context.mounted) return;
+      isTourActive.value = true;
       ShowCaseWidget.of(context).startShowCase(_tourSequence);
     });
   }
 
+  void skipTour(BuildContext context) {
+    ShowCaseWidget.of(context).dismiss();
+    isTourActive.value = false;
+    markTourSeen();
+  }
+
   void startTourNow(BuildContext context) {
+    isTourActive.value = true;
     ShowCaseWidget.of(context).startShowCase(_tourSequence);
   }
 
@@ -63,6 +73,7 @@ class QrScanScreenController extends GetxController
   void replayTour() {
     final ctx = scanQrTourScopeKey.currentContext;
     if (ctx == null || !ctx.mounted) return;
+    isTourActive.value = true;
     ShowCaseWidget.of(ctx).startShowCase(_tourSequence);
   }
 

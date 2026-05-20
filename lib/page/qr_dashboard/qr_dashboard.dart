@@ -16,10 +16,14 @@ class QrCodePage extends GetView<QrDashboardController> {
   Widget build(BuildContext context) {
     final myQrController = Get.find<MyQrScreenController>();
     return ShowCaseWidget(
-      onFinish: () => myQrController.markTourSeen(),
+      onFinish: () {
+        myQrController.isTourActive.value = false;
+        myQrController.markTourSeen();
+      },
       blurValue: 1,
       builder: (ctx) => _MyQrTourScope(
         key: myQrController.myQrTourScopeKey,
+        showcaseContext: ctx,
         start: () => myQrController.maybeStartTour(ctx),
         child: _buildScaffold(ctx, myQrController),
       ),
@@ -111,16 +115,95 @@ class QrCodePage extends GetView<QrDashboardController> {
 /// first open.
 class _MyQrTourScope extends StatefulWidget {
   final Widget child;
+  final BuildContext showcaseContext;
   final Future<void> Function() start;
 
-  const _MyQrTourScope({super.key, required this.child, required this.start});
+  const _MyQrTourScope({
+    super.key,
+    required this.child,
+    required this.showcaseContext,
+    required this.start,
+  });
 
   @override
   State<_MyQrTourScope> createState() => _MyQrTourScopeState();
 }
 
 class _MyQrTourScopeState extends State<_MyQrTourScope> {
+  final MyQrScreenController _controller = Get.find();
   bool _triggered = false;
+  OverlayEntry? _skipOverlay;
+  late final Worker _tourWatcher;
+
+  @override
+  void initState() {
+    super.initState();
+    _tourWatcher = ever(_controller.isTourActive, (active) {
+      if (active) {
+        _showSkipOverlay();
+      } else {
+        _removeSkipOverlay();
+      }
+    });
+  }
+
+  void _showSkipOverlay() {
+    _removeSkipOverlay();
+    // Wait two frames: showcaseview inserts its overlay in addPostFrameCallback,
+    // so we need to be after that to guarantee our entry is on top.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !_controller.isTourActive.value) return;
+        _skipOverlay = OverlayEntry(
+          builder: (ctx) {
+            final bottomPadding = MediaQuery.of(ctx).padding.bottom;
+            return Positioned(
+              bottom: bottomPadding + 16,
+              right: 16,
+              child: GestureDetector(
+                onTap: () => _controller.skipTour(widget.showcaseContext),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black87,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Text(
+                      'Skip Tour',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+        Overlay.of(context, rootOverlay: true).insert(_skipOverlay!);
+      });
+    });
+  }
+
+  void _removeSkipOverlay() {
+    _skipOverlay?.remove();
+    _skipOverlay = null;
+  }
 
   @override
   void didChangeDependencies() {
@@ -128,6 +211,13 @@ class _MyQrTourScopeState extends State<_MyQrTourScope> {
     if (_triggered) return;
     _triggered = true;
     WidgetsBinding.instance.addPostFrameCallback((_) => widget.start());
+  }
+
+  @override
+  void dispose() {
+    _tourWatcher.dispose();
+    _removeSkipOverlay();
+    super.dispose();
   }
 
   @override

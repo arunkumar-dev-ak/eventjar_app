@@ -1,6 +1,8 @@
 import 'package:eventjar/controller/profile_form/location/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class LocationFormPage extends GetView<LocationFormController> {
@@ -12,13 +14,19 @@ class LocationFormPage extends GetView<LocationFormController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: TextStyle(color: AppColors.textPrimary(context)),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         centerTitle: false,
-        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
-        elevation: 4,
-        backgroundColor: AppColors.cardBg(context),
-        shadowColor: Colors.black.withValues(alpha: 0.5),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
+        ),
+        elevation: 0,
       ),
       body: Text("hi"),
     );

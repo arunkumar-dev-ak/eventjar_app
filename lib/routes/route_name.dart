@@ -51,6 +51,7 @@ class RouteName {
   static const networkingFormPage = '/networkingFormPage';
   static const summaryFormPage = '/summaryFormPage';
   static const socialFormPage = '/socialFormPage';
+  static const galleryFormPage = '/galleryFormPage';
 
   //Notification
   static const notificationpage = '/notificationPage';
@@ -74,6 +75,9 @@ class RouteName {
   static const createExpensePage = '/createExpensePage';
   static const friendListPage = '/friendListPage';
   static const transactionPage = '/transactionPage';
+
+  //bio profile page
+  static const bioProfilePage = '/bioProfilePage';
 
   //more page
   static const morePage = '/morePage';

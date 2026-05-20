@@ -29,6 +29,9 @@ class UserProfileState {
   RxString otpError = ''.obs;
   RxInt resendCooldown = 0.obs;
 
+  // Gallery
+  final RxInt galleryIndex = 0.obs;
+
   // App permissions
   RxBool cameraGranted = false.obs;
   RxBool notificationGranted = false.obs;

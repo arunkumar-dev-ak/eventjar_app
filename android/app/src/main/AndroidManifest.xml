@@ -92,6 +92,7 @@
                 <data android:pathPrefix="/network" />
                 <data android:pathPrefix="/connections" />
                 <data android:pathPrefix="/find-events" />
+                 <data android:pathPrefix="/members/" />
             </intent-filter>
             <!-- Home screen widget deep link -->
             <intent-filter>

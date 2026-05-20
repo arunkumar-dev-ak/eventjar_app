@@ -136,7 +136,10 @@ class ContactCardPage extends StatelessWidget {
             return radialDesignBuildAccordionCard(
               context: context,
               contact: contact,
-              stages: _buildStagesForContact(contact.stage.index),
+              stages: _buildStagesForContact(
+                contact.stage.index,
+                isDarkMode: Theme.of(context).brightness == Brightness.dark,
+              ),
               isSmallScreen: isSmallScreen,
               index: index,
               isExpanded: isExpanded,
@@ -158,14 +161,19 @@ class ContactCardPage extends StatelessWidget {
   }
 }
 
-List<PieChartModel> _buildStagesForContact(int activeStageIndex) {
+List<PieChartModel> _buildStagesForContact(
+  int activeStageIndex, {
+  bool isDarkMode = false,
+}) {
   return stageDefinitions.asMap().entries.map((entry) {
     final index = entry.key;
     final stage = entry.value;
     final isEnabled = index <= activeStageIndex;
+    final disabledColor =
+        isDarkMode ? Colors.grey.shade700 : Colors.grey.shade400;
     return PieChartModel(
       name: stage.name,
-      color: isEnabled ? stage.color : Colors.grey.shade400,
+      color: isEnabled ? stage.color : disabledColor,
       isEnabled: isEnabled,
     );
   }).toList();

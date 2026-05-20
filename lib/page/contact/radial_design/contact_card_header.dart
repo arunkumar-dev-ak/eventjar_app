@@ -562,6 +562,7 @@ Widget _buildSmallChart(List<PieChartModel> stages, double size) {
         stages: stages,
         animationValue: 1.0,
         showText: false,
+        isDarkMode: Get.isDarkMode,
       ),
     ),
   );

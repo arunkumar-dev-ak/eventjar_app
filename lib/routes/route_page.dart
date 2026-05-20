@@ -22,6 +22,7 @@ import 'package:eventjar/controller/nfc_write/binding.dart';
 import 'package:eventjar/controller/notification/binding.dart';
 import 'package:eventjar/controller/notification_inbox/binding.dart';
 import 'package:eventjar/controller/profile_form/basic_info/binding.dart';
+import 'package:eventjar/controller/profile_form/gallery/binding.dart';
 import 'package:eventjar/controller/profile_form/business_info/binding.dart';
 import 'package:eventjar/controller/profile_form/location/binding.dart';
 import 'package:eventjar/controller/profile_form/networking/binding.dart';
@@ -63,6 +64,7 @@ import 'package:eventjar/page/nfc_write/nfc_write.dart';
 import 'package:eventjar/page/notification/notification_page.dart';
 import 'package:eventjar/page/notification_inbox/notification_inbox_page.dart';
 import 'package:eventjar/page/profile_form/basic_info/basic_info.dart';
+import 'package:eventjar/page/profile_form/gallery_form/gallery_form.dart';
 import 'package:eventjar/page/profile_form/business_info/business_info.dart';
 import 'package:eventjar/page/profile_form/location_form/location_form.dart';
 import 'package:eventjar/page/profile_form/networking_form/networking_form.dart';
@@ -85,8 +87,10 @@ import 'package:eventjar/routes/route_name.dart';
 import 'package:get/get.dart';
 
 import 'package:eventjar/page/more/more_page.dart';
+import 'package:eventjar/page/bio_profile/bio_profile_page.dart';
 
 import '../controller/categories_event/binding.dart';
+import '../controller/bio_profile/binding.dart';
 import '../controller/scan_card/binding.dart';
 import '../page/category_events/event_list.dart';
 import '../page/scan_card/scan_card.dart';
@@ -337,6 +341,12 @@ class RoutePage {
       binding: SocialBinding(),
       middlewares: [LoginMiddleware()],
     ),
+    GetPage(
+      name: RouteName.galleryFormPage,
+      page: () => const GalleryFormPage(),
+      binding: GalleryFormBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
 
     GetPage(
       name: RouteName.categoriesPage,
@@ -389,6 +399,13 @@ class RoutePage {
       page: () => TransactionPage(),
       binding: TransactionBinding(),
       middlewares: [LoginMiddleware()],
+    ),
+
+    //bio profile page
+    GetPage(
+      name: RouteName.bioProfilePage,
+      page: () => const BioProfilePage(),
+      binding: BioProfileBinding(),
     ),
 
     //more page

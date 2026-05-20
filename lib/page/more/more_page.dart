@@ -127,7 +127,7 @@ class MorePage extends GetView<MoreController> {
                           ),
                           _GridItem(
                             icon: Icons.document_scanner,
-                            label: "Scan\nVisiting Card",
+                            label: "Scan\nBusiness Card",
                             onTap: controller.navigateToScanCard,
                           ),
                         ]),

@@ -4,6 +4,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/schedule_meeting/schedule_meeting_button.dart';
 import 'package:eventjar/page/schedule_meeting/widget/schedule_meeting_message_method.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
@@ -18,13 +19,19 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
         appBar: AppBar(
           title: Text(
             controller.appBarTitle,
-            style: TextStyle(color: AppColors.textPrimary(context)),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
           ),
           centerTitle: false,
-          iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
-          elevation: 4,
-          backgroundColor: AppColors.cardBg(context),
-          shadowColor: Colors.black.withValues(alpha: 0.1),
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarIconBrightness: Brightness.light,
+          ),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: AppColors.appBarGradientFor(context),
+            ),
+          ),
+          elevation: 0,
         ),
         body: Obx(() {
           return Form(

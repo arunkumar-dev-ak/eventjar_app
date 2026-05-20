@@ -198,6 +198,20 @@ class DeepLinkHandler {
         );
         return true;
 
+      case 'members':
+        final memberUsername = segments.length > 1 ? segments[1].trim() : null;
+        if (memberUsername == null || memberUsername.isEmpty) {
+          AppSnackbar.warning(
+            title: "Invalid Profile",
+            message: "Profile link is not valid.",
+          );
+          return false;
+        }
+        Get.offAllNamed(
+          '${RouteName.bioProfilePage}?username=$memberUsername',
+        );
+        return true;
+
       case 'find-events':
         Get.offAllNamed(RouteName.dashboardpage);
         return true;

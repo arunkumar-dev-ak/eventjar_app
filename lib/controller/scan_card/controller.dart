@@ -18,7 +18,7 @@ import 'state.dart';
 
 class ScanCardController extends GetxController
     with GetTickerProviderStateMixin {
-  var appBarTitle = "Scan Visting Card";
+  var appBarTitle = "Scan Business Card";
   final state = ScanCardState();
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
@@ -26,6 +26,7 @@ class ScanCardController extends GetxController
   final ImagePicker _picker = ImagePicker();
   final TextRecognizer _textRecognizer = TextRecognizer();
   bool enableTour = false;
+  final RxBool isTourActive = false.obs;
 
   final Rx<VisitingCardInfo> cardInfo = VisitingCardInfo().obs;
 
@@ -56,6 +57,7 @@ class ScanCardController extends GetxController
     if (!context.mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!context.mounted) return;
+      isTourActive.value = true;
       ShowCaseWidget.of(context).startShowCase([
         tourTipsKey,
         tourCameraKey,
@@ -65,7 +67,14 @@ class ScanCardController extends GetxController
     });
   }
 
+  void skipTour(BuildContext context) {
+    ShowCaseWidget.of(context).dismiss();
+    isTourActive.value = false;
+    markTourSeen();
+  }
+
   void startTourNow(BuildContext context) {
+    isTourActive.value = true;
     ShowCaseWidget.of(
       context,
     ).startShowCase([tourTipsKey, tourCameraKey, tourGalleryKey, tourHelpKey]);
@@ -131,22 +140,25 @@ class ScanCardController extends GetxController
     }
   }
 
-  static final MethodChannel _scannerChannel =
-      MethodChannel('cunning_document_scanner');
+  static final MethodChannel _scannerChannel = MethodChannel(
+    'cunning_document_scanner',
+  );
 
   static const int _maxImageWidth = 1800;
   static const int _maxFileSizeBytes = 3 * 1024 * 1024; // 3 MB
 
   Future<List<String>?> _scanDocumentIOS() async {
-    final List<dynamic>? pictures =
-        await _scannerChannel.invokeMethod('getPictures', {
-      'noOfPages': 1,
-      'isGalleryImportAllowed': false,
-      'iosScannerOptions': {
-        'imageFormat': IosImageFormat.jpg.name,
-        'jpgCompressionQuality': 0.85,
+    final List<dynamic>? pictures = await _scannerChannel.invokeMethod(
+      'getPictures',
+      {
+        'noOfPages': 1,
+        'isGalleryImportAllowed': false,
+        'iosScannerOptions': {
+          'imageFormat': IosImageFormat.jpg.name,
+          'jpgCompressionQuality': 0.85,
+        },
       },
-    });
+    );
     return pictures?.map((e) => e as String).toList();
   }
 
@@ -247,7 +259,7 @@ class ScanCardController extends GetxController
       // Check if multiple cards are detected
       if (_hasMultipleCards(extractedText)) {
         errorMessage.value =
-            'Multiple cards detected. Please scan only one visiting card at a time.';
+            'Multiple cards detected. Please scan only one Business Card at a time.';
         return;
       }
 

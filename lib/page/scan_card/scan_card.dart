@@ -14,10 +14,14 @@ class ScanCard extends GetView<ScanCardController> {
   @override
   Widget build(BuildContext context) {
     return ShowCaseWidget(
-      onFinish: () => controller.markTourSeen(),
+      onFinish: () {
+        controller.isTourActive.value = false;
+        controller.markTourSeen();
+      },
       disableMovingAnimation: false,
       blurValue: 1,
       builder: (ctx) => _TourAutoStart(
+        showcaseContext: ctx,
         start: () => controller.maybeStartTour(ctx),
         child: _buildScaffold(ctx),
       ),
@@ -137,7 +141,7 @@ class ScanCard extends GetView<ScanCardController> {
       if (image == null) {
         return Showcase(
           key: controller.tourTipsKey,
-          title: 'Scan a visiting card',
+          title: 'Scan a Business Card',
           description: 'Snap or upload — we extract name, phone & email.',
           tooltipBackgroundColor: controller.primaryColor,
           textColor: Colors.white,
@@ -232,7 +236,7 @@ class ScanCard extends GetView<ScanCardController> {
           ),
           SizedBox(height: 1.5.hp),
           Text(
-            'Scan a Visiting Card to begin',
+            'Scan a Business Card to begin',
             style: TextStyle(
               color: AppColors.textHintStatic,
               fontSize: 10.sp,
@@ -287,7 +291,7 @@ class ScanCard extends GetView<ScanCardController> {
           SizedBox(height: 1.hp),
           _buildTipItem('Hold the card close & zoom in', tipStyle),
           const SizedBox(height: 6),
-          _buildTipItem('Scan one visiting card at a time', tipStyle),
+          _buildTipItem('Scan one Business Card at a time', tipStyle),
           const SizedBox(height: 6),
           _buildTipItem('Ensure good lighting on the card', tipStyle),
         ],
@@ -1008,16 +1012,92 @@ class ScanCard extends GetView<ScanCardController> {
 
 class _TourAutoStart extends StatefulWidget {
   final Widget child;
+  final BuildContext showcaseContext;
   final Future<void> Function() start;
 
-  const _TourAutoStart({required this.child, required this.start});
+  const _TourAutoStart({
+    required this.child,
+    required this.showcaseContext,
+    required this.start,
+  });
 
   @override
   State<_TourAutoStart> createState() => _TourAutoStartState();
 }
 
 class _TourAutoStartState extends State<_TourAutoStart> {
+  final ScanCardController _controller = Get.find();
   bool _triggered = false;
+  OverlayEntry? _skipOverlay;
+  late final Worker _tourWatcher;
+
+  @override
+  void initState() {
+    super.initState();
+    _tourWatcher = ever(_controller.isTourActive, (active) {
+      if (active) {
+        _showSkipOverlay();
+      } else {
+        _removeSkipOverlay();
+      }
+    });
+  }
+
+  void _showSkipOverlay() {
+    _removeSkipOverlay();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !_controller.isTourActive.value) return;
+        _skipOverlay = OverlayEntry(
+          builder: (ctx) {
+            final bottomPadding = MediaQuery.of(ctx).padding.bottom;
+            return Positioned(
+              bottom: bottomPadding + 16,
+              right: 16,
+              child: GestureDetector(
+                onTap: () => _controller.skipTour(widget.showcaseContext),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black87,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Text(
+                      'Skip Tour',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+        Overlay.of(context, rootOverlay: true).insert(_skipOverlay!);
+      });
+    });
+  }
+
+  void _removeSkipOverlay() {
+    _skipOverlay?.remove();
+    _skipOverlay = null;
+  }
 
   @override
   void didChangeDependencies() {
@@ -1025,6 +1105,13 @@ class _TourAutoStartState extends State<_TourAutoStart> {
     if (_triggered) return;
     _triggered = true;
     WidgetsBinding.instance.addPostFrameCallback((_) => widget.start());
+  }
+
+  @override
+  void dispose() {
+    _tourWatcher.dispose();
+    _removeSkipOverlay();
+    super.dispose();
   }
 
   @override

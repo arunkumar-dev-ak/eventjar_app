@@ -26,6 +26,7 @@ class MyQrScreenController extends GetxController
   final selectedTab = 0.obs;
 
   // Tour / showcase
+  final RxBool isTourActive = false.obs;
   static const String _tourSeenStorageKey = 'my_qr_tour_seen_v1';
   final GlobalKey tourQrKey = GlobalKey();
   final GlobalKey tourShareKey = GlobalKey();
@@ -59,8 +60,15 @@ class MyQrScreenController extends GetxController
     if (!context.mounted) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!context.mounted) return;
+      isTourActive.value = true;
       ShowCaseWidget.of(context).startShowCase(_tourSequence);
     });
+  }
+
+  void skipTour(BuildContext context) {
+    ShowCaseWidget.of(context).dismiss();
+    isTourActive.value = false;
+    markTourSeen();
   }
 
   /// Re-plays the tour from any context (e.g. QrCodePage AppBar) by resolving
@@ -68,6 +76,7 @@ class MyQrScreenController extends GetxController
   void replayTour() {
     final ctx = myQrTourScopeKey.currentContext;
     if (ctx == null || !ctx.mounted) return;
+    isTourActive.value = true;
     ShowCaseWidget.of(ctx).startShowCase(_tourSequence);
   }
 

@@ -18,13 +18,19 @@ class SocialFormPage extends GetView<SocialFormController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: TextStyle(color: AppColors.textPrimary(context)),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         centerTitle: false,
-        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
-        elevation: 4,
-        backgroundColor: AppColors.cardBg(context),
-        shadowColor: Colors.black.withValues(alpha: 0.5),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
+        ),
+        elevation: 0,
       ),
       body: SafeArea(
         child: GestureDetector(
@@ -78,7 +84,7 @@ class SocialFormPage extends GetView<SocialFormController> {
                       Row(
                         children: [
                           FaIcon(
-                            FontAwesomeIcons.commentDots,
+                            FontAwesomeIcons.whatsapp,
                             size: 14,
                             color: Colors.green.shade600,
                           ),
@@ -148,9 +154,9 @@ class SocialFormPage extends GetView<SocialFormController> {
                       Row(
                         children: [
                           FaIcon(
-                            FontAwesomeIcons.twitter,
+                            FontAwesomeIcons.xTwitter,
                             size: 14,
-                            color: Colors.blue.shade400,
+                            color: AppColors.textPrimary(context),
                           ),
                           SizedBox(width: 2.wp),
                           Text(

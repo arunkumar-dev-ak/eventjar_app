@@ -416,11 +416,16 @@ class UserProfileController extends GetxController
 
   Future<void> selectAvatarImage() async {
     if (state.isProfileLoading.value) return;
+    final context = Get.context!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
+
     await Get.bottomSheet(
       Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: bgColor,
           borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
         ),
         child: Column(
@@ -428,24 +433,27 @@ class UserProfileController extends GetxController
           children: [
             Text(
               'Change Profile Photo',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
             ),
             SizedBox(height: 20),
             ListTile(
               leading: Icon(Icons.camera_alt, color: Colors.blue),
-              title: Text('Take Photo'),
+              title: Text('Take Photo', style: TextStyle(color: textColor)),
               onTap: () {
                 Get.back();
-                //_getImageFromCamera();
                 _pickImage(ImageSource.camera);
               },
             ),
             ListTile(
               leading: Icon(Icons.collections, color: Colors.blue),
-              title: Text('Choose from Gallery'),
+              title: Text('Choose from Gallery',
+                  style: TextStyle(color: textColor)),
               onTap: () {
                 Get.back();
-                //_getImageFromGallery();
                 _pickImage(ImageSource.gallery);
               },
             ),
@@ -698,6 +706,10 @@ class UserProfileController extends GetxController
     return state.userProfile.value?.role ?? 'ATTENDEE';
   }
 
+  /// Gallery images from extended profile
+  List<String> get galleryImages =>
+      state.userProfile.value?.extendedProfile?.galleryImages ?? [];
+
   /// Check if user is verified
   bool get isVerified {
     return state.userProfile.value?.isVerified ?? false;
@@ -772,6 +784,16 @@ class UserProfileController extends GetxController
         if (val == 'refresh') {onTabOpen()},
       },
     );
+  }
+
+  Future<void> navigateToGalleryUpdate() async {
+    final result = await Get.toNamed(
+      RouteName.galleryFormPage,
+      arguments: galleryImages,
+    );
+    if (result == 'refresh') {
+      onTabOpen();
+    }
   }
 
   void navigateToConfigureNotification() {

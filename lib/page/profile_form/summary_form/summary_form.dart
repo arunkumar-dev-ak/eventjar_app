@@ -18,13 +18,19 @@ class SummaryFormPage extends GetView<SummaryFormController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: TextStyle(color: AppColors.textPrimary(context)),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         centerTitle: false,
-        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
-        elevation: 4,
-        backgroundColor: AppColors.cardBg(context),
-        shadowColor: Colors.black.withValues(alpha: 0.5),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
+        ),
+        elevation: 0,
       ),
       body: GestureDetector(
         onTap: () => Get.focusScope?.unfocus(),
