@@ -3,6 +3,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,42 +15,42 @@ Widget userProfileBuildSocialLinks() {
   return Column(
     children: [
       buildSocialLinkRow(
-        icon: Icons.link,
+        icon: FontAwesomeIcons.linkedinIn,
         platform: "LinkedIn",
         url: socialLinks['linkedin']!.isEmpty
             ? "Not connected"
             : socialLinks['linkedin']!,
-        color: Colors.blue.shade700,
+        color: const Color(0xFF0A66C2),
         isConnected: socialLinks['linkedin']!.isNotEmpty,
       ),
       SizedBox(height: 2.hp),
       buildSocialLinkRow(
-        icon: Icons.camera_alt,
+        icon: FontAwesomeIcons.instagram,
         platform: "Instagram",
         url: socialLinks['instagram']!.isEmpty
             ? "Not connected"
             : socialLinks['instagram']!,
-        color: Colors.pink.shade400,
+        color: const Color(0xFFE4405F),
         isConnected: socialLinks['instagram']!.isNotEmpty,
       ),
       SizedBox(height: 2.hp),
       buildSocialLinkRow(
-        icon: Icons.facebook,
+        icon: FontAwesomeIcons.facebookF,
         platform: "Facebook",
         url: socialLinks['facebook']!.isEmpty
             ? "Not connected"
             : socialLinks['facebook']!,
-        color: Colors.blue.shade600,
+        color: const Color(0xFF1877F2),
         isConnected: socialLinks['facebook']!.isNotEmpty,
       ),
       SizedBox(height: 2.hp),
       buildSocialLinkRow(
-        icon: Icons.alternate_email,
-        platform: "Twitter",
+        icon: FontAwesomeIcons.xTwitter,
+        platform: "X (Twitter)",
         url: socialLinks['twitter']!.isEmpty
             ? "Not connected"
             : socialLinks['twitter']!,
-        color: Colors.lightBlue.shade400,
+        color: const Color(0xFF000000),
         isConnected: socialLinks['twitter']!.isNotEmpty,
       ),
     ],
@@ -73,9 +74,9 @@ Widget buildSocialLinkRow({
               : AppColors.greyBgStatic,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(
+        child: FaIcon(
           icon,
-          size: 20,
+          size: 18,
           color: isConnected ? color : AppColors.iconMutedStatic,
         ),
       ),
@@ -120,7 +121,6 @@ Widget buildSocialLinkRow({
                 }
               }
             : null,
-
         child: Icon(
           isConnected ? Icons.open_in_new : Icons.link_off,
           size: 16,
