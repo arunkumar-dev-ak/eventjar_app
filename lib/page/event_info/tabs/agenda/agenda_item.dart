@@ -50,7 +50,7 @@ Widget _timelineIndicator(bool isLastItem) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      Icon(FontAwesomeIcons.clock, color: Colors.red[200], size: 17),
+      FaIcon(FontAwesomeIcons.clock, color: Colors.red[200], size: 17),
       SizedBox(height: 1.hp),
       Expanded(child: Container(color: Colors.red[200], width: 1)),
     ],

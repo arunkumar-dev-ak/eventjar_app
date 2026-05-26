@@ -442,7 +442,7 @@ class MorePage extends GetView<MoreController> {
 }
 
 class _GridItem {
-  final IconData icon;
+  final dynamic icon;
   final String label;
   final VoidCallback? onTap;
   final bool isFontAwesome;

@@ -105,8 +105,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   Widget _buildNavItem({
     required BuildContext context,
-    required IconData filledIcon,
-    required IconData outlinedIcon,
+    required dynamic filledIcon,
+    required dynamic outlinedIcon,
     required String label,
     required int index,
     required int selectedIndex,
@@ -119,7 +119,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
     final color = isSelected ? activeColor : inactiveColor;
     final icon = isSelected ? filledIcon : outlinedIcon;
 
-    final Widget iconWidget = isFontAwesome
+    final Widget iconWidget = icon is FaIconData
         ? FaIcon(icon, size: 26, color: color)
         : Icon(icon, size: 28, color: color);
 

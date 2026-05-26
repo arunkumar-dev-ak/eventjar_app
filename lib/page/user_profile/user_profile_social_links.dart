@@ -58,7 +58,7 @@ Widget userProfileBuildSocialLinks() {
 }
 
 Widget buildSocialLinkRow({
-  required IconData icon,
+  required dynamic icon,
   required String platform,
   required String url,
   required Color color,
@@ -74,11 +74,17 @@ Widget buildSocialLinkRow({
               : AppColors.greyBgStatic,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: FaIcon(
-          icon,
-          size: 18,
-          color: isConnected ? color : AppColors.iconMutedStatic,
-        ),
+        child: icon is FaIconData
+            ? FaIcon(
+                icon,
+                size: 18,
+                color: isConnected ? color : AppColors.iconMutedStatic,
+              )
+            : Icon(
+                icon,
+                size: 18,
+                color: isConnected ? color : AppColors.iconMutedStatic,
+              ),
       ),
       SizedBox(width: 3.wp),
       Expanded(

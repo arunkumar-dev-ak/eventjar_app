@@ -21,7 +21,7 @@ class AgendaHeader extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
+            FaIcon(
               FontAwesomeIcons.clock,
               color: const Color.fromARGB(255, 7, 102, 180),
               size: 16,

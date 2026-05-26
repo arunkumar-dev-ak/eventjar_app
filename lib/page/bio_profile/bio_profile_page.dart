@@ -1088,7 +1088,7 @@ class BioProfilePage extends GetView<BioProfileController> {
 
 class _SocialItem {
   final String platform;
-  final IconData icon;
+  final FaIconData icon;
   final String url;
 
   _SocialItem(this.platform, this.icon, this.url);
