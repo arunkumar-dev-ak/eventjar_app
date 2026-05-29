@@ -114,6 +114,7 @@ class ScanQrBottomSection extends StatelessWidget {
 
           // Scan from Gallery button (same as before)
           Showcase(
+            scope: QrScanScreenController.scanQrScope,
             key: controller.tourGalleryKey,
             title: 'From Gallery',
             description: 'Pick an image containing a QR.',

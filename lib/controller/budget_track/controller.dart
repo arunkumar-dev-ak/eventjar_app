@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/budget_track/state.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/budget_track/expense_model.dart';
 import 'package:eventjar/model/budget_track/trip_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +49,47 @@ class BudgetTrackController extends GetxController
       default:
         return {"title": "", "subtitle": ""};
     }
+  }
+
+  Map<String, double> computeTripAnalytics(String tripTitle) {
+    final expenses = dummyTripExpenses[tripTitle] ?? [];
+    double yourSpent = 0;
+    final Map<String, double> balances = {};
+
+    for (final e in expenses) {
+      final isYou = e.paidBy == "You";
+      yourSpent += e.yourShare;
+
+      final splitCount = e.members.isNotEmpty
+          ? e.members.length
+          : (e.yourShare > 0 ? (e.amount / e.yourShare).round() : 1);
+      final perPerson = e.amount / splitCount;
+
+      if (isYou) {
+        for (final m in e.members) {
+          if (m == "You") continue;
+          balances[m] = (balances[m] ?? 0) + perPerson;
+        }
+      } else {
+        balances[e.paidBy] = (balances[e.paidBy] ?? 0) - perPerson;
+      }
+    }
+
+    double youOwe = 0;
+    double youReceive = 0;
+    for (final net in balances.values) {
+      if (net > 0) {
+        youReceive += net;
+      } else {
+        youOwe += net.abs();
+      }
+    }
+
+    return {'yourSpent': yourSpent, 'youOwe': youOwe, 'youReceive': youReceive};
+  }
+
+  int getExpenseCount(String tripTitle) {
+    return (dummyTripExpenses[tripTitle] ?? []).length;
   }
 
   /*----- Balances Tab ------*/

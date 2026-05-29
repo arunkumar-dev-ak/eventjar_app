@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/view_trip/controller.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/model/budget_track/friend_model.dart';
 import 'package:flutter/material.dart';
 import 'package:eventjar/global/app_colors.dart';
@@ -38,21 +39,33 @@ class FriendsList extends GetView<ViewTripController> {
       ),
       child: Row(
         children: [
-          // PROFILE
           Stack(
+            clipBehavior: Clip.none,
             children: [
               Container(
                 height: 42,
                 width: 42,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isDark
-                      ? AppColors.darkCardElevated
-                      : const Color(0xFFE0E0E0),
+                  color: f.isYou
+                      ? AppColors.gradientDarkStart.withValues(alpha: 0.15)
+                      : (isDark
+                            ? AppColors.darkCardElevated
+                            : const Color(0xFFE0E0E0)),
+                ),
+                child: Center(
+                  child: Text(
+                    f.name[0].toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w700,
+                      color: f.isYou
+                          ? AppColors.gradientDarkStart
+                          : AppColors.textSecondary(context),
+                    ),
+                  ),
                 ),
               ),
-
-              // ME TAG
               if (f.isYou)
                 Positioned(
                   bottom: -2,
@@ -63,13 +76,13 @@ class FriendsList extends GetView<ViewTripController> {
                       vertical: 1,
                     ),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: AppColors.gradientDarkStart,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: Text(
+                    child: const Text(
                       "ME",
                       style: TextStyle(
-                        color: isDark ? Colors.black : Colors.white,
+                        color: Colors.white,
                         fontSize: 8,
                         fontWeight: FontWeight.w600,
                       ),
@@ -164,10 +177,9 @@ class FriendsList extends GetView<ViewTripController> {
       );
     }
 
-    /// 🔴 YOU OWE → SETTLE (PRIMARY CTA)
     if (f.youOwe) {
       return InkWell(
-        onTap: () {},
+        onTap: () => _showSettleUpDialog(context, f),
         borderRadius: BorderRadius.circular(20),
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 3.5.wp, vertical: 0.8.hp),
@@ -204,6 +216,243 @@ class FriendsList extends GetView<ViewTripController> {
             fontSize: 8.5.sp,
             fontWeight: FontWeight.w600,
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showSettleUpDialog(BuildContext context, FriendModel f) {
+    HapticHelper.medium();
+    showDialog(
+      context: context,
+      builder: (_) => _SettleUpDialog(friend: f),
+    );
+  }
+}
+
+class _SettleUpDialog extends StatefulWidget {
+  final FriendModel friend;
+  const _SettleUpDialog({required this.friend});
+
+  @override
+  State<_SettleUpDialog> createState() => _SettleUpDialogState();
+}
+
+class _SettleUpDialogState extends State<_SettleUpDialog> {
+  late final TextEditingController _amountController;
+  final TextEditingController _notesController = TextEditingController();
+  String _paymentMethod = 'UPI';
+  final _methods = ['Cash', 'UPI', 'Others'];
+
+  @override
+  void initState() {
+    super.initState();
+    _amountController = TextEditingController(
+      text: widget.friend.amount.toStringAsFixed(0),
+    );
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: AppColors.cardBg(context),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Settle Up",
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary(context),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Icon(
+                    Icons.close,
+                    size: 20,
+                    color: AppColors.textSecondary(context),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 0.5.hp),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Pay ${widget.friend.name}",
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary(context),
+                ),
+              ),
+            ),
+            SizedBox(height: 2.hp),
+
+            // Amount
+            TextField(
+              controller: _amountController,
+              keyboardType: TextInputType.number,
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary(context),
+              ),
+              decoration: InputDecoration(
+                labelText: "Amount",
+                labelStyle: TextStyle(
+                  fontSize: 9.sp,
+                  color: AppColors.textSecondary(context),
+                ),
+                prefixText: "₹ ",
+                prefixStyle: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary(context),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.divider(context)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.gradientDarkStart),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 4.wp,
+                  vertical: 1.5.hp,
+                ),
+              ),
+            ),
+            SizedBox(height: 2.hp),
+
+            // Payment Method
+            DropdownButtonFormField<String>(
+              initialValue: _paymentMethod,
+              items: _methods
+                  .map((m) => DropdownMenuItem(value: m, child: Text(m)))
+                  .toList(),
+              onChanged: (v) {
+                if (v != null) setState(() => _paymentMethod = v);
+              },
+              style: TextStyle(
+                fontSize: 10.sp,
+                color: AppColors.textPrimary(context),
+              ),
+              decoration: InputDecoration(
+                labelText: "Payment Method",
+                labelStyle: TextStyle(
+                  fontSize: 9.sp,
+                  color: AppColors.textSecondary(context),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.divider(context)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.gradientDarkStart),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 4.wp,
+                  vertical: 1.5.hp,
+                ),
+              ),
+            ),
+            SizedBox(height: 2.hp),
+
+            // Notes
+            TextField(
+              controller: _notesController,
+              maxLines: 2,
+              style: TextStyle(
+                fontSize: 10.sp,
+                color: AppColors.textPrimary(context),
+              ),
+              decoration: InputDecoration(
+                labelText: "Notes (optional)",
+                labelStyle: TextStyle(
+                  fontSize: 9.sp,
+                  color: AppColors.textSecondary(context),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.divider(context)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: AppColors.gradientDarkStart),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 4.wp,
+                  vertical: 1.5.hp,
+                ),
+              ),
+            ),
+            SizedBox(height: 3.hp),
+
+            // Submit
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Payment of ₹${_amountController.text} to ${widget.friend.name} recorded',
+                      ),
+                      behavior: SnackBarBehavior.floating,
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.gradientDarkStart,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 1.5.hp),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 2,
+                ),
+                child: Text(
+                  "Submit",
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

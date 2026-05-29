@@ -10,135 +10,34 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
 
-class QrCodePage extends GetView<QrDashboardController> {
+class QrCodePage extends StatefulWidget {
   const QrCodePage({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    final myQrController = Get.find<MyQrScreenController>();
-    return ShowCaseWidget(
+  State<QrCodePage> createState() => _QrCodePageState();
+}
+
+class _QrCodePageState extends State<QrCodePage> {
+  final QrDashboardController controller = Get.find();
+  late final MyQrScreenController myQrController;
+  late final ShowcaseView _showcaseView;
+  OverlayEntry? _skipOverlay;
+  late final Worker _tourWatcher;
+  bool _tourTriggered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    myQrController = Get.find<MyQrScreenController>();
+    _showcaseView = ShowcaseView.register(
+      scope: MyQrScreenController.myQrScope,
       onFinish: () {
         myQrController.isTourActive.value = false;
         myQrController.markTourSeen();
       },
       blurValue: 1,
-      builder: (ctx) => _MyQrTourScope(
-        key: myQrController.myQrTourScopeKey,
-        showcaseContext: ctx,
-        start: () => myQrController.maybeStartTour(ctx),
-        child: _buildScaffold(ctx, myQrController),
-      ),
     );
-  }
-
-  Widget _buildScaffold(BuildContext context, MyQrScreenController myQr) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.close_rounded, color: Colors.blueGrey),
-          onPressed: () => Get.back(),
-        ),
-        elevation: 0,
-        title: Text(
-          "Share or Scan QR",
-          style: TextStyle(color: AppColors.textPrimary(context)),
-        ),
-        actions: [
-          Obx(() {
-            final index = controller.state.selectedIndex.value;
-            if (index == 0) {
-              // My QR tab — this button IS a Showcase target (tourHelpKey) and
-              // calls the MyQR tour.
-              return Showcase(
-                key: myQr.tourHelpKey,
-                title: 'Replay',
-                description: 'Tap anytime to see the tour again.',
-                targetShapeBorder: const CircleBorder(),
-                tooltipBackgroundColor: AppColors.gradientLightStart,
-                textColor: Colors.white,
-                titleTextStyle: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                ),
-                descTextStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.help_outline_rounded,
-                    color: Colors.blueGrey,
-                  ),
-                  tooltip: 'Replay tour',
-                  onPressed: myQr.replayTour,
-                ),
-              );
-            }
-            // Scan QR tab — plain replay button; the scan tour lives in the
-            // ScanQrPage's own ShowCaseWidget subtree, reached via scope key.
-            return IconButton(
-              icon: const Icon(
-                Icons.help_outline_rounded,
-                color: Colors.blueGrey,
-              ),
-              tooltip: 'Replay tour',
-              onPressed: () {
-                Get.find<QrScanScreenController>().replayTour();
-              },
-            );
-          }),
-          SizedBox(width: 2.wp),
-        ],
-      ),
-      backgroundColor: AppColors.scaffoldBg(context),
-      body: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: SafeArea(
-          child: Obx(() {
-            final index = controller.state.selectedIndex.value.clamp(0, 1);
-            return IndexedStack(
-              index: index,
-              children: const [MyQrCodePage(), ScanQrPage()],
-            );
-          }),
-        ),
-      ),
-      bottomNavigationBar: QrDashboardBottomNavigation(),
-    );
-  }
-}
-
-/// Lives inside the ShowCaseWidget subtree so its `context` is a valid
-/// descendant — exposed via a GlobalKey so the AppBar / controller can
-/// invoke `replayTour()` from anywhere. Also kicks off the tour once on
-/// first open.
-class _MyQrTourScope extends StatefulWidget {
-  final Widget child;
-  final BuildContext showcaseContext;
-  final Future<void> Function() start;
-
-  const _MyQrTourScope({
-    super.key,
-    required this.child,
-    required this.showcaseContext,
-    required this.start,
-  });
-
-  @override
-  State<_MyQrTourScope> createState() => _MyQrTourScopeState();
-}
-
-class _MyQrTourScopeState extends State<_MyQrTourScope> {
-  final MyQrScreenController _controller = Get.find();
-  bool _triggered = false;
-  OverlayEntry? _skipOverlay;
-  late final Worker _tourWatcher;
-
-  @override
-  void initState() {
-    super.initState();
-    _tourWatcher = ever(_controller.isTourActive, (active) {
+    _tourWatcher = ever(myQrController.isTourActive, (active) {
       if (active) {
         _showSkipOverlay();
       } else {
@@ -147,14 +46,23 @@ class _MyQrTourScopeState extends State<_MyQrTourScope> {
     });
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_tourTriggered) return;
+    _tourTriggered = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      myQrController.maybeStartTour(context);
+    });
+  }
+
   void _showSkipOverlay() {
     _removeSkipOverlay();
-    // Wait two frames: showcaseview inserts its overlay in addPostFrameCallback,
-    // so we need to be after that to guarantee our entry is on top.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted || !_controller.isTourActive.value) return;
+        if (!mounted || !myQrController.isTourActive.value) return;
         _skipOverlay = OverlayEntry(
           builder: (ctx) {
             final bottomPadding = MediaQuery.of(ctx).padding.bottom;
@@ -162,7 +70,7 @@ class _MyQrTourScopeState extends State<_MyQrTourScope> {
               bottom: bottomPadding + 16,
               right: 16,
               child: GestureDetector(
-                onTap: () => _controller.skipTour(widget.showcaseContext),
+                onTap: () => myQrController.skipTour(),
                 child: Material(
                   color: Colors.transparent,
                   child: Container(
@@ -206,20 +114,86 @@ class _MyQrTourScopeState extends State<_MyQrTourScope> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_triggered) return;
-    _triggered = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) => widget.start());
-  }
-
-  @override
   void dispose() {
     _tourWatcher.dispose();
     _removeSkipOverlay();
+    _showcaseView.unregister();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => widget.child;
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.close_rounded, color: Colors.blueGrey),
+          onPressed: () => Get.back(),
+        ),
+        elevation: 0,
+        title: Text(
+          "Share or Scan QR",
+          style: TextStyle(color: AppColors.textPrimary(context)),
+        ),
+        actions: [
+          Obx(() {
+            final index = controller.state.selectedIndex.value;
+            if (index == 0) {
+              return Showcase(
+                scope: MyQrScreenController.myQrScope,
+                key: myQrController.tourHelpKey,
+                title: 'Replay',
+                description: 'Tap anytime to see the tour again.',
+                targetShapeBorder: const CircleBorder(),
+                tooltipBackgroundColor: AppColors.gradientLightStart,
+                textColor: Colors.white,
+                titleTextStyle: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
+                descTextStyle: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.help_outline_rounded,
+                    color: Colors.blueGrey,
+                  ),
+                  tooltip: 'Replay tour',
+                  onPressed: myQrController.replayTour,
+                ),
+              );
+            }
+            return IconButton(
+              icon: const Icon(
+                Icons.help_outline_rounded,
+                color: Colors.blueGrey,
+              ),
+              tooltip: 'Replay tour',
+              onPressed: () {
+                Get.find<QrScanScreenController>().replayTour();
+              },
+            );
+          }),
+          SizedBox(width: 2.wp),
+        ],
+      ),
+      backgroundColor: AppColors.scaffoldBg(context),
+      body: SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: SafeArea(
+          child: Obx(() {
+            final index = controller.state.selectedIndex.value.clamp(0, 1);
+            return IndexedStack(
+              index: index,
+              children: const [MyQrCodePage(), ScanQrPage()],
+            );
+          }),
+        ),
+      ),
+      bottomNavigationBar: QrDashboardBottomNavigation(),
+    );
+  }
 }

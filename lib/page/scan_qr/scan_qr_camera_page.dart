@@ -14,14 +14,12 @@ class ScanQrCameraSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      // Observe reactive state to trigger rebuild when scanner is ready
-      final isScannerReady = controller.state.isScannerReady.value;
-
-      return Stack(
-        children: [
-          // Scanner
-          ClipRRect(
+    return Stack(
+      children: [
+        // Scanner (reactive — only this part rebuilds)
+        Obx(() {
+          final isScannerReady = controller.state.isScannerReady.value;
+          return ClipRRect(
             borderRadius: const BorderRadius.vertical(
               bottom: Radius.circular(32),
             ),
@@ -37,67 +35,69 @@ class ScanQrCameraSection extends StatelessWidget {
                       child: CircularProgressIndicator(color: Colors.white54),
                     ),
                   ),
-          ),
+          );
+        }),
 
-          // Overlay
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(32),
-              ),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.3),
-                  Colors.transparent,
-                  Colors.transparent,
-                  Colors.black.withValues(alpha: 0.3),
+        // Overlay (static)
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.vertical(
+              bottom: Radius.circular(32),
+            ),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.black.withValues(alpha: 0.3),
+                Colors.transparent,
+                Colors.transparent,
+                Colors.black.withValues(alpha: 0.3),
+              ],
+              stops: const [0.0, 0.2, 0.8, 1.0],
+            ),
+          ),
+        ),
+
+        // Scan frame with Showcase (static — not inside Obx)
+        Center(
+          child: Showcase(
+            scope: QrScanScreenController.scanQrScope,
+            key: controller.tourCameraKey,
+            title: 'Scan a QR',
+            description: 'Hold the QR inside the frame.',
+            tooltipBackgroundColor:
+                Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFF1E293B)
+                    : AppColors.gradientDarkStart,
+            textColor: Colors.white,
+            titleTextStyle: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
+            ),
+            descTextStyle: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              height: 1.4,
+            ),
+            tooltipBorderRadius: const BorderRadius.all(Radius.circular(12)),
+            targetBorderRadius: BorderRadius.circular(12),
+            targetPadding: const EdgeInsets.all(4),
+            child: SizedBox(
+              width: size.width * 0.7,
+              height: size.width * 0.7,
+              child: const Stack(
+                children: [
+                  ScanQrCorner(alignment: Alignment.topLeft),
+                  ScanQrCorner(alignment: Alignment.topRight),
+                  ScanQrCorner(alignment: Alignment.bottomLeft),
+                  ScanQrCorner(alignment: Alignment.bottomRight),
                 ],
-                stops: const [0.0, 0.2, 0.8, 1.0],
               ),
             ),
           ),
-
-          // Scan frame
-          Center(
-            child: Showcase(
-              key: controller.tourCameraKey,
-              title: 'Scan a QR',
-              description: 'Hold the QR inside the frame.',
-              tooltipBackgroundColor: Theme.of(context).brightness == Brightness.dark
-                  ? const Color(0xFF1E293B)
-                  : AppColors.gradientDarkStart,
-              textColor: Colors.white,
-              titleTextStyle: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-              ),
-              descTextStyle: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                height: 1.4,
-              ),
-              tooltipBorderRadius: const BorderRadius.all(Radius.circular(12)),
-              targetBorderRadius: BorderRadius.circular(12),
-              targetPadding: const EdgeInsets.all(4),
-              child: SizedBox(
-                width: size.width * 0.7,
-                height: size.width * 0.7,
-                child: Stack(
-                  children: const [
-                    ScanQrCorner(alignment: Alignment.topLeft),
-                    ScanQrCorner(alignment: Alignment.topRight),
-                    ScanQrCorner(alignment: Alignment.bottomLeft),
-                    ScanQrCorner(alignment: Alignment.bottomRight),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
-    });
+        ),
+      ],
+    );
   }
 }

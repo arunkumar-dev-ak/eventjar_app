@@ -9,11 +9,11 @@ void addContactBottomModel(BuildContext context, ContactController controller) {
     backgroundColor: Colors.transparent,
     builder: (context) => Container(
       margin: EdgeInsets.all(4.wp),
-      decoration: BoxDecoration(
+      child: Material(
         color: AppColors.cardBgStatic,
         borderRadius: BorderRadius.circular(24),
-      ),
-      child: SingleChildScrollView(
+        clipBehavior: Clip.antiAlias,
+        child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -77,6 +77,7 @@ void addContactBottomModel(BuildContext context, ContactController controller) {
             SizedBox(height: 3.hp),
           ],
         ),
+      ),
       ),
     ),
   );

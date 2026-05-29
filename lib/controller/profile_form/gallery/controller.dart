@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:flutter/foundation.dart' show compute;
 
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/user_profile_api/user_profile_api.dart';
@@ -9,6 +12,7 @@ import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
 
 class GalleryFormController extends GetxController {
@@ -49,11 +53,7 @@ class GalleryFormController extends GetxController {
       return;
     }
 
-    final List<XFile> picked = await _picker.pickMultiImage(
-      maxWidth: 1920,
-      maxHeight: 1920,
-      imageQuality: 85,
-    );
+    final List<XFile> picked = await _picker.pickMultiImage();
 
     if (picked.isEmpty) return;
 
@@ -71,9 +71,6 @@ class GalleryFormController extends GetxController {
 
     final XFile? picked = await _picker.pickImage(
       source: ImageSource.camera,
-      maxWidth: 1920,
-      maxHeight: 1920,
-      imageQuality: 85,
     );
 
     if (picked == null) return;
@@ -133,49 +130,51 @@ class GalleryFormController extends GetxController {
     final textColor = isDark ? Colors.white : Colors.black;
 
     Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Add Images',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: textColor,
+      Material(
+        color: bgColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Add Images',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            ListTile(
-              leading: const Icon(Icons.camera_alt, color: Colors.blue),
-              title: Text('Take Photo', style: TextStyle(color: textColor)),
-              onTap: () {
-                Get.back();
-                pickFromCamera();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.collections, color: Colors.blue),
-              title: Text(
-                'Choose from Gallery',
-                style: TextStyle(color: textColor),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: const Icon(Icons.camera_alt, color: Colors.blue),
+                title: Text('Take Photo', style: TextStyle(color: textColor)),
+                onTap: () {
+                  Get.back();
+                  pickFromCamera();
+                },
               ),
-              onTap: () {
-                Get.back();
-                pickFromGallery();
-              },
-            ),
-            const SizedBox(height: 10),
-            TextButton(
-              onPressed: () => Get.back(),
-              child: const Text('Cancel', style: TextStyle(color: Colors.red)),
-            ),
-          ],
+              ListTile(
+                leading: const Icon(Icons.collections, color: Colors.blue),
+                title: Text(
+                  'Choose from Gallery',
+                  style: TextStyle(color: textColor),
+                ),
+                onTap: () {
+                  Get.back();
+                  pickFromGallery();
+                },
+              ),
+              const SizedBox(height: 10),
+              TextButton(
+                onPressed: () => Get.back(),
+                child:
+                    const Text('Cancel', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -188,7 +187,8 @@ class GalleryFormController extends GetxController {
       final uploadedUrls = <String>[];
 
       for (final image in state.selectedImages) {
-        final url = await UserProfileApi.uploadFile(image);
+        final fixed = await _fixExifOrientation(image);
+        final url = await UserProfileApi.uploadFile(fixed);
         uploadedUrls.add(url);
       }
 
@@ -223,4 +223,32 @@ class GalleryFormController extends GetxController {
       );
     });
   }
+
+  Future<File> _fixExifOrientation(File file) async {
+    final bytes = await file.readAsBytes();
+    final fixed = await compute(_orientAndResize, bytes);
+    final fixedFile = File(
+      '${file.parent.path}/fixed_${file.uri.pathSegments.last}',
+    );
+    await fixedFile.writeAsBytes(fixed);
+    return fixedFile;
+  }
+}
+
+Uint8List _orientAndResize(Uint8List bytes) {
+  var decoded = img.decodeImage(bytes);
+  if (decoded == null) return bytes;
+
+  decoded = img.bakeOrientation(decoded);
+
+  if (decoded.width > 1920 || decoded.height > 1920) {
+    decoded = img.copyResize(
+      decoded,
+      width: decoded.width >= decoded.height ? 1920 : null,
+      height: decoded.height > decoded.width ? 1920 : null,
+      interpolation: img.Interpolation.linear,
+    );
+  }
+
+  return Uint8List.fromList(img.encodeJpg(decoded, quality: 85));
 }

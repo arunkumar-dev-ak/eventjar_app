@@ -22,10 +22,11 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
 
   @override
   Widget build(BuildContext context) {
-    final youOwe = trip.youOwe;
-    final youGet = trip.youGet;
+    final computed = controller.computeTripAnalytics(trip.title);
 
-    final individualSpent = trip.individualSpent ?? 0;
+    final youOwe = computed['youOwe']!;
+    final youGet = computed['youReceive']!;
+    final individualSpent = computed['yourSpent']!;
     final totalSpent = trip.totalSpent ?? individualSpent;
     final budget = trip.budget;
 
@@ -131,7 +132,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
 
             /// ───────── META ─────────
             Text(
-              "${trip.expenses} Expenses • ${trip.members} Members",
+              "${controller.getExpenseCount(trip.title)} Expenses • ${trip.members} Members",
               style: TextStyle(
                 fontSize: 7.5.sp,
                 color: AppColors.textSecondary(context),

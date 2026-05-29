@@ -34,6 +34,7 @@ class ScanCardController extends GetxController
   Color secondaryColor = Color(0xFF167B4D);
 
   // Tour / showcase
+  static const String scanCardScope = 'scan-card';
   static const String _tourSeenStorageKey = 'scan_card_tour_seen_v1';
   final GlobalKey tourTipsKey = GlobalKey();
   final GlobalKey tourCameraKey = GlobalKey();
@@ -49,6 +50,8 @@ class ScanCardController extends GetxController
     await StorageService.to.setString(_tourSeenStorageKey, '1');
   }
 
+  ShowcaseView get _showcase => ShowcaseView.getNamed(scanCardScope);
+
   Future<void> maybeStartTour(BuildContext context) async {
     final seen = await isTourSeen();
 
@@ -58,7 +61,7 @@ class ScanCardController extends GetxController
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!context.mounted) return;
       isTourActive.value = true;
-      ShowCaseWidget.of(context).startShowCase([
+      _showcase.startShowCase([
         tourTipsKey,
         tourCameraKey,
         tourGalleryKey,
@@ -67,17 +70,17 @@ class ScanCardController extends GetxController
     });
   }
 
-  void skipTour(BuildContext context) {
-    ShowCaseWidget.of(context).dismiss();
+  void skipTour() {
+    _showcase.dismiss();
     isTourActive.value = false;
     markTourSeen();
   }
 
-  void startTourNow(BuildContext context) {
+  void startTourNow() {
     isTourActive.value = true;
-    ShowCaseWidget.of(
-      context,
-    ).startShowCase([tourTipsKey, tourCameraKey, tourGalleryKey, tourHelpKey]);
+    _showcase.startShowCase(
+      [tourTipsKey, tourCameraKey, tourGalleryKey, tourHelpKey],
+    );
   }
 
   AnimationController? _scanLineController;

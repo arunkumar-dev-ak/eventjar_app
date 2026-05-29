@@ -9,6 +9,9 @@ class ExpenseModel {
   final IconData icon;
   final Color color;
 
+  final bool isYourSharePaid;
+  final List<String> members;
+
   ExpenseModel({
     required this.title,
     required this.paidBy,
@@ -17,61 +20,42 @@ class ExpenseModel {
     required this.date,
     required this.icon,
     required this.color,
+    this.isYourSharePaid = false,
+    this.members = const [],
   });
 }
 
 final Map<String, List<ExpenseModel>> dummyTripExpenses = {
   "Goa Beach Escape": [
-    /// Rahul final => YOU OWE 120
     ExpenseModel(
-      title: "Taxi to Anjuna",
-      paidBy: "Rahul",
-      amount: 800,
-      yourShare: 200,
+      title: "Breakfast",
+      paidBy: "You",
+      amount: 1000,
+      yourShare: 250,
       date: DateTime.now(),
-      icon: Icons.local_taxi,
-      color: Colors.amber,
+      icon: Icons.free_breakfast,
+      color: Colors.brown,
+      members: ["You", "Gokul", "John", "Meera"],
     ),
-
     ExpenseModel(
-      title: "Beach Snacks",
-      paidBy: "Rahul",
-      amount: 600,
-      yourShare: 200,
+      title: "Hotel Room Booking",
+      paidBy: "Gokul",
+      amount: 4000,
+      yourShare: 1000,
       date: DateTime.now(),
-      icon: Icons.fastfood,
-      color: Colors.orange,
+      icon: Icons.hotel,
+      color: Colors.indigo,
+      members: ["You", "Gokul", "John", "Meera"],
     ),
-
     ExpenseModel(
-      title: "Sunset Drinks",
+      title: "Dinner at Beach Shack",
       paidBy: "You",
       amount: 800,
       yourShare: 200,
-      date: DateTime.now(),
-      icon: Icons.local_bar,
-      color: Colors.purple,
-    ),
-
-    ExpenseModel(
-      title: "Scooter Fuel",
-      paidBy: "You",
-      amount: 320,
-      yourShare: 80,
-      date: DateTime.now().subtract(const Duration(days: 1)),
-      icon: Icons.local_gas_station,
-      color: Colors.blue,
-    ),
-
-    /// Arjun final => YOU RECEIVE 120
-    ExpenseModel(
-      title: "Beach Dinner",
-      paidBy: "You",
-      amount: 480,
-      yourShare: 120,
       date: DateTime.now().subtract(const Duration(days: 1)),
       icon: Icons.restaurant,
-      color: Colors.red,
+      color: Colors.orange,
+      members: ["You", "Gokul", "John", "Meera"],
     ),
   ],
 

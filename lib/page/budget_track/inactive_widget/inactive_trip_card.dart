@@ -177,7 +177,7 @@ class InactiveTripCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20.sp),
                 ),
                 child: Text(
-                  "Pending Settlement : $pending",
+                  "My Owe Members : $pending",
                   style: TextStyle(
                     fontSize: 7.sp,
                     fontWeight: FontWeight.w600,

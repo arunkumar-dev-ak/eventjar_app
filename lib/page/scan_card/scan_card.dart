@@ -8,24 +8,117 @@ import 'package:showcaseview/showcaseview.dart';
 
 import '../../global/responsive/responsive.dart';
 
-class ScanCard extends GetView<ScanCardController> {
+class ScanCard extends StatefulWidget {
   const ScanCard({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ShowCaseWidget(
+  State<ScanCard> createState() => _ScanCardState();
+}
+
+class _ScanCardState extends State<ScanCard> {
+  final ScanCardController controller = Get.find();
+  late final ShowcaseView _showcaseView;
+  OverlayEntry? _skipOverlay;
+  late final Worker _tourWatcher;
+  bool _tourTriggered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _showcaseView = ShowcaseView.register(
+      scope: ScanCardController.scanCardScope,
       onFinish: () {
         controller.isTourActive.value = false;
         controller.markTourSeen();
       },
-      disableMovingAnimation: false,
       blurValue: 1,
-      builder: (ctx) => _TourAutoStart(
-        showcaseContext: ctx,
-        start: () => controller.maybeStartTour(ctx),
-        child: _buildScaffold(ctx),
-      ),
     );
+    _tourWatcher = ever(controller.isTourActive, (active) {
+      if (active) {
+        _showSkipOverlay();
+      } else {
+        _removeSkipOverlay();
+      }
+    });
+  }
+
+  void _showSkipOverlay() {
+    _removeSkipOverlay();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !controller.isTourActive.value) return;
+        _skipOverlay = OverlayEntry(
+          builder: (ctx) {
+            final bottomPadding = MediaQuery.of(ctx).padding.bottom;
+            return Positioned(
+              bottom: bottomPadding + 16,
+              right: 16,
+              child: GestureDetector(
+                onTap: () => controller.skipTour(),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black87,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Text(
+                      'Skip Tour',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+        Overlay.of(context, rootOverlay: true).insert(_skipOverlay!);
+      });
+    });
+  }
+
+  void _removeSkipOverlay() {
+    _skipOverlay?.remove();
+    _skipOverlay = null;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_tourTriggered) return;
+    _tourTriggered = true;
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => controller.maybeStartTour(context),
+    );
+  }
+
+  @override
+  void dispose() {
+    _tourWatcher.dispose();
+    _removeSkipOverlay();
+    _showcaseView.unregister();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildScaffold(context);
   }
 
   Widget _buildScaffold(BuildContext context) {
@@ -45,6 +138,7 @@ class ScanCard extends GetView<ScanCardController> {
         ),
         actions: [
           Showcase(
+            scope: ScanCardController.scanCardScope,
             key: controller.tourHelpKey,
             title: 'Replay',
             description: 'Tap anytime to see the tour again.',
@@ -63,7 +157,7 @@ class ScanCard extends GetView<ScanCardController> {
                 color: Colors.blueGrey,
               ),
               tooltip: 'Replay tour',
-              onPressed: () => controller.startTourNow(context),
+              onPressed: () => controller.startTourNow(),
             ),
           ),
         ],
@@ -140,6 +234,7 @@ class ScanCard extends GetView<ScanCardController> {
       // When no image selected, show combined placeholder with tips
       if (image == null) {
         return Showcase(
+          scope: ScanCardController.scanCardScope,
           key: controller.tourTipsKey,
           title: 'Scan a Business Card',
           description: 'Snap or upload — we extract name, phone & email.',
@@ -411,6 +506,7 @@ class ScanCard extends GetView<ScanCardController> {
         children: [
           Expanded(
             child: Showcase(
+              scope: ScanCardController.scanCardScope,
               key: controller.tourCameraKey,
               title: 'Use Camera',
               description: 'Scan live. Edges auto-detected.',
@@ -438,6 +534,7 @@ class ScanCard extends GetView<ScanCardController> {
           const SizedBox(width: 16),
           Expanded(
             child: Showcase(
+              scope: ScanCardController.scanCardScope,
               key: controller.tourGalleryKey,
               title: 'Use Gallery',
               description: 'Pick an existing photo of the card.',
@@ -1008,114 +1105,6 @@ class ScanCard extends GetView<ScanCardController> {
       },
     );
   }
-}
-
-class _TourAutoStart extends StatefulWidget {
-  final Widget child;
-  final BuildContext showcaseContext;
-  final Future<void> Function() start;
-
-  const _TourAutoStart({
-    required this.child,
-    required this.showcaseContext,
-    required this.start,
-  });
-
-  @override
-  State<_TourAutoStart> createState() => _TourAutoStartState();
-}
-
-class _TourAutoStartState extends State<_TourAutoStart> {
-  final ScanCardController _controller = Get.find();
-  bool _triggered = false;
-  OverlayEntry? _skipOverlay;
-  late final Worker _tourWatcher;
-
-  @override
-  void initState() {
-    super.initState();
-    _tourWatcher = ever(_controller.isTourActive, (active) {
-      if (active) {
-        _showSkipOverlay();
-      } else {
-        _removeSkipOverlay();
-      }
-    });
-  }
-
-  void _showSkipOverlay() {
-    _removeSkipOverlay();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted || !_controller.isTourActive.value) return;
-        _skipOverlay = OverlayEntry(
-          builder: (ctx) {
-            final bottomPadding = MediaQuery.of(ctx).padding.bottom;
-            return Positioned(
-              bottom: bottomPadding + 16,
-              right: 16,
-              child: GestureDetector(
-                onTap: () => _controller.skipTour(widget.showcaseContext),
-                child: Material(
-                  color: Colors.transparent,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black87,
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 8,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Text(
-                      'Skip Tour',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-        Overlay.of(context, rootOverlay: true).insert(_skipOverlay!);
-      });
-    });
-  }
-
-  void _removeSkipOverlay() {
-    _skipOverlay?.remove();
-    _skipOverlay = null;
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_triggered) return;
-    _triggered = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) => widget.start());
-  }
-
-  @override
-  void dispose() {
-    _tourWatcher.dispose();
-    _removeSkipOverlay();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => widget.child;
 }
 
 class _FloatingIconData {

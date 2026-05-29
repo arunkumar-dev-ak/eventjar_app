@@ -83,31 +83,24 @@ final Map<String, List<FriendModel>> dummyTripFriends = {
       isYou: true,
       isSettled: true,
     ),
-
-    // YOU OWE = 320
     FriendModel(
-      name: "Rahul",
-      amount: 120,
-      email: "rahul@mail.com",
+      name: "Gokul",
+      amount: 550,
+      email: "gokul@mail.com",
       phone: "9876543210",
       youOwe: true,
     ),
-
     FriendModel(
-      name: "Karthik",
-      amount: 200,
-      email: "karthik@mail.com",
+      name: "John",
+      amount: 450,
+      email: "john@mail.com",
       phone: "9000000001",
-      youOwe: true,
     ),
-
-    // YOU RECEIVE = 120
     FriendModel(
-      name: "Arjun",
-      amount: 120,
-      email: "arjun@mail.com",
+      name: "Meera",
+      amount: 450,
+      email: "meera@mail.com",
       phone: "9123456780",
-      youOwe: false,
     ),
   ],
 

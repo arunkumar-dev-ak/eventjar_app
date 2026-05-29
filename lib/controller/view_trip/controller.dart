@@ -57,6 +57,58 @@ class ViewTripController extends GetxController
     state.expenseSelectedIndexes.clear();
   }
 
+  double get yourSpent {
+    double total = 0;
+    for (final e in state.expense) {
+      total += e.yourShare;
+    }
+    return total;
+  }
+
+  Map<String, double> get _perPersonBalances {
+    final Map<String, double> balances = {};
+    for (final e in state.expense) {
+      final isYou = e.paidBy == "You";
+      final splitCount = e.members.isNotEmpty
+          ? e.members.length
+          : (e.yourShare > 0 ? (e.amount / e.yourShare).round() : 1);
+      final perPerson = e.amount / splitCount;
+      if (isYou) {
+        for (final m in e.members) {
+          if (m == "You") continue;
+          balances[m] = (balances[m] ?? 0) + perPerson;
+        }
+      } else {
+        balances[e.paidBy] = (balances[e.paidBy] ?? 0) - perPerson;
+      }
+    }
+    return balances;
+  }
+
+  double get youOwe {
+    double total = 0;
+    for (final net in _perPersonBalances.values) {
+      if (net < 0) total += net.abs();
+    }
+    return total;
+  }
+
+  double get youReceive {
+    double total = 0;
+    for (final net in _perPersonBalances.values) {
+      if (net > 0) total += net;
+    }
+    return total;
+  }
+
+  void deleteExpense(int index) {
+    final sortedExpenses = [...state.expense]
+      ..sort((a, b) => b.date.compareTo(a.date));
+    if (index < 0 || index >= sortedExpenses.length) return;
+    final expense = sortedExpenses[index];
+    state.expense.remove(expense);
+  }
+
   void changeTab(int index) {
     if (state.selectedTab.value != index &&
         state.expenseSelectedIndexes.isNotEmpty) {

@@ -47,6 +47,7 @@ class QrDashboardBottomNavigation extends StatelessWidget {
               children: [
                 Expanded(
                   child: Showcase(
+                    scope: MyQrScreenController.myQrScope,
                     key: myQr.tourMyQrTabKey,
                     title: 'My QR',
                     description:
@@ -78,6 +79,7 @@ class QrDashboardBottomNavigation extends StatelessWidget {
                 SizedBox(width: 12),
                 Expanded(
                   child: Showcase(
+                    scope: MyQrScreenController.myQrScope,
                     key: myQr.tourScanQrTabKey,
                     title: 'Scan QR',
                     description:

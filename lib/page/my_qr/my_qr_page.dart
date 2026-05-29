@@ -36,6 +36,7 @@ class MyQrCodePage extends GetView<MyQrScreenController> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Showcase(
+              scope: MyQrScreenController.myQrScope,
               key: controller.tourQrKey,
               title: 'Your QR Code',
               description:
@@ -62,6 +63,7 @@ class MyQrCodePage extends GetView<MyQrScreenController> {
             ),
             SizedBox(height: 5.hp),
             Showcase(
+              scope: MyQrScreenController.myQrScope,
               key: controller.tourShareKey,
               title: 'Share your QR',
               description:

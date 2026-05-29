@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ViewTripAnalytics extends GetView<ViewTripController> {
-  const ViewTripAnalytics({super.key});
+  final bool showSettleUp;
+  const ViewTripAnalytics({super.key, this.showSettleUp = false});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -18,19 +19,22 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
 
       padding: EdgeInsets.all(4.wp),
       child: Obx(() {
-        final trip = controller.state.trip.value;
+        controller.state.expense.length;
+
+        final yourSpent = controller.yourSpent;
+        final youOwe = controller.youOwe;
+        final youReceive = controller.youReceive;
+
         return Column(
           children: [
-            // YOU SPENT
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "YOU SPENT",
+                      "YOUR SPENT",
                       style: TextStyle(
                         fontSize: 7.sp,
                         color: AppColors.budgetTabTextColor,
@@ -40,7 +44,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                     ),
                     SizedBox(height: 0.5.hp),
                     Text(
-                      "₹${trip.individualSpent}",
+                      "₹${yourSpent.toStringAsFixed(0)}",
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -49,67 +53,67 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                     ),
                   ],
                 ),
-                Material(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(10.sp),
-                  child: InkWell(
+                if (showSettleUp)
+                  Material(
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(10.sp),
-                    onTap: () {
-                      HapticHelper.medium();
-                      // TODO: settle up logic
-                    },
-                    child: Ink(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 3.5.wp,
-                        vertical: 0.9.hp,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: AppColors.buttonGradientFor(context),
-                        borderRadius: BorderRadius.circular(10.sp),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.15),
-                            blurRadius: 8,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.handshake_outlined,
-                            size: 10.sp,
-                            color: Colors.white,
-                          ),
-                          SizedBox(width: 1.5.wp),
-                          Text(
-                            "Settle Up",
-                            style: TextStyle(
-                              fontSize: 8.sp,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.3,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(10.sp),
+                      onTap: () {
+                        HapticHelper.medium();
+                        controller.changeTab(1);
+                      },
+                      child: Ink(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 3.5.wp,
+                          vertical: 0.9.hp,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.buttonGradientFor(context),
+                          borderRadius: BorderRadius.circular(10.sp),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.15),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.handshake_outlined,
+                              size: 10.sp,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 1.5.wp),
+                            Text(
+                              "Settle Up",
+                              style: TextStyle(
+                                fontSize: 8.sp,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
 
             SizedBox(height: 1.5.hp),
 
-            // Amount
             Row(
               children: [
                 Expanded(
                   child: _amountCard(
                     context,
                     "YOU OWE",
-                    "₹${trip.youOwe}",
+                    "₹${youOwe.toStringAsFixed(0)}",
                     isOwe: true,
                   ),
                 ),
@@ -118,7 +122,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                   child: _amountCard(
                     context,
                     "YOU RECEIVE",
-                    "₹${trip.youGet}",
+                    "₹${youReceive.toStringAsFixed(0)}",
                     isOwe: false,
                   ),
                 ),

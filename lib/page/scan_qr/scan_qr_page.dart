@@ -5,41 +5,30 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:showcaseview/showcaseview.dart';
 
-class ScanQrPage extends GetView<QrScanScreenController> {
+class ScanQrPage extends StatefulWidget {
   const ScanQrPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ShowCaseWidget(
-      onFinish: () {
-        controller.isTourActive.value = false;
-        controller.markTourSeen();
-      },
-      blurValue: 1,
-      builder: (ctx) => KeyedSubtree(
-        key: controller.scanQrTourScopeKey,
-        child: _ScanQrContent(showcaseContext: ctx),
-      ),
-    );
-  }
+  State<ScanQrPage> createState() => _ScanQrPageState();
 }
 
-class _ScanQrContent extends StatefulWidget {
-  final BuildContext showcaseContext;
-  const _ScanQrContent({required this.showcaseContext});
-
-  @override
-  State<_ScanQrContent> createState() => _ScanQrContentState();
-}
-
-class _ScanQrContentState extends State<_ScanQrContent> {
+class _ScanQrPageState extends State<ScanQrPage> {
   final QrScanScreenController controller = Get.find();
+  late final ShowcaseView _showcaseView;
   OverlayEntry? _skipOverlay;
   late final Worker _tourWatcher;
 
   @override
   void initState() {
     super.initState();
+    _showcaseView = ShowcaseView.register(
+      scope: QrScanScreenController.scanQrScope,
+      onFinish: () {
+        controller.isTourActive.value = false;
+        controller.markTourSeen();
+      },
+      blurValue: 1,
+    );
     _tourWatcher = ever(controller.isTourActive, (active) {
       if (active) {
         _showSkipOverlay();
@@ -62,7 +51,7 @@ class _ScanQrContentState extends State<_ScanQrContent> {
               bottom: bottomPadding + 16,
               right: 16,
               child: GestureDetector(
-                onTap: () => controller.skipTour(widget.showcaseContext),
+                onTap: () => controller.skipTour(),
                 child: Material(
                   color: Colors.transparent,
                   child: Container(
@@ -109,6 +98,7 @@ class _ScanQrContentState extends State<_ScanQrContent> {
   void dispose() {
     _tourWatcher.dispose();
     _removeSkipOverlay();
+    _showcaseView.unregister();
     super.dispose();
   }
 

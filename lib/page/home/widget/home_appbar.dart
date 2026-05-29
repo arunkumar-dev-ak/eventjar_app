@@ -215,11 +215,11 @@ class HomeAppBar extends StatelessWidget {
           4.wp,
           4.wp + MediaQuery.of(context).padding.bottom,
         ),
-        decoration: BoxDecoration(
+        child: Material(
           color: AppColors.cardBg(context),
           borderRadius: BorderRadius.circular(24),
-        ),
-        child: Column(
+          clipBehavior: Clip.antiAlias,
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
@@ -305,6 +305,7 @@ class HomeAppBar extends StatelessWidget {
             ),
             SizedBox(height: 3.hp),
           ],
+        ),
         ),
       ),
     );

@@ -26,6 +26,7 @@ class MyQrScreenController extends GetxController
   final selectedTab = 0.obs;
 
   // Tour / showcase
+  static const String myQrScope = 'my-qr';
   final RxBool isTourActive = false.obs;
   static const String _tourSeenStorageKey = 'my_qr_tour_seen_v1';
   final GlobalKey tourQrKey = GlobalKey();
@@ -33,9 +34,6 @@ class MyQrScreenController extends GetxController
   final GlobalKey tourMyQrTabKey = GlobalKey();
   final GlobalKey tourScanQrTabKey = GlobalKey();
   final GlobalKey tourHelpKey = GlobalKey();
-  // Attached inside QrCodePage under the ShowCaseWidget. Used by actions
-  // outside the showcase subtree (not needed currently, but kept so
-  // replayTour() can also be called from anywhere).
   final GlobalKey myQrTourScopeKey = GlobalKey();
 
   List<GlobalKey> get _tourSequence => [
@@ -45,6 +43,8 @@ class MyQrScreenController extends GetxController
     tourScanQrTabKey,
     tourHelpKey,
   ];
+
+  ShowcaseView get _showcase => ShowcaseView.getNamed(myQrScope);
 
   Future<bool> isTourSeen() async {
     final value = await StorageService.to.getString(_tourSeenStorageKey);
@@ -61,23 +61,19 @@ class MyQrScreenController extends GetxController
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!context.mounted) return;
       isTourActive.value = true;
-      ShowCaseWidget.of(context).startShowCase(_tourSequence);
+      _showcase.startShowCase(_tourSequence);
     });
   }
 
-  void skipTour(BuildContext context) {
-    ShowCaseWidget.of(context).dismiss();
+  void skipTour() {
+    _showcase.dismiss();
     isTourActive.value = false;
     markTourSeen();
   }
 
-  /// Re-plays the tour from any context (e.g. QrCodePage AppBar) by resolving
-  /// a descendant context via [myQrTourScopeKey].
   void replayTour() {
-    final ctx = myQrTourScopeKey.currentContext;
-    if (ctx == null || !ctx.mounted) return;
     isTourActive.value = true;
-    ShowCaseWidget.of(ctx).startShowCase(_tourSequence);
+    _showcase.startShowCase(_tourSequence);
   }
 
   @override

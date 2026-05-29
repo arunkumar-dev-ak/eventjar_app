@@ -422,47 +422,48 @@ class UserProfileController extends GetxController
     final textColor = isDark ? Colors.white : Colors.black;
 
     await Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Change Profile Photo',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: textColor,
+      Material(
+        color: bgColor,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Change Profile Photo',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            ListTile(
-              leading: Icon(Icons.camera_alt, color: Colors.blue),
-              title: Text('Take Photo', style: TextStyle(color: textColor)),
-              onTap: () {
-                Get.back();
-                _pickImage(ImageSource.camera);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.collections, color: Colors.blue),
-              title: Text('Choose from Gallery',
-                  style: TextStyle(color: textColor)),
-              onTap: () {
-                Get.back();
-                _pickImage(ImageSource.gallery);
-              },
-            ),
-            SizedBox(height: 10),
-            TextButton(
-              onPressed: () => Get.back(),
-              child: Text('Cancel', style: TextStyle(color: Colors.red)),
-            ),
-          ],
+              SizedBox(height: 20),
+              ListTile(
+                leading: Icon(Icons.camera_alt, color: Colors.blue),
+                title: Text('Take Photo', style: TextStyle(color: textColor)),
+                onTap: () {
+                  Get.back();
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.collections, color: Colors.blue),
+                title: Text('Choose from Gallery',
+                    style: TextStyle(color: textColor)),
+                onTap: () {
+                  Get.back();
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              SizedBox(height: 10),
+              TextButton(
+                onPressed: () => Get.back(),
+                child: Text('Cancel', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          ),
         ),
       ),
     );
