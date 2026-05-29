@@ -14,6 +14,7 @@ import 'package:eventjar/controller/email_notification/binding.dart';
 import 'package:eventjar/controller/event_info/binding.dart';
 import 'package:eventjar/controller/forgotPassword/binding.dart';
 import 'package:eventjar/controller/friends/binding.dart';
+import 'package:eventjar/controller/google_calendar/binding.dart';
 import 'package:eventjar/controller/image_viewer/binding.dart';
 import 'package:eventjar/controller/meeting/binding.dart';
 import 'package:eventjar/controller/nfc/binding.dart';
@@ -56,6 +57,7 @@ import 'package:eventjar/page/email_notification/email_notification_page.dart';
 import 'package:eventjar/page/event_info/event_info.dart';
 import 'package:eventjar/page/forgot_password/forgot_password.dart';
 import 'package:eventjar/page/friends/friends_page.dart';
+import 'package:eventjar/page/google_calendar/google_calendar_page.dart';
 import 'package:eventjar/page/image_viewer/image_viewer.dart';
 import 'package:eventjar/page/meeting/meeting_page.dart';
 import 'package:eventjar/page/nfc/nfc_page.dart';
@@ -136,6 +138,11 @@ class RoutePage {
       name: RouteName.changePassword,
       page: () => ChangePasswordPage(),
       binding: ChangePasswordBinding(),
+    ),
+    GetPage(
+      name: RouteName.googleCalendarPage,
+      page: () => GoogleCalendarPage(),
+      binding: GoogleCalendarBinding(),
     ),
 
     /*----- Dashoard page -----*/

@@ -246,6 +246,10 @@ class MoreController extends GetxController {
     );
   }
 
+  void navigateToGoogleCalendarAutomation() {
+    _requireLogin(() => Get.toNamed(RouteName.googleCalendarPage));
+  }
+
   // Security shortcuts
   void navigateToSet2FA() {
     _requireLogin(() => Get.toNamed(RouteName.set2fa));

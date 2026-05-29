@@ -8,6 +8,7 @@ class RouteName {
   static const set2fa = '/set2faPage';
   static const changePassword = '/changePasswordPage';
   static const staffInvitePage = '/staffInvitePage';
+  static const googleCalendarPage = '/googleCalendarPage';
 
   //home page
   static const dashboardpage = '/dashboardPage';
