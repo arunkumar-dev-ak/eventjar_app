@@ -17,108 +17,116 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
       ),
 
       padding: EdgeInsets.all(4.wp),
-      child: Column(
-        children: [
-          // YOU SPENT
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "YOU SPENT",
-                    style: TextStyle(
-                      fontSize: 7.sp,
-                      color: AppColors.budgetTabTextColor,
-                      letterSpacing: 1.sp,
-                      fontWeight: FontWeight.bold,
+      child: Obx(() {
+        final trip = controller.state.trip.value;
+        return Column(
+          children: [
+            // YOU SPENT
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "YOU SPENT",
+                      style: TextStyle(
+                        fontSize: 7.sp,
+                        color: AppColors.budgetTabTextColor,
+                        letterSpacing: 1.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 0.5.hp),
-                  Text(
-                    "₹12,500",
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary(context),
+                    SizedBox(height: 0.5.hp),
+                    Text(
+                      "₹${trip.individualSpent}",
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary(context),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Material(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(10.sp),
-                child: InkWell(
+                  ],
+                ),
+                Material(
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.circular(10.sp),
-                  onTap: () {
-                    HapticHelper.medium();
-                    // TODO: settle up logic
-                  },
-                  child: Ink(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 3.5.wp,
-                      vertical: 0.9.hp,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: AppColors.buttonGradientFor(context),
-                      borderRadius: BorderRadius.circular(10.sp),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 8,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.handshake_outlined,
-                          size: 10.sp,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 1.5.wp),
-                        Text(
-                          "Settle Up",
-                          style: TextStyle(
-                            fontSize: 8.sp,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.3,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(10.sp),
+                    onTap: () {
+                      HapticHelper.medium();
+                      // TODO: settle up logic
+                    },
+                    child: Ink(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 3.5.wp,
+                        vertical: 0.9.hp,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.buttonGradientFor(context),
+                        borderRadius: BorderRadius.circular(10.sp),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.15),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.handshake_outlined,
+                            size: 10.sp,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 1.5.wp),
+                          Text(
+                            "Settle Up",
+                            style: TextStyle(
+                              fontSize: 8.sp,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
 
-          SizedBox(height: 1.5.hp),
+            SizedBox(height: 1.5.hp),
 
-          // Amount
-          Row(
-            children: [
-              Expanded(
-                child: _amountCard(context, "YOU OWE", "₹2,000", isOwe: true),
-              ),
-              SizedBox(width: 2.wp),
-              Expanded(
-                child: _amountCard(
-                  context,
-                  "YOU RECEIVE",
-                  "₹5,000",
-                  isOwe: false,
+            // Amount
+            Row(
+              children: [
+                Expanded(
+                  child: _amountCard(
+                    context,
+                    "YOU OWE",
+                    "₹${trip.youOwe}",
+                    isOwe: true,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+                SizedBox(width: 2.wp),
+                Expanded(
+                  child: _amountCard(
+                    context,
+                    "YOU RECEIVE",
+                    "₹${trip.youGet}",
+                    isOwe: false,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      }),
     );
   }
 }

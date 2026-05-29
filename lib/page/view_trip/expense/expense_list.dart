@@ -7,52 +7,52 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class ExpenseList extends GetView<ViewTripController> {
-  final List<ExpenseModel> expenses = dummyExpenses;
-
-  ExpenseList({super.key});
+  const ExpenseList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final sortedExpenses = [...expenses]
-      ..sort((a, b) => b.date.compareTo(a.date));
+    return Obx(() {
+      final expenses = controller.state.expense;
+      final sortedExpenses = [...expenses]
+        ..sort((a, b) => b.date.compareTo(a.date));
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _longPressHint(context),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: sortedExpenses.length,
+            itemBuilder: (context, index) {
+              final current = sortedExpenses[index];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _longPressHint(context),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: sortedExpenses.length,
-          itemBuilder: (context, index) {
-            final current = sortedExpenses[index];
+              final showHeader =
+                  index == 0 ||
+                  !_isSameDay(current.date, sortedExpenses[index - 1].date);
 
-            final showHeader =
-                index == 0 ||
-                !_isSameDay(current.date, sortedExpenses[index - 1].date);
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (showHeader)
-                  Padding(
-                    padding: EdgeInsets.only(top: 1.5.hp, bottom: 0.5.hp),
-                    child: Text(
-                      _getLabel(current.date),
-                      style: TextStyle(
-                        color: AppColors.textSecondary(context),
-                        fontWeight: FontWeight.w600,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (showHeader)
+                    Padding(
+                      padding: EdgeInsets.only(top: 1.5.hp, bottom: 0.5.hp),
+                      child: Text(
+                        _getLabel(current.date),
+                        style: TextStyle(
+                          color: AppColors.textSecondary(context),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                  ),
 
-                _expenseItem(context, current, index),
-              ],
-            );
-          },
-        ),
-      ],
-    );
+                  _expenseItem(context, current, index),
+                ],
+              );
+            },
+          ),
+        ],
+      );
+    });
   }
 
   /// ================= LONG-PRESS HINT =================
@@ -391,11 +391,7 @@ class ExpenseList extends GetView<ViewTripController> {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.handshake_outlined,
-                size: 11.sp,
-                color: Colors.white,
-              ),
+              Icon(Icons.handshake_outlined, size: 11.sp, color: Colors.white),
               SizedBox(width: 2.wp),
               Text(
                 "Settle Up · ₹${e.yourShare.toStringAsFixed(0)}",

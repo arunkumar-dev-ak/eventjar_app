@@ -1,21 +1,25 @@
+import 'package:eventjar/controller/view_trip/controller.dart';
 import 'package:eventjar/model/budget_track/friend_model.dart';
 import 'package:flutter/material.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:get/get.dart';
 
-class FriendsList extends StatelessWidget {
-  final List<FriendModel> friends = dummyFriends;
-
-  FriendsList({super.key});
+class FriendsList extends GetView<ViewTripController> {
+  const FriendsList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: List.generate(
-        friends.length,
-        (index) => _friendItem(context, friends[index]),
-      ),
-    );
+    return Obx(() {
+      final friends = controller.state.friends;
+
+      return Column(
+        children: List.generate(
+          friends.length,
+          (index) => _friendItem(context, friends[index]),
+        ),
+      );
+    });
   }
 
   // ================= ITEM =================

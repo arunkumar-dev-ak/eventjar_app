@@ -1,12 +1,15 @@
 import 'package:eventjar/controller/view_trip/state.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/budget_track/expense_model.dart';
+import 'package:eventjar/model/budget_track/friend_model.dart';
+import 'package:eventjar/model/budget_track/trip_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../routes/route_name.dart';
 
 class ViewTripController extends GetxController
-    with GetSingleTickerProviderStateMixin {
+    with GetTickerProviderStateMixin {
   var appBarTitle = "";
   final state = ViewTripState();
 
@@ -21,6 +24,12 @@ class ViewTripController extends GetxController
       duration: const Duration(seconds: 10),
     )..repeat();
     pageController = PageController(initialPage: state.selectedTab.value);
+    state.trip.value = Get.arguments as TripModel;
+    state.friends.value = dummyTripFriends[state.trip.value.title] ?? [];
+    LoggerService.loggerInstance.dynamic_d(state.friends.value);
+    state.expense.value = dummyTripExpenses[state.trip.value.title] ?? [];
+
+    appBarTitle = state.trip.value.title;
   }
 
   void toggleToOpen(int index) {

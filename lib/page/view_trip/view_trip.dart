@@ -53,7 +53,7 @@ class ViewTripPage extends GetView<ViewTripController> {
             );
           }
           return Text(
-            "Goa Trip 2024",
+            controller.appBarTitle,
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 15.sp,

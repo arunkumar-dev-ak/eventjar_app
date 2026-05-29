@@ -85,7 +85,7 @@ final List<TripModel> dummyTrips = [
     lastActivity: "2 hours ago",
     isActive: true,
     budget: 4500,
-    individualSpent: 3100,
+    individualSpent: 800,
     totalSpent: 3900,
     pendingSettlements: 2,
     lastActivityDate: "2026-05-28",

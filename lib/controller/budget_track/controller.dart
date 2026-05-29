@@ -134,7 +134,7 @@ class BudgetTrackController extends GetxController
   void navigateToViewTrip(TripModel trip) {
     Get.toNamed(
       RouteName.viewTripPage,
-      arguments: {trip},
+      arguments: trip,
     )?.then((result) async {});
   }
 
