@@ -17,6 +17,8 @@ class SummaryFormController extends GetxController {
   late String? _originalShortBio;
   late String? _originalYearsInBusiness;
   late String? _originalAvailabilitySlots;
+  late String? _originalKnownLanguages;
+  late String? _originalSkills;
 
   final shortBioController = TextEditingController();
   final availabilitySlotsController = TextEditingController();
@@ -48,6 +50,8 @@ class SummaryFormController extends GetxController {
     _originalShortBio = profile.bio ?? extended?.shortBio;
     _originalYearsInBusiness = extended?.yearsInBusiness?.toString();
     _originalAvailabilitySlots = extended?.availabilitySlots;
+    _originalKnownLanguages = extended?.knownLanguages.join(',');
+    _originalSkills = extended?.skills.join(',');
 
     // Populate controllers
     shortBioController.text = _originalShortBio ?? '';
@@ -60,6 +64,10 @@ class SummaryFormController extends GetxController {
     } else {
       state.experienceRange.value = state.experienceRanges[0]; // default
     }
+
+    state.selectedKnownLanguages.value =
+        extended?.knownLanguages.toList() ?? [];
+    state.selectedSkills.value = extended?.skills.toList() ?? [];
   }
 
   void clearForm() {
@@ -111,6 +119,20 @@ class SummaryFormController extends GetxController {
       current: availabilitySlotsController.text,
     )) {
       data['availabilitySlots'] = availabilitySlotsController.text.trim();
+    }
+
+    if (_hasFieldChanged(
+      original: _originalKnownLanguages,
+      current: state.selectedKnownLanguages.join(','),
+    )) {
+      data['knownLanguages'] = state.selectedKnownLanguages.toList();
+    }
+
+    if (_hasFieldChanged(
+      original: _originalSkills,
+      current: state.selectedSkills.join(','),
+    )) {
+      data['skills'] = state.selectedSkills.toList();
     }
 
     return data;

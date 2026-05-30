@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/api/sign_up_api/sign_up_api.dart';
 import 'package:eventjar/controller/signUp/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
@@ -53,7 +54,7 @@ class SignUpController extends GetxController {
     return {
       "email": emailController.text.trim(),
       "password": passwordController.text.trim(),
-      "name": fullNameController.text.trim(),
+      "name": capitalizeName(fullNameController.text.trim()),
       "phone": mobileNumberController.text.trim(),
       "countryCode": state.selectedCountry.value.code,
       if (invitationToken != null) "invitationToken": invitationToken,
@@ -66,7 +67,7 @@ class SignUpController extends GetxController {
       final signUpData = {
         "email": emailController.text.trim(),
         "password": passwordController.text.trim(),
-        "name": fullNameController.text.trim(),
+        "name": capitalizeName(fullNameController.text.trim()),
         "phone": mobileNumberController.text.trim(),
         "countryCode": '+${state.selectedCountry.value.fullCountryCode}',
         "mobile": mobileNumberController.text.trim(),

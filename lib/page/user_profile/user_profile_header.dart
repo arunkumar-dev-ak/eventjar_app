@@ -42,7 +42,9 @@ class UserProfileHeader extends StatelessWidget {
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.blue,
                       padding: EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 2),
+                        horizontal: 12,
+                        vertical: 2,
+                      ),
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
@@ -97,7 +99,8 @@ class UserProfileHeader extends StatelessWidget {
                           onPressed: controller.state.isLoading.value
                               ? null
                               : () {
-                                  controller.state.isEditingAvatar.value = false;
+                                  controller.state.isEditingAvatar.value =
+                                      false;
                                   controller.state.selectedAvatarFile.value =
                                       null;
                                 },
@@ -253,8 +256,11 @@ class UserProfileHeader extends StatelessWidget {
 
   // Display Name
   Widget _buildName() {
+    final name = controller.displayName.isEmpty
+        ? "N/A"
+        : capitalizeName(controller.displayName);
     return Text(
-      controller.displayName.isEmpty ? "N/A" : controller.displayName,
+      name,
       style: TextStyle(
         fontSize: 16.sp,
         fontWeight: FontWeight.bold,

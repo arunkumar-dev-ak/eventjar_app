@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
@@ -66,7 +67,7 @@ class ContactCardHeader extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildNameWithCallButton(
-                            name: contact.name,
+                            name: capitalizeName(contact.name),
                             contact: contact,
                             isOverDue: contact.isOverdue,
                             isExpanded: isExpanded,
@@ -121,7 +122,7 @@ class ContactCardHeader extends StatelessWidget {
                                   children: [
                                     // Name
                                     Text(
-                                      contact.name,
+                                      capitalizeName(contact.name),
                                       style: TextStyle(
                                         fontSize: 10.sp,
                                         fontWeight: FontWeight.bold,

@@ -6,6 +6,7 @@ import 'package:eventjar/controller/profile_form/gallery/state.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -53,6 +54,25 @@ class GalleryFormPage extends GetView<GalleryFormController> {
                       _buildSectionLabel(context, "Current Images"),
                       SizedBox(height: 1.hp),
                       _buildExistingImagesGrid(context, existing),
+                      SizedBox(height: 1.hp),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.touch_app_outlined,
+                            size: 14,
+                            color: AppColors.textHint(context),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Tap image to view full screen',
+                            style: TextStyle(
+                              fontSize: 8.sp,
+                              color: AppColors.textHint(context),
+                            ),
+                          ),
+                        ],
+                      ),
                       SizedBox(height: 2.hp),
                     ],
                     if (newImages.isNotEmpty) ...[
@@ -143,25 +163,34 @@ class GalleryFormPage extends GetView<GalleryFormController> {
       itemBuilder: (context, index) {
         return _buildImageTile(
           context,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: CachedNetworkImage(
-              imageUrl: getFileUrl(images[index]),
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
-              placeholder: (_, __) => Container(
-                color: Colors.grey.shade200,
-                child: const Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
+          child: GestureDetector(
+            onTap: () => Get.toNamed(
+              RouteName.imageViewerPage,
+              arguments: {
+                "fileUrl": getFileUrl(images[index]),
+                "header": "Gallery",
+              },
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: CachedNetworkImage(
+                imageUrl: getFileUrl(images[index]),
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                placeholder: (_, _) => Container(
+                  color: AppColors.chipBg(context),
+                  child: const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
                 ),
-              ),
-              errorWidget: (_, __, ___) => Container(
-                color: Colors.grey.shade200,
-                child: Icon(
-                  Icons.broken_image_outlined,
-                  size: 30,
-                  color: Colors.grey.shade400,
+                errorWidget: (_, _, _) => Container(
+                  color: AppColors.chipBg(context),
+                  child: Icon(
+                    Icons.broken_image_outlined,
+                    size: 30,
+                    color: AppColors.iconMuted(context),
+                  ),
                 ),
               ),
             ),

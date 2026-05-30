@@ -1,6 +1,7 @@
 import 'package:eventjar/api/user_profile_api/bio_profile_api.dart';
 import 'package:eventjar/controller/bio_profile/state.dart';
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/user_profile/bio_profile.dart';
 import 'package:eventjar/routes/route_name.dart';
@@ -15,14 +16,22 @@ class BioProfileController extends GetxController {
   DataUser? get _p => state.profile.value;
   ExtendedProfile? get _ext => _p?.extendedProfile;
 
-  String get name => _p?.name ?? '';
+  String get name {
+    final raw = _p?.name ?? '';
+    if (raw.isEmpty) return raw;
+    return capitalizeName(raw);
+  }
   String get username => _p?.username ?? '';
   String get avatarUrl => _p?.avatarUrl ?? '';
   String get position => _ext?.businessName?.toString().isNotEmpty == true
       ? (_p?.jobTitle ?? '')
       : (_p?.jobTitle ?? '');
-  String get businessName =>
-      _ext?.businessName?.toString() ?? _p?.company ?? '';
+  String get businessName {
+    final company = _p?.company ?? '';
+    if (company.isNotEmpty) return company;
+    final extName = _ext?.businessName?.toString() ?? '';
+    return extName;
+  }
   String get location => _p?.location ?? '';
   String get website => _p?.website ?? '';
   String get bio => _p?.bio ?? '';
@@ -38,6 +47,8 @@ class BioProfileController extends GetxController {
   List<String> get interestedInConnecting => _ext?.interestedInConnecting ?? [];
   List<String> get helpOfferings => _ext?.helpOfferings ?? [];
   List<String> get discussionTopics => _ext?.discussionTopics ?? [];
+  List<String> get knownLanguages => _ext?.knownLanguages ?? [];
+  List<String> get skills => _ext?.skills ?? [];
 
   int get eventsCount => _p?.stats?.eventsAttended ?? 0;
   int get contactsCount => _p?.stats?.connectionsCount ?? 0;

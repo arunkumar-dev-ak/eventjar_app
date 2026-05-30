@@ -2,6 +2,7 @@ import 'package:eventjar/controller/more/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/store/theme_store.dart';
+import 'package:eventjar/global/widget/language_change_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -70,7 +71,13 @@ class MorePage extends GetView<MoreController> {
                           ],
                         ),
                       ),
-                      _buildThemeToggle(context, isDark),
+                      Row(
+                        children: [
+                          _buildLanguageButton(context, isDark),
+                          SizedBox(width: 1.wp),
+                          _buildThemeToggle(context, isDark),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -371,6 +378,17 @@ class MorePage extends GetView<MoreController> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildLanguageButton(BuildContext context, bool isDark) {
+    final iconColor = isDark
+        ? const Color(0xFF5B9BEF)
+        : AppColors.gradientDarkStart;
+    return IconButton(
+      icon: Icon(Icons.language, color: iconColor),
+      tooltip: 'Language',
+      onPressed: () => showLanguageChangeDialog(context),
     );
   }
 

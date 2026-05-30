@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/store/theme_store.dart';
 import 'package:eventjar/global/utils/helpers.dart';
+import 'package:eventjar/global/widget/language_change_dialog.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/page/user_profile/user_profile_basic_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_business_info.dart';
@@ -43,6 +43,11 @@ class UserProfilePage extends GetView<UserProfileController> {
         ),
         elevation: 0,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.language, color: Colors.white),
+            tooltip: 'Language',
+            onPressed: () => showLanguageChangeDialog(context),
+          ),
           Obx(() {
             final mode = ThemeStore.to.themeMode;
             final IconData icon = switch (mode) {
@@ -176,9 +181,15 @@ class UserProfilePage extends GetView<UserProfileController> {
   }
 
   Widget _buildGallerySection(BuildContext ctx) {
+    const int columns = 3;
+    const int perPage = 6;
+    const double spacing = 8;
+
     return Obx(() {
       final images = controller.galleryImages;
       final hasImages = images.isNotEmpty;
+      final pageCount = hasImages ? (images.length / perPage).ceil() : 0;
+
       return Column(
         children: [
           _buildSection(
@@ -190,87 +201,145 @@ class UserProfilePage extends GetView<UserProfileController> {
             },
             editIcon: hasImages ? Icons.edit_outlined : Icons.add_rounded,
             child: hasImages
-                ? Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
-                        child: CarouselSlider.builder(
-                          itemCount: images.length,
-                          options: CarouselOptions(
-                            height: 24.hp,
-                            viewportFraction: 1,
-                            enableInfiniteScroll: images.length > 1,
-                            autoPlay: images.length > 1,
-                            autoPlayInterval: const Duration(seconds: 5),
-                            autoPlayCurve: Curves.fastOutSlowIn,
-                            enlargeCenterPage: false,
-                            onPageChanged: (index, _) {
-                              controller.state.galleryIndex.value = index;
-                            },
-                          ),
-                          itemBuilder: (context, index, _) {
-                            return GestureDetector(
-                              onTap: () => Get.toNamed(
-                                RouteName.imageViewerPage,
-                                arguments: {
-                                  "fileUrl": getFileUrl(images[index]),
-                                  "header": controller.displayName,
-                                },
-                              ),
-                              child: CachedNetworkImage(
-                                imageUrl: getFileUrl(images[index]),
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                placeholder: (context, url) => Container(
-                                  color: Colors.grey.shade200,
-                                  child: const Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
+                ? LayoutBuilder(
+                    builder: (context, constraints) {
+                      final tileSize =
+                          (constraints.maxWidth - spacing * (columns - 1)) /
+                              columns;
+                      final maxItems =
+                          images.length > perPage ? perPage : images.length;
+                      final rows = (maxItems / columns).ceil();
+                      final gridHeight =
+                          rows * tileSize + (rows - 1) * spacing;
+
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: gridHeight,
+                            child: PageView.builder(
+                              itemCount: pageCount,
+                              onPageChanged: (index) {
+                                controller.state.galleryIndex.value = index;
+                              },
+                              itemBuilder: (context, pageIndex) {
+                                final start = pageIndex * perPage;
+                                final end = (start + perPage) > images.length
+                                    ? images.length
+                                    : start + perPage;
+                                final pageImages = images.sublist(start, end);
+
+                                return GridView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  padding: EdgeInsets.zero,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: columns,
+                                    mainAxisSpacing: spacing,
+                                    crossAxisSpacing: spacing,
+                                    childAspectRatio: 1,
                                   ),
-                                ),
-                                errorWidget: (context, url, error) => Container(
-                                  color: Colors.grey.shade200,
-                                  child: Icon(
-                                    Icons.broken_image_outlined,
-                                    size: 40,
-                                    color: Colors.grey.shade400,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      if (images.length > 1) ...[
-                        SizedBox(height: 1.2.hp),
-                        Obx(
-                          () => Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(images.length, (index) {
-                              final isActive =
-                                  controller.state.galleryIndex.value == index;
-                              return AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 3,
-                                ),
-                                width: isActive ? 20 : 7,
-                                height: 7,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  color: isActive
-                                      ? AppColors.gradientDarkStart
-                                      : AppColors.gradientDarkStart.withValues(
-                                          alpha: 0.25,
+                                  itemCount: pageImages.length,
+                                  itemBuilder: (context, index) {
+                                    final imgIndex = start + index;
+                                    return GestureDetector(
+                                      onTap: () => Get.toNamed(
+                                        RouteName.imageViewerPage,
+                                        arguments: {
+                                          "fileUrl":
+                                              getFileUrl(images[imgIndex]),
+                                          "header": controller.displayName,
+                                        },
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(12),
+                                        child: CachedNetworkImage(
+                                          imageUrl:
+                                              getFileUrl(images[imgIndex]),
+                                          fit: BoxFit.cover,
+                                          width: tileSize,
+                                          height: tileSize,
+                                          placeholder: (context, url) =>
+                                              Container(
+                                            color: AppColors.chipBg(context),
+                                            child: const Center(
+                                              child:
+                                                  CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                              ),
+                                            ),
+                                          ),
+                                          errorWidget:
+                                              (context, url, error) =>
+                                                  Container(
+                                            color: AppColors.chipBg(context),
+                                            child: Icon(
+                                              Icons.broken_image_outlined,
+                                              size: 28,
+                                              color: AppColors.iconMuted(
+                                                  context),
+                                            ),
+                                          ),
                                         ),
-                                ),
-                              );
-                            }),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                      ],
-                    ],
+                          SizedBox(height: 1.hp),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.touch_app_outlined,
+                                size: 14,
+                                color: AppColors.textHint(ctx),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Tap image to view full screen',
+                                style: TextStyle(
+                                  fontSize: 8.sp,
+                                  color: AppColors.textHint(ctx),
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (pageCount > 1) ...[
+                            SizedBox(height: 1.hp),
+                            Obx(
+                              () => Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children:
+                                    List.generate(pageCount, (index) {
+                                  final isActive =
+                                      controller.state.galleryIndex.value ==
+                                          index;
+                                  return AnimatedContainer(
+                                    duration:
+                                        const Duration(milliseconds: 300),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 3),
+                                    width: isActive ? 24 : 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(4),
+                                      color: isActive
+                                          ? AppColors.gradientDarkStart
+                                          : AppColors.gradientDarkStart
+                                              .withValues(alpha: 0.2),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+                          ],
+                        ],
+                      );
+                    },
                   )
                 : Center(
                     child: Padding(

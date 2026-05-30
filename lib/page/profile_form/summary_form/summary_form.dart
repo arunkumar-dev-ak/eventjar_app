@@ -3,6 +3,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/profile_form/summary_form/widget/summary_dropdown.dart';
 import 'package:eventjar/page/profile_form/summary_form/widget/summary_form_element.dart';
+import 'package:eventjar/page/profile_form/summary_form/widget/summary_tag_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -32,11 +33,9 @@ class SummaryFormPage extends GetView<SummaryFormController> {
         ),
         elevation: 0,
       ),
-      body: GestureDetector(
-        onTap: () => Get.focusScope?.unfocus(),
-        child: SizedBox(
-          width: 100.wp,
-          height: MediaQuery.of(context).size.height,
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => Get.focusScope?.unfocus(),
           child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 3.hp),
             child: Form(
@@ -99,6 +98,24 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                         validator: (val) => null,
                       ),
                     ],
+                  ),
+                  SizedBox(height: 4.hp),
+
+                  // Known Languages
+                  SummaryTagInput(
+                    title: 'Known Languages',
+                    subtitle: 'Add languages you can communicate in',
+                    hintText: 'e.g., English, Hindi, Tamil',
+                    items: controller.state.selectedKnownLanguages,
+                  ),
+                  SizedBox(height: 4.hp),
+
+                  // Skills
+                  SummaryTagInput(
+                    title: 'Skills',
+                    subtitle: 'Add your key skills and expertise',
+                    hintText: 'e.g., Leadership, Marketing',
+                    items: controller.state.selectedSkills,
                   ),
                   SizedBox(height: 5.hp),
 

@@ -34,6 +34,24 @@ Widget userProfilebuildSummary() {
         value: extended?.availabilitySlots ?? "Availability not set",
         iconColor: Colors.green,
       ),
+      if (extended != null && extended.knownLanguages.isNotEmpty) ...[
+        SizedBox(height: 2.hp),
+        opearingRegionBuildChipSection(
+          icon: Icons.translate,
+          iconColor: Colors.teal,
+          label: "Known Languages",
+          chips: extended.knownLanguages,
+        ),
+      ],
+      if (extended != null && extended.skills.isNotEmpty) ...[
+        SizedBox(height: 2.hp),
+        opearingRegionBuildChipSection(
+          icon: Icons.lightbulb_outline,
+          iconColor: Colors.orange,
+          label: "Skills",
+          chips: extended.skills,
+        ),
+      ],
     ],
   );
 }

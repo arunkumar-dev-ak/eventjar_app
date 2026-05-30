@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:eventjar/controller/bio_profile/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/routes/route_name.dart';
@@ -14,14 +13,16 @@ import 'package:get/get.dart';
 class BioProfilePage extends GetView<BioProfileController> {
   const BioProfilePage({super.key});
 
-  static const double _avatarRadius = 65;
+  static const double _avatarRadius = 60;
 
   bool get _hasAboutOrNetworkingContent =>
       controller.bio.isNotEmpty ||
       controller.preferredLocations.isNotEmpty ||
       controller.interestedInConnecting.isNotEmpty ||
       controller.helpOfferings.isNotEmpty ||
-      controller.discussionTopics.isNotEmpty;
+      controller.discussionTopics.isNotEmpty ||
+      controller.knownLanguages.isNotEmpty ||
+      controller.skills.isNotEmpty;
 
   bool get _hasGalleryOrBadgesContent =>
       controller.galleryImages.isNotEmpty ||
@@ -29,21 +30,14 @@ class BioProfilePage extends GetView<BioProfileController> {
 
   @override
   Widget build(BuildContext context) {
-    final topPad = MediaQuery.of(context).padding.top;
-    final barHeight = topPad + 36;
-
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) controller.goBack();
       },
       child: Scaffold(
-        body: Column(
-          children: [
-            _buildGradientBar(barHeight, topPad),
-            Expanded(child: Obx(() => _buildBody(context))),
-          ],
-        ),
+        backgroundColor: AppColors.scaffoldBg(context),
+        body: Obx(() => _buildBody(context)),
         bottomNavigationBar: Obx(() {
           if (controller.state.isLoading.value ||
               controller.state.hasError.value ||
@@ -56,180 +50,209 @@ class BioProfilePage extends GetView<BioProfileController> {
     );
   }
 
-  Widget _buildGradientBar(double barHeight, double topPad) {
-    return Container(
-      height: barHeight,
-      padding: EdgeInsets.only(top: topPad),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.gradientDarkStart,
-            AppColors.gradientLightStart,
-            AppColors.gradientLightEnd,
-          ],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-      ),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Colors.white,
-            size: 20,
-          ),
-          onPressed: () => controller.goBack(),
-        ),
-      ),
-    );
-  }
-
   Widget _buildBody(BuildContext context) {
     if (controller.state.isLoading.value) {
       return const Center(child: CircularProgressIndicator());
     }
 
     if (controller.state.hasError.value) {
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.all(8.wp),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 48,
-                color: AppColors.textSecondary(context),
-              ),
-              SizedBox(height: 2.hp),
-              Text(
-                controller.state.errorMessage.value,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  color: AppColors.textSecondary(context),
+      return SafeArea(
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.all(8.wp),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withValues(alpha: 0.08),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.wifi_off_rounded,
+                    size: 48,
+                    color: Colors.red.shade400,
+                  ),
                 ),
-              ),
-              SizedBox(height: 2.hp),
-              OutlinedButton(
-                onPressed: controller.retry,
-                child: const Text('Retry'),
-              ),
-            ],
+                SizedBox(height: 2.5.hp),
+                Text(
+                  controller.state.errorMessage.value,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: AppColors.textSecondary(context),
+                    height: 1.5,
+                  ),
+                ),
+                SizedBox(height: 2.5.hp),
+                FilledButton.icon(
+                  onPressed: controller.retry,
+                  icon: const Icon(Icons.refresh_rounded, size: 18),
+                  label: const Text('Try Again'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.gradientDarkStart,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
     }
 
-    final gradientBodyHeight = _avatarRadius * 1.2;
+    return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
+      slivers: [
+        _buildSliverHeader(context),
+        SliverToBoxAdapter(child: _buildProfileContent(context)),
+      ],
+    );
+  }
 
-    return SingleChildScrollView(
-      child: Column(
+  Widget _buildSliverHeader(BuildContext context) {
+    final topPad = MediaQuery.of(context).padding.top;
+    return SliverToBoxAdapter(
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          // Avatar overlapping gradient → white
-          Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.topCenter,
-            children: [
-              // Gradient + white background
-              Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: gradientBodyHeight,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.gradientDarkStart,
-                          AppColors.gradientLightStart,
-                          AppColors.gradientLightEnd,
-                        ],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    height: _avatarRadius + 8,
-                    color: AppColors.cardBg(context),
-                  ),
-                ],
-              ),
-              // Avatar centered at the boundary
-              Positioned(
-                top: gradientBodyHeight - _avatarRadius,
-                child: _buildAvatar(),
-              ),
-            ],
-          ),
           Container(
             width: double.infinity,
-            color: AppColors.cardBg(context),
-            child: Column(
-              children: [
-                _buildNameSection(context),
-                SizedBox(height: 1.5.hp),
-                _buildBio(context),
-                SizedBox(height: 2.hp),
-                _buildDivider(context),
-                SizedBox(height: 1.5.hp),
-                _buildStatsRow(context),
-                SizedBox(height: 1.5.hp),
-                _buildDivider(context),
-                SizedBox(height: 2.5.hp),
-                _buildNetworkingGoal(context),
-                _buildProfessionalSection(context),
-                if (_hasAboutOrNetworkingContent) ...[
-                  _buildDivider(context),
-                  SizedBox(height: 2.5.hp),
-                  _buildAboutSection(context),
-                  SizedBox(height: 2.5.hp),
-                  _buildOperatingLocationSection(context),
-                  _buildNetworkingSection(context),
+            height: 16.hp,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.gradientDarkStart,
+                  AppColors.gradientDarkStart.withValues(alpha: 0.85),
+                  AppColors.gradientLightEnd.withValues(alpha: 0.7),
                 ],
-                if (_hasGalleryOrBadgesContent) ...[
-                  _buildDivider(context),
-                  SizedBox(height: 2.5.hp),
-                  _buildGallerySection(context),
-                  _buildBadgesSection(context),
-                ],
-                SizedBox(height: 4.hp),
-              ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(top: topPad),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: IconButton(
+                  icon: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  onPressed: () => controller.goBack(),
+                ),
+              ),
             ),
           ),
+          Positioned(
+            top: 16.hp - _avatarRadius - 6,
+            left: 0,
+            right: 0,
+            child: Center(child: _buildAvatar(context)),
+          ),
+          Positioned(
+            right: 3.wp,
+            top: topPad + 8,
+            child: _buildSocialLinksVertical(context),
+          ),
+          SizedBox(height: 16.hp + _avatarRadius - 6),
         ],
       ),
     );
   }
 
-  Widget _buildAvatar() {
+  Widget _buildProfileContent(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(height: _avatarRadius - 30),
+        _buildNameSection(context),
+        SizedBox(height: 2.hp),
+        _buildStatsRow(context),
+        SizedBox(height: 2.hp),
+        if (controller.networkingGoal.isNotEmpty) ...[
+          _buildNetworkingGoal(context),
+          SizedBox(height: 2.hp),
+        ],
+        _buildProfessionalCard(context),
+        if (_hasAboutOrNetworkingContent) ...[
+          if (controller.bio.isNotEmpty) ...[
+            SizedBox(height: 2.hp),
+            _buildAboutCard(context),
+          ],
+          if (controller.preferredLocations.isNotEmpty) ...[
+            SizedBox(height: 2.hp),
+            _buildOperatingLocationCard(context),
+          ],
+          if (controller.knownLanguages.isNotEmpty) ...[
+            SizedBox(height: 2.hp),
+            _buildLanguagesCard(context),
+          ],
+          if (controller.skills.isNotEmpty) ...[
+            SizedBox(height: 2.hp),
+            _buildSkillsCard(context),
+          ],
+          if (controller.interestedInConnecting.isNotEmpty ||
+              controller.helpOfferings.isNotEmpty ||
+              controller.discussionTopics.isNotEmpty) ...[
+            SizedBox(height: 2.hp),
+            _buildNetworkingCard(context),
+          ],
+        ],
+        if (_hasGalleryOrBadgesContent) ...[
+          if (controller.galleryImages.isNotEmpty) ...[
+            SizedBox(height: 2.hp),
+            _buildGalleryCard(context),
+          ],
+          if (controller.badgeAssignments.isNotEmpty) ...[
+            SizedBox(height: 2.hp),
+            _buildBadgesCard(context),
+          ],
+        ],
+        SizedBox(height: 4.hp),
+      ],
+    );
+  }
+
+  Widget _buildAvatar(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 3),
+        border: Border.all(color: AppColors.cardBg(context), width: 4),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+            color: AppColors.gradientDarkStart.withValues(alpha: 0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       child: controller.avatarUrl.isNotEmpty
           ? CircleAvatar(
               radius: _avatarRadius,
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.cardBg(context),
               backgroundImage: NetworkImage(getFileUrl(controller.avatarUrl)),
             )
           : CircleAvatar(
               radius: _avatarRadius,
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.gradientDarkStart.withValues(
+                alpha: 0.1,
+              ),
               child: Text(
                 _getInitials(controller.name),
                 style: TextStyle(
-                  fontSize: 20.sp,
+                  fontSize: 22.sp,
                   fontWeight: FontWeight.bold,
                   color: AppColors.gradientDarkStart,
                 ),
@@ -239,36 +262,63 @@ class BioProfilePage extends GetView<BioProfileController> {
   }
 
   Widget _buildNameSection(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          controller.name,
-          style: TextStyle(
-            fontSize: 17.sp,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary(context),
-          ),
-        ),
-        if (controller.username.isNotEmpty) ...[
-          const SizedBox(height: 4),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 5.wp),
+      child: Column(
+        children: [
           Text(
-            '@${controller.username}',
+            controller.name,
             style: TextStyle(
-              fontSize: 9.sp,
-              color: AppColors.textSecondary(context),
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary(context),
+              letterSpacing: -0.3,
             ),
           ),
+          if (controller.username.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 3),
+              decoration: BoxDecoration(
+                color: AppColors.gradientDarkStart.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                '@${controller.username}',
+                style: TextStyle(
+                  fontSize: 9.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.gradientDarkStart,
+                ),
+              ),
+            ),
+          ],
+          if (controller.shortBio.isNotEmpty) ...[
+            SizedBox(height: 1.hp),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4.wp),
+              child: Text(
+                controller.shortBio,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 9.5.sp,
+                  color: AppColors.textSecondary(context),
+                  height: 1.6,
+                ),
+              ),
+            ),
+          ],
         ],
-        _buildSocialLinks(context),
-      ],
+      ),
     );
   }
 
-  Widget _buildSocialLinks(BuildContext context) {
+  List<_SocialItem> _getSocialLinks() {
     final social = controller.socialLinks;
-    if (social == null) return const SizedBox.shrink();
-
-    final links = <_SocialItem>[
+    if (social == null) return [];
+    return [
       if (social.linkedin != null && social.linkedin!.isNotEmpty)
         _SocialItem('linkedin', FontAwesomeIcons.linkedinIn, social.linkedin!),
       if (social.twitter != null && social.twitter!.isNotEmpty)
@@ -278,16 +328,23 @@ class BioProfilePage extends GetView<BioProfileController> {
       if (social.facebook != null && social.facebook!.isNotEmpty)
         _SocialItem('facebook', FontAwesomeIcons.facebookF, social.facebook!),
     ];
+  }
 
+  Widget _buildSocialLinksVertical(BuildContext context) {
+    final links = _getSocialLinks();
     if (links.isEmpty) return const SizedBox.shrink();
 
-    return Padding(
-      padding: EdgeInsets.only(top: 1.hp),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 5),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: links.map((item) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 3),
             child: GestureDetector(
               onTap: () {
                 final url = item.url.startsWith('http')
@@ -296,15 +353,25 @@ class BioProfilePage extends GetView<BioProfileController> {
                 launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
               },
               child: Container(
-                padding: const EdgeInsets.all(8),
+                width: 34,
+                height: 34,
                 decoration: BoxDecoration(
-                  color: _socialColor(item.platform).withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
                 ),
-                child: FaIcon(
-                  item.icon,
-                  size: 18,
-                  color: _socialColor(item.platform),
+                child: Center(
+                  child: FaIcon(
+                    item.icon,
+                    size: 14,
+                    color: _socialColor(item.platform, context),
+                  ),
                 ),
               ),
             ),
@@ -314,12 +381,13 @@ class BioProfilePage extends GetView<BioProfileController> {
     );
   }
 
-  Color _socialColor(String platform) {
+  Color _socialColor(String platform, BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     switch (platform) {
       case 'linkedin':
         return const Color(0xFF0A66C2);
       case 'twitter':
-        return const Color(0xFF000000);
+        return isDark ? Colors.white : const Color(0xFF000000);
       case 'instagram':
         return const Color(0xFFE4405F);
       case 'facebook':
@@ -327,89 +395,6 @@ class BioProfilePage extends GetView<BioProfileController> {
       default:
         return AppColors.gradientDarkStart;
     }
-  }
-
-  Widget _buildBottomBar(BuildContext context) {
-    final bottomPad = MediaQuery.of(context).padding.bottom;
-    return Container(
-      padding: EdgeInsets.fromLTRB(5.wp, 1.2.hp, 5.wp, 1.2.hp + bottomPad),
-      decoration: BoxDecoration(
-        color: AppColors.cardBg(context),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow(context),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SizedBox(
-        width: double.infinity,
-        height: 48,
-        child: ElevatedButton.icon(
-          onPressed: () {
-            if (!controller.isLoggedIn) {
-              Get.toNamed(RouteName.signInPage);
-              return;
-            }
-            ScheduleMeetingDialog.show(
-              context,
-              name: controller.name,
-              position: controller.position,
-              company: controller.businessName,
-            );
-          },
-          icon: const Icon(Icons.calendar_month_outlined, size: 20),
-          label: Text(
-            'Schedule 1-on-1 Meeting',
-            style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w700),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.gradientDarkStart,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-            elevation: 0,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAboutSection(BuildContext context) {
-    if (controller.bio.isEmpty) return const SizedBox.shrink();
-    return _buildSection(
-      context,
-      icon: Icons.info_outline_rounded,
-      title: 'ABOUT',
-      child: Text(
-        controller.bio,
-        style: TextStyle(
-          fontSize: 9.5.sp,
-          color: AppColors.textSecondary(context),
-          height: 1.6,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBio(BuildContext context) {
-    if (controller.shortBio.isEmpty) return const SizedBox.shrink();
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 6.wp),
-      child: Text(
-        controller.shortBio,
-        textAlign: TextAlign.center,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          fontSize: 9.5.sp,
-          color: AppColors.textSecondary(context),
-          height: 1.6,
-        ),
-      ),
-    );
   }
 
   Widget _buildStatsRow(BuildContext context) {
@@ -422,7 +407,7 @@ class BioProfilePage extends GetView<BioProfileController> {
               context,
               icon: Icons.event_available_rounded,
               count: controller.eventsCount.toString(),
-              label: 'Attended Events',
+              label: 'Events',
               color: AppColors.gradientDarkStart,
             ),
           ),
@@ -449,31 +434,51 @@ class BioProfilePage extends GetView<BioProfileController> {
     required Color color,
   }) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 1.5.hp, horizontal: 3.wp),
+      padding: EdgeInsets.symmetric(vertical: 2.hp, horizontal: 4.wp),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withValues(alpha: 0.15)),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, size: 22, color: color),
-          SizedBox(height: 0.8.hp),
-          Text(
-            count,
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
+        color: AppColors.cardBg(context),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border(context)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow(context),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 8.sp,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textSecondary(context),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, size: 20, color: color),
+          ),
+          SizedBox(width: 3.wp),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  count,
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textPrimary(context),
+                  ),
+                ),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 8.sp,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textSecondary(context),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -482,46 +487,64 @@ class BioProfilePage extends GetView<BioProfileController> {
   }
 
   Widget _buildNetworkingGoal(BuildContext context) {
-    if (controller.networkingGoal.isEmpty) return const SizedBox.shrink();
     return Padding(
-      padding: EdgeInsets.only(left: 5.wp, right: 5.wp, bottom: 2.5.hp),
+      padding: EdgeInsets.symmetric(horizontal: 5.wp),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 2.hp),
+        padding: EdgeInsets.all(4.wp),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppColors.gradientDarkStart.withValues(alpha: 0.08),
-              AppColors.gradientLightEnd.withValues(alpha: 0.08),
+              AppColors.gradientDarkStart.withValues(alpha: 0.06),
+              AppColors.gradientLightEnd.withValues(alpha: 0.06),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColors.gradientDarkStart.withValues(alpha: 0.15),
+            color: AppColors.gradientDarkStart.withValues(alpha: 0.12),
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Text(
-              'NETWORKING GOAL',
-              style: TextStyle(
-                fontSize: 9.sp,
-                fontWeight: FontWeight.w700,
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.gradientDarkStart.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                Icons.track_changes_rounded,
+                size: 20,
                 color: AppColors.gradientDarkStart,
-                letterSpacing: 1.5,
               ),
             ),
-            SizedBox(height: 0.8.hp),
-            Text(
-              controller.networkingGoal,
-              style: TextStyle(
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary(context),
-                height: 1.5,
+            SizedBox(width: 3.wp),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Networking Goal',
+                    style: TextStyle(
+                      fontSize: 8.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.gradientDarkStart,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    controller.networkingGoal,
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary(context),
+                      height: 1.4,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -530,7 +553,7 @@ class BioProfilePage extends GetView<BioProfileController> {
     );
   }
 
-  Widget _buildProfessionalSection(BuildContext context) {
+  Widget _buildProfessionalCard(BuildContext context) {
     if (controller.position.isEmpty &&
         controller.businessCategory.isEmpty &&
         controller.location.isEmpty &&
@@ -538,10 +561,10 @@ class BioProfilePage extends GetView<BioProfileController> {
       return const SizedBox.shrink();
     }
 
-    return _buildSection(
+    return _buildCard(
       context,
       icon: Icons.work_outline_rounded,
-      title: 'PROFESSIONAL',
+      title: 'Professional',
       child: Column(
         children: [
           Row(
@@ -583,36 +606,67 @@ class BioProfilePage extends GetView<BioProfileController> {
               Expanded(
                 child: _buildInfoPair(
                   context,
-                  label: 'Location',
-                  value: controller.location.isNotEmpty
-                      ? controller.location
-                      : '-',
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 1.5.hp),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _buildInfoPair(
-                  context,
                   label: 'Experience',
                   value: controller.yearsInBusiness.isNotEmpty
                       ? controller.yearsInBusiness
                       : '-',
                 ),
               ),
-              Expanded(
-                child: controller.website.isNotEmpty
-                    ? _buildWebsitePair(context)
-                    : _buildInfoPair(context, label: 'Website', value: '-'),
-              ),
             ],
           ),
+          if (controller.location.isNotEmpty ||
+              controller.website.isNotEmpty) ...[
+            SizedBox(height: 1.5.hp),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: controller.location.isNotEmpty
+                      ? _buildInfoPair(
+                          context,
+                          label: 'Location',
+                          value: controller.location,
+                        )
+                      : const SizedBox.shrink(),
+                ),
+                Expanded(
+                  child: controller.website.isNotEmpty
+                      ? _buildWebsitePair(context)
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
+    );
+  }
+
+  Widget _buildInfoPair(
+    BuildContext context, {
+    required String label,
+    required String value,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 8.sp,
+            color: AppColors.textSecondary(context),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 10.sp,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary(context),
+          ),
+        ),
+      ],
     );
   }
 
@@ -649,181 +703,269 @@ class BioProfilePage extends GetView<BioProfileController> {
     );
   }
 
-  Widget _buildOperatingLocationSection(BuildContext context) {
-    if (controller.preferredLocations.isEmpty) return const SizedBox.shrink();
-    return Column(
-      children: [
-        _buildSection(
-          context,
-          icon: Icons.location_on_outlined,
-          title: 'OPERATING LOCATIONS',
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: controller.preferredLocations
-                .map(
-                  (location) => Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 3.wp,
-                      vertical: 0.6.hp,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.blue.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.location_on, size: 14, color: Colors.blue),
-                        const SizedBox(width: 4),
-                        Text(
-                          location,
-                          style: TextStyle(
-                            fontSize: 8.5.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.blue,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
+  Widget _buildAboutCard(BuildContext context) {
+    return _buildCard(
+      context,
+      icon: Icons.info_outline_rounded,
+      title: 'About',
+      child: Text(
+        controller.bio,
+        style: TextStyle(
+          fontSize: 9.5.sp,
+          color: AppColors.textSecondary(context),
+          height: 1.7,
         ),
-        _buildDivider(context),
-        SizedBox(height: 2.5.hp),
-      ],
+      ),
     );
   }
 
-  Widget _buildNetworkingSection(BuildContext context) {
-    if (controller.interestedInConnecting.isEmpty &&
-        controller.helpOfferings.isEmpty &&
-        controller.discussionTopics.isEmpty) {
-      return const SizedBox.shrink();
-    }
-    return _buildSection(
+  Widget _buildOperatingLocationCard(BuildContext context) {
+    return _buildCard(
+      context,
+      icon: Icons.location_on_outlined,
+      title: 'Operating Locations',
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: controller.preferredLocations
+            .map(
+              (location) => _buildModernChip(
+                context,
+                label: location,
+                icon: Icons.location_on,
+                color: const Color(0xFF2196F3),
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+
+  Widget _buildLanguagesCard(BuildContext context) {
+    return _buildCard(
+      context,
+      icon: Icons.translate_rounded,
+      title: 'Known Languages',
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 10,
+        children: controller.knownLanguages
+            .map(
+              (lang) => _buildModernChip(
+                context,
+                label: lang,
+                icon: Icons.language_rounded,
+                color: Colors.teal,
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+
+  Widget _buildSkillsCard(BuildContext context) {
+    return _buildCard(
+      context,
+      icon: Icons.lightbulb_outline_rounded,
+      title: 'Skills',
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 10,
+        children: controller.skills
+            .map(
+              (skill) => _buildModernChip(
+                context,
+                label: skill,
+                icon: Icons.auto_awesome,
+                color: const Color(0xFFFF9800),
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+
+  Widget _buildNetworkingCard(BuildContext context) {
+    return _buildCard(
       context,
       icon: Icons.people_outline_rounded,
-      title: 'NETWORKING',
+      title: 'Networking',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (controller.interestedInConnecting.isNotEmpty) ...[
-            _buildChipRow(
+            _buildChipGroup(
               context,
               icon: Icons.people_outline,
               label: 'Looking to connect with',
               items: controller.interestedInConnecting,
               color: AppColors.gradientDarkStart,
             ),
-            SizedBox(height: 1.5.hp),
+            SizedBox(height: 2.hp),
           ],
           if (controller.helpOfferings.isNotEmpty) ...[
-            _buildChipRow(
+            _buildChipGroup(
               context,
               icon: Icons.verified_outlined,
               label: 'Can help with',
               items: controller.helpOfferings,
-              color: Colors.green,
+              color: const Color(0xFF4CAF50),
             ),
-            SizedBox(height: 1.5.hp),
+            SizedBox(height: 2.hp),
           ],
           if (controller.discussionTopics.isNotEmpty)
-            _buildChipRow(
+            _buildChipGroup(
               context,
-              icon: Icons.chat_bubble_outline,
+              icon: Icons.chat_bubble_outline_rounded,
               label: 'Open to discuss',
               items: controller.discussionTopics,
-              color: Colors.deepPurple,
+              color: const Color(0xFF673AB7),
             ),
         ],
       ),
     );
   }
 
-  Widget _buildGallerySection(BuildContext context) {
-    if (controller.galleryImages.isEmpty) return const SizedBox.shrink();
+  Widget _buildGalleryCard(BuildContext context) {
     final images = controller.galleryImages;
-    return Column(
-      children: [
-        _buildSection(
-          context,
-          icon: Icons.photo_library_outlined,
-          title: 'GALLERY (${images.length})',
-          child: Column(
+    const int columns = 3;
+    const int perPage = 6;
+    const double spacing = 8;
+    final int pageCount = (images.length / perPage).ceil();
+
+    return _buildCard(
+      context,
+      icon: Icons.photo_library_outlined,
+      title: 'Gallery',
+      trailing: Container(
+        padding: EdgeInsets.symmetric(horizontal: 2.5.wp, vertical: 3),
+        decoration: BoxDecoration(
+          color: AppColors.gradientDarkStart.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          '${images.length}',
+          style: TextStyle(
+            fontSize: 8.sp,
+            fontWeight: FontWeight.w700,
+            color: AppColors.gradientDarkStart,
+          ),
+        ),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final tileSize =
+              (constraints.maxWidth - spacing * (columns - 1)) / columns;
+          final maxRows = (images.length > perPage ? perPage : images.length);
+          final rows = (maxRows / columns).ceil();
+          final gridHeight = rows * tileSize + (rows - 1) * spacing;
+
+          return Column(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: CarouselSlider.builder(
-                  itemCount: images.length,
-                  options: CarouselOptions(
-                    height: 24.hp,
-                    viewportFraction: 1,
-                    enableInfiniteScroll: images.length > 1,
-                    autoPlay: images.length > 1,
-                    autoPlayInterval: const Duration(seconds: 5),
-                    autoPlayCurve: Curves.fastOutSlowIn,
-                    enlargeCenterPage: false,
-                    onPageChanged: (index, _) {
-                      controller.state.galleryIndex.value = index;
-                    },
-                  ),
-                  itemBuilder: (context, index, _) {
-                    return GestureDetector(
-                      onTap: () => Get.toNamed(
-                        RouteName.imageViewerPage,
-                        arguments: {
-                          "fileUrl": getFileUrl(images[index]),
-                          "header": controller.name,
-                        },
-                      ),
-                      child: CachedNetworkImage(
-                        imageUrl: getFileUrl(images[index]),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        placeholder: (context, url) => Container(
-                          color: Colors.grey.shade200,
-                          child: const Center(
-                            child: CircularProgressIndicator(strokeWidth: 2),
+              SizedBox(
+                height: gridHeight,
+                child: PageView.builder(
+                  itemCount: pageCount,
+                  onPageChanged: (index) {
+                    controller.state.galleryIndex.value = index;
+                  },
+                  itemBuilder: (context, pageIndex) {
+                    final start = pageIndex * perPage;
+                    final end = (start + perPage) > images.length
+                        ? images.length
+                        : start + perPage;
+                    final pageImages = images.sublist(start, end);
+
+                    return GridView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.zero,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: columns,
+                            mainAxisSpacing: spacing,
+                            crossAxisSpacing: spacing,
+                            childAspectRatio: 1,
                           ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey.shade200,
-                          child: Icon(
-                            Icons.broken_image_outlined,
-                            size: 40,
-                            color: Colors.grey.shade400,
+                      itemCount: pageImages.length,
+                      itemBuilder: (context, index) {
+                        final imgIndex = start + index;
+                        return GestureDetector(
+                          onTap: () => Get.toNamed(
+                            RouteName.imageViewerPage,
+                            arguments: {
+                              "fileUrl": getFileUrl(images[imgIndex]),
+                              "header": controller.name,
+                            },
                           ),
-                        ),
-                      ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: CachedNetworkImage(
+                              imageUrl: getFileUrl(images[imgIndex]),
+                              fit: BoxFit.cover,
+                              width: tileSize,
+                              height: tileSize,
+                              placeholder: (context, url) => Container(
+                                color: AppColors.chipBg(context),
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                color: AppColors.chipBg(context),
+                                child: Icon(
+                                  Icons.broken_image_outlined,
+                                  size: 28,
+                                  color: AppColors.iconMuted(context),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
               ),
-              if (images.length > 1) ...[
-                SizedBox(height: 1.2.hp),
+              SizedBox(height: 1.hp),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.touch_app_outlined,
+                    size: 14,
+                    color: AppColors.textHint(context),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Tap image to view full screen',
+                    style: TextStyle(
+                      fontSize: 8.sp,
+                      color: AppColors.textHint(context),
+                    ),
+                  ),
+                ],
+              ),
+              if (pageCount > 1) ...[
+                SizedBox(height: 1.5.hp),
                 Obx(
                   () => Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(images.length, (index) {
+                    children: List.generate(pageCount, (index) {
                       final isActive =
                           controller.state.galleryIndex.value == index;
                       return AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
                         margin: const EdgeInsets.symmetric(horizontal: 3),
-                        width: isActive ? 20 : 7,
-                        height: 7,
+                        width: isActive ? 24 : 8,
+                        height: 8,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
                           color: isActive
                               ? AppColors.gradientDarkStart
                               : AppColors.gradientDarkStart.withValues(
-                                  alpha: 0.25,
+                                  alpha: 0.2,
                                 ),
                         ),
                       );
@@ -832,20 +974,32 @@ class BioProfilePage extends GetView<BioProfileController> {
                 ),
               ],
             ],
-          ),
-        ),
-        _buildDivider(context),
-        SizedBox(height: 2.5.hp),
-      ],
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildBadgesSection(BuildContext context) {
-    if (controller.badgeAssignments.isEmpty) return const SizedBox.shrink();
-    return _buildSection(
+  Widget _buildBadgesCard(BuildContext context) {
+    return _buildCard(
       context,
       icon: Icons.military_tech_outlined,
-      title: 'BADGES (${controller.badgeAssignments.length})',
+      title: 'Badges',
+      trailing: Container(
+        padding: EdgeInsets.symmetric(horizontal: 2.5.wp, vertical: 3),
+        decoration: BoxDecoration(
+          color: AppColors.gradientDarkStart.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          '${controller.badgeAssignments.length}',
+          style: TextStyle(
+            fontSize: 8.sp,
+            fontWeight: FontWeight.w700,
+            color: AppColors.gradientDarkStart,
+          ),
+        ),
+      ),
       child: Wrap(
         spacing: 12,
         runSpacing: 12,
@@ -864,81 +1018,172 @@ class BioProfilePage extends GetView<BioProfileController> {
     );
   }
 
-  // ── Reusable ──
+  Widget _buildBottomBar(BuildContext context) {
+    final bottomPad = MediaQuery.of(context).padding.bottom;
+    return Container(
+      padding: EdgeInsets.fromLTRB(5.wp, 1.2.hp, 5.wp, 1.2.hp + bottomPad),
+      decoration: BoxDecoration(
+        color: AppColors.cardBg(context),
+        border: Border(
+          top: BorderSide(color: AppColors.border(context), width: 0.5),
+        ),
+      ),
+      child: SizedBox(
+        width: double.infinity,
+        height: 52,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [AppColors.gradientDarkStart, AppColors.gradientDarkEnd],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.gradientDarkStart.withValues(alpha: 0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ElevatedButton.icon(
+            onPressed: () {
+              if (!controller.isLoggedIn) {
+                Get.toNamed(RouteName.signInPage);
+                return;
+              }
+              ScheduleMeetingDialog.show(
+                context,
+                name: controller.name,
+                position: controller.position,
+                company: controller.businessName,
+              );
+            },
+            icon: const Icon(Icons.calendar_month_outlined, size: 20),
+            label: Text(
+              'Schedule 1-on-1 Meeting',
+              style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w700),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.transparent,
+              foregroundColor: Colors.white,
+              shadowColor: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+              elevation: 0,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-  Widget _buildSection(
+  // ── Reusable Components ──
+
+  Widget _buildCard(
     BuildContext context, {
     required IconData icon,
     required String title,
     required Widget child,
+    Widget? trailing,
   }) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 5.wp),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: AppColors.gradientDarkStart),
-              SizedBox(width: 2.wp),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 9.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.gradientDarkStart,
-                  letterSpacing: 1.5,
-                ),
-              ),
-            ],
+      padding: EdgeInsets.symmetric(horizontal: 4.wp),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(4.wp),
+        decoration: BoxDecoration(
+          color: AppColors.cardBg(context),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: AppColors.border(context).withValues(alpha: 0.5),
           ),
-          SizedBox(height: 1.5.hp),
-          child,
-          SizedBox(height: 2.hp),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadow(context),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.gradientDarkStart.withValues(alpha: 0.12),
+                        AppColors.gradientLightEnd.withValues(alpha: 0.08),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 16,
+                    color: AppColors.gradientDarkStart,
+                  ),
+                ),
+                SizedBox(width: 2.5.wp),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary(context),
+                    ),
+                  ),
+                ),
+                ?trailing,
+              ],
+            ),
+            SizedBox(height: 2.hp),
+            child,
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernChip(
+    BuildContext context, {
+    required String label,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 3.5.wp, vertical: 0.8.hp),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: color),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 8.5.sp,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildDivider(BuildContext context) {
-    return Divider(
-      height: 1,
-      thickness: 0.5,
-      indent: 5.wp,
-      endIndent: 5.wp,
-      color: AppColors.divider(context),
-    );
-  }
-
-  Widget _buildInfoPair(
-    BuildContext context, {
-    required String label,
-    required String value,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 8.sp,
-            color: AppColors.textSecondary(context),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 10.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary(context),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildChipRow(
+  Widget _buildChipGroup(
     BuildContext context, {
     required IconData icon,
     required String label,
@@ -950,19 +1195,26 @@ class BioProfilePage extends GetView<BioProfileController> {
       children: [
         Row(
           children: [
-            Icon(icon, size: 16, color: color),
-            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, size: 14, color: color),
+            ),
+            const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
                 fontSize: 9.sp,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: AppColors.textSecondary(context),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 1.hp),
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -970,19 +1222,19 @@ class BioProfilePage extends GetView<BioProfileController> {
               .map(
                 (item) => Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 3.wp,
-                    vertical: 0.6.hp,
+                    horizontal: 3.5.wp,
+                    vertical: 0.7.hp,
                   ),
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: color.withValues(alpha: 0.3)),
+                    color: color.withValues(alpha: 0.07),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: color.withValues(alpha: 0.2)),
                   ),
                   child: Text(
                     item,
                     style: TextStyle(
                       fontSize: 8.5.sp,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       color: color,
                     ),
                   ),
@@ -1005,11 +1257,19 @@ class BioProfilePage extends GetView<BioProfileController> {
         : AppColors.gradientDarkStart;
     final hasImage = imageUrl != null && imageUrl.isNotEmpty;
     return Container(
-      width: 110,
+      width: 100,
       padding: EdgeInsets.symmetric(vertical: 1.5.hp, horizontal: 2.wp),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.divider(context)),
+        color: AppColors.cardBg(context),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border(context)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadow(context),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -1025,9 +1285,7 @@ class BioProfilePage extends GetView<BioProfileController> {
                   height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: badgeColor.withValues(alpha: 0.3),
-                    ),
+                    color: badgeColor.withValues(alpha: 0.1),
                   ),
                   child: const Center(
                     child: CircularProgressIndicator(strokeWidth: 1.5),
@@ -1038,9 +1296,7 @@ class BioProfilePage extends GetView<BioProfileController> {
                   height: 40,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: badgeColor.withValues(alpha: 0.3),
-                    ),
+                    color: badgeColor.withValues(alpha: 0.1),
                   ),
                   child: Icon(
                     Icons.military_tech_outlined,
@@ -1052,10 +1308,10 @@ class BioProfilePage extends GetView<BioProfileController> {
             )
           else
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: badgeColor.withValues(alpha: 0.3)),
+                color: badgeColor.withValues(alpha: 0.1),
               ),
               child: Icon(
                 Icons.military_tech_outlined,
@@ -1067,8 +1323,10 @@ class BioProfilePage extends GetView<BioProfileController> {
           Text(
             label,
             textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 8.5.sp,
+              fontSize: 8.sp,
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary(context),
             ),

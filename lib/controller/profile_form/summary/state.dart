@@ -14,4 +14,7 @@ class SummaryFormState {
     '20+ years',
   ];
   final RxString experienceRange = '0-1 years'.obs;
+
+  final RxList<String> selectedKnownLanguages = <String>[].obs;
+  final RxList<String> selectedSkills = <String>[].obs;
 }

@@ -163,6 +163,8 @@ class ExtendedProfile {
   List<String>? interestedInConnecting;
   List<String>? helpOfferings;
   List<String>? discussionTopics;
+  List<String>? knownLanguages;
+  List<String>? skills;
   dynamic shortBio;
   String? availabilitySlots;
   List<dynamic>? preferredLocations;
@@ -182,6 +184,8 @@ class ExtendedProfile {
     this.interestedInConnecting,
     this.helpOfferings,
     this.discussionTopics,
+    this.knownLanguages,
+    this.skills,
     this.shortBio,
     this.availabilitySlots,
     this.preferredLocations,
@@ -209,6 +213,12 @@ class ExtendedProfile {
         discussionTopics: json["discussionTopics"] == null
             ? []
             : List<String>.from(json["discussionTopics"]!.map((x) => x)),
+        knownLanguages: json["knownLanguages"] == null
+            ? []
+            : List<String>.from(json["knownLanguages"]!.map((x) => x)),
+        skills: json["skills"] == null
+            ? []
+            : List<String>.from(json["skills"]!.map((x) => x)),
         shortBio: json["shortBio"],
         availabilitySlots: json["availabilitySlots"],
         preferredLocations: json["preferredLocations"] == null
@@ -243,6 +253,10 @@ class ExtendedProfile {
     "discussionTopics": discussionTopics == null
         ? []
         : List<dynamic>.from(discussionTopics!.map((x) => x)),
+    "knownLanguages": knownLanguages == null
+        ? []
+        : List<dynamic>.from(knownLanguages!.map((x) => x)),
+    "skills": skills == null ? [] : List<dynamic>.from(skills!.map((x) => x)),
     "shortBio": shortBio,
     "availabilitySlots": availabilitySlots,
     "preferredLocations": preferredLocations == null

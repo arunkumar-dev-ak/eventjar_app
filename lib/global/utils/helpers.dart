@@ -12,6 +12,20 @@ String capitalize(String input) {
   return input[0].toUpperCase() + input.substring(1).toLowerCase();
 }
 
+String capitalizeName(String name) {
+  if (name.isEmpty) return name;
+  return name.split(' ').map((word) {
+    if (word.isEmpty) return word;
+    if (word.contains('.')) {
+      return word.split('.').map((part) {
+        if (part.isEmpty) return part;
+        return part[0].toUpperCase() + part.substring(1).toLowerCase();
+      }).join('.');
+    }
+    return capitalize(word);
+  }).join(' ');
+}
+
 DateTime? parseDateSafe(dynamic value) {
   if (value == null) return null;
 

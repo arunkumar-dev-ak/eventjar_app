@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/controller/splashScreen/state.dart';
+import 'package:eventjar/global/store/language_store.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/services/deep_link_handler.dart';
@@ -43,6 +45,8 @@ class SplashScreenController extends GetxController
 
   // Network animation
   late Animation<double> networkOpacity;
+
+  Completer<void>? _languageCompleter;
 
   @override
   void onInit() {
@@ -166,9 +170,21 @@ class SplashScreenController extends GetxController
     mainAnimationController.forward();
   }
 
+  void onLanguageSelected() {
+    _languageCompleter?.complete();
+    state.showLanguagePopup.value = false;
+  }
+
   /*----- Navigation And IOS deeplink handler -----*/
   void _navigateToHome() async {
     await Future.delayed(const Duration(milliseconds: 2000));
+
+    // Show language selection popup on first launch
+    if (!LanguageStore.to.isLanguageSelected) {
+      _languageCompleter = Completer<void>();
+      state.showLanguagePopup.value = true;
+      await _languageCompleter!.future;
+    }
 
     // 1. Cold-start deep link (Universal Links / App Links, plus the
     //    Android Play Install Referrer fallback). If we have one, it
