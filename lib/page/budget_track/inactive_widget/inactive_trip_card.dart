@@ -1,11 +1,15 @@
+import 'package:eventjar/controller/budget_track/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/widget/delete_confirm_dialog.dart';
 import 'package:eventjar/model/budget_track/trip_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-class InactiveTripCard extends StatelessWidget {
+class InactiveTripCard extends GetView<BudgetTrackController> {
   final int index;
   final TripModel trip;
 
@@ -170,6 +174,22 @@ class InactiveTripCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
+                  if (controller.isTripOwner(trip))
+                    GestureDetector(
+                      onTap: () {
+                        HapticHelper.medium();
+                        _showDeleteDialog(context);
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(bottom: 0.5.hp),
+                        child: Icon(
+                          Icons.delete_outline,
+                          size: 20,
+                          color: Colors.red.shade400,
+                        ),
+                      ),
+                    ),
+
                   Text(
                     "₹${formatAmount(mainAmount)}",
                     style: TextStyle(
@@ -241,6 +261,19 @@ class InactiveTripCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => DeleteConfirmDialog(
+        title: "Delete Trip",
+        itemName: trip.name,
+        warningText:
+            "This action cannot be undone and will permanently delete this trip and all its data.",
+        onDelete: () => controller.deleteTrip(trip),
       ),
     );
   }

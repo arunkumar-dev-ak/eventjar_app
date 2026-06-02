@@ -1,5 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:eventjar/api/budget_track_api/budget_track_api.dart';
+import 'package:eventjar/api/split_track_api/split_track_api.dart';
 import 'package:eventjar/controller/budget_track/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
@@ -150,6 +150,30 @@ class BudgetTrackController extends GetxController
     }
   }
 
+  // Delete trip
+  bool isTripOwner(TripModel trip) {
+    final loggedUserId = UserStore.to.profile['id'] as String?;
+    return trip.createdById == loggedUserId;
+  }
+
+  Future<void> deleteTrip(TripModel trip) async {
+    try {
+      await SplitTrackApi.deleteTrip(tripId: trip.id);
+      state.trips.remove(trip);
+      AppSnackbar.success(title: "Success", message: "Trip deleted successfully");
+    } catch (err) {
+      LoggerService.loggerInstance.e('Delete trip error: $err');
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to delete Trip",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
+    }
+  }
+
   //navigation
   void navigateToSignInPage() {
     Get.toNamed(RouteName.signInPage);
@@ -187,11 +211,9 @@ class BudgetTrackController extends GetxController
 
   void navigateToCreateTrip() {
     Get.toNamed(RouteName.createTripPage)?.then((result) async {
-      // if (result == "logged_in") {
-      //   await fetchContactsOnFirstLoad();
-      // } else {
-      //   Get.back();
-      // }
+      if (result == "created") {
+        await refreshTrips();
+      }
     });
   }
 

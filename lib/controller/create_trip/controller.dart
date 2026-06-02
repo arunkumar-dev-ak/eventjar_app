@@ -1,7 +1,15 @@
+import 'package:currency_picker/currency_picker.dart';
+import 'package:eventjar/api/split_track_api/split_track_api.dart';
 import 'package:eventjar/controller/create_trip/state.dart';
-import 'package:eventjar/model/contact/mobile_contact_model.dart';
+import 'package:eventjar/model/budget_track/split_track_friend_model.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../routes/route_name.dart';
 
 class CreateTripController extends GetxController {
   final state = CreateTripState();
@@ -10,10 +18,12 @@ class CreateTripController extends GetxController {
 
   final appBarTitle = "Create Trip";
 
+  static const _limit = 20;
+
   @override
   void onInit() {
     super.onInit();
-    fetchContacts(initial: true);
+    fetchFriends(initial: true);
   }
 
   // Form Controllers
@@ -22,92 +32,148 @@ class CreateTripController extends GetxController {
   final budgetController = TextEditingController();
   final descriptionController = TextEditingController();
 
-  /// 🔥 FETCH CONTACTS
-  Future<void> fetchContacts({bool initial = false}) async {
-    // try {
-    //   if (initial) {
-    //     state.isDropdownLoading.value = true;
-    //     state.page = 1;
-    //     state.contacts.clear();
-    //   }
-
-    //   /// 🔥 Simulate API
-    //   await Future.delayed(const Duration(milliseconds: 800));
-
-    //   List<MobileContact> newData = List.generate(
-    //     10,
-    //     (index) => MobileContact(
-    //       id: "${state.page}-$index",
-    //       name: "User ${state.page}-$index",
-    //       email: "user${index}@mail.com",
-    //     ),
-    //   );
-
-    //   state.contacts.addAll(newData);
-    //   state.page++;
-    //   state.hasMore = state.page < 5; // simulate end
-    // } finally {
-    //   state.isDropdownLoading.value = false;
-    //   state.isDropdownLoadMoreLoading.value = false;
-    // }
+  // Currency
+  void selectCurrency(Currency currency) {
+    state.selectedCurrency.value = currency;
   }
 
-  /// 🔥 SEARCH
+  // Fetch Friends
+  Future<void> fetchFriends({bool initial = false}) async {
+    try {
+      if (initial) {
+        state.isDropdownLoading.value = true;
+        state.page = 1;
+        state.friends.clear();
+      }
+
+      final queryParams = <String, dynamic>{
+        'page': state.page,
+        'limit': _limit,
+      };
+
+      final search = state.searchQuery.value.trim();
+      if (search.isNotEmpty) {
+        queryParams['search'] = search;
+      }
+
+      final response = await SplitTrackApi.getFriends(queryParams: queryParams);
+
+      if (initial) {
+        state.friends.value = response.data;
+      } else {
+        state.friends.addAll(response.data);
+      }
+
+      state.hasMore = response.pagination.hasNext;
+      state.page = response.pagination.page + 1;
+    } catch (err) {
+      LoggerService.loggerInstance.e('Fetch friends error: $err');
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load Friends",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          Get.toNamed(RouteName.signInPage);
+        },
+      );
+    } finally {
+      state.isDropdownLoading.value = false;
+      state.isDropdownLoadMoreLoading.value = false;
+    }
+  }
+
   void onSearchChanged(String value) {
     state.searchQuery.value = value;
-    fetchContacts(initial: true);
+    fetchFriends(initial: true);
   }
 
-  /// 🔥 LOAD MORE
   void onLoadMoreClicked() {
     if (!state.hasMore || state.isDropdownLoadMoreLoading.value) return;
 
     state.isDropdownLoadMoreLoading.value = true;
-    fetchContacts();
+    fetchFriends();
   }
 
-  /// 🔥 REFRESH
   void onRefreshClicked() {
-    fetchContacts(initial: true);
+    fetchFriends(initial: true);
   }
 
-  /// 🔥 CLEAR FORM
+  // Clear Form
   void clearForm() {
     tripNameController.clear();
     destinationController.clear();
     budgetController.clear();
     descriptionController.clear();
     state.selectedFriendsMap.clear();
+    state.selectedCurrency.value = CurrencyService().findByCode('INR')!;
   }
 
-  /// 🔥 SUBMIT
+  // Submit
   Future<void> submit() async {
     if (state.isLoading.value) return;
+
+    if (state.selectedFriendsMap.isEmpty) {
+      AppSnackbar.warning(message: "Please select at least one friend");
+      return;
+    }
 
     state.isLoading.value = true;
 
     try {
-      final data = {
-        "tripName": tripNameController.text.trim(),
-        "destination": destinationController.text.trim(),
-        "budget": budgetController.text.trim(),
+      final budget = double.tryParse(budgetController.text.trim()) ?? 0;
+
+      final body = {
+        "name": tripNameController.text.trim(),
         "description": descriptionController.text.trim(),
-        "friends": state.selectedFriendsMap.values.map((e) => e.id).toList(),
+        "destination": destinationController.text.trim(),
+        "totalBudget": budget,
+        "currency": state.selectedCurrency.value.code,
+        "members": state.selectedFriendsMap.values
+            .map((f) => _buildMemberEntry(f))
+            .toList(),
       };
 
-      /// 🔥 Simulate API
-      await Future.delayed(const Duration(seconds: 1));
+      await SplitTrackApi.createTrip(body: body);
 
-      debugPrint("CREATE TRIP DATA => $data");
+      state.isLoading.value = false;
 
-      Get.snackbar("Success", "Trip created successfully");
+      Get.back(result: "created");
 
-      clearForm();
-    } catch (e) {
-      Get.snackbar("Error", "Something went wrong");
+      AppSnackbar.success(title: "Success", message: "Trip created successfully");
+    } catch (err) {
+      LoggerService.loggerInstance.e('Create trip error: $err');
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to create Trip",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          Get.toNamed(RouteName.signInPage);
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }
+  }
+
+  Map<String, String> _buildMemberEntry(SplitTrackFriend f) {
+    final loggedUserId = UserStore.to.profile['id'] as String;
+
+    // 1. Not registered — pass as friendId
+    if (!f.isRegistered) {
+      return {"friendId": f.id};
+    }
+
+    // 2. userId matches logged user — pass friendUserId as userId
+    if (f.userId == loggedUserId) {
+      return {"userId": f.friendUserId!};
+    }
+
+    // 3. friendUserId matches logged user — pass userId as userId
+    if (f.friendUserId == loggedUserId) {
+      return {"userId": f.userId};
+    }
+
+    return {"friendId": f.id};
   }
 
   @override

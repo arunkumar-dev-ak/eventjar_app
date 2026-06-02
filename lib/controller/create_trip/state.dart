@@ -1,16 +1,16 @@
-import 'package:eventjar/model/contact/mobile_contact_model.dart';
+import 'package:currency_picker/currency_picker.dart';
+import 'package:eventjar/model/budget_track/split_track_friend_model.dart';
 import 'package:get/get.dart';
 
 class CreateTripState {
-  // Loading
   final RxBool isLoading = false.obs;
 
-  // Contacts (for dropdown)
-  final RxList<MobileContact> contacts = <MobileContact>[].obs;
+  // Friends (for dropdown)
+  final RxList<SplitTrackFriend> friends = <SplitTrackFriend>[].obs;
 
   // Selected Friends (MULTI SELECT)
-  final RxMap<String, MobileContact> selectedFriendsMap =
-      <String, MobileContact>{}.obs;
+  final RxMap<String, SplitTrackFriend> selectedFriendsMap =
+      <String, SplitTrackFriend>{}.obs;
 
   // Dropdown Loading
   final RxBool isDropdownLoading = false.obs;
@@ -22,4 +22,8 @@ class CreateTripState {
 
   // Search
   final RxString searchQuery = "".obs;
+
+  // Currency
+  final Rx<Currency> selectedCurrency =
+      CurrencyService().findByCode('INR')!.obs;
 }

@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:eventjar/controller/budget_track/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/widget/delete_confirm_dialog.dart';
 import 'package:eventjar/model/budget_track/trip_model.dart';
 import 'package:eventjar/page/budget_track/active_widget/active_animate_border.dart';
 import 'package:flutter/material.dart';
@@ -17,277 +20,411 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
     if (amount >= 100000) {
       return "${(amount / 100000).toStringAsFixed(1)}L";
     }
-
     if (amount >= 1000) {
       return "${(amount / 1000).toStringAsFixed(1)}K";
     }
-
     return amount.toStringAsFixed(0);
   }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final totalBudget = trip.totalBudget;
-
     final spent = trip.teamShare;
-
     final progress = totalBudget > 0
         ? (spent / totalBudget).clamp(0.0, 1.0)
         : 0.0;
-
     final isOverBudget = spent > totalBudget;
 
     return AnimatedBorderCard(
-      child: Container(
-        padding: EdgeInsets.all(4.wp),
-        decoration: BoxDecoration(
-          color: AppColors.cardBg(context),
-          borderRadius: BorderRadius.circular(14.sp),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // TITLE + ACTIVE
-            Row(
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(14.sp),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: Container(
+            padding: EdgeInsets.all(4.wp),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.white.withValues(alpha: 0.75),
+              borderRadius: BorderRadius.circular(14.sp),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.12)
+                    : Colors.white.withValues(alpha: 0.6),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Text(
-                    trip.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary(context),
+                // HEADER ROW
+                Row(
+                  children: [
+                    // Trip icon
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.gradientDarkStart.withValues(alpha: 0.15),
+                            AppColors.gradientDarkStart.withValues(alpha: 0.05),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.flight_takeoff_rounded,
+                        size: 20,
+                        color: AppColors.gradientDarkStart,
+                      ),
                     ),
-                  ),
+
+                    SizedBox(width: 3.wp),
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            trip.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 11.sp,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary(context),
+                            ),
+                          ),
+                          SizedBox(height: 0.2.hp),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on_outlined,
+                                size: 12,
+                                color: AppColors.textSecondary(context),
+                              ),
+                              SizedBox(width: 0.5.wp),
+                              Expanded(
+                                child: Text(
+                                  trip.destination,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 7.5.sp,
+                                    color: AppColors.textSecondary(context),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Active badge
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 2.wp,
+                        vertical: 0.4.hp,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.green.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: const BoxDecoration(
+                              color: Colors.green,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          SizedBox(width: 1.wp),
+                          Text(
+                            "ACTIVE",
+                            style: TextStyle(
+                              color: Colors.green.shade700,
+                              fontSize: 6.5.sp,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    if (controller.isTripOwner(trip)) ...[
+                      SizedBox(width: 1.5.wp),
+                      GestureDetector(
+                        onTap: () {
+                          HapticHelper.medium();
+                          _showDeleteDialog(context);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.delete_outline,
+                            size: 18,
+                            color: Colors.red.shade400,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
 
+                SizedBox(height: 1.hp),
+
+                // STATS CHIPS
+                Row(
+                  children: [
+                    _chipInfo(
+                      "${trip.expensesCount} Expenses",
+                      Icons.receipt_outlined,
+                      context,
+                    ),
+                    SizedBox(width: 2.wp),
+                    _chipInfo(
+                      "${trip.membersCount} Members",
+                      Icons.people_outline,
+                      context,
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 1.5.hp),
+
+                // ANALYTICS ROW
                 Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 2.wp,
-                    vertical: .4.hp,
+                    horizontal: 3.wp,
+                    vertical: 1.2.hp,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: .1),
-                    borderRadius: BorderRadius.circular(20.sp),
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.06)
+                          : Colors.grey.shade200,
+                    ),
                   ),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      const CircleAvatar(
-                        radius: 3,
-                        backgroundColor: Colors.green,
+                      _analyticsItem(
+                        "YOU OWE",
+                        trip.myOwe,
+                        Colors.red,
+                        context,
                       ),
-                      SizedBox(width: 1.wp),
-                      Text(
-                        "ACTIVE",
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 6.5.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      Container(
+                        width: 1,
+                        height: 30,
+                        color: AppColors.divider(context),
+                      ),
+                      _analyticsItem(
+                        "RECEIVE",
+                        trip.myReceive,
+                        Colors.green,
+                        context,
+                      ),
+                      Container(
+                        width: 1,
+                        height: 30,
+                        color: AppColors.divider(context),
+                      ),
+                      _analyticsItem(
+                        "MY SHARE",
+                        trip.myShare,
+                        AppColors.gradientDarkStart,
+                        context,
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
 
-            SizedBox(height: .8.hp),
+                SizedBox(height: 1.5.hp),
 
-            // DESTINATION
-            Row(
-              children: [
-                Icon(
-                  Icons.location_on,
-                  size: 8.sp,
-                  color: AppColors.iconMuted(context),
-                ),
-                SizedBox(width: 1.wp),
-                Expanded(
-                  child: Text(
-                    trip.destination,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 7.sp,
-                      color: AppColors.textSecondary(context),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: .8.hp),
-
-            // EXPENSES + MEMBERS
-            Text(
-              "${trip.expensesCount} Expenses • ${trip.membersCount} Members",
-              style: TextStyle(
-                fontSize: 7.sp,
-                color: AppColors.textSecondary(context),
-              ),
-            ),
-
-            SizedBox(height: 1.2.hp),
-
-            Divider(color: AppColors.divider(context)),
-
-            SizedBox(height: 1.hp),
-
-            // MY ANALYTICS
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _amountItem(
-                  label: "YOU OWE",
-                  amount: trip.myOwe,
-                  color: Colors.red,
-                  context: context,
-                ),
-
-                _amountItem(
-                  label: "YOU RECEIVE",
-                  amount: trip.myReceive,
-                  color: Colors.green,
-                  context: context,
-                ),
-
-                _amountItem(
-                  label: "MY SHARE",
-                  amount: trip.myShare,
-                  color: AppColors.gradientDarkStart,
-                  context: context,
-                ),
-              ],
-            ),
-
-            SizedBox(height: 1.hp),
-
-            Divider(color: AppColors.divider(context)),
-
-            SizedBox(height: 1.5.hp),
-
-            // BUDGET
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "₹${formatAmount(spent)} SPENT",
-                  style: TextStyle(
-                    fontSize: 7.5.sp,
-                    fontWeight: FontWeight.w600,
-                    color: isOverBudget
-                        ? Colors.red
-                        : AppColors.textPrimary(context),
-                  ),
-                ),
-                Text(
-                  "₹${formatAmount(totalBudget)} BUDGET",
-                  style: TextStyle(
-                    fontSize: 7.5.sp,
-                    color: AppColors.textSecondary(context),
-                  ),
-                ),
-              ],
-            ),
-
-            SizedBox(height: .7.hp),
-
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10.sp),
-              child: LinearProgressIndicator(
-                value: progress,
-                minHeight: .9.hp,
-                backgroundColor: AppColors.divider(context),
-                valueColor: AlwaysStoppedAnimation(
-                  isOverBudget ? Colors.red : AppColors.gradientDarkStart,
-                ),
-              ),
-            ),
-
-            SizedBox(height: .6.hp),
-
-            Text(
-              isOverBudget
-                  ? "Exceeded by ₹${formatAmount(spent - totalBudget)}"
-                  : "₹${formatAmount(totalBudget - spent)} left",
-              style: TextStyle(
-                fontSize: 7.sp,
-                color: isOverBudget ? Colors.red : Colors.green,
-              ),
-            ),
-
-            // DESCRIPTION
-            if ((trip.description ?? "").isNotEmpty) ...[
-              SizedBox(height: 1.5.hp),
-
-              Obx(() {
-                final expanded = controller.isExpanded(index);
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                // BUDGET PROGRESS
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      trip.description!,
-                      maxLines: expanded ? 5 : 2,
-                      overflow: TextOverflow.ellipsis,
+                      "₹${formatAmount(spent)} spent",
                       style: TextStyle(
-                        fontSize: 7.sp,
+                        fontSize: 7.5.sp,
+                        fontWeight: FontWeight.w600,
+                        color: isOverBudget
+                            ? Colors.red
+                            : AppColors.textPrimary(context),
+                      ),
+                    ),
+                    Text(
+                      "₹${formatAmount(totalBudget)} budget",
+                      style: TextStyle(
+                        fontSize: 7.5.sp,
                         color: AppColors.textSecondary(context),
                       ),
                     ),
-
-                    SizedBox(height: .3.hp),
-
-                    GestureDetector(
-                      onTap: () {
-                        HapticHelper.light();
-                        controller.toggleNotes(index);
-                      },
-                      child: Text(
-                        expanded ? "Show less" : "Read more",
-                        style: TextStyle(
-                          fontSize: 7.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.gradientDarkStart,
-                        ),
-                      ),
-                    ),
                   ],
-                );
-              }),
-            ],
-          ],
+                ),
+
+                SizedBox(height: 0.6.hp),
+
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    minHeight: 0.8.hp,
+                    backgroundColor: isDark
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.grey.shade200,
+                    valueColor: AlwaysStoppedAnimation(
+                      isOverBudget ? Colors.red : AppColors.gradientDarkStart,
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: 0.4.hp),
+
+                Text(
+                  isOverBudget
+                      ? "Exceeded by ₹${formatAmount(spent - totalBudget)}"
+                      : "₹${formatAmount(totalBudget - spent)} remaining",
+                  style: TextStyle(
+                    fontSize: 7.sp,
+                    fontWeight: FontWeight.w500,
+                    color: isOverBudget ? Colors.red : Colors.green,
+                  ),
+                ),
+
+                // DESCRIPTION
+                if ((trip.description ?? "").isNotEmpty) ...[
+                  SizedBox(height: 1.2.hp),
+                  Obx(() {
+                    final expanded = controller.isExpanded(index);
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          trip.description!,
+                          maxLines: expanded ? 5 : 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 7.sp,
+                            color: AppColors.textSecondary(context),
+                            height: 1.4,
+                          ),
+                        ),
+                        SizedBox(height: 0.3.hp),
+                        GestureDetector(
+                          onTap: () {
+                            HapticHelper.light();
+                            controller.toggleNotes(index);
+                          },
+                          child: Text(
+                            expanded ? "Show less" : "Read more",
+                            style: TextStyle(
+                              fontSize: 7.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.gradientDarkStart,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _amountItem({
-    required String label,
-    required double amount,
-    required Color color,
-    required BuildContext context,
-  }) {
+  Widget _chipInfo(String text, IconData icon, BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 2.wp, vertical: 0.4.hp),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.06)
+            : Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: AppColors.textSecondary(context)),
+          SizedBox(width: 1.wp),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 7.sp,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textSecondary(context),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _analyticsItem(
+    String label,
+    double amount,
+    Color color,
+    BuildContext context,
+  ) {
     return Column(
       children: [
         Text(
           label,
           style: TextStyle(
             fontSize: 6.5.sp,
+            fontWeight: FontWeight.w600,
             color: AppColors.textSecondary(context),
+            letterSpacing: 0.3,
           ),
         ),
-        SizedBox(height: .2.hp),
+        SizedBox(height: 0.3.hp),
         Text(
-          "₹${amount.toStringAsFixed(0)}",
+          "₹${formatAmount(amount)}",
           style: TextStyle(
-            fontSize: 10.sp,
-            fontWeight: FontWeight.bold,
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w800,
             color: amount > 0 ? color : AppColors.textPrimary(context),
           ),
         ),
       ],
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => DeleteConfirmDialog(
+        title: "Delete Trip",
+        itemName: trip.name,
+        warningText:
+            "This action cannot be undone and will permanently delete this trip and all its data.",
+        onDelete: () => controller.deleteTrip(trip),
+      ),
     );
   }
 }

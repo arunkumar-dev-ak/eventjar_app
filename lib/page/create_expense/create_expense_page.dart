@@ -104,10 +104,6 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
 
                   selectedShade1: (isDark ? Colors.white : Colors.grey)
                       .withValues(alpha: 0.15),
-                  selectedShade2: (isDark ? Colors.white : Colors.grey)
-                      .withValues(alpha: 0.25),
-                  selectedShade3: (isDark ? Colors.white : Colors.grey)
-                      .withValues(alpha: 0.4),
 
                   selectedDisplayColor: AppColors.textPrimary(context),
                 ),

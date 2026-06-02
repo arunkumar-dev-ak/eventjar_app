@@ -1,4 +1,6 @@
 import 'package:eventjar/api/budget_track_api/budget_track_api.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/api/split_track_api/split_track_api.dart';
 import 'package:eventjar/api/view_trip_api/view_trip_api.dart';
 import 'package:eventjar/controller/view_trip/state.dart';
 import 'package:eventjar/global/store/user_store.dart';
@@ -426,6 +428,37 @@ class ViewTripController extends GetxController
   void _loadDataForTab(int index) {
     if (index == 1 && !state.isFriendsLoaded.value) {
       fetchViewFriendData();
+    }
+  }
+
+  // Delete trip
+  bool get isOwner {
+    final trip = state.trip.value;
+    if (trip == null) return false;
+    final loggedUserId = UserStore.to.profile['id'] as String?;
+    return trip.createdById == loggedUserId;
+  }
+
+  Future<void> deleteTrip() async {
+    try {
+      state.isLoading.value = true;
+
+      await SplitTrackApi.deleteTrip(tripId: state.tripId.value);
+
+      AppSnackbar.success(title: "Success", message: "Trip deleted successfully");
+      Get.back(result: "deleted");
+    } catch (err) {
+      LoggerService.loggerInstance.e('Delete trip error: $err');
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to delete Trip",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
+    } finally {
+      state.isLoading.value = false;
     }
   }
 

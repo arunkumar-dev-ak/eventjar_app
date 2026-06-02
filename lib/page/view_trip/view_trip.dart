@@ -2,6 +2,7 @@ import 'package:eventjar/controller/view_trip/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/widget/delete_confirm_dialog.dart';
 import 'package:eventjar/page/view_trip/friends/friend_list.dart';
 import 'package:eventjar/page/view_trip/widget/analytics_view_trip.dart';
 import 'package:eventjar/page/view_trip/expense/expense_list.dart';
@@ -56,7 +57,7 @@ class ViewTripPage extends GetView<ViewTripController> {
               },
               borderRadius: BorderRadius.circular(20),
               child: Container(
-                margin: EdgeInsets.only(right: 3.wp),
+                margin: EdgeInsets.only(right: 2.wp),
                 padding: EdgeInsets.symmetric(
                   horizontal: 3.wp,
                   vertical: 0.6.hp,
@@ -83,6 +84,16 @@ class ViewTripPage extends GetView<ViewTripController> {
                   ],
                 ),
               ),
+            );
+          }),
+          Obx(() {
+            if (!controller.isOwner) return const SizedBox.shrink();
+            return IconButton(
+              icon: const Icon(Icons.delete_outline, color: Colors.white),
+              onPressed: () {
+                HapticHelper.medium();
+                _showDeleteDialog(context);
+              },
             );
           }),
         ],
@@ -127,6 +138,19 @@ class ViewTripPage extends GetView<ViewTripController> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => DeleteConfirmDialog(
+        title: "Delete Trip",
+        itemName: controller.state.trip.value?.name ?? "",
+        warningText:
+            "This action cannot be undone and will permanently delete this trip and all its data.",
+        onDelete: () => controller.deleteTrip(),
       ),
     );
   }

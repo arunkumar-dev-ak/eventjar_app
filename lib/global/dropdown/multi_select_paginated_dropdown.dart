@@ -12,6 +12,9 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
 
   final String Function(T) getDisplayValue;
   final String Function(T) getKeyValue;
+  final String Function(T)? getSubtitleValue;
+  final Widget Function(T)? getLeadingWidget;
+  final Widget Function(T)? getTrailingWidget;
 
   final Function(String) onChanged;
   final VoidCallback onLoadMore;
@@ -21,13 +24,10 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
   final RxBool isLoadMoreLoading;
   final Color? selectedDisplayColor;
 
-  // NEW OPTIONALS
   final String? hintText;
   final Color? themeColor;
   final Color? headerColor;
   final Color? selectedShade1;
-  final Color? selectedShade2;
-  final Color? selectedShade3;
 
   final double? height;
   final double? borderWidth;
@@ -46,14 +46,13 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
     required this.onRefresh,
     required this.isLoading,
     required this.isLoadMoreLoading,
-
-    // optional
+    this.getSubtitleValue,
+    this.getLeadingWidget,
+    this.getTrailingWidget,
     this.hintText,
     this.themeColor,
     this.headerColor,
     this.selectedShade1,
-    this.selectedShade2,
-    this.selectedShade3,
     this.height,
     this.borderWidth,
     this.selectedTextSize,
@@ -70,7 +69,6 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// 🔥 TRIGGER BOX
         GestureDetector(
           onTap: () {
             HapticHelper.light();
@@ -98,8 +96,6 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
               children: [
                 Icon(Icons.group, color: AppColors.textSecondary(context)),
                 const SizedBox(width: 10),
-
-                /// TEXT
                 Expanded(
                   child: Obx(() {
                     final hasValue = selectedItemsMap.isNotEmpty;
@@ -110,9 +106,8 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
                           : (hintText ?? "Select items"),
                       style: TextStyle(
                         fontSize: selectedTextSize ?? 10.sp,
-                        fontWeight: hasValue
-                            ? FontWeight.w600
-                            : FontWeight.w500,
+                        fontWeight:
+                            hasValue ? FontWeight.w600 : FontWeight.w500,
                         color: hasValue
                             ? selectedDisplayColor ?? primary
                             : AppColors.textSecondary(context),
@@ -120,8 +115,6 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
                     );
                   }),
                 ),
-
-                /// ICON
                 Icon(
                   Icons.keyboard_arrow_down_rounded,
                   size: dropDownIconSize ?? 24,
@@ -132,7 +125,7 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
           ),
         ),
 
-        /// 🔥 CHIPS
+        /// CHIPS
         Obx(() {
           if (selectedItemsMap.isEmpty) return const SizedBox();
 
@@ -170,88 +163,217 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
       context: context,
       builder: (_) => Dialog(
         backgroundColor: Colors.transparent,
-        child: Container(
-          height: 60.hp,
-          decoration: BoxDecoration(
-            color: AppColors.cardBg(context),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            children: [
-              /// 🔥 HEADER
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: headerColor,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20),
+        child: Material(
+          color: AppColors.cardBg(context),
+          borderRadius: BorderRadius.circular(20),
+          clipBehavior: Clip.antiAlias,
+          child: SizedBox(
+            height: 60.hp,
+            child: Column(
+              children: [
+                /// HEADER
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: headerColor,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
                   ),
-                ),
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-
-              /// SEARCH
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: TextField(
-                  onChanged: onChanged,
-                  decoration: const InputDecoration(
-                    hintText: "Search...",
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                ),
-              ),
-
-              /// LIST
-              Expanded(
-                child: Obx(() {
-                  if (isLoading.value) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  return ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (_, index) {
-                      final item = items[index];
-                      final key = getKeyValue(item);
-
-                      return Obx(() {
-                        final selected = selectedItemsMap.containsKey(key);
-
-                        return CheckboxListTile(
-                          value: selected,
-                          activeColor: primary,
-                          title: Text(getDisplayValue(item)),
-                          onChanged: (_) {
-                            HapticHelper.selection();
-                            if (selected) {
-                              selectedItemsMap.remove(key);
-                            } else {
-                              selectedItemsMap[key] = item;
-                            }
-                          },
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Obx(() {
+                        if (selectedItemsMap.isEmpty) return const SizedBox();
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.25),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            "${selectedItemsMap.length}",
+                            style: TextStyle(
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
                         );
-                      });
-                    },
-                  );
-                }),
-              ),
+                      }),
+                    ],
+                  ),
+                ),
 
-              /// DONE
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("Done"),
-              ),
-            ],
+                /// SEARCH
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+                  child: TextField(
+                    onChanged: onChanged,
+                    decoration: InputDecoration(
+                      hintText: "Search...",
+                      hintStyle: TextStyle(
+                        color: AppColors.textHint(context),
+                        fontSize: 10.sp,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: AppColors.textHint(context),
+                      ),
+                      filled: true,
+                      fillColor: isDark
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : Colors.grey.shade100,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
+                ),
+
+                /// LIST
+                Expanded(
+                  child: Obx(() {
+                    if (isLoading.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (items.isEmpty) {
+                      return Center(
+                        child: Text(
+                          "No friends found",
+                          style: TextStyle(
+                            color: AppColors.textSecondary(context),
+                            fontSize: 10.sp,
+                          ),
+                        ),
+                      );
+                    }
+
+                    return ListView.separated(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      itemCount: items.length,
+                      separatorBuilder: (_, __) => Divider(
+                        height: 1,
+                        indent: 16,
+                        endIndent: 16,
+                        color: AppColors.border(context).withValues(alpha: 0.3),
+                      ),
+                      itemBuilder: (_, index) {
+                        final item = items[index];
+                        final key = getKeyValue(item);
+
+                        return Obx(() {
+                          final selected = selectedItemsMap.containsKey(key);
+
+                          return ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 2,
+                            ),
+                            leading: getLeadingWidget != null
+                                ? getLeadingWidget!(item)
+                                : null,
+                            title: Text(
+                              getDisplayValue(item),
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary(context),
+                              ),
+                            ),
+                            subtitle: getSubtitleValue != null
+                                ? Text(
+                                    getSubtitleValue!(item),
+                                    style: TextStyle(
+                                      fontSize: 8.5.sp,
+                                      color: AppColors.textSecondary(context),
+                                    ),
+                                  )
+                                : null,
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (getTrailingWidget != null)
+                                  getTrailingWidget!(item),
+                                Checkbox(
+                                  value: selected,
+                                  activeColor: primary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  onChanged: (_) {
+                                    HapticHelper.selection();
+                                    if (selected) {
+                                      selectedItemsMap.remove(key);
+                                    } else {
+                                      selectedItemsMap[key] = item;
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              HapticHelper.selection();
+                              if (selected) {
+                                selectedItemsMap.remove(key);
+                              } else {
+                                selectedItemsMap[key] = item;
+                              }
+                            },
+                          );
+                        });
+                      },
+                    );
+                  }),
+                ),
+
+                /// DONE BUTTON
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        "Done",
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
