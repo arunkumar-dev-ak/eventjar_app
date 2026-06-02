@@ -7,13 +7,14 @@ import 'package:get/get.dart';
 class ViewTripState {
   RxInt selectedTab = 0.obs;
 
-  final Rxn<TripModel> trip = Rxn<TripModel>();
   RxString tripId = ''.obs;
 
   RxList<TripExpenseModel> expenses = <TripExpenseModel>[].obs;
   RxList<TripFriendModel> friends = <TripFriendModel>[].obs;
 
   Rxn<MobileMeta> expenseMeta = Rxn<MobileMeta>();
+
+  Rxn<TripModel> trip = Rxn<TripModel>();
   Rxn<MobileMeta> friendMeta = Rxn<MobileMeta>();
 
   RxBool isLoading = false.obs;
