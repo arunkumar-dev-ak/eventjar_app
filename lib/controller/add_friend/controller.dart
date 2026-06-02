@@ -1,5 +1,15 @@
+import 'dart:async';
+
+import 'package:dio/dio.dart';
+import 'package:eventjar/api/add_friend_api/add_friend_api.dart';
+import 'package:eventjar/api/contact_api/contact_api.dart';
 import 'package:eventjar/controller/add_friend/state.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,6 +20,8 @@ class AddFriendController extends GetxController {
 
   final String appBarTitle = "Add Friend";
 
+  Timer? _debounceTimer;
+
   /// 🔹 Form controllers
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -17,13 +29,12 @@ class AddFriendController extends GetxController {
 
   @override
   void onInit() {
-    /// Default type
+    // Default type
     state.selectedType.value = AddFriendType.contact;
 
-    /// Dummy contacts (for now)
-    _loadDummyContacts();
-
     super.onInit();
+
+    getContactList();
   }
 
   /// ================= CHANGE TYPE =================
@@ -57,105 +68,249 @@ class AddFriendController extends GetxController {
   }
 
   /// ================= SUBMIT =================
-  void submit() {
-    if (!(formKey.currentState?.validate() ?? false)) return;
 
-    state.isLoading.value = true;
+  String _getSource() {
+    if (state.selectedType.value == AddFriendType.contact) {
+      return "contact";
+    }
 
-    final data = {
-      "name": nameController.text.trim(),
-      "email": emailController.text.trim(),
-      "phone": phoneController.text.trim(),
-      "sendEmail": state.sendViaEmail.value,
-      "sendPhone": state.sendViaPhone.value,
-      "type": state.selectedType.value?.name,
-      "contact": state.selectedContact.value,
-    };
+    if (state.sendViaEmail.value && emailController.text.trim().isNotEmpty) {
+      return "email";
+    }
 
-    /// 🔥 Debug output
-    debugPrint("Add Friend Data: $data");
-
-    Future.delayed(const Duration(seconds: 1), () {
-      state.isLoading.value = false;
-
-      Get.snackbar(
-        "Success",
-        "Friend added successfully",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-
-      clearForm();
-    });
+    return "phone";
   }
 
-  /// ================= DUMMY DATA =================
-  void _loadDummyContacts() {
-    // state.contacts.assignAll([
-    //   MobileContact(
-    //     id: "1",
-    //     name: "Rahul Kumar",
-    //     email: "rahul@gmail.com",
-    //     phone: "9876543210",
-    //     stage: ContactStage.followup24h,
-    //     status: "Active",
-    //     nextFollowUpDate: DateTime.now(),
-    //     createdAt: DateTime.now(),
-    //     updatedAt: DateTime.now(),
-    //     meetingScheduled: true,
-    //     isOverdue: true,
-    //     meetingConfirmed: true,
-    //     meetingCompleted: true,
-    //     isEventJarUser: true,
-    //     tags: [],
-    //   ),
-    //   MobileContact(
-    //     id: "2",
-    //     name: "Arun",
-    //     email: "arun@gmail.com",
-    //     phone: "9123456780",
-    //     stage: ContactStage.followup24h,
-    //     status: "Active",
-    //     nextFollowUpDate: DateTime.now(),
-    //     createdAt: DateTime.now(),
-    //     updatedAt: DateTime.now(),
-    //     meetingScheduled: true,
-    //     isOverdue: true,
-    //     meetingConfirmed: true,
-    //     meetingCompleted: true,
-    //     isEventJarUser: true,
-    //     tags: [],
-    //   ),
-    //   MobileContact(
-    //     id: "3",
-    //     name: "Vignesh",
-    //     email: "vignesh@gmail.com",
-    //     phone: "9000000001",
-    //     stage: ContactStage.followup24h,
-    //     status: "Active",
-    //     nextFollowUpDate: DateTime.now(),
-    //     createdAt: DateTime.now(),
-    //     updatedAt: DateTime.now(),
-    //     meetingScheduled: true,
-    //     isOverdue: true,
-    //     meetingConfirmed: true,
-    //     meetingCompleted: true,
-    //     isEventJarUser: true,
-    //     tags: [],
-    //   ),
-    // ]);
+  Future<void> submit() async {
+    if (!(formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    // Contact mode validation
+    if (state.selectedType.value == AddFriendType.contact &&
+        state.selectedContact.value == null) {
+      AppSnackbar.warning(
+        title: "Contact Required",
+        message: "Please select a contact before sending the invitation.",
+      );
+      return;
+    }
+
+    try {
+      state.isLoading.value = true;
+
+      final payload = {
+        "source": _getSource(),
+        "invitedName": nameController.text.trim(),
+        "invitedPhone": phoneController.text.trim(),
+      };
+
+      if (emailController.text.trim().isNotEmpty) {
+        payload["invitedEmail"] = emailController.text.trim();
+      }
+
+      if (state.selectedType.value == AddFriendType.contact &&
+          state.selectedContact.value != null) {
+        payload["contactId"] = state.selectedContact.value!.id;
+      }
+
+      LoggerService.loggerInstance.dynamic_d(payload);
+
+      // await AddFriendApi.addFriend(data: payload);
+
+      clearForm();
+
+      AppSnackbar.success(title: 'Added', message: 'Friend Added Successfully');
+
+      Navigator.pop(Get.context!, "refresh");
+    } catch (err) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to send invitation",
+        onUnauthorized: () {
+          navigateToSignInPage();
+        },
+      );
+    } finally {
+      state.isLoading.value = false;
+    }
   }
 
   /// ================= DROPDOWN EVENTS =================
+  void navigateToSignInPage() {
+    Get.toNamed(RouteName.signInPage);
+  }
+
+  void getContactList() {
+    state.isContactDropdownLoading.value = true;
+
+    try {
+      // Your qualified contact API endpoint
+      final endPoint = '/mobile/contacts?limit=25&page=1';
+
+      ContactApi.getEventList(endPoint)
+          .then((MobileContactResponse response) {
+            state.contacts.value = response.data.contacts;
+            state.meta.value = response.data.pagination;
+          })
+          .onError((error, stackTrace) {
+            if (error is DioException) {
+              final statusCode = error.response?.statusCode;
+              if (statusCode == 401) {
+                UserStore.to.clearStore();
+                Get.offAllNamed('/sign-in');
+                return;
+              }
+              ApiErrorHandler.handleDioError(
+                error,
+                'Failed to load Qualified Contacts',
+              );
+            } else {
+              AppSnackbar.error(
+                title: 'Error',
+                message: 'Failed to load contacts',
+              );
+            }
+          })
+          .whenComplete(() {
+            state.isContactDropdownLoading.value = false;
+          });
+    } catch (e) {
+      LoggerService.loggerInstance.e(e);
+      state.isContactDropdownLoading.value = false;
+      AppSnackbar.error(title: 'Error', message: 'Failed to load contacts');
+    }
+  }
+
   void onSearchChanged(String? val) {
-    /// hook API later
+    if (state.isContactDropdownLoading.value) return;
+
+    final String query = val?.trim() ?? '';
+
+    // Cancel previous debounce
+    if (_debounceTimer?.isActive ?? false) {
+      _debounceTimer?.cancel();
+    }
+
+    // Show loading state
+    state.isContactDropdownLoading.value = true;
+
+    _debounceTimer = Timer(const Duration(milliseconds: 800), () {
+      try {
+        // Build endpoint with search=param
+        final String endpoint =
+            '/mobile/contacts?limit=25&page=1&stage=qualified&search=${Uri.encodeComponent(query)}';
+
+        ContactApi.getEventList(endpoint)
+            .then((MobileContactResponse response) {
+              state.contacts.value = response.data.contacts;
+              state.meta.value = response.data.pagination;
+            })
+            .onError((error, stackTrace) {
+              if (error is DioException) {
+                final statusCode = error.response?.statusCode;
+                if (statusCode == 401) {
+                  UserStore.to.clearStore();
+                  Get.offAllNamed('/sign-in');
+                  return;
+                }
+                ApiErrorHandler.handleDioError(error, 'Search failed');
+              } else {
+                AppSnackbar.error(
+                  title: 'Search Error',
+                  message: 'Failed to search',
+                );
+              }
+            })
+            .whenComplete(() {
+              state.isContactDropdownLoading.value = false;
+            });
+      } catch (e) {
+        LoggerService.loggerInstance.e(e);
+        state.isContactDropdownLoading.value = false;
+        AppSnackbar.error(title: 'Error', message: 'Search failed');
+      }
+    });
   }
 
   void onLoadMoreClicked() {
-    /// pagination later
+    if (state.isContactDropdownLoadMoreLoading.value) return;
+
+    final currentMeta = state.meta.value;
+    if (currentMeta == null) return;
+    if (!currentMeta.hasNext) return;
+
+    state.isContactDropdownLoadMoreLoading.value = true;
+
+    try {
+      final int nextPage = currentMeta.page + 1;
+      final String endpoint = '/mobile/contacts?limit=25&page=$nextPage';
+
+      ContactApi.getEventList(endpoint)
+          .then((MobileContactResponse response) {
+            state.contacts.addAll(response.data.contacts);
+            state.meta.value = response.data.pagination;
+          })
+          .onError((error, stackTrace) {
+            if (error is DioException) {
+              final statusCode = error.response?.statusCode;
+              if (statusCode == 401) {
+                UserStore.to.clearStore();
+                Get.offAllNamed('/sign-in');
+                return;
+              }
+              ApiErrorHandler.handleDioError(error, 'Load more failed');
+            } else {
+              AppSnackbar.error(title: 'Error', message: 'Failed to load more');
+            }
+          })
+          .whenComplete(() {
+            state.isContactDropdownLoadMoreLoading.value = false;
+          });
+    } catch (e) {
+      LoggerService.loggerInstance.e(e);
+      state.isContactDropdownLoadMoreLoading.value = false;
+      AppSnackbar.error(title: 'Error', message: 'Failed to load more');
+    }
   }
 
   void onRefreshClicked() {
-    /// refresh later
+    state.isContactDropdownLoading.value = true;
+    state.isContactDropdownLoadMoreLoading.value = false;
+
+    try {
+      final String endpoint =
+          '/mobile/contacts?limit=25&page=1&stage=qualified';
+
+      ContactApi.getEventList(endpoint)
+          .then((MobileContactResponse response) {
+            state.contacts.value = response.data.contacts;
+            state.meta.value = response.data.pagination;
+          })
+          .onError((error, stackTrace) {
+            if (error is DioException) {
+              final statusCode = error.response?.statusCode;
+              if (statusCode == 401) {
+                UserStore.to.clearStore();
+                Get.offAllNamed('/sign-in');
+                return;
+              }
+              ApiErrorHandler.handleDioError(error, 'Refresh failed');
+            } else {
+              AppSnackbar.error(
+                title: 'Refresh Error',
+                message: 'Failed to refresh',
+              );
+            }
+          })
+          .whenComplete(() {
+            state.isContactDropdownLoading.value = false;
+          });
+    } catch (e) {
+      LoggerService.loggerInstance.e(e);
+      state.isContactDropdownLoading.value = false;
+      AppSnackbar.error(title: 'Error', message: 'Failed to refresh');
+    }
   }
 
   @override

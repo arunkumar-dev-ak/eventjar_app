@@ -109,16 +109,14 @@ class AddFriendPage extends GetView<AddFriendController> {
                     children: [
                       // CLEAR
                       Expanded(
-                        child: Obx(() {
-                          final isLoading = controller.state.isLoading.value;
-
-                          return FormButton(
-                            text: "Clear",
-                            isLoading: isLoading,
-                            type: FormButtonType.outline,
-                            onPressed: () {},
-                          );
-                        }),
+                        child: FormButton(
+                          text: "Clear",
+                          isLoading: false,
+                          type: FormButtonType.outline,
+                          onPressed: () {
+                            controller.clearForm();
+                          },
+                        ),
                       ),
 
                       SizedBox(width: 3.wp),
@@ -139,7 +137,7 @@ class AddFriendPage extends GetView<AddFriendController> {
                               if (controller.formKey.currentState?.validate() ??
                                   false) {
                                 Get.focusScope?.unfocus();
-                                // controller.submitForm(context);
+                                controller.submit();
                               }
                             },
                           );

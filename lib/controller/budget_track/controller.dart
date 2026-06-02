@@ -77,6 +77,7 @@ class BudgetTrackController extends GetxController
   }
 
   Future<void> fetchTrips() async {
+    LoggerService.loggerInstance.dynamic_d("In fertchTrips");
     try {
       state.isLoading.value = true;
 

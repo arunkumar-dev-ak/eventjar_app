@@ -2,8 +2,9 @@ import 'package:eventjar/controller/view_trip/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/model/budget_track/expense_model.dart';
+import 'package:eventjar/model/view_trip/trip_expense_model.dart';
 import 'package:eventjar/page/view_trip/expense/expense_detail_page.dart';
+import 'package:eventjar/global/store/user_store.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,59 +13,41 @@ class ExpenseList extends GetView<ViewTripController> {
 
   @override
   Widget build(BuildContext context) {
-    // return Obx(() {
-    //   final expenses = controller.state.expense;
-    //   final sortedExpenses = [...expenses]
-    //     ..sort((a, b) => b.date.compareTo(a.date));
-    //   return ListView.builder(
-    //     shrinkWrap: true,
-    //     physics: const NeverScrollableScrollPhysics(),
-    //     itemCount: sortedExpenses.length,
-    //     itemBuilder: (context, index) {
-    //       final current = sortedExpenses[index];
-    //       final showHeader =
-    //           index == 0 ||
-    //           !_isSameDay(current.date, sortedExpenses[index - 1].date);
+    return Obx(() {
+      final expenses = controller.state.expenses;
+      final haveNextPage = controller.hasExpenseMore;
 
-    //       return Column(
-    //         crossAxisAlignment: CrossAxisAlignment.start,
-    //         children: [
-    //           if (showHeader)
-    //             Padding(
-    //               padding: EdgeInsets.only(top: 1.5.hp, bottom: 0.5.hp),
-    //               child: Center(
-    //                 child: Container(
-    //                   padding: EdgeInsets.symmetric(
-    //                     horizontal: 3.wp,
-    //                     vertical: 0.5.hp,
-    //                   ),
-    //                   decoration: BoxDecoration(
-    //                     color: AppColors.budgetTabColor,
-    //                     borderRadius: BorderRadius.circular(12),
-    //                   ),
-    //                   child: Text(
-    //                     _getLabel(current.date),
-    //                     style: TextStyle(
-    //                       color: AppColors.textSecondary(context),
-    //                       fontWeight: FontWeight.w600,
-    //                       fontSize: 8.sp,
-    //                     ),
-    //                   ),
-    //                 ),
-    //               ),
-    //             ),
-    //           _expenseItem(context, current, index),
-    //         ],
-    //       );
-    //     },
-    //   );
-    // });
+      return ListView.separated(
+        controller: controller.expenseScrollController,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: haveNextPage ? expenses.length + 1 : expenses.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          if (index >= expenses.length) {
+            return Obx(
+              () => controller.state.isPaginationLoading.value
+                  ? const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : const SizedBox.shrink(),
+            );
+          }
 
-    return Text("hi");
+          final current = expenses[index];
+          return _expenseItem(context, current, index);
+        },
+      );
+    });
   }
 
-  Widget _expenseItem(BuildContext context, ExpenseModel e, int index) {
-    final isYou = e.paidBy == "You";
+  // ---------------- ITEM ----------------
+
+  Widget _expenseItem(BuildContext context, TripExpenseModel e, int index) {
+    final currentUserId = UserStore.to.profile['id'];
+
+    final isYou = e.paidById == currentUserId;
 
     final card = Align(
       alignment: isYou ? Alignment.centerRight : Alignment.centerLeft,
@@ -101,7 +84,7 @@ class ExpenseList extends GetView<ViewTripController> {
     if (!isYou) return card;
 
     return Dismissible(
-      key: ValueKey('${e.title}_${e.date.millisecondsSinceEpoch}'),
+      key: ValueKey(e.id),
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
@@ -111,7 +94,7 @@ class ExpenseList extends GetView<ViewTripController> {
           color: Colors.red.shade400,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Icon(Icons.delete_outline, color: Colors.white, size: 24),
+        child: const Icon(Icons.delete_outline, color: Colors.white),
       ),
       confirmDismiss: (_) async {
         HapticHelper.medium();
@@ -129,9 +112,12 @@ class ExpenseList extends GetView<ViewTripController> {
     );
   }
 
-  Widget _cardContent(BuildContext context, ExpenseModel e, bool isYou) {
-    final splitCount = e.yourShare > 0 ? (e.amount / e.yourShare).round() : 1;
-    final paidCount = 1;
+  // ---------------- CARD ----------------
+
+  Widget _cardContent(BuildContext context, TripExpenseModel e, bool isYou) {
+    final splitCount = e.count?.participants ?? e.participants.length;
+
+    final myParticipant = _myParticipant(e);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,14 +125,19 @@ class ExpenseList extends GetView<ViewTripController> {
         Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: e.color.withValues(alpha: 0.15),
+                color: Colors.blueAccent,
                 shape: BoxShape.circle,
               ),
-              child: Icon(e.icon, color: e.color, size: 16),
+              child: Icon(
+                Icons.receipt_long_rounded,
+                color: Colors.white,
+                size: 16,
+              ),
             ),
             SizedBox(width: 2.5.wp),
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,52 +164,43 @@ class ExpenseList extends GetView<ViewTripController> {
                 ],
               ),
             ),
-            ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 30.wp),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  if (!isYou) ...[
-                    Text(
-                      "Paid by",
-                      style: TextStyle(
-                        fontSize: 7.sp,
-                        color: AppColors.textSecondary(context),
-                      ),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (!isYou)
+                  Text(
+                    "Paid by",
+                    style: TextStyle(
+                      fontSize: 7.sp,
+                      color: AppColors.textSecondary(context),
                     ),
-                    Text(
-                      e.paidBy,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 9.sp,
-                        color: Colors.orange.shade700,
-                      ),
+                  ),
+                if (!isYou)
+                  Text(
+                    _paidByName(e),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 9.sp,
+                      color: Colors.orange.shade700,
                     ),
-                  ],
-                ],
-              ),
+                  ),
+              ],
             ),
           ],
         ),
+
         SizedBox(height: 1.hp),
+
         Row(
           children: [
             if (isYou) ...[
               Icon(Icons.check_circle, size: 14, color: Colors.green),
               SizedBox(width: 1.wp),
               Text(
-                "Paid",
-                style: TextStyle(
-                  fontSize: 8.5.sp,
-                  color: Colors.green.shade700,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(width: 1.wp),
-              Text(
-                "₹${e.yourShare.toStringAsFixed(0)}",
+                "Paid ₹${e.amount.toStringAsFixed(0)}",
                 style: TextStyle(
                   fontSize: 8.5.sp,
                   color: Colors.green.shade700,
@@ -227,37 +209,18 @@ class ExpenseList extends GetView<ViewTripController> {
               ),
               SizedBox(width: 1.5.wp),
               Text(
-                "-",
-                style: TextStyle(
-                  fontSize: 8.5.sp,
-                  color: AppColors.textSecondary(context),
-                ),
-              ),
-              SizedBox(width: 1.5.wp),
-              Text(
-                "$paidCount/$splitCount",
+                "- $splitCount members",
                 style: TextStyle(
                   fontSize: 7.5.sp,
-                  fontWeight: FontWeight.w600,
                   color: AppColors.textSecondary(context),
                 ),
               ),
-            ],
-            if (!isYou) ...[
-              if (e.isYourSharePaid) ...[
+            ] else ...[
+              if (myParticipant?.isPaid == true) ...[
                 Icon(Icons.check_circle, size: 14, color: Colors.green),
                 SizedBox(width: 1.wp),
                 Text(
-                  "Paid",
-                  style: TextStyle(
-                    fontSize: 8.5.sp,
-                    color: Colors.green.shade700,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(width: 1.wp),
-                Text(
-                  "₹${e.yourShare.toStringAsFixed(0)}",
+                  "Paid ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
                   style: TextStyle(
                     fontSize: 8.5.sp,
                     color: Colors.green.shade700,
@@ -266,26 +229,35 @@ class ExpenseList extends GetView<ViewTripController> {
                 ),
               ] else ...[
                 Text(
-                  "Your share",
+                  "Your share ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
                   style: TextStyle(
-                    fontSize: 8.5.sp,
-                    color: AppColors.textSecondary(context),
-                  ),
-                ),
-                SizedBox(width: 1.wp),
-                Text(
-                  "₹${e.yourShare.toStringAsFixed(0)}",
-                  style: TextStyle(
-                    fontSize: 9.5.sp,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 9.sp,
+                    fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary(context),
                   ),
                 ),
               ],
             ],
+
             const Spacer(),
-            _stackedAvatars(context, e.members, splitCount),
+
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 2.5.wp,
+                vertical: 0.5.hp,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.chipBg(context),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                "$splitCount Members",
+                style: TextStyle(fontSize: 7.5.sp, fontWeight: FontWeight.w600),
+              ),
+            ),
+
             SizedBox(width: 1.wp),
+
             Icon(
               Icons.chevron_right_rounded,
               size: 16,
@@ -297,103 +269,20 @@ class ExpenseList extends GetView<ViewTripController> {
     );
   }
 
-  Widget _stackedAvatars(
-    BuildContext context,
-    List<String> members,
-    int count,
-  ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final colors = [
-      Colors.blue.shade300,
-      Colors.green.shade300,
-      Colors.orange.shade300,
-      Colors.purple.shade300,
-      Colors.teal.shade300,
-      Colors.red.shade300,
-    ];
-    final maxShow = 6;
-    final showCount = count > maxShow ? maxShow : count;
-    final remaining = count - maxShow;
-    final totalCircles = showCount + (remaining > 0 ? 1 : 0);
-    return SizedBox(
-      width: 20.0 + (totalCircles - 1) * 10.0,
-      height: 20,
-      child: Stack(
-        children: [
-          ...List.generate(showCount, (i) {
-            final initial = i < members.length
-                ? members[i][0].toUpperCase()
-                : "?";
-            return Positioned(
-              left: i * 10.0,
-              child: Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: colors[i % colors.length],
-                  border: Border.all(
-                    color: isDark ? AppColors.darkCardElevated : Colors.white,
-                    width: 1.5,
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    initial,
-                    style: const TextStyle(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }),
-          if (remaining > 0)
-            Positioned(
-              left: showCount * 10.0,
-              child: Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isDark
-                      ? AppColors.darkCardElevated
-                      : Colors.grey.shade300,
-                  border: Border.all(
-                    color: isDark ? AppColors.darkCardElevated : Colors.white,
-                    width: 1.5,
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    "+$remaining",
-                    style: TextStyle(
-                      fontSize: 7,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white70 : Colors.grey.shade700,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
+  // ---------------- HELPERS ----------------
+
+  String _paidByName(TripExpenseModel e) {
+    return e.paidBy?.name ?? e.paidByFriend?.invitedName ?? 'Unknown';
   }
 
-  String _getLabel(DateTime date) {
-    final now = DateTime.now();
-    if (_isSameDay(date, now)) return "TODAY";
-    if (_isSameDay(date, now.subtract(const Duration(days: 1)))) {
-      return "YESTERDAY";
+  TripExpenseParticipant? _myParticipant(TripExpenseModel e) {
+    final userId = UserStore.to.profile['id'];
+
+    try {
+      return e.participants.firstWhere((p) => p.userId == userId);
+    } catch (_) {
+      return null;
     }
-    return "${date.day}/${date.month}/${date.year}";
-  }
-
-  bool _isSameDay(DateTime a, DateTime b) {
-    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }
 
