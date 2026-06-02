@@ -145,22 +145,14 @@ class CheckoutController extends GetxController {
 
       state.badgeValidationResponse.value = response;
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Badge Validation Failed",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Badge Validation Failed");
-      } else {
-        AppSnackbar.error(
-          title: "Badge Validation Failed",
-          message: "Something went wrong",
-        );
-      }
+        },
+      );
     } finally {
       state.isCheckingBadge.value = false;
     }
@@ -412,7 +404,7 @@ class CheckoutController extends GetxController {
         navigateToSignInPage();
         return;
       }
-      ApiErrorHandler.handleError(err, "Registration Failed");
+      ApiErrorHandler.handleDioError(err, "Registration Failed");
     } else {
       AppSnackbar.error(title: "Error", message: "Something went wrong");
     }
@@ -540,21 +532,14 @@ class CheckoutController extends GetxController {
       state.eligibilityResponse.value = response;
     } catch (err) {
       state.isCheckingEligibility.value = false;
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Ticket Eligibility Failed",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return; // Stop further error handling
-        }
-        ApiErrorHandler.handleError(err, "Ticket Eligibity Failed");
-      } else {
-        AppSnackbar.error(
-          title: "Ticket Eligibity Failed",
-          message: "Something went wrong",
-        );
-      }
+        },
+      );
     } finally {
       state.isCheckingEligibility.value = false;
     }

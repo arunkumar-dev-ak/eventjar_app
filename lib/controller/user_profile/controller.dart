@@ -138,10 +138,7 @@ class UserProfileController extends GetxController
     await refreshPermissions();
   }
 
-  void _showSettingsDialog({
-    required String title,
-    required String message,
-  }) {
+  void _showSettingsDialog({required String title, required String message}) {
     final context = Get.context;
     if (context == null) return;
 
@@ -261,24 +258,14 @@ class UserProfileController extends GetxController
       state.deleteAccountResponse.value = response;
     } catch (err) {
       LoggerService.loggerInstance.e(err);
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to fetch user status",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to fetch user status");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.toString()})",
-        );
-      }
+        },
+      );
     }
   }
 
@@ -310,24 +297,14 @@ class UserProfileController extends GetxController
       checkAndUpdateLocalProfileInfo();
     } catch (err) {
       LoggerService.loggerInstance.e(err);
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
-          await UserStore.to.clearStore();
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to Load User Profile",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
           navigateToSignInPage();
-          return; // Stop further error handling
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to load User Profile");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.toString()})",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }
@@ -388,27 +365,14 @@ class UserProfileController extends GetxController
         }
       }
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to ${isReactivate ? "reactivte" : "deactivate"} account",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(
-          err,
-          "Failed to ${isReactivate ? "reactivte" : "deactivate"} account",
-        );
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.toString()})",
-        );
-      }
+        },
+      );
     } finally {
       state.isDeleteLoading.value = false;
     }
@@ -450,8 +414,10 @@ class UserProfileController extends GetxController
               ),
               ListTile(
                 leading: Icon(Icons.collections, color: Colors.blue),
-                title: Text('Choose from Gallery',
-                    style: TextStyle(color: textColor)),
+                title: Text(
+                  'Choose from Gallery',
+                  style: TextStyle(color: textColor),
+                ),
                 onTap: () {
                   Get.back();
                   _pickImage(ImageSource.gallery);
@@ -896,7 +862,7 @@ class UserProfileController extends GetxController
       return true;
     } catch (err) {
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Failed to send OTP");
+        ApiErrorHandler.handleDioError(err, "Failed to send OTP");
       } else {
         AppSnackbar.error(title: "Error", message: err.toString());
       }
@@ -964,7 +930,10 @@ class UserProfileController extends GetxController
       return true;
     } catch (err) {
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Failed to send verification email");
+        ApiErrorHandler.handleDioError(
+          err,
+          "Failed to send verification email",
+        );
       } else {
         AppSnackbar.error(
           title: "Error",
@@ -1047,7 +1016,7 @@ class UserProfileController extends GetxController
       }
     } catch (err) {
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Error");
+        ApiErrorHandler.handleDioError(err, "Error");
       } else {
         AppSnackbar.error(title: "Error", message: "Something went wrong");
       }

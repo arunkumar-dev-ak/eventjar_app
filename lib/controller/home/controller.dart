@@ -173,7 +173,7 @@ class HomeController extends GetxController {
       }
 
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Failed to load data");
+        ApiErrorHandler.handleDioError(err, "Failed to load data");
       }
     } finally {
       state.isLoading.value = false;
@@ -459,7 +459,7 @@ class HomeController extends GetxController {
       return true;
     } catch (err) {
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Failed to send OTP");
+        ApiErrorHandler.handleDioError(err, "Failed to send OTP");
       } else {
         AppSnackbar.error(title: "Error", message: err.toString());
       }
@@ -527,7 +527,10 @@ class HomeController extends GetxController {
       return true;
     } catch (err) {
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Failed to send verification email");
+        ApiErrorHandler.handleDioError(
+          err,
+          "Failed to send verification email",
+        );
       } else {
         AppSnackbar.error(
           title: "Error",

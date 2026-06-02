@@ -106,7 +106,7 @@ class SignInController extends GetxController {
       state.isLoading.value = false;
       LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Login Error");
+        ApiErrorHandler.handleDioError(err, "Login Error");
       } else {
         AppSnackbar.error(
           title: "Login Error",
@@ -159,7 +159,7 @@ class SignInController extends GetxController {
       state.is2FaLoading.value = false;
       LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "2FA Error");
+        ApiErrorHandler.handleDioError(err, "2FA Error");
       } else {
         AppSnackbar.error(title: "2FA Error", message: "Something went wrong");
       }
@@ -182,7 +182,7 @@ class SignInController extends GetxController {
     } catch (err) {
       LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Authentication Failed");
+        ApiErrorHandler.handleDioError(err, "Authentication Failed");
       } else {
         AppSnackbar.error(
           title: "Authentication Failed",

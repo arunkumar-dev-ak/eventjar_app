@@ -1,4 +1,10 @@
+import 'package:dio/dio.dart';
+import 'package:eventjar/api/budget_track_api/budget_track_api.dart';
+import 'package:eventjar/api/view_trip_api/view_trip_api.dart';
 import 'package:eventjar/controller/view_trip/state.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/budget_track/expense_model.dart';
 import 'package:eventjar/model/budget_track/friend_model.dart';
@@ -16,20 +22,166 @@ class ViewTripController extends GetxController
   late AnimationController animation;
   late PageController pageController;
 
+  static const _limit = 10;
+
   @override
   void onInit() {
     super.onInit();
+
     animation = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 10),
     )..repeat();
-    pageController = PageController(initialPage: state.selectedTab.value);
-    state.trip.value = Get.arguments as TripModel;
-    // state.friends.value = dummyTripFriends[state.trip.value.title] ?? [];
-    // LoggerService.loggerInstance.dynamic_d(state.friends.value);
-    // state.expense.value = dummyTripExpenses[state.trip.value.title] ?? [];
 
-    // appBarTitle = state.trip.value.title;
+    pageController = PageController(initialPage: state.selectedTab.value);
+
+    final args = Get.arguments;
+
+    if (args is TripModel) {
+      state.trip.value = args;
+      state.tripId.value = args.id;
+    }
+
+    fetchTripAnalytics();
+    fetchTripExpenses();
+  }
+
+  //pagination helpers
+  int _getLimit() {
+    return _limit;
+  }
+
+  int _getExpenseNextOffset() {
+    return state.expenses.length;
+  }
+
+  bool get hasExpenseMore {
+    final meta = state.meta.value;
+
+    if (meta == null) {
+      return true;
+    }
+
+    return meta.paging.pages.next != null;
+  }
+
+  Map<String, dynamic> getExpenseQueryParams({bool onRefresh = false}) {
+    return {
+      'tripId': state.tripId.value,
+      'offset': onRefresh ? 0 : _getExpenseNextOffset(),
+      'limit': _getLimit(),
+    };
+  }
+
+  //trip analytics
+  Future<void> fetchTripAnalytics() async {
+    try {
+      final response = await BudgetTrackApi.getTrips(
+        queryParams: {'tripId': state.tripId.value, 'limit': 1},
+      );
+
+      if (response.data.isNotEmpty) {
+        state.trip.value = response.data.first;
+      }
+    } catch (err) {
+      LoggerService.loggerInstance.e('Trip Loads onScroll error: $err');
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to Get Trip Analytics",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
+    }
+  }
+
+  /*-----Trip Expense -----*/
+  Future<void> fetchTripExpenses() async {
+    try {
+      state.isLoading.value = true;
+
+      final response = await ViewTripApi.getTripExpenses(
+        queryParams: {
+          'tripId': state.tripId.value,
+          'offset': 0,
+          'limit': _limit,
+        },
+      );
+
+      state.expenses.value = response.data;
+      state.meta.value = response.meta;
+    } catch (err) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load Expenses",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
+    } finally {
+      state.isLoading.value = false;
+    }
+  }
+
+  Future<void> refreshTripExpenses() async {
+    if (state.isPaginationLoading.value) {
+      return;
+    }
+
+    try {
+      await fetchTripAnalytics();
+
+      final response = await ViewTripApi.getTripExpenses(
+        queryParams: getExpenseQueryParams(onRefresh: true),
+      );
+
+      state.expenses.value = response.data;
+      state.meta.value = response.meta;
+    } catch (err) {
+      LoggerService.loggerInstance.e('Expense refresh error: $err');
+
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to Refresh Expense",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
+    }
+  }
+
+  Future<void> fetchTripExpensesOnScroll() async {
+    if (state.isPaginationLoading.value || !hasExpenseMore) {
+      return;
+    }
+
+    try {
+      state.isPaginationLoading.value = true;
+
+      final response = await ViewTripApi.getTripExpenses(
+        queryParams: getExpenseQueryParams(),
+      );
+
+      state.expenses.addAll(response.data);
+
+      state.meta.value = response.meta;
+    } catch (err) {
+      LoggerService.loggerInstance.e('Expense onScroll error: $err');
+
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load more expense",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
+    } finally {
+      state.isPaginationLoading.value = false;
+    }
   }
 
   void toggleToOpen(int index) {
@@ -59,29 +211,29 @@ class ViewTripController extends GetxController
 
   double get yourSpent {
     double total = 0;
-    for (final e in state.expense) {
-      total += e.yourShare;
-    }
+    // for (final e in state.expense) {
+    //   total += e.yourShare;
+    // }
     return total;
   }
 
   Map<String, double> get _perPersonBalances {
     final Map<String, double> balances = {};
-    for (final e in state.expense) {
-      final isYou = e.paidBy == "You";
-      final splitCount = e.members.isNotEmpty
-          ? e.members.length
-          : (e.yourShare > 0 ? (e.amount / e.yourShare).round() : 1);
-      final perPerson = e.amount / splitCount;
-      if (isYou) {
-        for (final m in e.members) {
-          if (m == "You") continue;
-          balances[m] = (balances[m] ?? 0) + perPerson;
-        }
-      } else {
-        balances[e.paidBy] = (balances[e.paidBy] ?? 0) - perPerson;
-      }
-    }
+    // for (final e in state.expense) {
+    //   final isYou = e.paidBy == "You";
+    //   final splitCount = e.members.isNotEmpty
+    //       ? e.members.length
+    //       : (e.yourShare > 0 ? (e.amount / e.yourShare).round() : 1);
+    //   final perPerson = e.amount / splitCount;
+    //   if (isYou) {
+    //     for (final m in e.members) {
+    //       if (m == "You") continue;
+    //       balances[m] = (balances[m] ?? 0) + perPerson;
+    //     }
+    //   } else {
+    //     balances[e.paidBy] = (balances[e.paidBy] ?? 0) - perPerson;
+    //   }
+    // }
     return balances;
   }
 
@@ -102,11 +254,11 @@ class ViewTripController extends GetxController
   }
 
   void deleteExpense(int index) {
-    final sortedExpenses = [...state.expense]
-      ..sort((a, b) => b.date.compareTo(a.date));
-    if (index < 0 || index >= sortedExpenses.length) return;
-    final expense = sortedExpenses[index];
-    state.expense.remove(expense);
+    // final sortedExpenses = [...state.expense]
+    //   ..sort((a, b) => b.date.compareTo(a.date));
+    // if (index < 0 || index >= sortedExpenses.length) return;
+    // final expense = sortedExpenses[index];
+    // state.expense.remove(expense);
   }
 
   void changeTab(int index) {
@@ -133,6 +285,16 @@ class ViewTripController extends GetxController
   }
 
   //navigation
+  void navigateToSignInPage() {
+    Get.toNamed(RouteName.signInPage)?.then((result) async {
+      if (result == "logged_in") {
+        await fetchTripExpenses();
+      } else {
+        Get.back();
+      }
+    });
+  }
+
   void navigateToAddFriend() {
     Get.toNamed(RouteName.addFriendPage)?.then((result) async {
       // if (result == "logged_in") {

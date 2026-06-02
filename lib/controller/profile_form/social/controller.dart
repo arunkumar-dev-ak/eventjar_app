@@ -131,7 +131,7 @@ class SocialFormController extends GetxController {
           Get.toNamed(RouteName.signInPage);
           return;
         }
-        ApiErrorHandler.handleError(err, "Failed to update social links");
+        ApiErrorHandler.handleDioError(err, "Failed to update social links");
       } else {
         AppSnackbar.error(
           title: "Failed",

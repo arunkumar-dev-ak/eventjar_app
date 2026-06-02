@@ -86,7 +86,7 @@ class SignUpController extends GetxController {
     } catch (err) {
       state.isLoading.value = false;
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Sign Up Error");
+        ApiErrorHandler.handleDioError(err, "Sign Up Error");
       } else {
         AppSnackbar.error(
           title: "Sign Up Error",
@@ -141,7 +141,7 @@ class SignUpController extends GetxController {
             message: "This invitation has expired",
           );
         } else {
-          ApiErrorHandler.handleError(err, "Invite Error");
+          ApiErrorHandler.handleDioError(err, "Invite Error");
         }
       }
     } finally {
@@ -162,7 +162,7 @@ class SignUpController extends GetxController {
     } catch (err) {
       LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Authentication Failed");
+        ApiErrorHandler.handleDioError(err, "Authentication Failed");
       } else {
         AppSnackbar.error(
           title: "Authentication Failed",

@@ -229,7 +229,7 @@ class EmailNotificationController extends GetxController {
         return;
       }
 
-      ApiErrorHandler.handleError(err, message);
+      ApiErrorHandler.handleDioError(err, message);
     } else if (err is Exception) {
       AppSnackbar.error(title: "Exception", message: err.toString());
     } else {

@@ -87,24 +87,14 @@ class BudgetTrackController extends GetxController
       state.trips.value = response.data;
       state.meta.value = response.meta;
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load trips",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to load Trips");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.runtimeType})",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }
@@ -123,24 +113,14 @@ class BudgetTrackController extends GetxController
       state.meta.value = response.meta;
     } catch (err) {
       LoggerService.loggerInstance.e('Trip refresh error: $err');
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load trips",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to load Trips");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.runtimeType})",
-        );
-      }
+        },
+      );
     }
   }
 
@@ -156,24 +136,14 @@ class BudgetTrackController extends GetxController
       state.meta.value = response.meta;
     } catch (err) {
       LoggerService.loggerInstance.e('Trip Loads onScroll error: $err');
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load Trips",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to load Trips");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.runtimeType})",
-        );
-      }
+        },
+      );
     } finally {
       state.isPaginationLoading.value = false;
     }

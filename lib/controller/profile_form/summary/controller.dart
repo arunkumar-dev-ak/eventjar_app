@@ -166,7 +166,7 @@ class SummaryFormController extends GetxController {
           Get.toNamed(RouteName.signInPage);
           return;
         }
-        ApiErrorHandler.handleError(err, "Failed to update summary");
+        ApiErrorHandler.handleDioError(err, "Failed to update summary");
       } else {
         AppSnackbar.error(
           title: "Failed",

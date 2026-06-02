@@ -1,30 +1,56 @@
+import 'dart:ui';
+
 import 'package:dio/dio.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/logger_service.dart';
 
 class ApiErrorHandler {
-  static void handleError(DioException err, String? title) {
-    LoggerService.loggerInstance.e("Error: ${err.runtimeType}, ${err.type}");
+  static void handle({
+    required dynamic error,
+    String title = "Error",
+    VoidCallback? onUnauthorized,
+  }) {
+    LoggerService.loggerInstance.e(error);
 
+    if (error is DioException) {
+      final statusCode = error.response?.statusCode;
+
+      // 401
+      if (statusCode == 401) {
+        onUnauthorized?.call();
+        return;
+      }
+
+      handleDioError(error, title);
+      return;
+    }
+
+    if (error is Exception) {
+      AppSnackbar.error(title: title, message: error.toString());
+      return;
+    }
+
+    AppSnackbar.error(
+      title: title,
+      message: "Something went wrong (${error.runtimeType})",
+    );
+  }
+
+  static void handleDioError(DioException err, String? title) {
     String errorMessage;
 
-    // ✅ 1. NETWORK ERRORS - Use predefined messages (NO title needed)
     if (err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.connectionError ||
         err.type == DioExceptionType.sendTimeout ||
         err.type == DioExceptionType.receiveTimeout ||
         err.message?.contains('No Internet') == true) {
       errorMessage = "No Internet Connection";
-    }
-    // ✅ 2. SERVER ERRORS - Use predefined message
-    else if (err.response?.statusCode == 500 ||
+    } else if (err.response?.statusCode == 500 ||
         err.response?.statusCode == 502 ||
         err.response?.statusCode == 503 ||
         err.response?.statusCode == 504) {
       errorMessage = "Server Error. Please try again later.";
-    }
-    // ✅ 3. API RESPONSE ERRORS - Extract from response
-    else {
+    } else {
       final data = err.response?.data;
 
       if (data is String) {
@@ -32,12 +58,9 @@ class ApiErrorHandler {
       } else if (data is Map) {
         final message = data['message'];
 
-        // Case 1: Simple string
         if (message is String) {
           errorMessage = message;
-        }
-        // Case 2: Nested message map
-        else if (message is Map) {
+        } else if (message is Map) {
           final innerMessage = message['message'];
 
           if (innerMessage is String) {
@@ -47,9 +70,7 @@ class ApiErrorHandler {
           } else {
             errorMessage = message.values.first.toString();
           }
-        }
-        // Case 3: Direct data error
-        else {
+        } else {
           errorMessage =
               data['error']?.toString() ??
               data['detail']?.toString() ??
@@ -60,7 +81,6 @@ class ApiErrorHandler {
       }
     }
 
-    // ✅ Show snackbar WITHOUT title for network/server errors
     if (err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.sendTimeout ||
         err.type == DioExceptionType.receiveTimeout ||
@@ -69,10 +89,7 @@ class ApiErrorHandler {
         err.response?.statusCode == 502 ||
         err.response?.statusCode == 503 ||
         err.response?.statusCode == 504) {
-      AppSnackbar.warning(
-        title: title ?? "Error",
-        message: errorMessage,
-      ); // ✅ NO title
+      AppSnackbar.warning(title: title ?? "Error", message: errorMessage);
     } else {
       AppSnackbar.error(title: title ?? "Error", message: errorMessage);
     }

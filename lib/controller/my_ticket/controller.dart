@@ -186,24 +186,14 @@ class MyTicketController extends GetxController {
     } catch (err) {
       state.tickets.value = [];
 
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load Tickets",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to load tickets");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.runtimeType})",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
       if (state.isLoadingMore.value) {
@@ -228,22 +218,14 @@ class MyTicketController extends GetxController {
       state.tickets.addAll(response.data);
       state.pagination.value = response.meta;
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load more tickets",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to load more tickets");
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Failed to load more tickets",
-        );
-      }
+        },
+      );
     } finally {
       if (state.isLoadingMore.value) state.isLoadingMore.value = false;
       if (state.isLoading.value) state.isLoading.value = false;

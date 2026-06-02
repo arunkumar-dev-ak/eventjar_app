@@ -106,24 +106,14 @@ class ContactListMeetingController extends GetxController {
       );
       Navigator.pop(Get.context!, "refresh");
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to chnage status",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to change Status");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.runtimeType})",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }
@@ -201,27 +191,15 @@ class ContactListMeetingController extends GetxController {
 
       return true;
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to change status",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return false;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to change Status");
-        return false;
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-        return false;
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Failed to reschedule meeting",
-        );
-        return false;
-      }
+        },
+      );
+      return false;
     } finally {
       state.isRescheduling.value = false;
     }
@@ -264,24 +242,14 @@ class ContactListMeetingController extends GetxController {
       );
       Navigator.pop(Get.context!, "refresh");
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to change status",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to change Status");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.runtimeType})",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }

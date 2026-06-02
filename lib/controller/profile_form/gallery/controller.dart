@@ -69,9 +69,7 @@ class GalleryFormController extends GetxController {
       return;
     }
 
-    final XFile? picked = await _picker.pickImage(
-      source: ImageSource.camera,
-    );
+    final XFile? picked = await _picker.pickImage(source: ImageSource.camera);
 
     if (picked == null) return;
 
@@ -170,8 +168,10 @@ class GalleryFormController extends GetxController {
               const SizedBox(height: 10),
               TextButton(
                 onPressed: () => Get.back(),
-                child:
-                    const Text('Cancel', style: TextStyle(color: Colors.red)),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: Colors.red),
+                ),
               ),
             ],
           ),
@@ -203,7 +203,7 @@ class GalleryFormController extends GetxController {
         Get.toNamed(RouteName.signInPage);
         return;
       }
-      ApiErrorHandler.handleError(err, 'Failed to update gallery');
+      ApiErrorHandler.handleDioError(err, 'Failed to update gallery');
       return;
     } catch (err) {
       state.isSaving.value = false;

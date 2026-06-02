@@ -12,53 +12,55 @@ class ExpenseList extends GetView<ViewTripController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      final expenses = controller.state.expense;
-      final sortedExpenses = [...expenses]
-        ..sort((a, b) => b.date.compareTo(a.date));
-      return ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: sortedExpenses.length,
-        itemBuilder: (context, index) {
-          final current = sortedExpenses[index];
-          final showHeader =
-              index == 0 ||
-              !_isSameDay(current.date, sortedExpenses[index - 1].date);
+    // return Obx(() {
+    //   final expenses = controller.state.expense;
+    //   final sortedExpenses = [...expenses]
+    //     ..sort((a, b) => b.date.compareTo(a.date));
+    //   return ListView.builder(
+    //     shrinkWrap: true,
+    //     physics: const NeverScrollableScrollPhysics(),
+    //     itemCount: sortedExpenses.length,
+    //     itemBuilder: (context, index) {
+    //       final current = sortedExpenses[index];
+    //       final showHeader =
+    //           index == 0 ||
+    //           !_isSameDay(current.date, sortedExpenses[index - 1].date);
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (showHeader)
-                Padding(
-                  padding: EdgeInsets.only(top: 1.5.hp, bottom: 0.5.hp),
-                  child: Center(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 3.wp,
-                        vertical: 0.5.hp,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.budgetTabColor,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        _getLabel(current.date),
-                        style: TextStyle(
-                          color: AppColors.textSecondary(context),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 8.sp,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              _expenseItem(context, current, index),
-            ],
-          );
-        },
-      );
-    });
+    //       return Column(
+    //         crossAxisAlignment: CrossAxisAlignment.start,
+    //         children: [
+    //           if (showHeader)
+    //             Padding(
+    //               padding: EdgeInsets.only(top: 1.5.hp, bottom: 0.5.hp),
+    //               child: Center(
+    //                 child: Container(
+    //                   padding: EdgeInsets.symmetric(
+    //                     horizontal: 3.wp,
+    //                     vertical: 0.5.hp,
+    //                   ),
+    //                   decoration: BoxDecoration(
+    //                     color: AppColors.budgetTabColor,
+    //                     borderRadius: BorderRadius.circular(12),
+    //                   ),
+    //                   child: Text(
+    //                     _getLabel(current.date),
+    //                     style: TextStyle(
+    //                       color: AppColors.textSecondary(context),
+    //                       fontWeight: FontWeight.w600,
+    //                       fontSize: 8.sp,
+    //                     ),
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //           _expenseItem(context, current, index),
+    //         ],
+    //       );
+    //     },
+    //   );
+    // });
+
+    return Text("hi");
   }
 
   Widget _expenseItem(BuildContext context, ExpenseModel e, int index) {

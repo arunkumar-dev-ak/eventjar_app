@@ -217,7 +217,7 @@ class NetworkingFormController extends GetxController {
           Get.toNamed(RouteName.signInPage);
           return;
         }
-        ApiErrorHandler.handleError(err, "Failed to update networking info");
+        ApiErrorHandler.handleDioError(err, "Failed to update networking info");
       } else {
         AppSnackbar.error(
           title: "Failed",

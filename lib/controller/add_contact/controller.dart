@@ -323,22 +323,14 @@ class AddContactController extends GetxController {
       state.availableTags.value = result.map((tag) => tag.name).toList();
       state.filteredTags.value = state.availableTags;
     } catch (err) {
-      if (err is dio.DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to fetch analytics",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to fetch analytics");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.isDropDownLoading.value = false;
     }
@@ -517,22 +509,14 @@ class AddContactController extends GetxController {
       contactId = null;
       Navigator.pop(context, "refresh");
     } catch (err) {
-      if (err is dio.DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to add/update contact",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to add/update contact");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }

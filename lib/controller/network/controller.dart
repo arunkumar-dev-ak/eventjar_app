@@ -113,23 +113,14 @@ class NetworkScreenController extends GetxController
       );
       state.analytics.value = result;
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
-          // Auth error handling example
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to fetch Analytics",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to fetch analytics");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }

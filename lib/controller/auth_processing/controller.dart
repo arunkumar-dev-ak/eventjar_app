@@ -157,7 +157,7 @@ class AuthProcessingController extends GetxController {
           phoneFocusNode.requestFocus();
         });
       } else {
-        ApiErrorHandler.handleError(
+        ApiErrorHandler.handleDioError(
           e,
           "${_provider == "google" ? "Google" : "Linkedin"} Authentication Failed",
         );
@@ -217,7 +217,7 @@ class AuthProcessingController extends GetxController {
       state.is2FaLoading.value = false;
       LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "2FA Error");
+        ApiErrorHandler.handleDioError(err, "2FA Error");
       } else {
         AppSnackbar.error(title: "2FA Error", message: "Something went wrong");
       }
@@ -275,7 +275,7 @@ class AuthProcessingController extends GetxController {
       } catch (err) {
         // --- Error Handling ---
         if (err is DioException) {
-          ApiErrorHandler.handleError(err, "Sign Up Error");
+          ApiErrorHandler.handleDioError(err, "Sign Up Error");
         } else {
           AppSnackbar.error(
             title: "Sign Up Error",

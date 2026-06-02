@@ -19,8 +19,6 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
 
       padding: EdgeInsets.all(4.wp),
       child: Obx(() {
-        controller.state.expense.length;
-
         final yourSpent = controller.yourSpent;
         final youOwe = controller.youOwe;
         final youReceive = controller.youReceive;
