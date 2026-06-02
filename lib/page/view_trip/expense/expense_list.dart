@@ -17,29 +17,26 @@ class ExpenseList extends GetView<ViewTripController> {
       final expenses = controller.state.expenses;
       final haveNextPage = controller.hasExpenseMore;
 
-      return RefreshIndicator(
-        onRefresh: controller.refreshTripExpenses,
-        child: ListView.separated(
-          controller: controller.expenseScrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: haveNextPage ? expenses.length + 1 : expenses.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
-          itemBuilder: (context, index) {
-            if (index >= expenses.length) {
-              return Obx(
-                () => controller.state.isPaginationLoading.value
-                    ? const Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Center(child: CircularProgressIndicator()),
-                      )
-                    : const SizedBox.shrink(),
-              );
-            }
+      return ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: haveNextPage ? expenses.length + 1 : expenses.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          if (index >= expenses.length) {
+            return Obx(
+              () => controller.state.isPaginationLoading.value
+                  ? const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : const SizedBox.shrink(),
+            );
+          }
 
-            final current = expenses[index];
-            return _expenseItem(context, current, index);
-          },
-        ),
+          final current = expenses[index];
+          return _expenseItem(context, current, index);
+        },
       );
     });
   }

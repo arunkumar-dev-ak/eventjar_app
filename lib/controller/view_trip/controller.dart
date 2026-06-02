@@ -275,6 +275,7 @@ class ViewTripController extends GetxController
       final response = await ViewTripApi.getTripFriends(
         queryParams: getFriendQueryParams(onRefresh: true),
       );
+      LoggerService.loggerInstance.dynamic_d("reee ${response.data.length}");
 
       state.friends.value = response.data;
       state.friendMeta.value = response.meta;
@@ -445,7 +446,10 @@ class ViewTripController extends GetxController
 
       await SplitTrackApi.deleteTrip(tripId: state.tripId.value);
 
-      AppSnackbar.success(title: "Success", message: "Trip deleted successfully");
+      AppSnackbar.success(
+        title: "Success",
+        message: "Trip deleted successfully",
+      );
       Get.back(result: "deleted");
     } catch (err) {
       LoggerService.loggerInstance.e('Delete trip error: $err');
