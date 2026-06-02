@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/model/view_trip/trip_expense_model.dart';
+import 'package:eventjar/model/view_trip/trip_friend_model.dart';
 
 class ViewTripApi {
   static final Dio _dio = DioClient().dio;
@@ -19,6 +20,21 @@ class ViewTripApi {
       }
 
       throw Exception('Failed to fetch Trip Expenses');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<TripFriendResponse> getTripFriends({
+    required Map<String, dynamic> queryParams,
+  }) async {
+    try {
+      final response = await _dio.get(
+        '/mobile/budget-track/trip-friend',
+        queryParameters: queryParams,
+      );
+
+      return TripFriendResponse.fromJson(response.data);
     } catch (e) {
       rethrow;
     }

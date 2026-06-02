@@ -20,7 +20,8 @@ class ViewTripController extends GetxController
   final state = ViewTripState();
 
   late AnimationController animation;
-  late PageController pageController;
+  final expenseScrollController = ScrollController();
+  final friendsScrollController = ScrollController();
 
   static const _limit = 10;
 
@@ -33,8 +34,6 @@ class ViewTripController extends GetxController
       duration: const Duration(seconds: 10),
     )..repeat();
 
-    pageController = PageController(initialPage: state.selectedTab.value);
-
     final args = Get.arguments;
 
     if (args is TripModel) {
@@ -42,8 +41,33 @@ class ViewTripController extends GetxController
       state.tripId.value = args.id;
     }
 
-    fetchTripAnalytics();
-    fetchTripExpenses();
+    expenseScrollController.addListener(_onExpenseScroll);
+    friendsScrollController.addListener(_onFriendScroll);
+
+    fetchViewTripData();
+  }
+
+  // scroll controller
+  void _onExpenseScroll() {
+    if (state.selectedTab.value != 0) return;
+
+    if (!expenseScrollController.hasClients) return;
+
+    if (expenseScrollController.position.pixels >=
+            expenseScrollController.position.maxScrollExtent - 200 &&
+        hasExpenseMore) {
+      fetchTripExpensesOnScroll();
+    }
+  }
+
+  void _onFriendScroll() {
+    if (state.selectedTab.value != 1) return;
+
+    if (!friendsScrollController.hasClients) return;
+
+    // if (hasFriendMore) {
+    //   fetchTripFriendsOnScroll();
+    // }
   }
 
   //pagination helpers
@@ -55,8 +79,22 @@ class ViewTripController extends GetxController
     return state.expenses.length;
   }
 
+  int _getFriendNextOffset() {
+    return state.friends.length;
+  }
+
   bool get hasExpenseMore {
     final meta = state.meta.value;
+
+    if (meta == null) {
+      return true;
+    }
+
+    return meta.paging.pages.next != null;
+  }
+
+  bool get hasFriendMore {
+    final meta = state.friendMeta.value;
 
     if (meta == null) {
       return true;
@@ -73,8 +111,54 @@ class ViewTripController extends GetxController
     };
   }
 
+  Map<String, dynamic> getFriendQueryParams({bool onRefresh = false}) {
+    return {
+      'tripId': state.tripId.value,
+      'offset': onRefresh ? 0 : _getFriendNextOffset(),
+      'limit': _getLimit(),
+    };
+  }
+
+  Future<void> fetchViewTripData({bool onRefresh = false}) async {
+    try {
+      if (!onRefresh) state.isLoading.value = true;
+
+      final analyticsLoaded = await fetchTripAnalytics();
+
+      if (!analyticsLoaded) {
+        return;
+      }
+
+      await fetchTripExpenses();
+
+      // Future
+      // await fetchTripFriends();
+    } finally {
+      state.isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchViewFriendData({bool onRefresh = false}) async {
+    try {
+      if (!onRefresh) state.isLoading.value = true;
+
+      final analyticsLoaded = await fetchTripAnalytics();
+
+      if (!analyticsLoaded) {
+        return;
+      }
+
+      await fetchTripExpenses();
+
+      // Future
+      // await fetchTripFriends();
+    } finally {
+      state.isLoading.value = false;
+    }
+  }
+
   //trip analytics
-  Future<void> fetchTripAnalytics() async {
+  Future<bool> fetchTripAnalytics() async {
     try {
       final response = await BudgetTrackApi.getTrips(
         queryParams: {'tripId': state.tripId.value, 'limit': 1},
@@ -83,6 +167,7 @@ class ViewTripController extends GetxController
       if (response.data.isNotEmpty) {
         state.trip.value = response.data.first;
       }
+      return true;
     } catch (err) {
       LoggerService.loggerInstance.e('Trip Loads onScroll error: $err');
       ApiErrorHandler.handle(
@@ -93,14 +178,13 @@ class ViewTripController extends GetxController
           navigateToSignInPage();
         },
       );
+      return false;
     }
   }
 
   /*-----Trip Expense -----*/
   Future<void> fetchTripExpenses() async {
     try {
-      state.isLoading.value = true;
-
       final response = await ViewTripApi.getTripExpenses(
         queryParams: {
           'tripId': state.tripId.value,
@@ -120,41 +204,15 @@ class ViewTripController extends GetxController
           navigateToSignInPage();
         },
       );
-    } finally {
-      state.isLoading.value = false;
     }
   }
 
   Future<void> refreshTripExpenses() async {
-    if (state.isPaginationLoading.value) {
-      return;
-    }
-
-    try {
-      await fetchTripAnalytics();
-
-      final response = await ViewTripApi.getTripExpenses(
-        queryParams: getExpenseQueryParams(onRefresh: true),
-      );
-
-      state.expenses.value = response.data;
-      state.meta.value = response.meta;
-    } catch (err) {
-      LoggerService.loggerInstance.e('Expense refresh error: $err');
-
-      ApiErrorHandler.handle(
-        error: err,
-        title: "Failed to Refresh Expense",
-        onUnauthorized: () {
-          UserStore.to.clearStore();
-          navigateToSignInPage();
-        },
-      );
-    }
+    await fetchViewTripData(onRefresh: true);
   }
 
   Future<void> fetchTripExpensesOnScroll() async {
-    if (state.isPaginationLoading.value || !hasExpenseMore) {
+    if (state.isPaginationLoading.value) {
       return;
     }
 
@@ -181,6 +239,90 @@ class ViewTripController extends GetxController
       );
     } finally {
       state.isPaginationLoading.value = false;
+    }
+  }
+
+  /*----- Trip Friends -----*/
+  Future<void> fetchTripFriends() async {
+    try {
+      final response = await ViewTripApi.getTripFriends(
+        queryParams: {
+          'tripId': state.tripId.value,
+          'offset': 0,
+          'limit': _limit,
+        },
+      );
+
+      state.friends.value = response.data;
+      state.friendMeta.value = response.meta;
+    } catch (err) {
+      LoggerService.loggerInstance.e('Friend load error: $err');
+
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load Friends",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
+    }
+  }
+
+  Future<void> refreshTripFriends() async {
+    if (state.isFriendPaginationLoading.value) {
+      return;
+    }
+
+    try {
+      final response = await ViewTripApi.getTripFriends(
+        queryParams: getFriendQueryParams(onRefresh: true),
+      );
+
+      state.friends.value = response.data;
+      state.friendMeta.value = response.meta;
+    } catch (err) {
+      LoggerService.loggerInstance.e('Friend refresh error: $err');
+
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to refresh Friends",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
+    }
+  }
+
+  Future<void> fetchTripFriendsOnScroll() async {
+    if (state.isFriendPaginationLoading.value || !hasFriendMore) {
+      return;
+    }
+
+    try {
+      state.isFriendPaginationLoading.value = true;
+
+      final response = await ViewTripApi.getTripFriends(
+        queryParams: getFriendQueryParams(),
+      );
+
+      state.friends.addAll(response.data);
+
+      state.friendMeta.value = response.meta;
+    } catch (err) {
+      LoggerService.loggerInstance.e('Friend pagination error: $err');
+
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load more Friends",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
+    } finally {
+      state.isFriendPaginationLoading.value = false;
     }
   }
 
@@ -318,7 +460,8 @@ class ViewTripController extends GetxController
   @override
   void onClose() {
     animation.dispose();
-    pageController.dispose();
-    super.onClose();
+
+    expenseScrollController.dispose();
+    friendsScrollController.dispose();
   }
 }
