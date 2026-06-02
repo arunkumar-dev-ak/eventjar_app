@@ -1,6 +1,10 @@
+import 'package:dio/dio.dart';
+import 'package:eventjar/api/budget_track_api/budget_track_api.dart';
 import 'package:eventjar/controller/budget_track/state.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
-import 'package:eventjar/model/budget_track/expense_model.dart';
 import 'package:eventjar/model/budget_track/trip_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +13,9 @@ import 'package:get/get.dart';
 class BudgetTrackController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final state = BudgetTrackState();
+
+  static const int _limit = 10;
+  final ScrollController tripScrollController = ScrollController();
   late AnimationController animation;
 
   @override
@@ -18,6 +25,24 @@ class BudgetTrackController extends GetxController
       vsync: this,
       duration: const Duration(seconds: 10),
     )..repeat();
+    tripScrollController.addListener(_onScroll);
+
+    fetchTrips();
+  }
+
+  void _onScroll() {
+    if (!tripScrollController.hasClients) return;
+
+    final maxScroll = tripScrollController.position.maxScrollExtent;
+    final currentScroll = tripScrollController.position.pixels;
+
+    const double prefetchThreshold = 200.0;
+
+    if (maxScroll - currentScroll <= prefetchThreshold) {
+      if (hasMore && !state.isPaginationLoading.value) {
+        fetchTripsOnScroll();
+      }
+    }
   }
 
   void toggleNotes(int index) {
@@ -28,101 +53,137 @@ class BudgetTrackController extends GetxController
     return state.expandedNotes[index] ?? false;
   }
 
-  Map<String, String> getHeader(int index) {
-    switch (index) {
-      case 0:
-        return {"title": "Friends", "subtitle": "Manage your social circle"};
-      case 1:
-        return {"title": "Trips", "subtitle": "Manage your social circle"};
-      case 2:
-        return {"title": "Expenses", "subtitle": "Manage and split trip costs"};
-      case 3:
-        return {
-          "title": "Balances",
-          "subtitle": "Track your shared expenses and settle up",
-        };
-      case 4:
-        return {
-          "title": "Transactions",
-          "subtitle": "View and manage all your payment activity",
-        };
-      default:
-        return {"title": "", "subtitle": ""};
-    }
+  //fetching trips
+  int _getLimit() {
+    return _limit;
   }
 
-  Map<String, double> computeTripAnalytics(String tripTitle) {
-    final expenses = dummyTripExpenses[tripTitle] ?? [];
-    double yourSpent = 0;
-    final Map<String, double> balances = {};
+  int _getNextOffset() {
+    return state.trips.length;
+  }
 
-    for (final e in expenses) {
-      final isYou = e.paidBy == "You";
-      yourSpent += e.yourShare;
+  bool get hasMore {
+    final meta = state.meta.value;
 
-      final splitCount = e.members.isNotEmpty
-          ? e.members.length
-          : (e.yourShare > 0 ? (e.amount / e.yourShare).round() : 1);
-      final perPerson = e.amount / splitCount;
+    if (meta == null) {
+      return true;
+    }
 
-      if (isYou) {
-        for (final m in e.members) {
-          if (m == "You") continue;
-          balances[m] = (balances[m] ?? 0) + perPerson;
+    return meta.paging.pages.next != null;
+  }
+
+  Map<String, dynamic> getQueryParams({bool onRefresh = false}) {
+    return {'offset': onRefresh ? 0 : _getNextOffset(), 'limit': _getLimit()};
+  }
+
+  Future<void> fetchTrips() async {
+    try {
+      state.isLoading.value = true;
+
+      final response = await BudgetTrackApi.getTrips(
+        queryParams: {'offset': 0, 'limit': _limit},
+      );
+
+      state.trips.value = response.data;
+      state.meta.value = response.meta;
+    } catch (err) {
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return;
         }
+
+        ApiErrorHandler.handleError(err, "Failed to load Trips");
+      } else if (err is Exception) {
+        AppSnackbar.error(title: "Exception", message: err.toString());
       } else {
-        balances[e.paidBy] = (balances[e.paidBy] ?? 0) - perPerson;
+        AppSnackbar.error(
+          title: "Error",
+          message: "Something went wrong (${err.runtimeType})",
+        );
+      }
+    } finally {
+      state.isLoading.value = false;
+    }
+  }
+
+  Future<void> refreshTrips() async {
+    if (state.isPaginationLoading.value) {
+      return;
+    }
+    try {
+      final response = await BudgetTrackApi.getTrips(
+        queryParams: getQueryParams(onRefresh: true),
+      );
+
+      state.trips.value = response.data;
+      state.meta.value = response.meta;
+    } catch (err) {
+      LoggerService.loggerInstance.e('Trip refresh error: $err');
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return;
+        }
+
+        ApiErrorHandler.handleError(err, "Failed to load Trips");
+      } else if (err is Exception) {
+        AppSnackbar.error(title: "Exception", message: err.toString());
+      } else {
+        AppSnackbar.error(
+          title: "Error",
+          message: "Something went wrong (${err.runtimeType})",
+        );
       }
     }
+  }
 
-    double youOwe = 0;
-    double youReceive = 0;
-    for (final net in balances.values) {
-      if (net > 0) {
-        youReceive += net;
+  Future<void> fetchTripsOnScroll() async {
+    try {
+      state.isPaginationLoading.value = true;
+
+      final response = await BudgetTrackApi.getTrips(
+        queryParams: getQueryParams(),
+      );
+
+      state.trips.addAll(response.data);
+      state.meta.value = response.meta;
+    } catch (err) {
+      LoggerService.loggerInstance.e('Trip Loads onScroll error: $err');
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 401) {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+          return;
+        }
+
+        ApiErrorHandler.handleError(err, "Failed to load Trips");
+      } else if (err is Exception) {
+        AppSnackbar.error(title: "Exception", message: err.toString());
       } else {
-        youOwe += net.abs();
+        AppSnackbar.error(
+          title: "Error",
+          message: "Something went wrong (${err.runtimeType})",
+        );
       }
+    } finally {
+      state.isPaginationLoading.value = false;
     }
-
-    return {'yourSpent': yourSpent, 'youOwe': youOwe, 'youReceive': youReceive};
-  }
-
-  int getExpenseCount(String tripTitle) {
-    return (dummyTripExpenses[tripTitle] ?? []).length;
-  }
-
-  /*----- Balances Tab ------*/
-  void selectOwed() {
-    state.isOwedSelected.value = true;
-  }
-
-  void selectOwe() {
-    state.isOwedSelected.value = false;
-  }
-
-  // MOCK API METHODS
-  void fetchFriends() {
-    LoggerService.loggerInstance.dynamic_d("Fetching Friends...");
-  }
-
-  void fetchTrips() {
-    LoggerService.loggerInstance.dynamic_d("Fetching Trips...");
-  }
-
-  void fetchExpenses() {
-    LoggerService.loggerInstance.dynamic_d("Fetching Expenses...");
-  }
-
-  void fetchBalances() {
-    LoggerService.loggerInstance.dynamic_d("Fetching Balances...");
-  }
-
-  void fetchSettlements() {
-    LoggerService.loggerInstance.dynamic_d("Fetching Settle Ups...");
   }
 
   //navigation
+  void navigateToSignInPage() {
+    Get.toNamed(RouteName.signInPage);
+  }
+
   void navigateToFriendList() {
     Get.toNamed(RouteName.friendListPage)?.then((result) async {
       // if (result == "logged_in") {
@@ -183,6 +244,7 @@ class BudgetTrackController extends GetxController
   @override
   void onClose() {
     animation.dispose();
+    tripScrollController.dispose();
     super.onClose();
   }
 }

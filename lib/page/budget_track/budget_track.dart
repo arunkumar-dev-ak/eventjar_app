@@ -67,7 +67,10 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
 
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.hp),
-        child: TripsList(),
+        child: RefreshIndicator(
+          onRefresh: controller.refreshTrips,
+          child: TripsList(),
+        ),
       ),
 
       floatingActionButton: FloatingActionButton(

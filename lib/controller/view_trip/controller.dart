@@ -25,11 +25,11 @@ class ViewTripController extends GetxController
     )..repeat();
     pageController = PageController(initialPage: state.selectedTab.value);
     state.trip.value = Get.arguments as TripModel;
-    state.friends.value = dummyTripFriends[state.trip.value.title] ?? [];
-    LoggerService.loggerInstance.dynamic_d(state.friends.value);
-    state.expense.value = dummyTripExpenses[state.trip.value.title] ?? [];
+    // state.friends.value = dummyTripFriends[state.trip.value.title] ?? [];
+    // LoggerService.loggerInstance.dynamic_d(state.friends.value);
+    // state.expense.value = dummyTripExpenses[state.trip.value.title] ?? [];
 
-    appBarTitle = state.trip.value.title;
+    // appBarTitle = state.trip.value.title;
   }
 
   void toggleToOpen(int index) {

@@ -3,6 +3,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/budget_track/trip_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 class InactiveTripCard extends StatelessWidget {
   final int index;
@@ -15,63 +16,78 @@ class InactiveTripCard extends StatelessWidget {
     return "assets/illustration/ill$imageIndex.svg";
   }
 
-  /// Format amount (1L+, 10K+, etc.)
   String formatAmount(double amount) {
-    if (amount >= 100000) return "${(amount / 100000).toStringAsFixed(1)}L+";
-    // if (amount >= 1000) return "${(amount / 1000).toStringAsFixed(1)}K+";
-    return amount.toString();
+    if (amount >= 100000) {
+      return "${(amount / 100000).toStringAsFixed(1)}L";
+    }
+
+    if (amount >= 1000) {
+      return "${(amount / 1000).toStringAsFixed(1)}K";
+    }
+
+    return amount.toStringAsFixed(0);
   }
 
-  String formatTimeAgo(String dateStr) {
-    final date = DateTime.parse(dateStr);
+  String formatTimeAgo(DateTime date) {
+    final diff = DateTime.now().difference(date);
+
+    if (diff.inMinutes < 1) {
+      return 'Just now';
+    }
+
+    if (diff.inHours < 1) {
+      return '${diff.inMinutes}m ago';
+    }
+
+    if (diff.inHours < 24) {
+      return '${diff.inHours}h ago';
+    }
+
+    if (diff.inDays == 1) {
+      return 'Yesterday';
+    }
+
+    if (diff.inDays < 7) {
+      return '${diff.inDays}d ago';
+    }
+
     final now = DateTime.now();
 
-    final diff = now.difference(date);
-
-    if (diff.inDays >= 365) {
-      return "${(diff.inDays / 365).floor()}y ago";
-    } else if (diff.inDays >= 30) {
-      return "${(diff.inDays / 30).floor()}mo ago";
-    } else if (diff.inDays >= 1) {
-      return "${diff.inDays}d ago";
-    } else if (diff.inHours >= 1) {
-      return "${diff.inHours}h ago";
-    } else {
-      return "Just now";
+    if (date.year == now.year) {
+      return DateFormat('MMM d').format(date);
     }
+
+    return DateFormat('MMM d, yyyy').format(date);
   }
 
   @override
   Widget build(BuildContext context) {
-    final youOwe = trip.youOwe;
-    final youGet = trip.youGet;
+    final youOwe = trip.myOwe;
+    final youReceive = trip.myReceive;
 
-    final individualSpent = trip.individualSpent ?? 0;
+    // fallback amount
+    final myShare = trip.myShare;
 
-    final pending = trip.pendingSettlements ?? 0;
-    final lastActivityDate = trip.lastActivityDate;
-
-    /// STATUS
+    // status
     String statusText;
     Color statusColor;
 
-    if (youGet > 0) {
+    if (youReceive > 0) {
       statusText = "RECEIVE";
       statusColor = Colors.green;
     } else if (youOwe > 0) {
       statusText = "YOU OWE";
       statusColor = Colors.red;
     } else {
-      statusText = "SPENT";
-      statusColor = Colors.blueGrey;
+      statusText = "MY SHARE";
+      statusColor = AppColors.gradientDarkStart;
     }
 
-    /// RIGHT SIDE BIG AMOUNT
-    final mainAmount = youGet > 0
-        ? youGet
+    final mainAmount = youReceive > 0
+        ? youReceive
         : youOwe > 0
         ? youOwe
-        : individualSpent;
+        : myShare;
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 1.hp),
@@ -89,10 +105,9 @@ class InactiveTripCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          /// TOP ROW
+          // TOP
           Row(
             children: [
-              /// LEFT IMAGE
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.sp),
                 child: SizedBox(
@@ -110,13 +125,12 @@ class InactiveTripCard extends StatelessWidget {
 
               SizedBox(width: 3.wp),
 
-              /// MIDDLE
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      trip.title,
+                      trip.name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -125,11 +139,25 @@ class InactiveTripCard extends StatelessWidget {
                         color: AppColors.textPrimary(context),
                       ),
                     ),
-                    SizedBox(height: 0.4.hp),
+
+                    SizedBox(height: .4.hp),
+
                     Text(
-                      "${trip.expenses} expenses • ${trip.members} members",
+                      "${trip.expensesCount} expenses • ${trip.membersCount} members",
                       style: TextStyle(
                         fontSize: 7.5.sp,
+                        color: AppColors.textSecondary(context),
+                      ),
+                    ),
+
+                    SizedBox(height: .3.hp),
+
+                    Text(
+                      trip.destination,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 7.sp,
                         color: AppColors.textSecondary(context),
                       ),
                     ),
@@ -139,7 +167,6 @@ class InactiveTripCard extends StatelessWidget {
 
               SizedBox(width: 3.wp),
 
-              /// RIGHT
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -151,7 +178,9 @@ class InactiveTripCard extends StatelessWidget {
                       color: statusColor,
                     ),
                   ),
-                  SizedBox(height: 0.3.hp),
+
+                  SizedBox(height: .3.hp),
+
                   Text(
                     statusText,
                     style: TextStyle(fontSize: 7.sp, color: statusColor),
@@ -161,23 +190,21 @@ class InactiveTripCard extends StatelessWidget {
             ],
           ),
 
-          // meta
           SizedBox(height: 1.5.hp),
 
           Row(
             children: [
-              /// Pending settlements
               Container(
                 padding: EdgeInsets.symmetric(
                   horizontal: 2.2.wp,
-                  vertical: 0.5.hp,
+                  vertical: .5.hp,
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.lightBlueBg(context),
                   borderRadius: BorderRadius.circular(20.sp),
                 ),
                 child: Text(
-                  "My Owe Members : $pending",
+                  "My Owe Members : ${trip.myOweMembersCount}",
                   style: TextStyle(
                     fontSize: 7.sp,
                     fontWeight: FontWeight.w600,
@@ -188,25 +215,27 @@ class InactiveTripCard extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(width: 4.wp),
+              SizedBox(width: 3.wp),
 
-              /// Last activity
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 2.2.wp,
-                  vertical: 0.5.hp,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.chipBg(context),
-                  borderRadius: BorderRadius.circular(20.sp),
-                ),
-                child: Text(
-                  "Last activity ${formatTimeAgo(lastActivityDate!)}",
-                  style: TextStyle(
-                    fontSize: 7.sp,
-                    color: AppColors.textSecondary(context),
+              Expanded(
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 2.2.wp,
+                    vertical: .5.hp,
                   ),
-                  overflow: TextOverflow.ellipsis,
+                  decoration: BoxDecoration(
+                    color: AppColors.chipBg(context),
+                    borderRadius: BorderRadius.circular(20.sp),
+                  ),
+                  child: Text(
+                    "Created ${formatTimeAgo(trip.createdAt)}",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 7.sp,
+                      color: AppColors.textSecondary(context),
+                    ),
+                  ),
                 ),
               ),
             ],

@@ -11,7 +11,7 @@ class ViewTripState {
   RxInt selectedTab = 0.obs;
   RxBool showLongPressHint = true.obs;
 
-  final Rx<TripModel> trip = dummyTrips[0].obs;
+  final Rxn<TripModel> trip = Rxn<TripModel>();
   RxList<FriendModel> friends = <FriendModel>[].obs;
   RxList<ExpenseModel> expense = <ExpenseModel>[].obs;
 }

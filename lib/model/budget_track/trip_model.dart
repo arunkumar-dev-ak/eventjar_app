@@ -1,207 +1,126 @@
-class TripModel {
-  final String title;
-  final String location;
-  final int members;
-  final int expenses;
-  final double youOwe;
-  final double youGet;
-  final String lastActivity;
-  final bool isActive;
+import 'package:eventjar/model/meta/mobile_meta_model.dart';
 
-  final double? budget;
-  final double? individualSpent;
-  final double? totalSpent;
-  final int? pendingSettlements;
-  final String? lastActivityDate;
-  final String? notes;
+class TripResponse {
+  final List<TripModel> data;
+  final MobileMeta? meta;
 
-  TripModel({
-    required this.title,
-    required this.location,
-    required this.members,
-    required this.expenses,
-    required this.youOwe,
-    required this.youGet,
-    required this.lastActivity,
-    required this.isActive,
-    this.budget,
-    this.individualSpent,
-    this.totalSpent,
-    this.pendingSettlements,
-    this.lastActivityDate,
-    this.notes,
-  });
+  TripResponse({required this.data, this.meta});
 
-  /// 🔁 Convert from Map (useful for API later)
-  factory TripModel.fromMap(Map<String, dynamic> map) {
-    return TripModel(
-      title: map["title"] ?? "",
-      location: map["location"] ?? "",
-      members: map["members"] ?? 0,
-      expenses: map["expenses"] ?? 0,
-      youOwe: (map["youOwe"] ?? 0).toDouble(),
-      youGet: (map["youGet"] ?? 0).toDouble(),
-      lastActivity: map["lastActivity"] ?? "",
-      isActive: map["isActive"] ?? false,
-      budget: map["budget"]?.toDouble(),
-      individualSpent: map["individualSpent"]?.toDouble(),
-      totalSpent: map["totalSpent"]?.toDouble(),
-      pendingSettlements: map["pendingSettlements"],
-      lastActivityDate: map["lastActivityDate"],
-      notes: map["notes"],
-    );
+  factory TripResponse.fromJson(Map<String, dynamic> json) {
+    try {
+      return TripResponse(
+        data: (json['data'] as List).map((e) => TripModel.fromJson(e)).toList(),
+        meta: json['meta'] != null ? MobileMeta.fromJson(json['meta']) : null,
+      );
+    } catch (e) {
+      throw Exception('Error in TripResponse: $e');
+    }
   }
 
-  /// 🔁 Convert to Map (optional)
-  Map<String, dynamic> toMap() {
-    return {
-      "title": title,
-      "location": location,
-      "members": members,
-      "expenses": expenses,
-      "youOwe": youOwe,
-      "youGet": youGet,
-      "lastActivity": lastActivity,
-      "isActive": isActive,
-      "budget": budget,
-      "individualSpent": individualSpent,
-      "totalSpent": totalSpent,
-      "pendingSettlements": pendingSettlements,
-      "lastActivityDate": lastActivityDate,
-      "notes": notes,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+    'data': data.map((e) => e.toJson()).toList(),
+    if (meta != null) 'meta': meta!.toJson(),
+  };
 }
 
-final List<TripModel> dummyTrips = [
-  /// 🟢 ACTIVE
-  TripModel(
-    title: "Goa Beach Escape",
-    location: "Goa",
-    members: 4,
-    expenses: 3,
-    youOwe: 550,
-    youGet: 900,
-    lastActivity: "2 hours ago",
-    isActive: true,
-    budget: 4500,
-    individualSpent: 1450,
-    totalSpent: 5800,
-    pendingSettlements: 1,
-    lastActivityDate: "2026-05-28",
-    notes: "Beach stay, bike rentals, café hopping and watersports included.",
-  ),
+class TripModel {
+  final String id;
+  final String createdById;
 
-  /// 🔴 INACTIVE
-  TripModel(
-    title: "Ooty Chill Trip",
-    location: "Ooty",
-    members: 3,
-    expenses: 6,
-    youOwe: 180,
-    youGet: 0,
-    lastActivity: "3 days ago",
-    isActive: false,
-    budget: 3200,
-    individualSpent: 2500,
-    totalSpent: 2900,
-    pendingSettlements: 1,
-    lastActivityDate: "2026-05-25",
-  ),
+  final String name;
+  final String? description;
+  final String destination;
 
-  TripModel(
-    title: "Chennai Meetup",
-    location: "Chennai",
-    members: 2,
-    expenses: 4,
-    youOwe: 0,
-    youGet: 150,
-    lastActivity: "5 days ago",
-    isActive: false,
-    budget: 2500,
-    individualSpent: 1900,
-    totalSpent: 2200,
-    pendingSettlements: 0,
-    lastActivityDate: "2026-05-23",
-  ),
+  final String status;
+  final String? coverImageUrl;
 
-  TripModel(
-    title: "Bangalore Weekend",
-    location: "Bangalore",
-    members: 4,
-    expenses: 7,
-    youOwe: 220,
-    youGet: 0,
-    lastActivity: "1 week ago",
-    isActive: false,
-    budget: 4000,
-    individualSpent: 3100,
-    totalSpent: 3600,
-    pendingSettlements: 1,
-    lastActivityDate: "2026-05-20",
-  ),
+  final double totalBudget;
+  final String currency;
 
-  TripModel(
-    title: "Pondicherry Ride",
-    location: "Pondicherry",
-    members: 3,
-    expenses: 5,
-    youOwe: 0,
-    youGet: 200,
-    lastActivity: "6 days ago",
-    isActive: false,
-    budget: 2800,
-    individualSpent: 2200,
-    totalSpent: 2500,
-    pendingSettlements: 0,
-    lastActivityDate: "2026-05-22",
-  ),
+  final String joinToken;
 
-  TripModel(
-    title: "Kerala Backwaters",
-    location: "Kerala",
-    members: 4,
-    expenses: 9,
-    youOwe: 350,
-    youGet: 0,
-    lastActivity: "10 days ago",
-    isActive: false,
-    budget: 5000,
-    individualSpent: 3900,
-    totalSpent: 4500,
-    pendingSettlements: 2,
-    lastActivityDate: "2026-05-18",
-  ),
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
-  TripModel(
-    title: "Hyderabad Food Tour",
-    location: "Hyderabad",
-    members: 4,
-    expenses: 8,
-    youOwe: 240,
-    youGet: 80,
-    lastActivity: "2 weeks ago",
-    isActive: false,
-    budget: 4200,
-    individualSpent: 3300,
-    totalSpent: 3800,
-    pendingSettlements: 1,
-    lastActivityDate: "2026-05-15",
-  ),
+  final int membersCount;
+  final int expensesCount;
 
-  TripModel(
-    title: "Coorg Nature Stay",
-    location: "Coorg",
-    members: 3,
-    expenses: 5,
-    youOwe: 0,
-    youGet: 170,
-    lastActivity: "12 days ago",
-    isActive: false,
-    budget: 3000,
-    individualSpent: 2400,
-    totalSpent: 2700,
-    pendingSettlements: 0,
-    lastActivityDate: "2026-05-14",
-  ),
-];
+  final double myShare;
+  final double teamShare;
+
+  final double myOwe;
+  final double myReceive;
+
+  final int myOweMembersCount;
+
+  TripModel({
+    required this.id,
+    required this.createdById,
+    required this.name,
+    this.description,
+    required this.destination,
+    required this.status,
+    this.coverImageUrl,
+    required this.totalBudget,
+    required this.currency,
+    required this.joinToken,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.membersCount,
+    required this.expensesCount,
+    required this.myShare,
+    required this.teamShare,
+    required this.myOwe,
+    required this.myReceive,
+    required this.myOweMembersCount,
+  });
+
+  factory TripModel.fromJson(Map<String, dynamic> json) {
+    try {
+      return TripModel(
+        id: json['id'] ?? '',
+        createdById: json['createdById'] ?? '',
+        name: json['name'] ?? '',
+        description: json['description'],
+        destination: json['destination'] ?? '',
+        status: json['status'] ?? '',
+        coverImageUrl: json['coverImageUrl'],
+        totalBudget: double.tryParse(json['totalBudget'].toString()) ?? 0,
+        currency: json['currency'] ?? '',
+        joinToken: json['joinToken'] ?? '',
+        createdAt: DateTime.parse(json['createdAt']),
+        updatedAt: DateTime.parse(json['updatedAt']),
+        membersCount: json['_count']?['members'] ?? 0,
+        expensesCount: json['_count']?['expenses'] ?? 0,
+        myShare: double.tryParse(json['myShare'].toString()) ?? 0,
+        teamShare: double.tryParse(json['teamShare'].toString()) ?? 0,
+        myOwe: double.tryParse(json['myOwe'].toString()) ?? 0,
+        myReceive: double.tryParse(json['myReceive'].toString()) ?? 0,
+        myOweMembersCount: json['myOweMembersCount'] ?? 0,
+      );
+    } catch (e) {
+      throw Exception('Error in TripModel: $e');
+    }
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'createdById': createdById,
+    'name': name,
+    'description': description,
+    'destination': destination,
+    'status': status,
+    'coverImageUrl': coverImageUrl,
+    'totalBudget': totalBudget,
+    'currency': currency,
+    'joinToken': joinToken,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+    '_count': {'members': membersCount, 'expenses': expensesCount},
+    'myShare': myShare,
+    'teamShare': teamShare,
+    'myOwe': myOwe,
+    'myReceive': myReceive,
+    'myOweMembersCount': myOweMembersCount,
+  };
+}

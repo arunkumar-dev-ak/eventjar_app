@@ -15,26 +15,27 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
 
   String formatAmount(double amount) {
     if (amount >= 100000) {
-      return "${(amount / 100000).toStringAsFixed(1)}L+";
+      return "${(amount / 100000).toStringAsFixed(1)}L";
     }
-    return amount.toString();
+
+    if (amount >= 1000) {
+      return "${(amount / 1000).toStringAsFixed(1)}K";
+    }
+
+    return amount.toStringAsFixed(0);
   }
 
   @override
   Widget build(BuildContext context) {
-    final computed = controller.computeTripAnalytics(trip.title);
+    final totalBudget = trip.totalBudget;
 
-    final youOwe = computed['youOwe']!;
-    final youGet = computed['youReceive']!;
-    final individualSpent = computed['yourSpent']!;
-    final totalSpent = trip.totalSpent ?? individualSpent;
-    final budget = trip.budget;
+    final spent = trip.teamShare;
 
-    final progress = budget != null
-        ? (totalSpent / budget).clamp(0.0, 1.0)
+    final progress = totalBudget > 0
+        ? (spent / totalBudget).clamp(0.0, 1.0)
         : 0.0;
 
-    final isOverBudget = budget != null && totalSpent > budget;
+    final isOverBudget = spent > totalBudget;
 
     return AnimatedBorderCard(
       child: Container(
@@ -42,23 +43,16 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
         decoration: BoxDecoration(
           color: AppColors.cardBg(context),
           borderRadius: BorderRadius.circular(14.sp),
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: AppColors.shadow(context),
-          //     blurRadius: 8.sp,
-          //     offset: Offset(0, 1.sp),
-          //   ),
-          // ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// ───────── TITLE + STATUS ─────────
+            // TITLE + ACTIVE
             Row(
               children: [
                 Expanded(
                   child: Text(
-                    trip.title,
+                    trip.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -69,32 +63,27 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                   ),
                 ),
 
-                /// ACTIVE BADGE
                 Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 2.wp,
-                    vertical: 0.4.hp,
+                    vertical: .4.hp,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.1),
+                    color: Colors.green.withValues(alpha: .1),
                     borderRadius: BorderRadius.circular(20.sp),
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        width: 5,
-                        height: 5,
-                        decoration: const BoxDecoration(
-                          color: Colors.green,
-                          shape: BoxShape.circle,
-                        ),
+                      const CircleAvatar(
+                        radius: 3,
+                        backgroundColor: Colors.green,
                       ),
                       SizedBox(width: 1.wp),
                       Text(
                         "ACTIVE",
                         style: TextStyle(
-                          fontSize: 6.5.sp,
                           color: Colors.green,
+                          fontSize: 6.5.sp,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -104,9 +93,9 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
               ],
             ),
 
-            SizedBox(height: 0.6.hp),
+            SizedBox(height: .8.hp),
 
-            /// ───────── LOCATION ─────────
+            // DESTINATION
             Row(
               children: [
                 Icon(
@@ -117,58 +106,56 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                 SizedBox(width: 1.wp),
                 Expanded(
                   child: Text(
-                    trip.location,
+                    trip.destination,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 7.sp,
                       color: AppColors.textSecondary(context),
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
 
-            SizedBox(height: 0.6.hp),
+            SizedBox(height: .8.hp),
 
-            /// ───────── META ─────────
+            // EXPENSES + MEMBERS
             Text(
-              "${controller.getExpenseCount(trip.title)} Expenses • ${trip.members} Members",
+              "${trip.expensesCount} Expenses • ${trip.membersCount} Members",
               style: TextStyle(
-                fontSize: 7.5.sp,
+                fontSize: 7.sp,
                 color: AppColors.textSecondary(context),
               ),
             ),
 
             SizedBox(height: 1.2.hp),
 
-            /// ───────── DIVIDER ─────────
             Divider(color: AppColors.divider(context)),
 
             SizedBox(height: 1.hp),
 
-            /// ───────── AMOUNTS ─────────
+            // MY ANALYTICS
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _amountItem(
                   label: "YOU OWE",
-                  amount: youOwe,
+                  amount: trip.myOwe,
                   color: Colors.red,
-                  highlight: youOwe > 0,
                   context: context,
                 ),
+
                 _amountItem(
                   label: "YOU RECEIVE",
-                  amount: youGet,
+                  amount: trip.myReceive,
                   color: Colors.green,
-                  highlight: youGet > 0,
                   context: context,
                 ),
+
                 _amountItem(
-                  label: "SPENDING",
-                  amount: individualSpent,
+                  label: "MY SHARE",
+                  amount: trip.myShare,
                   color: AppColors.gradientDarkStart,
-                  highlight: youGet == 0 && youOwe == 0,
                   context: context,
                 ),
               ],
@@ -178,96 +165,71 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
 
             Divider(color: AppColors.divider(context)),
 
-            /// ───────── BUDGET ─────────
-            if (budget != null) ...[
-              SizedBox(height: 1.8.hp),
+            SizedBox(height: 1.5.hp),
 
-              /// LABELS
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "₹${formatAmount(totalSpent)} TOT SPENT",
-                    style: TextStyle(
-                      fontSize: 7.5.sp,
-                      fontWeight: FontWeight.w600,
-                      color: isOverBudget
-                          ? Colors.red
-                          : AppColors.textPrimary(context),
-                    ),
-                  ),
-                  Text(
-                    "₹${formatAmount(budget)} BUDGET",
-                    style: TextStyle(
-                      fontSize: 7.5.sp,
-                      color: AppColors.textSecondary(context),
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 0.6.hp),
-
-              /// PROGRESS BAR (more visible white bg)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(6.sp),
-                child: Container(
-                  height: 1.hp,
-                  color: AppColors.divider(context),
-                  child: Stack(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        color: AppColors.divider(context),
-                      ),
-
-                      FractionallySizedBox(
-                        widthFactor: progress,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: isOverBudget
-                                  ? [Colors.red.shade700, Colors.red]
-                                  : [
-                                      AppColors.gradientDarkStart,
-                                      AppColors.gradientDarkEnd,
-                                    ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+            // BUDGET
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "₹${formatAmount(spent)} SPENT",
+                  style: TextStyle(
+                    fontSize: 7.5.sp,
+                    fontWeight: FontWeight.w600,
+                    color: isOverBudget
+                        ? Colors.red
+                        : AppColors.textPrimary(context),
                   ),
                 ),
-              ),
+                Text(
+                  "₹${formatAmount(totalBudget)} BUDGET",
+                  style: TextStyle(
+                    fontSize: 7.5.sp,
+                    color: AppColors.textSecondary(context),
+                  ),
+                ),
+              ],
+            ),
 
-              SizedBox(height: 0.5.hp),
+            SizedBox(height: .7.hp),
 
-              /// STATUS
-              Text(
-                isOverBudget
-                    ? "Exceeded by ₹${formatAmount(totalSpent - budget)}"
-                    : "₹${formatAmount(budget - totalSpent)} left",
-                style: TextStyle(
-                  fontSize: 7.sp,
-                  color: isOverBudget ? Colors.red : Colors.green,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10.sp),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: .9.hp,
+                backgroundColor: AppColors.divider(context),
+                valueColor: AlwaysStoppedAnimation(
+                  isOverBudget ? Colors.red : AppColors.gradientDarkStart,
                 ),
               ),
-            ],
+            ),
 
-            /// ───────── NOTES ─────────
-            if (trip.notes != null && trip.notes!.isNotEmpty) ...[
+            SizedBox(height: .6.hp),
+
+            Text(
+              isOverBudget
+                  ? "Exceeded by ₹${formatAmount(spent - totalBudget)}"
+                  : "₹${formatAmount(totalBudget - spent)} left",
+              style: TextStyle(
+                fontSize: 7.sp,
+                color: isOverBudget ? Colors.red : Colors.green,
+              ),
+            ),
+
+            // DESCRIPTION
+            if ((trip.description ?? "").isNotEmpty) ...[
               SizedBox(height: 1.5.hp),
 
               Obx(() {
-                final isExpanded = controller.isExpanded(index);
+                final expanded = controller.isExpanded(index);
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      trip.notes!,
-                      maxLines: isExpanded ? 5 : 2,
+                      trip.description!,
+                      maxLines: expanded ? 5 : 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 7.sp,
@@ -275,7 +237,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                       ),
                     ),
 
-                    SizedBox(height: 0.3.hp),
+                    SizedBox(height: .3.hp),
 
                     GestureDetector(
                       onTap: () {
@@ -283,7 +245,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                         controller.toggleNotes(index);
                       },
                       child: Text(
-                        isExpanded ? "Show less" : "Read more",
+                        expanded ? "Show less" : "Read more",
                         style: TextStyle(
                           fontSize: 7.sp,
                           fontWeight: FontWeight.w600,
@@ -301,35 +263,28 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
     );
   }
 
-  /// 💰 AMOUNT ITEM
   Widget _amountItem({
     required String label,
     required double amount,
     required Color color,
-    required bool highlight,
     required BuildContext context,
   }) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           label,
           style: TextStyle(
             fontSize: 6.5.sp,
-            color: amount == 0
-                ? AppColors.textSecondary(context)
-                : (highlight ? color : AppColors.textPrimary(context)),
+            color: AppColors.textSecondary(context),
           ),
         ),
-        SizedBox(height: 0.2.hp),
+        SizedBox(height: .2.hp),
         Text(
-          "₹${amount.toStringAsFixed(2)}",
+          "₹${amount.toStringAsFixed(0)}",
           style: TextStyle(
-            fontSize: highlight ? 11.sp : 9.sp,
+            fontSize: 10.sp,
             fontWeight: FontWeight.bold,
-            color: amount == 0
-                ? AppColors.textSecondary(context)
-                : (highlight ? color : AppColors.textPrimary(context)),
+            color: amount > 0 ? color : AppColors.textPrimary(context),
           ),
         ),
       ],
