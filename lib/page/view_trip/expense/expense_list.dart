@@ -2,9 +2,11 @@ import 'package:eventjar/controller/view_trip/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/widget/empty_widget.dart';
 import 'package:eventjar/model/view_trip/trip_expense_model.dart';
 import 'package:eventjar/page/view_trip/expense/expense_detail_page.dart';
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/page/view_trip/expense/expense_shimmer_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,6 +18,34 @@ class ExpenseList extends GetView<ViewTripController> {
     return Obx(() {
       final expenses = controller.state.expenses;
       final haveNextPage = controller.hasExpenseMore;
+      final isLoading = controller.state.isLoading.value;
+
+      if (isLoading) {
+        return ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 6,
+          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          itemBuilder: (context, index) {
+            return const ExpenseShimmerCard();
+          },
+        );
+      }
+
+      // Empty State
+      if (expenses.isEmpty && !controller.state.isLoading.value) {
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: 60.hp,
+            child: EmptyStateWidget(
+              icon: Icons.receipt_long,
+              title: "No expenses yet",
+              subtitle: "Start adding expenses for this trip",
+            ),
+          ),
+        );
+      }
 
       return ListView.separated(
         shrinkWrap: true,
@@ -24,14 +54,7 @@ class ExpenseList extends GetView<ViewTripController> {
         separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           if (index >= expenses.length) {
-            return Obx(
-              () => controller.state.isPaginationLoading.value
-                  ? const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: CircularProgressIndicator()),
-                    )
-                  : const SizedBox.shrink(),
-            );
+            return const ExpenseShimmerCard();
           }
 
           final current = expenses[index];

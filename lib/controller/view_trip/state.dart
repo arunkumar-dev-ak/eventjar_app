@@ -26,4 +26,8 @@ class ViewTripState {
   RxInt expenseOpenedIndex = (-1).obs;
   RxSet<int> expenseSelectedIndexes = <int>{}.obs;
   RxBool showLongPressHint = true.obs;
+
+  final RxString paymentMethod = 'UPI'.obs;
+  final List<String> paymentMethods = ['Cash', 'UPI', 'Bank Transfer', 'Other'];
+  RxBool isSettleupLoading = false.obs;
 }

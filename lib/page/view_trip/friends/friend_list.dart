@@ -1,5 +1,7 @@
 import 'package:eventjar/controller/view_trip/controller.dart';
+import 'package:eventjar/global/widget/empty_widget.dart';
 import 'package:eventjar/model/view_trip/trip_friend_model.dart';
+import 'package:eventjar/page/view_trip/friends/friend_shimmer_card.dart';
 import 'package:flutter/material.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
@@ -13,30 +15,43 @@ class FriendsList extends GetView<ViewTripController> {
     return Obx(() {
       final friends = controller.state.friends;
 
-      if (controller.state.isLoading.value) {
-        return const Center(child: CircularProgressIndicator());
+      final isLoading = controller.state.isLoading.value;
+
+      final haveNextPage = controller.hasFriendMore;
+
+      // 🔥 FULL LOADING SHIMMER
+      if (isLoading) {
+        return Column(
+          children: List.generate(5, (index) => const FriendShimmerCard()),
+        );
       }
 
+      // 🔥 EMPTY STATE
       if (friends.isEmpty) {
-        return Center(
-          child: Padding(
-            padding: EdgeInsets.only(top: 4.hp),
-            child: Text(
-              "No friends added yet",
-              style: TextStyle(
-                color: AppColors.textSecondary(context),
-                fontSize: 10.sp,
-              ),
+        return SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: 60.hp,
+            child: EmptyStateWidget(
+              icon: Icons.group_off,
+              title: "No friends added yet",
+              subtitle: "Add friends to start splitting expenses",
             ),
           ),
         );
       }
 
+      // 🔥 DATA LIST
       return Column(
-        children: List.generate(
-          friends.length,
-          (index) => _friendItem(context, friends[index]),
-        ),
+        children: List.generate(friends.length + (haveNextPage ? 1 : 0), (
+          index,
+        ) {
+          if (index >= friends.length) {
+            return const FriendShimmerCard();
+          }
+
+          return _friendItem(context, friends[index]);
+        }),
       );
     });
   }
@@ -58,25 +73,11 @@ class FriendsList extends GetView<ViewTripController> {
       ),
       child: Row(
         children: [
-          Container(
-            height: 42,
-            width: 42,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isDark
-                  ? AppColors.darkCardElevated
-                  : const Color(0xFFE0E0E0),
-            ),
-            child: Center(
-              child: Text(
-                name.isNotEmpty ? name[0].toUpperCase() : '?',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textSecondary(context),
-                ),
-              ),
-            ),
+          CircleAvatar(
+            backgroundColor: isDark
+                ? AppColors.darkCardElevated
+                : const Color(0xFFE0E0E0),
+            child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?'),
           ),
 
           SizedBox(width: 3.wp),
@@ -94,27 +95,19 @@ class FriendsList extends GetView<ViewTripController> {
                   ),
                 ),
                 SizedBox(height: 0.3.hp),
-                _statusText(context, f, isOwe, isReceive, isSettled),
+                _statusText(context, f),
               ],
             ),
           ),
 
-          _actionWidget(context, isOwe, isReceive, isSettled),
+          _actionWidget(context, f, isOwe, isReceive, isSettled),
         ],
       ),
     );
   }
 
-  Widget _statusText(
-    BuildContext context,
-    TripFriendModel f,
-    bool isOwe,
-    bool isReceive,
-    bool isSettled,
-  ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    if (isSettled) {
+  Widget _statusText(BuildContext context, TripFriendModel f) {
+    if (f.balance == 0) {
       return Text(
         "No dues",
         style: TextStyle(
@@ -124,11 +117,11 @@ class FriendsList extends GetView<ViewTripController> {
       );
     }
 
-    if (isOwe) {
+    if (f.balanceType == 'owe') {
       return Text(
         "You owe ₹${f.myOwe.toStringAsFixed(0)}",
         style: TextStyle(
-          color: isDark ? Colors.red.shade300 : Colors.red.shade700,
+          color: Colors.red,
           fontSize: 8.5.sp,
           fontWeight: FontWeight.w500,
         ),
@@ -138,7 +131,7 @@ class FriendsList extends GetView<ViewTripController> {
     return Text(
       "You receive ₹${f.myReceive.toStringAsFixed(0)}",
       style: TextStyle(
-        color: isDark ? Colors.green.shade300 : Colors.green.shade700,
+        color: Colors.green,
         fontSize: 8.5.sp,
         fontWeight: FontWeight.w500,
       ),
@@ -147,6 +140,7 @@ class FriendsList extends GetView<ViewTripController> {
 
   Widget _actionWidget(
     BuildContext context,
+    TripFriendModel f,
     bool isOwe,
     bool isReceive,
     bool isSettled,
@@ -154,43 +148,37 @@ class FriendsList extends GetView<ViewTripController> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (isSettled) {
-      return Icon(
-        Icons.check_circle_outline,
-        color: isDark ? Colors.green.shade400 : Colors.green.shade600,
-        size: 22,
+      return Icon(Icons.check_circle_outline, color: Colors.green, size: 22);
+    }
+
+    // ❌ OWE → SettleUp
+    if (isOwe) {
+      return InkWell(
+        onTap: () =>
+            controller.openPaymentDialog(f, PaymentActionType.settleUp),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 3.5.wp, vertical: 0.8.hp),
+          decoration: BoxDecoration(
+            gradient: AppColors.buttonGradientFor(context),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text("SettleUp", style: TextStyle(color: Colors.white)),
+        ),
       );
     }
 
-    if (isOwe) {
-      return Container(
+    // ✅ RECEIVE → Record
+    return InkWell(
+      onTap: () => controller.openPaymentDialog(f, PaymentActionType.record),
+      child: Container(
         padding: EdgeInsets.symmetric(horizontal: 3.5.wp, vertical: 0.8.hp),
         decoration: BoxDecoration(
-          gradient: AppColors.buttonGradientFor(context),
+          color: Colors.blue.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
-          "SettleUp",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 8.5.sp,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 3.5.wp, vertical: 0.8.hp),
-      decoration: BoxDecoration(
-        color: Colors.blue.withValues(alpha: isDark ? 0.2 : 0.1),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        "Remind",
-        style: TextStyle(
-          color: isDark ? Colors.blue.shade300 : Colors.blue.shade700,
-          fontSize: 8.5.sp,
-          fontWeight: FontWeight.w600,
+          "Record",
+          style: TextStyle(color: Colors.blue, fontSize: 8.5.sp),
         ),
       ),
     );

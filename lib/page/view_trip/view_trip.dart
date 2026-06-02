@@ -17,6 +17,7 @@ class ViewTripPage extends GetView<ViewTripController> {
     return Scaffold(
       backgroundColor: AppColors.budgetScaffoldBgColor,
 
+      // ---------------- APP BAR ----------------
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -27,21 +28,17 @@ class ViewTripPage extends GetView<ViewTripController> {
             Navigator.pop(context);
           },
         ),
-        title: Obx(() {
-          final tripName = controller.state.trip.value?.name ?? "";
-          final tabLabel =
-              controller.state.selectedTab.value == 0 ? "Expense" : "Friends";
-          return Text(
-            tripName.isNotEmpty ? "$tripName - $tabLabel" : tabLabel,
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 15.sp,
-              color: Colors.white,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          );
-        }),
+        title: Text(
+          controller.state.trip.value?.name ?? "",
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 15.sp,
+            color: Colors.white,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: AppColors.appBarGradientFor(context),
@@ -50,8 +47,10 @@ class ViewTripPage extends GetView<ViewTripController> {
         centerTitle: false,
       ),
 
+      // ---------------- FLOATING BUTTON ----------------
       floatingActionButton: Obx(() {
         final isExpenseTab = controller.state.selectedTab.value == 0;
+
         return FloatingActionButton.extended(
           onPressed: () {
             HapticHelper.light();
@@ -74,45 +73,47 @@ class ViewTripPage extends GetView<ViewTripController> {
         );
       }),
 
+      // ---------------- BODY ----------------
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.hp),
         child: Column(
           children: [
             SizedBox(height: 1.hp),
 
+            // Tabs
             ViewTripTabs(),
 
             SizedBox(height: 1.hp),
 
+            // PageView
             Expanded(
               child: PageView(
                 controller: controller.pageController,
                 onPageChanged: controller.onPageSwiped,
                 children: [
+                  // ================= EXPENSE TAB =================
                   RefreshIndicator(
                     onRefresh: controller.refreshTripExpenses,
-                    child: SingleChildScrollView(
+                    child: ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      child: Column(
-                        children: [
-                          ViewTripAnalytics(showSettleUp: true),
-                          SizedBox(height: 2.hp),
-                          ExpenseList(),
-                        ],
-                      ),
+                      children: [
+                        ViewTripAnalytics(showSettleUp: true),
+                        SizedBox(height: 2.hp),
+                        const ExpenseList(),
+                      ],
                     ),
                   ),
+
+                  // ================= FRIEND TAB =================
                   RefreshIndicator(
                     onRefresh: controller.refreshTripFriends,
-                    child: SingleChildScrollView(
+                    child: ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
-                      child: Column(
-                        children: [
-                          ViewTripAnalytics(),
-                          SizedBox(height: 2.hp),
-                          FriendsList(),
-                        ],
-                      ),
+                      children: [
+                        const ViewTripAnalytics(),
+                        SizedBox(height: 2.hp),
+                        const FriendsList(),
+                      ],
                     ),
                   ),
                 ],

@@ -7,10 +7,14 @@ import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/budget_track/trip_model.dart';
+import 'package:eventjar/model/view_trip/trip_friend_model.dart';
+import 'package:eventjar/page/view_trip/friends/friend_settleup_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../routes/route_name.dart';
+
+enum PaymentActionType { settleUp, record }
 
 class ViewTripController extends GetxController
     with GetTickerProviderStateMixin {
@@ -21,6 +25,9 @@ class ViewTripController extends GetxController
   final pageController = PageController();
   final expenseScrollController = ScrollController();
   final friendsScrollController = ScrollController();
+
+  final settleAmountController = TextEditingController();
+  final settleNotesController = TextEditingController();
 
   static const _limit = 10;
 
@@ -52,7 +59,8 @@ class ViewTripController extends GetxController
 
     if (!expenseScrollController.hasClients) return;
 
-    if (expenseScrollController.position.pixels >=
+    if (state.selectedTab.value == 0 &&
+        expenseScrollController.position.pixels >=
             expenseScrollController.position.maxScrollExtent - 200 &&
         hasExpenseMore) {
       fetchTripExpensesOnScroll();
@@ -63,6 +71,13 @@ class ViewTripController extends GetxController
     if (state.selectedTab.value != 1) return;
 
     if (!friendsScrollController.hasClients) return;
+
+    if (state.selectedTab.value == 1 &&
+        friendsScrollController.position.pixels >=
+            friendsScrollController.position.maxScrollExtent - 200 &&
+        hasFriendMore) {
+      fetchTripFriendsOnScroll();
+    }
 
     // if (hasFriendMore) {
     //   fetchTripFriendsOnScroll();
@@ -129,9 +144,6 @@ class ViewTripController extends GetxController
       }
 
       await fetchTripExpenses();
-
-      // Future
-      // await fetchTripFriends();
     } finally {
       state.isLoading.value = false;
     }
@@ -324,73 +336,59 @@ class ViewTripController extends GetxController
     }
   }
 
-  void toggleToOpen(int index) {
-    if (state.expenseOpenedIndex.value == index) {
-      state.expenseOpenedIndex.value = -1;
-    } else {
-      state.expenseOpenedIndex.value = index;
+  //settlement dialog
+  void openPaymentDialog(TripFriendModel friend, PaymentActionType type) {
+    settleAmountController.text = type == PaymentActionType.record
+        ? friend.myReceive.abs().toStringAsFixed(0)
+        : friend.myOwe.abs().toStringAsFixed(0);
+
+    settleNotesController.clear();
+    state.paymentMethod.value = 'UPI';
+
+    Get.dialog(SettleUpDialog(friend: friend, type: type));
+  }
+
+  Future<void> submitSettleUp(
+    TripFriendModel friend,
+    PaymentActionType type,
+  ) async {
+    final rawAmount = settleAmountController.text.trim();
+    final double amount = double.tryParse(rawAmount) ?? 0;
+
+    try {
+      state.isSettleupLoading.value = true;
+
+      final payload = {
+        "toMemberId": friend.memberId,
+        "tripId": state.tripId.value,
+        "amount": type == PaymentActionType.record ? amount : -amount,
+        "method": state.paymentMethod.value.toLowerCase().replaceAll(" ", "_"),
+        "notes": settleNotesController.text.trim(),
+      };
+
+      await ViewTripApi.settleBalance(data: payload);
+
+      AppSnackbar.success(
+        title: "Success",
+        message: "Settlement marked successfully",
+      );
+
+      Navigator.pop(Get.context!);
+
+      await fetchViewFriendData();
+    } catch (err) {
+      LoggerService.loggerInstance.e('Settlement error: $err');
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Unable to Complete Settlement",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
+    } finally {
+      state.isSettleupLoading.value = false;
     }
-  }
-
-  void toggleToSelect(int index) {
-    if (state.expenseSelectedIndexes.contains(index)) {
-      state.expenseSelectedIndexes.remove(index);
-    } else {
-      state.expenseSelectedIndexes.add(index);
-    }
-    state.showLongPressHint.value = false;
-  }
-
-  void dismissLongPressHint() {
-    state.showLongPressHint.value = false;
-  }
-
-  void clearSelection() {
-    state.expenseSelectedIndexes.clear();
-  }
-
-  double get yourSpent {
-    double total = 0;
-    // for (final e in state.expense) {
-    //   total += e.yourShare;
-    // }
-    return total;
-  }
-
-  Map<String, double> get _perPersonBalances {
-    final Map<String, double> balances = {};
-    // for (final e in state.expense) {
-    //   final isYou = e.paidBy == "You";
-    //   final splitCount = e.members.isNotEmpty
-    //       ? e.members.length
-    //       : (e.yourShare > 0 ? (e.amount / e.yourShare).round() : 1);
-    //   final perPerson = e.amount / splitCount;
-    //   if (isYou) {
-    //     for (final m in e.members) {
-    //       if (m == "You") continue;
-    //       balances[m] = (balances[m] ?? 0) + perPerson;
-    //     }
-    //   } else {
-    //     balances[e.paidBy] = (balances[e.paidBy] ?? 0) - perPerson;
-    //   }
-    // }
-    return balances;
-  }
-
-  double get youOwe {
-    double total = 0;
-    for (final net in _perPersonBalances.values) {
-      if (net < 0) total += net.abs();
-    }
-    return total;
-  }
-
-  double get youReceive {
-    double total = 0;
-    for (final net in _perPersonBalances.values) {
-      if (net > 0) total += net;
-    }
-    return total;
   }
 
   void deleteExpense(int index) {
@@ -402,10 +400,10 @@ class ViewTripController extends GetxController
   }
 
   void changeTab(int index) {
-    if (state.selectedTab.value != index &&
-        state.expenseSelectedIndexes.isNotEmpty) {
-      state.expenseSelectedIndexes.clear();
-    }
+    // if (state.selectedTab.value != index &&
+    //     state.expenseSelectedIndexes.isNotEmpty) {
+    //   state.expenseSelectedIndexes.clear();
+    // }
     state.selectedTab.value = index;
     if (pageController.hasClients && pageController.page?.round() != index) {
       pageController.animateToPage(
@@ -427,42 +425,10 @@ class ViewTripController extends GetxController
   }
 
   void _loadDataForTab(int index) {
-    if (index == 1 && !state.isFriendsLoaded.value) {
+    if (index == 0) {
+      fetchViewTripData();
+    } else {
       fetchViewFriendData();
-    }
-  }
-
-  // Delete trip
-  bool get isOwner {
-    final trip = state.trip.value;
-    if (trip == null) return false;
-    final loggedUserId = UserStore.to.profile['id'] as String?;
-    return trip.createdById == loggedUserId;
-  }
-
-  Future<void> deleteTrip() async {
-    try {
-      state.isLoading.value = true;
-
-      await SplitTrackApi.deleteTrip(tripId: state.tripId.value);
-
-      AppSnackbar.success(
-        title: "Success",
-        message: "Trip deleted successfully",
-      );
-      Get.back(result: "deleted");
-    } catch (err) {
-      LoggerService.loggerInstance.e('Delete trip error: $err');
-      ApiErrorHandler.handle(
-        error: err,
-        title: "Failed to delete Trip",
-        onUnauthorized: () {
-          UserStore.to.clearStore();
-          navigateToSignInPage();
-        },
-      );
-    } finally {
-      state.isLoading.value = false;
     }
   }
 
