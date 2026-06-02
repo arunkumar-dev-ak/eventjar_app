@@ -1,13 +1,9 @@
-import 'package:dio/dio.dart';
 import 'package:eventjar/api/budget_track_api/budget_track_api.dart';
 import 'package:eventjar/api/view_trip_api/view_trip_api.dart';
 import 'package:eventjar/controller/view_trip/state.dart';
-import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
-import 'package:eventjar/model/budget_track/expense_model.dart';
-import 'package:eventjar/model/budget_track/friend_model.dart';
 import 'package:eventjar/model/budget_track/trip_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,6 +16,7 @@ class ViewTripController extends GetxController
   final state = ViewTripState();
 
   late AnimationController animation;
+  final pageController = PageController();
   final expenseScrollController = ScrollController();
   final friendsScrollController = ScrollController();
 
@@ -84,7 +81,7 @@ class ViewTripController extends GetxController
   }
 
   bool get hasExpenseMore {
-    final meta = state.meta.value;
+    final meta = state.expenseMeta.value;
 
     if (meta == null) {
       return true;
@@ -148,10 +145,8 @@ class ViewTripController extends GetxController
         return;
       }
 
-      await fetchTripExpenses();
-
-      // Future
-      // await fetchTripFriends();
+      await fetchTripFriends();
+      state.isFriendsLoaded.value = true;
     } finally {
       state.isLoading.value = false;
     }
@@ -194,7 +189,7 @@ class ViewTripController extends GetxController
       );
 
       state.expenses.value = response.data;
-      state.meta.value = response.meta;
+      state.expenseMeta.value = response.meta;
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
@@ -225,7 +220,7 @@ class ViewTripController extends GetxController
 
       state.expenses.addAll(response.data);
 
-      state.meta.value = response.meta;
+      state.expenseMeta.value = response.meta;
     } catch (err) {
       LoggerService.loggerInstance.e('Expense onScroll error: $err');
 
@@ -416,6 +411,7 @@ class ViewTripController extends GetxController
         curve: Curves.easeInOut,
       );
     }
+    _loadDataForTab(index);
   }
 
   void onPageSwiped(int index) {
@@ -424,6 +420,13 @@ class ViewTripController extends GetxController
       state.expenseSelectedIndexes.clear();
     }
     state.selectedTab.value = index;
+    _loadDataForTab(index);
+  }
+
+  void _loadDataForTab(int index) {
+    if (index == 1 && !state.isFriendsLoaded.value) {
+      fetchViewFriendData();
+    }
   }
 
   //navigation
@@ -460,8 +463,9 @@ class ViewTripController extends GetxController
   @override
   void onClose() {
     animation.dispose();
-
+    pageController.dispose();
     expenseScrollController.dispose();
     friendsScrollController.dispose();
+    super.onClose();
   }
 }
