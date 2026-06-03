@@ -1,11 +1,14 @@
 import 'package:eventjar/model/budget_track/trip_model.dart';
 import 'package:eventjar/model/meta/mobile_meta_model.dart';
+import 'package:eventjar/model/view_trip/dropdown_friend_model.dart';
 import 'package:eventjar/model/view_trip/trip_expense_model.dart';
 import 'package:eventjar/model/view_trip/trip_friend_model.dart';
 import 'package:get/get.dart';
 
 class ViewTripState {
   RxInt selectedTab = 0.obs;
+  RxBool deleteExpenseLoading = false.obs;
+  RxBool isRemovingMember = false.obs;
 
   RxString tripId = ''.obs;
 
@@ -30,4 +33,17 @@ class ViewTripState {
   final RxString paymentMethod = 'UPI'.obs;
   final List<String> paymentMethods = ['Cash', 'UPI', 'Bank Transfer', 'Other'];
   RxBool isSettleupLoading = false.obs;
+
+  // --- Friend Dropdown Variables ---
+  final RxList<DropDownFriendListModel> dropdownFriends =
+      <DropDownFriendListModel>[].obs;
+
+  final RxBool isFriendDropdownLoading = false.obs;
+  final RxBool isFriendDropdownLoadMoreLoading = false.obs;
+  final RxBool isAddingMember = false.obs;
+
+  final RxString currentFriendSearchQuery = ''.obs;
+
+  // To track pagination from the backend response
+  final Rxn<MobileMeta> friendDropdownMeta = Rxn<MobileMeta>();
 }

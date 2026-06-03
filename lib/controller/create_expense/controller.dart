@@ -1,11 +1,16 @@
+import 'dart:async';
+import 'package:dio/dio.dart';
+import 'package:eventjar/api/create_expense_api/create_expense_api.dart';
 import 'package:eventjar/controller/create_expense/state.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CreateExpenseController extends GetxController {
   final state = CreateExpenseState();
-
   final formKey = GlobalKey<FormState>();
 
   final titleController = TextEditingController();
@@ -14,70 +19,215 @@ class CreateExpenseController extends GetxController {
 
   final appBarTitle = "Create Expense";
 
+  // Trip ID from arguments
+  late final String tripId;
+  Timer? _debounceTimer;
+
   @override
   void onInit() {
     super.onInit();
+    tripId = Get.arguments?['tripId'] ?? '';
+    fetchMembers();
   }
 
-  // SUBMIT
-  void submit() {
-    if (!(formKey.currentState?.validate() ?? false)) return;
+  String get myUserId => UserStore.to.profile['id'] ?? '';
 
-    final data = {
-      "title": titleController.text.trim(),
-      "amount": amountController.text.trim(),
-      "description": descriptionController.text.trim(),
-      "category": state.selectedCategory.value,
-      "members": state.selectedMembers.values.toList(),
-    };
+  // Helper to find the current user in the member list to set as default Payer
+  void _setDefaultPayer() {
+    if (state.paidBy.value != null || state.members.isEmpty) return;
 
-    debugPrint("Expense Data: $data");
+    try {
+      final me = state.members.firstWhere((m) {
+        if (m.userId == myUserId) return true;
+        if (m.friend != null) {
+          return m.friend!['userId'] == myUserId ||
+              m.friend!['friendUserId'] == myUserId;
+        }
+        return false;
+      });
+      state.paidBy.value = me;
+    } catch (e) {
+      state.paidBy.value = state.members.first;
+    }
+  }
 
-    state.isLoading.value = true;
+  void fetchMembers() {
+    state.isMembersLoading.value = true;
+    try {
+      CreateExpenseApi.getDropdownMembers(
+            queryParams: {'tripId': tripId, 'limit': 25, 'offset': 0},
+          )
+          .then((response) {
+            state.members.value = response.data;
+            state.meta.value = response.meta;
+            _setDefaultPayer();
+          })
+          .catchError((error) {
+            _handleApiError(error, 'Failed to load trip members');
+          })
+          .whenComplete(() {
+            state.isMembersLoading.value = false;
+          });
+    } catch (e) {
+      state.isMembersLoading.value = false;
+    }
+  }
 
-    Future.delayed(const Duration(seconds: 1), () {
-      state.isLoading.value = false;
+  void onSearchMembers(String? val) {
+    if (state.isMembersLoading.value) return;
 
-      Get.snackbar(
-        "Success",
-        "Expense created",
-        snackPosition: SnackPosition.BOTTOM,
-      );
+    final String query = val?.trim() ?? '';
+    if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
 
-      clearForm();
+    state.isMembersLoading.value = true;
+
+    _debounceTimer = Timer(const Duration(milliseconds: 800), () {
+      try {
+        CreateExpenseApi.getDropdownMembers(
+              queryParams: {
+                'tripId': tripId,
+                'limit': 25,
+                'offset': 0,
+                if (query.isNotEmpty) 'search': query,
+              },
+            )
+            .then((response) {
+              LoggerService.loggerInstance.dynamic_d(response.data);
+              state.members.value = response.data;
+              state.meta.value = response.meta;
+            })
+            .catchError((error) {
+              _handleApiError(error, 'Search failed');
+            })
+            .whenComplete(() {
+              state.isMembersLoading.value = false;
+            });
+      } catch (e) {
+        state.isMembersLoading.value = false;
+      }
     });
   }
 
-  // CLEAR
+  void onLoadMoreMembers() {
+    if (state.isMembersLoadMoreLoading.value) return;
+
+    final currentMeta = state.meta.value;
+    if (currentMeta == null || currentMeta.paging.links.next == null) return;
+
+    state.isMembersLoadMoreLoading.value = true;
+
+    try {
+      final int nextPage = currentMeta.paging.pages.current + 1;
+
+      CreateExpenseApi.getDropdownMembers(
+            queryParams: {'tripId': tripId, 'limit': 25, 'offset': nextPage},
+          )
+          .then((response) {
+            state.members.addAll(response.data);
+            state.meta.value = response.meta;
+          })
+          .catchError((error) {
+            _handleApiError(error, 'Load more failed');
+          })
+          .whenComplete(() {
+            state.isMembersLoadMoreLoading.value = false;
+          });
+    } catch (e) {
+      state.isMembersLoadMoreLoading.value = false;
+    }
+  }
+
+  void onRefreshMembers() {
+    fetchMembers();
+  }
+
+  void _handleApiError(Object? error, String fallbackMsg) {
+    if (error is DioException) {
+      final statusCode = error.response?.statusCode;
+      if (statusCode == 401) {
+        return;
+      }
+      debugPrint("API Error: ${error.response?.data}");
+    }
+  }
+
+  void submit() async {
+    if (!(formKey.currentState?.validate() ?? false)) return;
+
+    final payer = state.paidBy.value;
+    if (payer == null) {
+      Get.snackbar(
+        "Error",
+        "Please select who paid for the expense",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    if (state.selectedMembers.isEmpty) {
+      Get.snackbar(
+        "Error",
+        "Please select at least one member to split with",
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    // Perfectly matches the DTO array layout we created
+    List<Map<String, dynamic>> participants = state.selectedMembers.values
+        .map((m) => {"memberId": m.id})
+        .toList();
+
+    // Map your frontend string to your backend enum format if needed
+    // (e.g., "Shopping" -> "shopping")
+    String mappedCategory =
+        state.selectedCategory.value?.toLowerCase() ?? 'other';
+
+    final data = {
+      "title": titleController.text.trim(),
+      "amount": double.tryParse(amountController.text.trim()) ?? 0,
+      "description": descriptionController.text.trim(),
+      "category": mappedCategory,
+      "splitType": "equal",
+      "tripId": tripId,
+      "paidByMemberId": payer.id,
+      "participants": participants,
+    };
+
+    state.isLoading.value = true;
+
+    try {
+      await CreateExpenseApi.createExpense(data: data);
+      AppSnackbar.success(
+        title: "Expense Created",
+        message: "The expense was successfully added to the trip.",
+      );
+      Navigator.pop(Get.context!, "refresh");
+    } catch (error) {
+      _handleApiError(error, 'Failed to create expense');
+    } finally {
+      state.isLoading.value = false;
+    }
+  }
+
   void clearForm() {
     titleController.clear();
     amountController.clear();
     descriptionController.clear();
-
     state.selectedCategory.value = "Shopping";
     state.selectedMembers.clear();
+    _setDefaultPayer();
   }
 
-  // DROPDOWN EVENTS
-  void onSearchMembers(String val) {}
-
-  void onLoadMoreMembers() {}
-
-  void onRefreshMembers() {}
-
-  //navigation
   void navigateToAddFriend() {
-    Get.toNamed(RouteName.addFriendPage)?.then((result) async {
-      // if (result == "logged_in") {
-      //   await fetchContactsOnFirstLoad();
-      // } else {
-      //   Get.back();
-      // }
+    Get.toNamed(RouteName.addFriendPage)?.then((result) {
+      if (result == "logged_in") onRefreshMembers();
     });
   }
 
   @override
   void onClose() {
+    _debounceTimer?.cancel();
     titleController.dispose();
     amountController.dispose();
     descriptionController.dispose();

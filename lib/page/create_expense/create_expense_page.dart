@@ -2,9 +2,11 @@ import 'package:eventjar/controller/create_expense/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/dropdown/multi_select_paginated_dropdown.dart';
 import 'package:eventjar/global/dropdown/single_selected_dropdown.dart';
+import 'package:eventjar/global/dropdown/single_selected_paginated_dropdown.dart';
 import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/widget/form_submit_button.dart';
+import 'package:eventjar/model/budget_track/drop_down_response_model.dart';
 import 'package:eventjar/page/add_contact/add_contact_form_element.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,9 +17,9 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg(context),
-
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
@@ -28,7 +30,6 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
         elevation: 4,
         backgroundColor: AppColors.cardBg(context),
       ),
-
       body: GestureDetector(
         onTap: () => Get.focusScope?.unfocus(),
         child: SingleChildScrollView(
@@ -46,7 +47,6 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   validator: (val) =>
                       val == null || val.isEmpty ? "Required" : null,
                 ),
-
                 SizedBox(height: 2.hp),
 
                 // AMOUNT
@@ -57,7 +57,6 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   validator: (val) =>
                       val == null || val.isEmpty ? "Enter amount" : null,
                 ),
-
                 SizedBox(height: 2.hp),
 
                 // CATEGORY DROPDOWN
@@ -71,45 +70,67 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   onSelected: (val) =>
                       controller.state.selectedCategory.value = val,
                   hintText: "Select Category",
-
                   headerColor: AppColors.gradientDarkStart,
                   themeColor: AppColors.gradientDarkStart,
-
                   selectedShade1: (isDark ? Colors.white : Colors.grey)
                       .withValues(alpha: 0.15),
                   selectedShade2: (isDark ? Colors.white : Colors.grey)
                       .withValues(alpha: 0.25),
                   selectedShade3: (isDark ? Colors.white : Colors.grey)
                       .withValues(alpha: 0.4),
-
                   selectedDisplayColor: AppColors.textPrimary(context),
                   dropdownIcon: Icons.keyboard_arrow_down_rounded,
                 ),
-
                 SizedBox(height: 2.hp),
 
-                // SPLIT WITH
-                MultiSelectPaginatedDropdown<String>(
+                // PAID BY (Single Select)
+                SingleSelectPaginatedFilterDropdown<DropdownMemberModel>(
+                  title: "Paid By",
+                  items: controller.state.members,
+                  selectedItem: controller.state.paidBy,
+                  getDefaultItem: () => controller.state.members.first,
+                  getDisplayValue: (item) => item.displayName,
+                  getKeyValue: (item) => item,
+
+                  onSelected: (val) => controller.state.paidBy.value = val,
+                  hintText: "Select Payer",
+                  onChanged: controller.onSearchMembers,
+                  onRefresh: controller.onRefreshMembers,
+                  onClickedLoadMore: controller.onLoadMoreMembers,
+                  onDropdownListLoading: controller.state.isMembersLoading,
+                  onLoadMoreLoading: controller.state.isMembersLoadMoreLoading,
+                  headerColor: AppColors.gradientDarkStart,
+                  themeColor: AppColors.gradientDarkStart,
+                  selectedShade1: (isDark ? Colors.white : Colors.grey)
+                      .withValues(alpha: 0.15),
+                  selectedShade2: (isDark ? Colors.white : Colors.grey)
+                      .withValues(alpha: 0.25),
+                  selectedShade3: (isDark ? Colors.white : Colors.grey)
+                      .withValues(alpha: 0.4),
+                ),
+                SizedBox(height: 2.hp),
+
+                // SPLIT WITH (Multi Select)
+                MultiSelectPaginatedDropdown<dynamic>(
+                  // Assuming dynamic is TripFriendModel
                   title: "Split With",
                   items: controller.state.members,
                   selectedItemsMap: controller.state.selectedMembers,
-                  getDisplayValue: (item) => item,
-                  getKeyValue: (item) => item,
+                  getDisplayValue: (item) => item.displayName,
+                  getKeyValue: (item) => item.memberId,
                   onChanged: controller.onSearchMembers,
                   onLoadMore: controller.onLoadMoreMembers,
                   onRefresh: controller.onRefreshMembers,
                   isLoading: controller.state.isMembersLoading,
                   isLoadMoreLoading: controller.state.isMembersLoadMoreLoading,
                   hintText: "Select Members",
-
                   selectedShade1: (isDark ? Colors.white : Colors.grey)
                       .withValues(alpha: 0.15),
-
                   selectedDisplayColor: AppColors.textPrimary(context),
                 ),
-
                 SizedBox(height: 0.5.hp),
 
+                // ADD NEW MEMBER BUTTON
                 InkWell(
                   onTap: () {
                     HapticHelper.light();
@@ -148,7 +169,6 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   label: "Description",
                   maxLines: 3,
                 ),
-
                 SizedBox(height: 3.hp),
 
                 // BUTTONS
@@ -158,23 +178,22 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                       Expanded(
                         child: Obx(() {
                           final isLoading = controller.state.isLoading.value;
-
                           return FormButton(
                             text: "Clear",
-                            isLoading: isLoading,
+                            isLoading: false,
                             type: FormButtonType.outline,
-                            onPressed: () {},
+                            onPressed: () {
+                              if (!isLoading) controller.clearForm();
+                            },
                           );
                         }),
                       ),
-
                       SizedBox(width: 3.wp),
 
                       // SUBMIT
                       Expanded(
                         child: Obx(() {
                           final isLoading = controller.state.isLoading.value;
-
                           return FormButton(
                             text: isLoading ? "Creating..." : "Create Expense",
                             isLoading: isLoading,
@@ -182,7 +201,6 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                             icon: Icons.receipt_long,
                             onPressed: () {
                               if (isLoading) return;
-
                               if (controller.formKey.currentState?.validate() ??
                                   false) {
                                 Get.focusScope?.unfocus();

@@ -146,16 +146,16 @@ class SplashScreenPage extends GetView<SplashScreenController> {
             ),
 
             // Language selection popup (first launch only)
-            Obx(
-              () => controller.state.showLanguagePopup.value
-                  ? Container(
-                      color: Colors.black.withValues(alpha: 0.5),
-                      child: LanguageSelectionPopup(
-                        onLanguageSelected: controller.onLanguageSelected,
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            ),
+            // Obx(
+            //   () => controller.state.showLanguagePopup.value
+            //       ? Container(
+            //           color: Colors.black.withValues(alpha: 0.5),
+            //           child: LanguageSelectionPopup(
+            //             onLanguageSelected: controller.onLanguageSelected,
+            //           ),
+            //         )
+            //       : const SizedBox.shrink(),
+            // ),
 
             // loader for deeplink
             Obx(
@@ -285,8 +285,12 @@ class SplashScreenPage extends GetView<SplashScreenController> {
             return GradientText(
               textSize: 20.sp,
               content: "MyEventJar",
-              gradientStart: dark ? AppColors.gradientLightStart : AppColors.gradientDarkStart,
-              gradientEnd: dark ? AppColors.gradientLightEnd : AppColors.gradientDarkEnd,
+              gradientStart: dark
+                  ? AppColors.gradientLightStart
+                  : AppColors.gradientDarkStart,
+              gradientEnd: dark
+                  ? AppColors.gradientLightEnd
+                  : AppColors.gradientDarkEnd,
               fontWeight: FontWeight.bold,
             );
           },

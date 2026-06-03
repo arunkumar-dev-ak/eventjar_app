@@ -71,39 +71,48 @@ class ExpenseList extends GetView<ViewTripController> {
 
     final isYou = e.paidById == currentUserId;
 
-    final card = Align(
-      alignment: isYou ? Alignment.centerRight : Alignment.centerLeft,
-      child: GestureDetector(
-        onTap: () {
-          HapticHelper.light();
-          Get.to(() => ExpenseDetailPage(expense: e));
-        },
-        child: Container(
-          width: 78.wp,
-          margin: EdgeInsets.only(top: 1.hp),
-          padding: EdgeInsets.all(3.5.wp),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: const Radius.circular(14),
-              topRight: const Radius.circular(14),
-              bottomLeft: Radius.circular(isYou ? 14 : 4),
-              bottomRight: Radius.circular(isYou ? 4 : 14),
-            ),
-            color: isYou
-                ? AppColors.gradientDarkStart.withValues(alpha: 0.08)
-                : AppColors.cardBg(context),
-            border: Border.all(
+    // ✅ Use your model's exact property here
+    final isClosed = e.isDeleted;
+
+    final card = Opacity(
+      // Make the entire card slightly faded if it's closed
+      opacity: isClosed ? 0.65 : 1.0,
+      child: Align(
+        alignment: isYou ? Alignment.centerRight : Alignment.centerLeft,
+        child: GestureDetector(
+          onTap: () {
+            HapticHelper.light();
+            Get.to(() => ExpenseDetailPage(expense: e));
+          },
+          child: Container(
+            width: 78.wp,
+            margin: EdgeInsets.only(top: 1.hp),
+            padding: EdgeInsets.all(3.5.wp),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(14),
+                topRight: const Radius.circular(14),
+                bottomLeft: Radius.circular(isYou ? 14 : 4),
+                bottomRight: Radius.circular(isYou ? 4 : 14),
+              ),
               color: isYou
-                  ? AppColors.gradientDarkStart.withValues(alpha: 0.2)
-                  : AppColors.budgetTabColor,
+                  ? AppColors.gradientDarkStart.withValues(alpha: 0.08)
+                  : AppColors.cardBg(context),
+              border: Border.all(
+                color: isYou
+                    ? AppColors.gradientDarkStart.withValues(alpha: 0.2)
+                    : AppColors.budgetTabColor,
+              ),
             ),
+            // Pass the isClosed state to the card content
+            child: _cardContent(context, e, isYou, isClosed: isClosed),
           ),
-          child: _cardContent(context, e, isYou),
         ),
       ),
     );
 
-    if (!isYou) return card;
+    // If it's NOT you, OR if the expense is ALREADY CLOSED (deleted), just return the card (No swipe allowed)
+    if (!isYou || isClosed) return card;
 
     return Dismissible(
       key: ValueKey(e.id),
@@ -113,32 +122,40 @@ class ExpenseList extends GetView<ViewTripController> {
         margin: EdgeInsets.only(top: 1.hp),
         padding: EdgeInsets.only(right: 5.wp),
         decoration: BoxDecoration(
-          color: Colors.red.shade400,
+          color: Colors.orange.shade400,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Icon(Icons.delete_outline, color: Colors.white),
+        child: const Icon(
+          Icons.cancel_presentation_rounded,
+          color: Colors.white,
+        ),
       ),
       confirmDismiss: (_) async {
         HapticHelper.medium();
         final result = await showDialog<bool>(
           context: context,
-          builder: (_) => _DeleteExpenseDialog(
+          barrierDismissible: false,
+          builder: (_) => _CloseExpenseDialog(
             expenseTitle: e.title,
-            onDelete: () => Navigator.of(context).pop(true),
+            expenseId: e.id,
+            controller: controller,
           ),
         );
         return result == true;
       },
-      onDismissed: (_) => controller.deleteExpense(index),
+      onDismissed: (_) {},
       child: card,
     );
   }
-
   // ---------------- CARD ----------------
 
-  Widget _cardContent(BuildContext context, TripExpenseModel e, bool isYou) {
+  Widget _cardContent(
+    BuildContext context,
+    TripExpenseModel e,
+    bool isYou, {
+    bool isClosed = false,
+  }) {
     final splitCount = e.count?.participants ?? e.participants.length;
-
     final myParticipant = _myParticipant(e);
 
     return Column(
@@ -147,12 +164,13 @@ class ExpenseList extends GetView<ViewTripController> {
         Row(
           children: [
             Container(
-              padding: EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.blueAccent,
+                // Change icon color if closed
+                color: isClosed ? Colors.grey : Colors.blueAccent,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.receipt_long_rounded,
                 color: Colors.white,
                 size: 16,
@@ -164,15 +182,22 @@ class ExpenseList extends GetView<ViewTripController> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    e.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 9.5.sp,
-                      color: AppColors.textPrimary(context),
-                    ),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          e.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 9.5.sp,
+                            color: AppColors.textPrimary(context),
+                          ),
+                        ),
+                      ),
+                      // Top label removed from here!
+                    ],
                   ),
                   SizedBox(height: 0.3.hp),
                   Text(
@@ -206,7 +231,10 @@ class ExpenseList extends GetView<ViewTripController> {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 9.sp,
-                      color: Colors.orange.shade700,
+                      // Mute the color if closed
+                      color: isClosed
+                          ? AppColors.textSecondary(context)
+                          : Colors.orange.shade700,
                     ),
                   ),
               ],
@@ -218,46 +246,69 @@ class ExpenseList extends GetView<ViewTripController> {
 
         Row(
           children: [
-            if (isYou) ...[
-              Icon(Icons.check_circle, size: 14, color: Colors.green),
-              SizedBox(width: 1.wp),
-              Text(
-                "Paid ₹${e.amount.toStringAsFixed(0)}",
-                style: TextStyle(
-                  fontSize: 8.5.sp,
-                  color: Colors.green.shade700,
-                  fontWeight: FontWeight.w700,
+            // If closed, show the red CLOSED label badge at the bottom
+            if (isClosed) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colors.red.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: Colors.red.withValues(alpha: 0.5)),
+                ),
+                child: Text(
+                  "CLOSED",
+                  style: TextStyle(
+                    fontSize: 8.sp,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
-              SizedBox(width: 1.5.wp),
-              Text(
-                "- $splitCount members",
-                style: TextStyle(
-                  fontSize: 7.5.sp,
-                  color: AppColors.textSecondary(context),
-                ),
-              ),
-            ] else ...[
-              if (myParticipant?.isPaid == true) ...[
-                Icon(Icons.check_circle, size: 14, color: Colors.green),
+            ]
+            // If active, show the normal payment details
+            else ...[
+              if (isYou) ...[
+                const Icon(Icons.check_circle, size: 14, color: Colors.green),
                 SizedBox(width: 1.wp),
                 Text(
-                  "Paid ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
+                  "Paid ₹${e.amount.toStringAsFixed(0)}",
                   style: TextStyle(
                     fontSize: 8.5.sp,
                     color: Colors.green.shade700,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-              ] else ...[
+                SizedBox(width: 1.5.wp),
                 Text(
-                  "Your share ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
+                  "- $splitCount members",
                   style: TextStyle(
-                    fontSize: 9.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary(context),
+                    fontSize: 7.5.sp,
+                    color: AppColors.textSecondary(context),
                   ),
                 ),
+              ] else ...[
+                if (myParticipant?.isPaid == true) ...[
+                  const Icon(Icons.check_circle, size: 14, color: Colors.green),
+                  SizedBox(width: 1.wp),
+                  Text(
+                    "Paid ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
+                    style: TextStyle(
+                      fontSize: 8.5.sp,
+                      color: Colors.green.shade700,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ] else ...[
+                  Text(
+                    "Your share ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
+                    style: TextStyle(
+                      fontSize: 9.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary(context),
+                    ),
+                  ),
+                ],
               ],
             ],
 
@@ -291,8 +342,6 @@ class ExpenseList extends GetView<ViewTripController> {
     );
   }
 
-  // ---------------- HELPERS ----------------
-
   String _paidByName(TripExpenseModel e) {
     return e.paidBy?.name ?? e.paidByFriend?.invitedName ?? 'Unknown';
   }
@@ -308,14 +357,26 @@ class ExpenseList extends GetView<ViewTripController> {
   }
 }
 
-class _DeleteExpenseDialog extends StatelessWidget {
+class _CloseExpenseDialog extends StatelessWidget {
   final String expenseTitle;
-  final VoidCallback onDelete;
+  final String expenseId;
+  final ViewTripController controller;
 
-  const _DeleteExpenseDialog({
+  const _CloseExpenseDialog({
     required this.expenseTitle,
-    required this.onDelete,
+    required this.expenseId,
+    required this.controller,
   });
+
+  Future<void> _handleCloseRequest(BuildContext context) async {
+    // Await the controller method which handles the state and API call
+    final success = await controller.closeExpenseRequest(expenseId);
+
+    // Only pop the dialog if the API call was successful
+    if (success && context.mounted) {
+      Navigator.of(context).pop(true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -342,18 +403,18 @@ class _DeleteExpenseDialog extends StatelessWidget {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: Colors.red.shade50,
+                color: Colors.orange.shade50,
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.delete_forever_rounded,
-                size: 36,
-                color: Colors.red.shade500,
+                Icons.cancel_presentation_rounded,
+                size: 32,
+                color: Colors.orange.shade600,
               ),
             ),
             SizedBox(height: 1.hp),
             Text(
-              'Delete Expense',
+              'Close Request',
               style: TextStyle(
                 fontSize: 11.sp,
                 fontWeight: FontWeight.bold,
@@ -363,7 +424,7 @@ class _DeleteExpenseDialog extends StatelessWidget {
             ),
             SizedBox(height: 1.hp),
             Text(
-              'Are you sure you want to delete "$expenseTitle"?',
+              'Are you sure you want to close the request for "$expenseTitle"?',
               style: TextStyle(
                 fontSize: 10.sp,
                 color: AppColors.textSecondary(context),
@@ -376,24 +437,23 @@ class _DeleteExpenseDialog extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.orange.shade50,
+                color: AppColors.chipBg(context),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.orange.shade200),
               ),
               child: Row(
                 children: [
                   Icon(
-                    Icons.warning_amber_rounded,
-                    color: Colors.orange.shade700,
+                    Icons.info_outline_rounded,
+                    color: AppColors.textSecondary(context),
                     size: 18,
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'This action cannot be undone and will permanently delete this expense.',
+                      'Closing this will cancel the expense and remove it from everyone\'s balances.',
                       style: TextStyle(
                         fontSize: 9.sp,
-                        color: Colors.orange.shade800,
+                        color: AppColors.textSecondary(context),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -402,54 +462,78 @@ class _DeleteExpenseDialog extends StatelessWidget {
               ),
             ),
             SizedBox(height: 3.hp),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.chipBg(context),
-                      foregroundColor: AppColors.textSecondary(context),
-                      padding: EdgeInsets.symmetric(vertical: 1.5.hp),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+
+            // Wrap the buttons in an Obx to listen to the global loading state
+            Obx(() {
+              final isLoading = controller.state.deleteExpenseLoading.value;
+
+              return Row(
+                children: [
+                  // Cancel Button
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.chipBg(context),
+                        foregroundColor: AppColors.textSecondary(context),
+                        padding: EdgeInsets.symmetric(vertical: 1.5.hp),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
                       ),
-                      elevation: 0,
-                    ),
-                    onPressed: () => Navigator.of(context).pop(false),
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(
-                        fontSize: 9.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 2.wp),
-                Expanded(
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade500,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 1.5.hp),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 2,
-                    ),
-                    onPressed: onDelete,
-                    child: Text(
-                      'Delete',
-                      style: TextStyle(
-                        fontSize: 9.sp,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
+                      // Disable tap if loading
+                      onPressed: isLoading
+                          ? null
+                          : () => Navigator.of(context).pop(false),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          fontSize: 9.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                  SizedBox(width: 2.wp),
+
+                  // Close/Submit Button
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange.shade600,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 1.5.hp),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 2,
+                      ),
+                      // Disable tap if loading
+                      onPressed: isLoading
+                          ? null
+                          : () => _handleCloseRequest(context),
+                      child: isLoading
+                          ? const SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              'Close',
+                              style: TextStyle(
+                                fontSize: 9.sp,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                    ),
+                  ),
+                ],
+              );
+            }),
           ],
         ),
       ),

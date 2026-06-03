@@ -43,6 +43,7 @@ class TripExpenseModel {
   final TripExpensePaidByFriend? paidByFriend;
 
   final TripExpenseCount? count;
+  final bool isDeleted;
 
   final List<TripExpenseParticipant> participants;
 
@@ -59,6 +60,7 @@ class TripExpenseModel {
     this.paidBy,
     this.paidByFriend,
     this.count,
+    required this.isDeleted,
     required this.participants,
   });
 
@@ -69,6 +71,7 @@ class TripExpenseModel {
         createdById: json['createdById'] ?? '',
         paidById: json['paidById'],
         title: json['title'] ?? '',
+        isDeleted: json['isDeleted'] ?? false,
         description: json['description'],
         amount: double.tryParse(json['amount'].toString()) ?? 0,
         currency: json['currency'] ?? '',
@@ -101,6 +104,7 @@ class TripExpenseModel {
     'title': title,
     'description': description,
     'amount': amount,
+    'isDeleted': isDeleted,
     'currency': currency,
     'createdAt': createdAt.toIso8601String(),
     'createdBy': createdBy?.toJson(),

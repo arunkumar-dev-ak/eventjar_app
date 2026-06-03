@@ -160,7 +160,10 @@ class BudgetTrackController extends GetxController
     try {
       await SplitTrackApi.deleteTrip(tripId: trip.id);
       state.trips.remove(trip);
-      AppSnackbar.success(title: "Success", message: "Trip deleted successfully");
+      AppSnackbar.success(
+        title: "Success",
+        message: "Trip deleted successfully",
+      );
     } catch (err) {
       LoggerService.loggerInstance.e('Delete trip error: $err');
       ApiErrorHandler.handle(
@@ -211,7 +214,7 @@ class BudgetTrackController extends GetxController
 
   void navigateToCreateTrip() {
     Get.toNamed(RouteName.createTripPage)?.then((result) async {
-      if (result == "created") {
+      if (result == "refresh") {
         await refreshTrips();
       }
     });

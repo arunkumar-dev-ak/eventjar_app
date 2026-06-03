@@ -1,12 +1,15 @@
+import 'dart:async';
+
+import 'package:dio/dio.dart';
 import 'package:eventjar/api/budget_track_api/budget_track_api.dart';
 import 'package:eventjar/global/app_snackbar.dart';
-import 'package:eventjar/api/split_track_api/split_track_api.dart';
 import 'package:eventjar/api/view_trip_api/view_trip_api.dart';
 import 'package:eventjar/controller/view_trip/state.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/budget_track/trip_model.dart';
+import 'package:eventjar/model/view_trip/dropdown_friend_model.dart';
 import 'package:eventjar/model/view_trip/trip_friend_model.dart';
 import 'package:eventjar/page/view_trip/friends/friend_settleup_dialog.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +24,8 @@ class ViewTripController extends GetxController
   var appBarTitle = "";
   final state = ViewTripState();
 
+  Timer? _friendSearchDebounce;
+
   late AnimationController animation;
   final pageController = PageController();
   final expenseScrollController = ScrollController();
@@ -29,7 +34,9 @@ class ViewTripController extends GetxController
   final settleAmountController = TextEditingController();
   final settleNotesController = TextEditingController();
 
-  static const _limit = 10;
+  static const _limit = 15;
+
+  Timer? _friendSearchDebounceTimer;
 
   @override
   void onInit() {
@@ -336,6 +343,34 @@ class ViewTripController extends GetxController
     }
   }
 
+  //delete Expense
+  Future<bool> closeExpenseRequest(String expenseId) async {
+    try {
+      state.deleteExpenseLoading.value = true;
+      await ViewTripApi.deleteExpense(expenseId);
+
+      AppSnackbar.success(
+        title: "Success",
+        message: "Expense request closed successfully.",
+      );
+
+      fetchViewTripData();
+      return true;
+    } catch (err) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to close the expense request. Please try again.",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
+      return false;
+    } finally {
+      state.deleteExpenseLoading.value = false;
+    }
+  }
+
   //settlement dialog
   void openPaymentDialog(TripFriendModel friend, PaymentActionType type) {
     settleAmountController.text = type == PaymentActionType.record
@@ -391,12 +426,217 @@ class ViewTripController extends GetxController
     }
   }
 
-  void deleteExpense(int index) {
-    // final sortedExpenses = [...state.expense]
-    //   ..sort((a, b) => b.date.compareTo(a.date));
-    // if (index < 0 || index >= sortedExpenses.length) return;
-    // final expense = sortedExpenses[index];
-    // state.expense.remove(expense);
+  void getDropdownFriendList() {
+    state.isFriendDropdownLoading.value = true;
+    state.currentFriendSearchQuery.value = ''; // Reset search
+
+    try {
+      ViewTripApi.getDropdownFriends(
+            tripId: state.tripId.value,
+            limit: _limit,
+            offset: 0,
+          )
+          .then((DropdownFriendResponseModel response) {
+            state.dropdownFriends.value = response.data;
+            state.friendDropdownMeta.value = response.meta;
+          })
+          .onError((error, stackTrace) {
+            _handleApiError(error, 'Failed to load friends');
+          })
+          .whenComplete(() {
+            state.isFriendDropdownLoading.value = false;
+          });
+    } catch (e) {
+      LoggerService.loggerInstance.e(e);
+      state.isFriendDropdownLoading.value = false;
+      AppSnackbar.error(title: 'Error', message: 'Failed to load friends');
+    }
+  }
+
+  //
+  //---------------------------------------------------------------------------
+  // 2. ON SEARCH CHANGED
+  // ---------------------------------------------------------------------------
+  void onFriendSearchChanged(String? val) {
+    if (state.isFriendDropdownLoading.value) return;
+
+    final String query = val?.trim() ?? '';
+    state.currentFriendSearchQuery.value = query;
+
+    // Cancel previous debounce
+    if (_friendSearchDebounceTimer?.isActive ?? false) {
+      _friendSearchDebounceTimer?.cancel();
+    }
+
+    state.isFriendDropdownLoading.value = true;
+
+    _friendSearchDebounceTimer = Timer(const Duration(milliseconds: 800), () {
+      try {
+        ViewTripApi.getDropdownFriends(
+              tripId: state.tripId.value,
+              search: query, // Pass the search query directly
+              limit: _limit,
+              offset: 0, // Reset offset to 0 for a new search
+            )
+            .then((DropdownFriendResponseModel response) {
+              state.dropdownFriends.value = response.data;
+              state.friendDropdownMeta.value = response.meta;
+            })
+            .onError((error, stackTrace) {
+              _handleApiError(error, 'Search failed');
+            })
+            .whenComplete(() {
+              state.isFriendDropdownLoading.value = false;
+            });
+      } catch (e) {
+        LoggerService.loggerInstance.e(e);
+        state.isFriendDropdownLoading.value = false;
+        AppSnackbar.error(title: 'Error', message: 'Search failed');
+      }
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // 3. LOAD MORE (PAGINATION)
+  // ---------------------------------------------------------------------------
+  void onFriendLoadMoreClicked() {
+    if (state.isFriendDropdownLoadMoreLoading.value) return;
+
+    final totalCount = state.friendDropdownMeta.value?.paging?.totalCount ?? 0;
+    final currentCount = state.dropdownFriends.length;
+
+    if (currentCount >= totalCount) return; // Stop if we've loaded everything
+
+    state.isFriendDropdownLoadMoreLoading.value = true;
+
+    try {
+      final int nextOffset = currentCount;
+
+      ViewTripApi.getDropdownFriends(
+            tripId: state.tripId.value,
+            search: state
+                .currentFriendSearchQuery
+                .value, // Keep current search active
+            limit: _limit,
+            offset: nextOffset,
+          )
+          .then((DropdownFriendResponseModel response) {
+            state.dropdownFriends.addAll(response.data);
+            state.friendDropdownMeta.value = response.meta;
+          })
+          .onError((error, stackTrace) {
+            _handleApiError(error, 'Load more failed');
+          })
+          .whenComplete(() {
+            state.isFriendDropdownLoadMoreLoading.value = false;
+          });
+    } catch (e) {
+      LoggerService.loggerInstance.e(e);
+      state.isFriendDropdownLoadMoreLoading.value = false;
+      AppSnackbar.error(title: 'Error', message: 'Failed to load more');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 4. ON REFRESH CLICKED
+  // ---------------------------------------------------------------------------
+  void onFriendRefreshClicked() {
+    state.isFriendDropdownLoading.value = true;
+    state.isFriendDropdownLoadMoreLoading.value = false;
+
+    try {
+      ViewTripApi.getDropdownFriends(
+            tripId: state.tripId.value,
+            search: state
+                .currentFriendSearchQuery
+                .value, // Keep current search active
+            limit: _limit,
+            offset: 0, // Reset to page 1
+          )
+          .then((DropdownFriendResponseModel response) {
+            state.dropdownFriends.value = response.data;
+            state.friendDropdownMeta.value = response.meta;
+          })
+          .onError((error, stackTrace) {
+            _handleApiError(error, 'Refresh failed');
+          })
+          .whenComplete(() {
+            state.isFriendDropdownLoading.value = false;
+          });
+    } catch (e) {
+      LoggerService.loggerInstance.e(e);
+      state.isFriendDropdownLoading.value = false;
+      AppSnackbar.error(title: 'Error', message: 'Failed to refresh');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // ERROR HANDLER HELPER
+  // ---------------------------------------------------------------------------
+  void _handleApiError(Object? error, String fallbackMessage) {
+    if (error is DioException) {
+      final statusCode = error.response?.statusCode;
+      if (statusCode == 401) {
+        UserStore.to.clearStore();
+        Get.offAllNamed(RouteName.signInPage);
+        return;
+      }
+      ApiErrorHandler.handleDioError(error, fallbackMessage);
+    } else {
+      AppSnackbar.error(title: 'Error', message: fallbackMessage);
+    }
+  }
+
+  Future<void> addSelectedFriendToTrip(
+    DropDownFriendListModel selectedFriend,
+  ) async {
+    // Prevent multiple rapid clicks
+    if (state.isAddingMember.value) return;
+
+    final tripId = state.tripId.value;
+    if (tripId.isEmpty) return;
+
+    try {
+      state.isAddingMember.value = true;
+
+      Get.dialog(
+        const Center(child: CircularProgressIndicator(color: Colors.white)),
+        barrierDismissible: false,
+      );
+
+      // 2. Call the API
+      await ViewTripApi.addMemberToTrip(
+        tripId: tripId,
+        friendId: selectedFriend.id,
+      );
+
+      // 3. Close the global loading overlay
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
+
+      // 4. Show Success Snackbar
+      final currentUserId = UserStore.to.profile['id'] as String;
+      final friendName = selectedFriend.getFriendDisplayName(currentUserId);
+
+      AppSnackbar.success(
+        title: 'Success',
+        message: 'Friend Successfully to the trip!',
+      );
+
+      onFriendRefreshClicked();
+      refreshTripFriends();
+    } catch (error) {
+      // Close the loading overlay on error
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
+
+      LoggerService.loggerInstance.e(error);
+      _handleApiError(error, 'Failed to add member to the trip.');
+    } finally {
+      state.isAddingMember.value = false;
+    }
   }
 
   void changeTab(int index) {
@@ -454,13 +694,45 @@ class ViewTripController extends GetxController
   }
 
   void navigateToCreateExpense() {
-    Get.toNamed(RouteName.createExpensePage)?.then((result) async {
-      // if (result == "logged_in") {
-      //   await fetchContactsOnFirstLoad();
-      // } else {
-      //   Get.back();
-      // }
+    Get.toNamed(
+      RouteName.createExpensePage,
+      arguments: {'tripId': state.tripId.value},
+    )?.then((result) async {
+      if (result == "refresh") {
+        await fetchViewTripData();
+      } else {
+        Get.back();
+      }
     });
+  }
+
+  Future<bool> removeMemberFromTrip(String memberId) async {
+    final tripId = state.tripId.value;
+    if (tripId.isEmpty) return false;
+
+    state.isRemovingMember.value = true;
+
+    try {
+      // 1. Call the API
+      await ViewTripApi.deleteMemberToTrip(tripId: tripId, memberId: memberId);
+
+      // 2. Show Success Snackbar
+      AppSnackbar.success(
+        title: 'Success',
+        message: 'Member has been removed from the trip.',
+      );
+
+      // 3. Refresh the Friends list and Analytics to reflect the removal
+      refreshTripFriends();
+
+      return true;
+    } catch (error) {
+      LoggerService.loggerInstance.e(error);
+      _handleApiError(error, 'Failed to remove member.');
+      return false;
+    } finally {
+      state.isRemovingMember.value = false;
+    }
   }
 
   @override

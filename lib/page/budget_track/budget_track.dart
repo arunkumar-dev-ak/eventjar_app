@@ -54,12 +54,12 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
               SizedBox(width: 3.wp),
 
               // TRANSACTION
-              AppbarButton(
-                icon: Icons.receipt_long_rounded,
-                onPressed: controller.navigateToTransaction,
-              ),
+              // AppbarButton(
+              //   icon: Icons.receipt_long_rounded,
+              //   onPressed: controller.navigateToTransaction,
+              // ),
 
-              SizedBox(width: 3.wp),
+              // SizedBox(width: 3.wp),
             ],
           ),
         ],

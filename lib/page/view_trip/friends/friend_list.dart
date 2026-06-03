@@ -1,7 +1,10 @@
 import 'package:eventjar/controller/view_trip/controller.dart';
+import 'package:eventjar/global/haptic_helper.dart';
+import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/global/widget/empty_widget.dart';
 import 'package:eventjar/model/view_trip/trip_friend_model.dart';
 import 'package:eventjar/page/view_trip/friends/friend_shimmer_card.dart';
+import 'package:eventjar/page/view_trip/friends/remove_member_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
@@ -57,13 +60,21 @@ class FriendsList extends GetView<ViewTripController> {
   }
 
   Widget _friendItem(BuildContext context, TripFriendModel f) {
+    // --- 1. SECURITY CHECK ---
+    final currentUserId = UserStore.to.profile['id'];
+    final creatorId = controller.state.trip.value?.createdById;
+
+    // Only true if the logged-in user made the trip
+    final isCurrentUserCreator = currentUserId == creatorId;
+
+    // --- 2. YOUR CARD UI ---
     final isOwe = f.balanceType == 'owe';
     final isReceive = f.balanceType == 'receive';
     final isSettled = f.balance == 0;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final name = f.displayName;
 
-    return Container(
+    final card = Container(
       margin: EdgeInsets.only(top: 1.hp),
       padding: EdgeInsets.all(4.wp),
       decoration: BoxDecoration(
@@ -103,6 +114,43 @@ class FriendsList extends GetView<ViewTripController> {
           _actionWidget(context, f, isOwe, isReceive, isSettled),
         ],
       ),
+    );
+
+    // --- 3. SWIPE TO DELETE LOGIC ---
+    // If the user is NOT the creator, just return the static card (Disables the swipe).
+    if (!isCurrentUserCreator) {
+      return card;
+    }
+
+    // IF ALLOWED: Return the swipeable Dismissible
+    return Dismissible(
+      key: ValueKey(f.memberId),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        margin: EdgeInsets.only(top: 1.hp),
+        padding: EdgeInsets.only(right: 5.wp),
+        decoration: BoxDecoration(
+          color: Colors.red.shade500,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Icon(Icons.person_remove_rounded, color: Colors.white),
+      ),
+      confirmDismiss: (_) async {
+        HapticHelper.medium();
+        // Open the modern stateless confirmation dialog
+        final result = await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) =>
+              RemoveMemberDialog(memberName: name, memberId: f.memberId),
+        );
+        return result == true;
+      },
+      onDismissed: (_) {
+        // UI handles removal automatically via the controller's refresh mechanism
+      },
+      child: card,
     );
   }
 

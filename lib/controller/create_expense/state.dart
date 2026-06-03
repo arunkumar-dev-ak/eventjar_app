@@ -1,3 +1,5 @@
+import 'package:eventjar/model/budget_track/drop_down_response_model.dart';
+import 'package:eventjar/model/meta/mobile_meta_model.dart';
 import 'package:get/get.dart';
 
 class CreateExpenseState {
@@ -19,14 +21,16 @@ class CreateExpenseState {
 
   final Rxn<String> selectedCategory = Rxn("Shopping");
 
-  final RxList<String> members = <String>[
-    "Arun",
-    "Rahul",
-    "Vignesh",
-    "Karthik",
-  ].obs;
+  // Updated to use the new model
+  final RxList<DropdownMemberModel> members = <DropdownMemberModel>[].obs;
+  final Rx<MobileMeta?> meta = Rxn<MobileMeta>();
 
-  final RxMap<String, String> selectedMembers = <String, String>{}.obs;
+  // Paid By (Single Select)
+  final Rxn<DropdownMemberModel> paidBy = Rxn<DropdownMemberModel>();
+
+  // Split With (Multi Select)
+  final RxMap<String, DropdownMemberModel> selectedMembers =
+      <String, DropdownMemberModel>{}.obs;
 
   final RxBool isMembersLoading = false.obs;
   final RxBool isMembersLoadMoreLoading = false.obs;
