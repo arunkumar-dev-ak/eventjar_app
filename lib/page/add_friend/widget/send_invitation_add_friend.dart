@@ -49,6 +49,8 @@ class SendInvitationAddFriend extends GetView<AddFriendController> {
                   title: "Email",
                   icon: Icons.email_outlined,
                   value: controller.state.sendViaEmail.value,
+                  // Pass the disabled state here:
+                  isDisabled: !controller.state.hasValidEmail.value,
                   onChanged: (val) => controller.state.sendViaEmail.value = val,
                 ),
               ),
@@ -65,14 +67,17 @@ class SendInvitationAddFriend extends GetView<AddFriendController> {
     required IconData icon,
     required bool value,
     required Function(bool) onChanged,
+    bool isDisabled = false,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final accent = isDark
         ? const Color(0xFF5B9BEF)
         : AppColors.gradientDarkStart;
 
-    return GestureDetector(
-      onTap: () {},
+    final opacity = isDisabled ? 0.4 : 1.0;
+
+    return Opacity(
+      opacity: opacity,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 1.hp),
         decoration: BoxDecoration(
@@ -113,10 +118,12 @@ class SendInvitationAddFriend extends GetView<AddFriendController> {
               scale: 0.8,
               child: Switch(
                 value: value,
-                onChanged: (val) {
-                  HapticHelper.selection();
-                  onChanged(val);
-                },
+                onChanged: isDisabled
+                    ? null
+                    : (val) {
+                        HapticHelper.selection();
+                        onChanged(val);
+                      },
                 activeThumbColor: Colors.white,
                 activeTrackColor: accent.withValues(alpha: 0.8),
                 inactiveThumbColor: isDark

@@ -11,6 +11,7 @@ import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_intl_phone_field/countries.dart';
 import 'package:get/get.dart';
 
 class AddFriendController extends GetxController {
@@ -35,6 +36,16 @@ class AddFriendController extends GetxController {
     super.onInit();
 
     getContactList();
+
+    emailController.addListener(() {
+      final hasText = emailController.text.trim().isNotEmpty;
+      state.hasValidEmail.value = hasText;
+
+      // If they clear the email field, automatically turn off the email switch
+      if (!hasText && state.sendViaEmail.value) {
+        state.sendViaEmail.value = false;
+      }
+    });
   }
 
   /// ================= CHANGE TYPE =================
@@ -49,10 +60,16 @@ class AddFriendController extends GetxController {
   void onContactSelected(MobileContact contact) {
     state.selectedContact.value = contact;
 
-    /// 🔥 Auto-fill fields
-    nameController.text = contact.name ?? '';
-    emailController.text = contact.email ?? '';
-    phoneController.text = contact.phone ?? '';
+    nameController.text = contact.name;
+    emailController.text = contact.email;
+    phoneController.text = contact.phoneParsed?.phoneNumber ?? "";
+
+    final selectedCountryCode = contact.phoneParsed?.countryCode ?? "+91";
+    final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
+    state.selectedCountry.value = countries.firstWhere(
+      (country) => country.fullCountryCode == cleanCountryCode,
+      orElse: () => countries.first,
+    );
   }
 
   /// ================= CLEAR =================
@@ -99,10 +116,14 @@ class AddFriendController extends GetxController {
     try {
       state.isLoading.value = true;
 
+      final countryCode = state.selectedCountry.value.fullCountryCode;
+      final localPhoneNumber = phoneController.text.trim();
+      final fullPhoneNumber = '+$countryCode$localPhoneNumber';
+
       final payload = {
         "source": _getSource(),
         "invitedName": nameController.text.trim(),
-        "invitedPhone": phoneController.text.trim(),
+        "invitedPhone": fullPhoneNumber.trim(),
       };
 
       if (emailController.text.trim().isNotEmpty) {
@@ -116,7 +137,7 @@ class AddFriendController extends GetxController {
 
       LoggerService.loggerInstance.dynamic_d(payload);
 
-      // await AddFriendApi.addFriend(data: payload);
+      await AddFriendApi.addFriend(data: payload);
 
       clearForm();
 

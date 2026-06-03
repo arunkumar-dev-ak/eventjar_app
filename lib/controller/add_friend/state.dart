@@ -1,4 +1,5 @@
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
+import 'package:flutter_intl_phone_field/countries.dart';
 import 'package:get/get.dart';
 import 'package:eventjar/model/meta/meta_model.dart';
 
@@ -7,7 +8,13 @@ enum AddFriendType { contact, newFriend }
 class AddFriendState {
   final RxBool isLoading = false.obs;
 
+  final RxBool hasValidEmail = false.obs;
+
   final Rxn<AddFriendType> selectedType = Rxn<AddFriendType>();
+
+  Rx<Country> selectedCountry = countries
+      .firstWhere((country) => country.code == 'IN')
+      .obs;
 
   RxList<MobileContact> contacts = <MobileContact>[].obs;
   Rxn<MobileContact> selectedContact = Rxn<MobileContact>();

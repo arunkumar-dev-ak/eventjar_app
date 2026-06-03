@@ -27,12 +27,7 @@ class ContactAddFriendContactView extends GetView<AddFriendController> {
           getKeyValue: (item) => item,
 
           onSelected: (item) {
-            controller.state.selectedContact.value = item;
-
-            // AUTO-FILL (dummy ready)
-            controller.nameController.text = item.name;
-            controller.emailController.text = item.email;
-            controller.phoneController.text = item.phone ?? "";
+            controller.onContactSelected(item);
           },
 
           hintText: "Choose contact",
