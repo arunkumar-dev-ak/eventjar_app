@@ -1,114 +1,177 @@
+import 'package:eventjar/api/friends_api/friends_api.dart';
 import 'package:eventjar/controller/friends/state.dart';
-import 'package:eventjar/model/budget_track/friend_model.dart';
-import 'package:eventjar/page/friends/widget/bottom_sheet_friends_page.dart';
+import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/helper/apierror_handler.dart';
+import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/budget_track/split_track_friend_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-enum FriendAction { viewTrips, remind, remove }
+enum FriendAction { accept, reject, remove }
 
 class FriendsController extends GetxController {
   final state = FriendsState();
 
+  final ScrollController friendScrollController = ScrollController();
+
+  final int _limit = 20;
+
   @override
   void onInit() {
     super.onInit();
-    loadDummyFriends();
+
+    friendScrollController.addListener(_onScroll);
+
+    fetchFriendsFirstLoad();
   }
 
-  void loadDummyFriends() {
-    state.friends.assignAll(dummyFriends);
+  bool get hasNextPage => state.pagination.value?.hasNext ?? false;
+
+  void _onScroll() {
+    if (!friendScrollController.hasClients) return;
+
+    final maxScroll = friendScrollController.position.maxScrollExtent;
+    final currentScroll = friendScrollController.position.pixels;
+
+    if (maxScroll - currentScroll <= 200) {
+      if (hasNextPage &&
+          !state.isPaginationLoading.value &&
+          !state.isLoading.value) {
+        fetchFriendsOnScroll();
+      }
+    }
   }
 
-  void openTrips(FriendModel friend) {
-    Get.bottomSheet(_buildTripsSheet(friend), isScrollControlled: true);
+  Map<String, dynamic> getQueryParams({bool refresh = false}) {
+    return {
+      "page": refresh ? 1 : ((state.pagination.value?.page ?? 1) + 1),
+      "limit": _limit,
+    };
+  }
+
+  Future<void> fetchFriendsFirstLoad() async {
+    try {
+      state.isLoading.value = true;
+
+      final response = await FriendsApi.getFriends(
+        queryParams: getQueryParams(refresh: true),
+      );
+
+      state.friends.assignAll(response.data);
+      state.pagination.value = response.pagination;
+    } catch (err) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load friends",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+        },
+      );
+    } finally {
+      state.isLoading.value = false;
+    }
+  }
+
+  Future<void> refreshFriends() async {
+    try {
+      final response = await FriendsApi.getFriends(
+        queryParams: getQueryParams(refresh: true),
+      );
+
+      state.friends.assignAll(response.data);
+      state.pagination.value = response.pagination;
+    } catch (err) {
+      ApiErrorHandler.handle(error: err, title: "Failed to refresh friends");
+    }
+  }
+
+  Future<void> fetchFriendsOnScroll() async {
+    try {
+      state.isPaginationLoading.value = true;
+
+      final response = await FriendsApi.getFriends(
+        queryParams: getQueryParams(),
+      );
+
+      state.friends.addAll(response.data);
+      state.pagination.value = response.pagination;
+    } catch (err) {
+      ApiErrorHandler.handle(error: err, title: "Failed to load more friends");
+    } finally {
+      state.isPaginationLoading.value = false;
+    }
+  }
+
+  Future<void> acceptFriend(SplitTrackFriend friend) async {
+    try {
+      state.isLoading.value = true;
+
+      await FriendsApi.acceptFriends(id: friend.id);
+
+      AppSnackbar.success(
+        title: "Friend Accepted",
+        message: "${friend.name} added successfully",
+      );
+
+      await fetchFriendsFirstLoad();
+    } catch (err) {
+      ApiErrorHandler.handle(error: err, title: "Failed to accept friend");
+    } finally {
+      state.isLoading.value = false;
+    }
+  }
+
+  Future<void> rejectFriend(SplitTrackFriend friend) async {
+    try {
+      state.isLoading.value = true;
+
+      await FriendsApi.rejectFriends(id: friend.id);
+
+      AppSnackbar.success(
+        title: "Invitation Rejected",
+        message: "${friend.name} invitation rejected",
+      );
+
+      await fetchFriendsFirstLoad();
+    } catch (err) {
+      ApiErrorHandler.handle(error: err, title: "Failed to reject friend");
+    } finally {
+      state.isLoading.value = false;
+    }
+  }
+
+  Future<void> deleteFriend(SplitTrackFriend friend) async {
+    try {
+      state.isLoading.value = true;
+
+      await FriendsApi.deleteFriends(id: friend.id);
+
+      AppSnackbar.success(
+        title: "Friend Removed",
+        message: "${friend.name} removed successfully",
+      );
+
+      state.friends.removeWhere((e) => e.id == friend.id);
+    } catch (err) {
+      ApiErrorHandler.handle(error: err, title: "Failed to remove friend");
+    } finally {
+      state.isLoading.value = false;
+    }
   }
 
   void navigateToAddFriend() {
     Get.toNamed(RouteName.addFriendPage)?.then((result) async {
-      // if (result == "logged_in") {
-      //   await fetchContactsOnFirstLoad();
-      // } else {
-      //   Get.back();
-      // }
+      if (result == "refresh") {
+        await fetchFriendsFirstLoad();
+      }
     });
   }
 
-  Widget _buildTripsSheet(FriendModel friend) {
-    return DraggableScrollableSheet(
-      expand: false,
-      builder: (_, scrollController) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            color: Get.theme.cardColor,
-          ),
-          child: ListView.builder(
-            controller: scrollController,
-            itemCount: 3,
-            itemBuilder: (_, i) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Get.theme.scaffoldBackgroundColor,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Goa Trip",
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 6),
-                    const Text("Pending: ₹300"),
-                    const Text("You owe: ₹150"),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: const Text("Pay"),
-                        ),
-                        const SizedBox(width: 10),
-                        OutlinedButton(
-                          onPressed: () {},
-                          child: const Text("Remind"),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  void handleAction(BuildContext context, FriendAction action, FriendModel f) {
-    switch (action) {
-      case FriendAction.viewTrips:
-        _openTripsBottomSheet(context, f);
-        break;
-      case FriendAction.remind:
-        Get.snackbar("Reminder", "Reminder sent to ${f.name}");
-        break;
-      case FriendAction.remove:
-        Get.snackbar("Removed", "${f.name} removed");
-        break;
-    }
-  }
-
-  void _openTripsBottomSheet(BuildContext context, FriendModel f) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => TripsBottomSheetFriendList(friend: f),
-    );
+  @override
+  void onClose() {
+    friendScrollController.dispose();
+    super.onClose();
   }
 }
