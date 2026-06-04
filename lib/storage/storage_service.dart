@@ -1,26 +1,36 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService extends GetxService {
   static StorageService get to => Get.find<StorageService>();
-  late final SharedPreferences _prefs;
+
+  late final FlutterSecureStorage _storage;
+
   Future<StorageService> init() async {
-    _prefs = await SharedPreferences.getInstance();
+    _storage = const FlutterSecureStorage();
     return this;
   }
 
-  //set
-  Future<bool> setString(String key, String value) async {
-    return await _prefs.setString(key, value);
+  Future<void> setString(String key, String value) async {
+    try {
+      await _storage.write(key: key, value: value);
+    } catch (_) {
+      // Swallow plugin-attachment race / keystore errors so a single
+      // storage failure can't crash the app at startup.
+    }
   }
 
-  //get
   Future<String?> getString(String key) async {
-    return _prefs.getString(key) ?? "";
+    try {
+      return await _storage.read(key: key);
+    } catch (_) {
+      return null;
+    }
   }
 
-  //delete
-  Future<bool> deleteString(String key) async {
-    return await _prefs.remove(key);
+  Future<void> deleteString(String key) async {
+    try {
+      await _storage.delete(key: key);
+    } catch (_) {}
   }
 }

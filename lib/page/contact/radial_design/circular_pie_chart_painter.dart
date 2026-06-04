@@ -8,12 +8,14 @@ class CircularPieChartPainter extends CustomPainter {
   final double animationValue;
   final bool showText;
   final int? activeStageIndex;
+  final bool isDarkMode;
 
   CircularPieChartPainter({
     required this.stages,
     required this.animationValue,
     this.showText = true,
     this.activeStageIndex,
+    this.isDarkMode = false,
   });
 
   @override
@@ -152,20 +154,21 @@ class CircularPieChartPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     if (isActive) {
-      // Add gradient for active segment
+      final blendTarget = isDarkMode ? Colors.white : Colors.white;
       paint.shader = RadialGradient(
         center: Alignment.center,
         radius: 1.0,
-        colors: [color, Color.lerp(color, Colors.white, 0.2)!],
+        colors: [color, Color.lerp(color, blendTarget, 0.2)!],
       ).createShader(Rect.fromCircle(center: center, radius: outerRadius));
     }
 
     canvas.drawPath(path, paint);
 
-    // Add highlight border for active segment
     if (isActive) {
       final borderPaint = Paint()
-        ..color = Colors.white.withAlpha(200)
+        ..color = isDarkMode
+            ? color.withAlpha(200)
+            : Colors.white.withAlpha(200)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.5;
       canvas.drawPath(path, borderPaint);
@@ -211,7 +214,9 @@ class CircularPieChartPainter extends CustomPainter {
     bool isEnabled,
   ) {
     final textStyle = TextStyle(
-      color: isEnabled ? Colors.white : Colors.white70,
+      color: isDarkMode
+          ? (isEnabled ? Colors.white : Colors.white60)
+          : (isEnabled ? Colors.white : Colors.white70),
       fontSize: 10,
       fontWeight: FontWeight.bold,
       letterSpacing: 0.5,
@@ -289,6 +294,7 @@ class CircularPieChartPainter extends CustomPainter {
   bool shouldRepaint(CircularPieChartPainter oldDelegate) {
     return oldDelegate.animationValue != animationValue ||
         oldDelegate.showText != showText ||
-        oldDelegate.activeStageIndex != activeStageIndex;
+        oldDelegate.activeStageIndex != activeStageIndex ||
+        oldDelegate.isDarkMode != isDarkMode;
   }
 }

@@ -5,7 +5,9 @@ import 'package:eventjar/controller/network/controller.dart';
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/routes/route_name.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class DashboardController extends GetxController {
@@ -22,11 +24,13 @@ class DashboardController extends GetxController {
 
     final args = Get.arguments;
 
-    if (args != null && args is Map<String, dynamic>) {
-      _handleNotificationNavigation(args);
-    } else {
-      state.selectedIndex.value = 0;
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (args != null && args is Map<String, dynamic>) {
+        _handleNotificationNavigation(args);
+      } else {
+        state.selectedIndex.value = 0;
+      }
+    });
   }
 
   bool shouldExit() {
@@ -62,15 +66,14 @@ class DashboardController extends GetxController {
     } else if (index == 3 && isLoggedIn.value == true) {
       state.selectedIndex.value = index;
       Get.find<MyTicketController>().onTabOpen();
-    } else if (index == 4 && isLoggedIn.value == true) {
-      Get.toNamed(RouteName.budgetTrackPage);
+    } else if (index == 4) {
+      state.selectedIndex.value = index;
     } else {
       navigateToSignInPage(index);
     }
   }
 
   void navigateToSignInPage(int index) {
-    LoggerService.loggerInstance.dynamic_d(index);
     Get.toNamed(RouteName.signInPage)?.then((result) async {
       if (result == "logged_in") {
         state.selectedIndex.value = index;
@@ -85,7 +88,7 @@ class DashboardController extends GetxController {
     });
   }
 
-  /*----- Notification Handling  -----*/
+  /*----- Notification and Deeplink Handling  -----*/
   void _triggerTabController(int index) {
     if (index == 1) {
       Get.find<NetworkScreenController>().onTabOpen();
@@ -97,17 +100,31 @@ class DashboardController extends GetxController {
   }
 
   Future<void> _handleNotificationNavigation(Map<String, dynamic> args) async {
-    final initialTab = args["initialTab"];
     final isLoginRequired = args["isLoginRequired"] == true;
 
-    if (((isLoginRequired && isLoggedIn.value) || !isLoginRequired) &&
-        initialTab != null) {
+    // If login required but NOT logged in → go to login first
+    if (isLoginRequired && !isLoggedIn.value) {
+      final result = await Get.toNamed(RouteName.signInPage);
+
+      if (result == "logged_in") {
+        // After login → continue navigation
+        _resumeNotificationNavigation(args);
+      }
+
+      return;
+    }
+
+    _resumeNotificationNavigation(args);
+  }
+
+  Future<void> _resumeNotificationNavigation(Map<String, dynamic> args) async {
+    final initialTab = args["initialTab"];
+
+    if (initialTab != null) {
       state.selectedIndex.value = initialTab;
 
-      //small delay
       await Future.delayed(const Duration(milliseconds: 300));
 
-      // open Notification page
       await _openSubPage(args);
     }
   }
@@ -115,23 +132,94 @@ class DashboardController extends GetxController {
   Future<void> _openSubPage(Map<String, dynamic> args) async {
     final subPage = args["openSubPage"];
 
-    if (subPage == "contact") {
-      await Get.toNamed(
-        RouteName.contactPage,
-      )?.then((_) => {_triggerTabController(state.selectedIndex.value)});
-    } else if (subPage == "meeting") {
-      await Get.toNamed(
-        RouteName.meetingPage,
-      )?.then((_) => {_triggerTabController(state.selectedIndex.value)});
-    } else if (subPage == "connection") {
-      final tab = args["connectionTab"] ?? 0;
+    switch (subPage) {
+      case "contact":
+        await Get.toNamed(
+          RouteName.contactPage,
+        )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
 
-      await Get.toNamed(
-        RouteName.connectionPage,
-        arguments: {"openTab": tab},
-      )?.then((_) => {_triggerTabController(state.selectedIndex.value)});
-    } else {
-      _triggerTabController(state.selectedIndex.value);
+      case "signUpPage":
+        final token = args["token"];
+
+        await Get.toNamed(
+          RouteName.signUpPage,
+          arguments: {"token": token},
+        )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
+      case "eventInfo":
+        await Get.toNamed(
+          RouteName.eventInfoPage,
+          parameters: args['parameters'],
+        )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
+      case "meeting":
+        await Get.toNamed(
+          RouteName.meetingPage,
+        )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
+      case "connection":
+        final tab = args["connectionTab"] ?? 0;
+        await Get.toNamed(
+          RouteName.connectionPage,
+          arguments: {"openTab": tab},
+        )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
+      // NEWLY ADDED HANDLERS
+      case "email_integration":
+        await Get.toNamed(
+          RouteName.notificationpage,
+          arguments: "email",
+        )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
+      case "whatsapp_integration":
+        await Get.toNamed(
+          RouteName.emailNotificationFormOage,
+          arguments: "whatsapp",
+        )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
+      case "calendar_feature":
+        // await Get.toNamed(
+        //   RouteName.calendarFeaturePage,
+        // )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
+      case "scan_card":
+        await Get.toNamed(
+          RouteName.scanCardPage,
+          arguments: {"enableTour": true},
+        )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
+      case "add_contact":
+        await Get.toNamed(
+          RouteName.addContactPage,
+        )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
+      case "overdue_contact":
+        await Get.toNamed(
+          RouteName.contactPage,
+          arguments: {
+            "statusCard": NetworkStatusCardData(
+              key: 'overdue',
+              enumKey: 'overdue',
+              label: 'Overdue',
+              icon: Icons.warning_amber_rounded,
+              color: Colors.red,
+            ),
+          },
+        )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
+      default:
+        _triggerTabController(state.selectedIndex.value);
     }
   }
 }

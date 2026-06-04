@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/home/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/home/widget/home_search_model.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class HomeSearchBar extends StatelessWidget {
           Expanded(
             child: GestureDetector(
               onTap: () {
+                HapticHelper.light();
                 openSearchModel(context);
               },
               child: Container(

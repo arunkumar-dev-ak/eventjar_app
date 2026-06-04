@@ -115,28 +115,15 @@ class ConnectionController extends GetxController {
 
       state.sent.value = response.sent;
       state.received.value = response.received;
-
-      LoggerService.loggerInstance.dynamic_d(
-        state.received.value?.requests.length,
-      );
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
-          // Auth error handling example
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to fetch analytics",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to fetch analytics");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       checkAndMakeLoadingFalse();
     }
@@ -197,23 +184,14 @@ class ConnectionController extends GetxController {
         );
       }
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
-          // Auth error handling example
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to fetch Connection Details",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to fetch Connection Details");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       checkAndMakeLoadingFalse();
     }
@@ -236,17 +214,7 @@ class ConnectionController extends GetxController {
   }
 
   Future<void> refreshConnections() async {
-    // isLoading.value = true;
-    // // Simulate API
-    // await Future.delayed(const Duration(seconds: 1));
-    // state.sentRequests.value = _generateDummyRequests(10, true);
-    // state.receivedRequests.value = _generateDummyRequests(15, false);
-    // state.sentTotalPages.value = 3;
-    // state.receivedTotalPages.value = 4;
-    // state.pendingReceivedCount.value = state.receivedRequests
-    //     .where((r) => r.status == 'pending')
-    //     .length;
-    // isLoading.value = false;
+    await fetchConnections();
   }
 
   void navigateToSignInPage() {

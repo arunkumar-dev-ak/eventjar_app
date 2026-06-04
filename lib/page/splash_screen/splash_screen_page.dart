@@ -1,5 +1,7 @@
 import 'package:eventjar/controller/splashScreen/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/widget/full_screen_loader.dart';
+import 'package:eventjar/page/splash_screen/widget/language_selection_popup.dart';
 import 'package:eventjar/page/splash_screen/widget/network_animation_binder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +15,7 @@ class SplashScreenPage extends GetView<SplashScreenController> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -27,6 +30,8 @@ class SplashScreenPage extends GetView<SplashScreenController> {
             Image.asset(
               'assets/splash/splash_screen_bg.png',
               fit: BoxFit.cover,
+              color: isDark ? Colors.black.withValues(alpha: 0.5) : null,
+              colorBlendMode: isDark ? BlendMode.darken : null,
             ),
             // Dark overlay gradient for better text visibility
             Container(
@@ -34,11 +39,17 @@ class SplashScreenPage extends GetView<SplashScreenController> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    const Color(0xFF1c56bf).withValues(alpha: 0.7),
-                    const Color(0xFF2d5a87).withValues(alpha: 0.5),
-                    const Color(0xFF1ceb8c).withValues(alpha: 0.3),
-                  ],
+                  colors: isDark
+                      ? [
+                          const Color(0xFF0a1e3d).withValues(alpha: 0.9),
+                          const Color(0xFF0f2a4a).withValues(alpha: 0.85),
+                          const Color(0xFF0a3d2a).withValues(alpha: 0.8),
+                        ]
+                      : [
+                          const Color(0xFF1c56bf).withValues(alpha: 0.7),
+                          const Color(0xFF2d5a87).withValues(alpha: 0.5),
+                          const Color(0xFF1ceb8c).withValues(alpha: 0.3),
+                        ],
                   stops: const [0.0, 0.5, 1.0],
                 ),
               ),
@@ -133,6 +144,26 @@ class SplashScreenPage extends GetView<SplashScreenController> {
                 },
               ),
             ),
+
+            // Language selection popup (first launch only)
+            // Obx(
+            //   () => controller.state.showLanguagePopup.value
+            //       ? Container(
+            //           color: Colors.black.withValues(alpha: 0.5),
+            //           child: LanguageSelectionPopup(
+            //             onLanguageSelected: controller.onLanguageSelected,
+            //           ),
+            //         )
+            //       : const SizedBox.shrink(),
+            // ),
+
+            // loader for deeplink
+            Obx(
+              () => FullScreenLoader(
+                isLoading: controller.state.isResolvingDeepLink.value,
+                message: "Preparing your experience...",
+              ),
+            ),
           ],
         ),
       ),
@@ -208,21 +239,32 @@ class SplashScreenPage extends GetView<SplashScreenController> {
     required Color iconColor,
     bool isWhatsApp = false,
   }) {
-    return Container(
-      width: 12.wp,
-      height: 12.wp,
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+    return Builder(
+      builder: (context) {
+        final dark = Theme.of(context).brightness == Brightness.dark;
+        final bg = dark && backgroundColor == Colors.white
+            ? Colors.white.withValues(alpha: 0.15)
+            : backgroundColor;
+        final ic = dark && iconColor == const Color(0xFF1a365d)
+            ? Colors.white
+            : iconColor;
+        return Container(
+          width: 12.wp,
+          height: 12.wp,
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: dark ? 0.4 : 0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Icon(icon, color: iconColor, size: 8.wp),
+          child: Icon(icon, color: ic, size: 8.wp),
+        );
+      },
     );
   }
 
@@ -237,12 +279,21 @@ class SplashScreenPage extends GetView<SplashScreenController> {
         //   // colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
         // ),
         SizedBox(width: 2.wp),
-        GradientText(
-          textSize: 20.sp,
-          content: "MyEventJar",
-          gradientStart: AppColors.gradientDarkStart,
-          gradientEnd: AppColors.gradientDarkEnd,
-          fontWeight: FontWeight.bold,
+        Builder(
+          builder: (context) {
+            final dark = Theme.of(context).brightness == Brightness.dark;
+            return GradientText(
+              textSize: 20.sp,
+              content: "MyEventJar",
+              gradientStart: dark
+                  ? AppColors.gradientLightStart
+                  : AppColors.gradientDarkStart,
+              gradientEnd: dark
+                  ? AppColors.gradientLightEnd
+                  : AppColors.gradientDarkEnd,
+              fontWeight: FontWeight.bold,
+            );
+          },
         ),
       ],
     );

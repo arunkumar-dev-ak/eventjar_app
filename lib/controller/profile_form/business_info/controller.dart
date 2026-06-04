@@ -190,20 +190,14 @@ class BusinessInfoFormController extends GetxController {
       AppSnackbar.success(title: "Success", message: "Business info updated");
       Navigator.pop(Get.context!, "refresh");
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to update business info",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-        ApiErrorHandler.handleError(err, "Failed to update basic info");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }

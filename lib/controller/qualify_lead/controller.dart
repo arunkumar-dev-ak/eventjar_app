@@ -122,7 +122,7 @@ class QualifyLeadController extends GetxController {
           Get.toNamed(RouteName.signInPage);
           return;
         }
-        ApiErrorHandler.handleError(err, "Failed to qualify lead");
+        ApiErrorHandler.handleDioError(err, "Failed to qualify lead");
       } else {
         AppSnackbar.error(title: "Failed", message: "Something went wrong.");
       }

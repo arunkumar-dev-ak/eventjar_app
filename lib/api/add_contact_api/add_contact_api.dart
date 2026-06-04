@@ -90,8 +90,6 @@ class AddContactApi {
     try {
       final response = await _dio.put('/contacts/$id', data: data);
 
-      LoggerService.loggerInstance.dynamic_d(response.statusCode);
-
       if ((response.statusCode == 200 || response.statusCode == 201) &&
           !isFromQualify) {
         AppSnackbar.success(

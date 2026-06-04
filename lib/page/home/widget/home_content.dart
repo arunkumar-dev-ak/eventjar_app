@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/home/controller.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/helper/event_share_helper.dart';
@@ -26,10 +27,10 @@ class HomeContent extends StatelessWidget {
         );
       }
       if (controller.state.events.isEmpty) {
-        return SliverToBoxAdapter(
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: noEventsFoundWidget(),
+        return SliverFillRemaining(
+          hasScrollBody: false,
+          child: noEventsFoundWidget(
+            onRefresh: () => controller.onTabOpen(),
           ),
         );
       }
@@ -111,6 +112,7 @@ class HomeContent extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
+                        HapticHelper.light();
                         controller.navigateToEventCategoryPage();
                       },
                       child: Text(
@@ -144,7 +146,10 @@ class HomeContent extends StatelessWidget {
                   : ('Physical', Icons.location_on, const Color(0xFF4CAF50));
 
               return GestureDetector(
-                onTap: () => controller.navigateToEventInfoPage(event),
+                onTap: () {
+                  HapticHelper.light();
+                  controller.navigateToEventInfoPage(event);
+                },
                 child: Container(
                   margin: EdgeInsets.symmetric(
                     horizontal: 4.wp,
@@ -212,6 +217,7 @@ class HomeContent extends StatelessWidget {
                             right: 10,
                             child: GestureDetector(
                               onTap: () {
+                                HapticHelper.light();
                                 ShareEventHelper.shareEvent(
                                   context: context,
                                   title: event.title,
@@ -450,7 +456,10 @@ class HomeContent extends StatelessWidget {
             } else {
               if (events.length > 5) {
                 return GestureDetector(
-                  onTap: () => controller.navigateToEventCategoryPage(),
+                  onTap: () {
+                    HapticHelper.light();
+                    controller.navigateToEventCategoryPage();
+                  },
                   child: Container(
                     margin: EdgeInsets.symmetric(
                       horizontal: 4.wp,
@@ -502,6 +511,7 @@ class HomeContent extends StatelessWidget {
   Widget _buildCategoryChip(String label, Color color) {
     return GestureDetector(
       onTap: () {
+        HapticHelper.light();
         controller.navigateToEventCategoryPage(
           category: label == 'View All' ? null : label,
         );

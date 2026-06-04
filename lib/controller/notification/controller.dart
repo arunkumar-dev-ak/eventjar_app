@@ -21,8 +21,6 @@ class NotificationController extends GetxController {
     super.onInit();
     final args = Get.arguments;
 
-    LoggerService.loggerInstance.dynamic_d(args);
-
     if (args != null && args == "whatsapp") {
       changeTab(1);
     } else {
@@ -54,23 +52,14 @@ class NotificationController extends GetxController {
       state.emailConfig.value = emailConfig;
     } catch (err) {
       LoggerService.loggerInstance.e(err);
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
-          // Auth error handling example
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to fetch Email Configuration",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to fetch Email Configuration");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }
@@ -87,26 +76,14 @@ class NotificationController extends GetxController {
       loadEmailProviders();
     } catch (err) {
       LoggerService.loggerInstance.e(err);
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
-          // Auth error handling example
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to Disconnect Email Configuration",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(
-          err,
-          "Failed to Disconnect Email Configuration",
-        );
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.isDeleting.value = false;
     }
@@ -138,26 +115,14 @@ class NotificationController extends GetxController {
       state.whatsAppConfig.value = res;
     } catch (err) {
       LoggerService.loggerInstance.e(err);
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
-          // Auth error handling example
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to fetch Whatsapp Configuration",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(
-          err,
-          "Failed to fetch Whatsapp Configuration",
-        );
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }
@@ -193,14 +158,14 @@ class NotificationController extends GetxController {
     } catch (err) {
       state.isSavingToken.value = false;
       LoggerService.loggerInstance.e(err);
-      if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Failed to save WhatsApp token");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to save WhatsApp token",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
     }
   }
 
@@ -218,22 +183,14 @@ class NotificationController extends GetxController {
     } catch (err) {
       LoggerService.loggerInstance.e(err);
       state.isDeleting.value = false;
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to disconnect WhatsApp",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to disconnect WhatsApp");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     }
   }
 

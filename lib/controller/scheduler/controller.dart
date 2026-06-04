@@ -118,8 +118,6 @@ class SchedulerController extends GetxController {
         ),
       );
 
-      LoggerService.loggerInstance.dynamic_d(time);
-
       if (time != null) {
         state.scheduledAt.value = DateTime(
           picked.year,
@@ -154,7 +152,7 @@ class SchedulerController extends GetxController {
                 Get.offAllNamed('/sign-in');
                 return;
               }
-              ApiErrorHandler.handleError(
+              ApiErrorHandler.handleDioError(
                 error,
                 'Failed to load Qualified Contacts',
               );
@@ -207,7 +205,7 @@ class SchedulerController extends GetxController {
                   Get.offAllNamed('/sign-in');
                   return;
                 }
-                ApiErrorHandler.handleError(error, 'Search failed');
+                ApiErrorHandler.handleDioError(error, 'Search failed');
               } else {
                 AppSnackbar.error(
                   title: 'Search Error',
@@ -253,7 +251,7 @@ class SchedulerController extends GetxController {
                 Get.offAllNamed('/sign-in');
                 return;
               }
-              ApiErrorHandler.handleError(error, 'Load more failed');
+              ApiErrorHandler.handleDioError(error, 'Load more failed');
             } else {
               AppSnackbar.error(title: 'Error', message: 'Failed to load more');
             }
@@ -289,7 +287,7 @@ class SchedulerController extends GetxController {
                 Get.offAllNamed('/sign-in');
                 return;
               }
-              ApiErrorHandler.handleError(error, 'Refresh failed');
+              ApiErrorHandler.handleDioError(error, 'Refresh failed');
             } else {
               AppSnackbar.error(
                 title: 'Refresh Error',
@@ -418,8 +416,6 @@ class SchedulerController extends GetxController {
 
       if (isRescheduleMode) {
         final dto = _buildRescheduleDto();
-        // LoggerService.loggerInstance.dynamic_d(dto);
-        // LoggerService.loggerInstance.dynamic_d(state.selectedMeeting.value!.id);
 
         if (dto.isEmpty) {
           Navigator.pop(context);
@@ -460,7 +456,7 @@ class SchedulerController extends GetxController {
           navigateToSignInPage();
           return;
         }
-        ApiErrorHandler.handleError(
+        ApiErrorHandler.handleDioError(
           err,
           isRescheduleMode
               ? "Failed to reschedule meeting"

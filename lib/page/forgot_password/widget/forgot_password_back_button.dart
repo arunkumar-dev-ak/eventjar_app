@@ -1,3 +1,4 @@
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,7 +13,11 @@ class ForgotPasswordBackButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 12, left: 12),
       child: GestureDetector(
-        onTap: () => {Get.focusScope?.unfocus(), Get.back()},
+        onTap: () {
+          HapticHelper.light();
+          Get.focusScope?.unfocus();
+          Get.back();
+        },
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(

@@ -1,3 +1,4 @@
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +22,7 @@ class SocialButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final dimmedColor = color.withValues(alpha: isLoading ? 0.04 : 0.08);
     final borderColor = color.withValues(alpha: isLoading ? 0.15 : 0.3);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Opacity(
       opacity: isLoading ? 0.7 : 1.0,
@@ -28,7 +30,12 @@ class SocialButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
-          onTap: isLoading ? null : onTap,
+          onTap: isLoading
+              ? null
+              : () {
+                  HapticHelper.light();
+                  onTap();
+                },
           child: Container(
             padding: EdgeInsets.symmetric(vertical: 1.2.hp, horizontal: 3.wp),
             decoration: BoxDecoration(
@@ -62,9 +69,11 @@ class SocialButton extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87.withValues(
-                      alpha: isLoading ? 0.6 : 1.0,
-                    ),
+                    color: isDark
+                        ? Colors.white
+                        : Colors.black87.withValues(
+                            alpha: isLoading ? 0.6 : 1.0,
+                          ),
                     letterSpacing: 0.5,
                   ),
                 ),

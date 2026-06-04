@@ -48,8 +48,6 @@ class ConnectionApi {
         '/networking/meeting-requests/$requestId',
       );
 
-      LoggerService.loggerInstance.dynamic_d(response.statusCode);
-
       return response.statusCode == 200 ||
           response.statusCode == 201 ||
           response.statusCode == 204;

@@ -1,4 +1,5 @@
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +18,7 @@ class AuthSignIn extends StatelessWidget {
           ),
         ),
         onPressed: () {
+          HapticHelper.light();
           onPressed();
         },
         child: RichText(

@@ -4,6 +4,7 @@ import 'package:eventjar/api/signin_api/signin_api.dart';
 import 'package:eventjar/controller/signIn/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/global_values.dart';
+import 'package:eventjar/global/social_auth/linkedin_auth.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
@@ -105,7 +106,7 @@ class SignInController extends GetxController {
       state.isLoading.value = false;
       LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Login Error");
+        ApiErrorHandler.handleDioError(err, "Login Error");
       } else {
         AppSnackbar.error(
           title: "Login Error",
@@ -156,9 +157,9 @@ class SignInController extends GetxController {
       navigateToBackPage(context);
     } catch (err) {
       state.is2FaLoading.value = false;
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "2FA Error");
+        ApiErrorHandler.handleDioError(err, "2FA Error");
       } else {
         AppSnackbar.error(title: "2FA Error", message: "Something went wrong");
       }
@@ -167,7 +168,10 @@ class SignInController extends GetxController {
 
   Future<void> handleLinkedIn() async {
     state.isLinkedinLoading.value = true;
-    final url = "${backendBaseUrl()}auth/linkedin?platform=mobile";
+    final codeChallenge = await generateCodeChallenge();
+    LoggerService.loggerInstance.dynamic_d(codeChallenge);
+    final url =
+        "${backendBaseUrl()}/auth/linkedin?platform=mobile&code_challenge=$codeChallenge";
     final Uri authUri = Uri.parse(url);
     try {
       if (await canLaunchUrl(authUri)) {
@@ -176,9 +180,9 @@ class SignInController extends GetxController {
         throw 'Could not launch browser.Kindly try again after some time.';
       }
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Authentication Failed");
+        ApiErrorHandler.handleDioError(err, "Authentication Failed");
       } else {
         AppSnackbar.error(
           title: "Authentication Failed",

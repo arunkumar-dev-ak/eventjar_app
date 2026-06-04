@@ -3,6 +3,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/profile_form/summary_form/widget/summary_dropdown.dart';
 import 'package:eventjar/page/profile_form/summary_form/widget/summary_form_element.dart';
+import 'package:eventjar/page/profile_form/summary_form/widget/summary_tag_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -18,19 +19,23 @@ class SummaryFormPage extends GetView<SummaryFormController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: TextStyle(color: AppColors.textPrimary(context)),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         centerTitle: false,
-        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
-        elevation: 4,
-        backgroundColor: AppColors.cardBg(context),
-        shadowColor: Colors.black.withValues(alpha: 0.5),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
+        ),
+        elevation: 0,
       ),
-      body: GestureDetector(
-        onTap: () => Get.focusScope?.unfocus(),
-        child: SizedBox(
-          width: 100.wp,
-          height: MediaQuery.of(context).size.height,
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => Get.focusScope?.unfocus(),
           child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 3.hp),
             child: Form(
@@ -93,6 +98,24 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                         validator: (val) => null,
                       ),
                     ],
+                  ),
+                  SizedBox(height: 4.hp),
+
+                  // Known Languages
+                  SummaryTagInput(
+                    title: 'Known Languages',
+                    subtitle: 'Add languages you can communicate in',
+                    hintText: 'e.g., English, Hindi, Tamil',
+                    items: controller.state.selectedKnownLanguages,
+                  ),
+                  SizedBox(height: 4.hp),
+
+                  // Skills
+                  SummaryTagInput(
+                    title: 'Skills',
+                    subtitle: 'Add your key skills and expertise',
+                    hintText: 'e.g., Leadership, Marketing',
+                    items: controller.state.selectedSkills,
                   ),
                   SizedBox(height: 5.hp),
 

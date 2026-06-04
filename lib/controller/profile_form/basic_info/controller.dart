@@ -153,20 +153,14 @@ class BasicInfoFormController extends GetxController {
 
       Navigator.pop(context, "refresh");
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to update basic info",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-        ApiErrorHandler.handleError(err, "Failed to update basic info");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }
@@ -196,7 +190,7 @@ class BasicInfoFormController extends GetxController {
       _startResendCooldown();
     } catch (err) {
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Failed to send OTP");
+        ApiErrorHandler.handleDioError(err, "Failed to send OTP");
       } else {
         AppSnackbar.error(title: "Error", message: err.toString());
       }

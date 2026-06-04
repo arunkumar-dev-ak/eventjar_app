@@ -16,10 +16,13 @@ import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/page/user_profile/user_profile_security/user_profile_security_info.dart';
+import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/routes/route_name.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:typed_data';
@@ -31,7 +34,7 @@ import '../../api/verify_api/phone.dart';
 import '../../global/image_process.dart';
 
 class UserProfileController extends GetxController
-    with GetSingleTickerProviderStateMixin {
+    with GetSingleTickerProviderStateMixin, WidgetsBindingObserver {
   var appBarTitle = "EventJar";
   final state = UserProfileState();
   final formKey = GlobalKey<FormState>();
@@ -54,7 +57,9 @@ class UserProfileController extends GetxController
   void onInit() async {
     UserStore.cancelAllRequests();
     super.onInit();
+    WidgetsBinding.instance.addObserver(this);
     loadAppInfo();
+    refreshPermissions();
     // shakeController = AnimationController(
     //   duration: Duration(milliseconds: 800),
     //   vsync: this,
@@ -81,6 +86,113 @@ class UserProfileController extends GetxController
     }
     state.isDeleteLoading.value = false;
     if (state.isLoggingOut.value) state.isLoggingOut.value = false;
+    refreshPermissions();
+  }
+
+  Future<void> refreshPermissions() async {
+    state.cameraGranted.value = await Permission.camera.isGranted;
+    state.notificationGranted.value = await Permission.notification.isGranted;
+  }
+
+  Future<void> toggleCameraPermission() async {
+    final status = await Permission.camera.status;
+    if (status.isGranted) {
+      _showSettingsDialog(
+        title: 'Disable Camera',
+        message:
+            'To disable camera access, you need to turn it off in your device settings.',
+      );
+      return;
+    }
+    if (status.isPermanentlyDenied || status.isRestricted) {
+      _showSettingsDialog(
+        title: 'Enable Camera',
+        message:
+            'Camera permission was previously denied. Please enable it in your device settings to use QR scan and card scan.',
+      );
+      return;
+    }
+    await Permission.camera.request();
+    await refreshPermissions();
+  }
+
+  Future<void> toggleNotificationPermission() async {
+    final status = await Permission.notification.status;
+    if (status.isGranted) {
+      _showSettingsDialog(
+        title: 'Disable Notifications',
+        message:
+            'To disable notifications, you need to turn them off in your device settings.',
+      );
+      return;
+    }
+    if (status.isPermanentlyDenied || status.isRestricted) {
+      _showSettingsDialog(
+        title: 'Enable Notifications',
+        message:
+            'Notification permission was previously denied. Please enable it in your device settings to stay updated.',
+      );
+      return;
+    }
+    await Permission.notification.request();
+    await refreshPermissions();
+  }
+
+  void _showSettingsDialog({required String title, required String message}) {
+    final context = Get.context;
+    if (context == null) return;
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => Platform.isIOS
+          ? CupertinoAlertDialog(
+              title: Text(title),
+              content: Text(message),
+              actions: [
+                CupertinoDialogAction(
+                  child: const Text('Cancel'),
+                  onPressed: () => Navigator.pop(ctx),
+                ),
+                CupertinoDialogAction(
+                  isDefaultAction: true,
+                  child: const Text('Open Settings'),
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    openAppSettings();
+                  },
+                ),
+              ],
+            )
+          : AlertDialog(
+              title: Text(title),
+              content: Text(message),
+              backgroundColor: isDark ? const Color(0xFF1E293B) : null,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: AppColors.textSecondary(ctx)),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    openAppSettings();
+                  },
+                  child: Text(
+                    'Open Settings',
+                    style: TextStyle(color: AppColors.gradientLightStart),
+                  ),
+                ),
+              ],
+            ),
+    );
   }
 
   void checkAndUpdateLocalProfileInfo() async {
@@ -146,24 +258,14 @@ class UserProfileController extends GetxController
       state.deleteAccountResponse.value = response;
     } catch (err) {
       LoggerService.loggerInstance.e(err);
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to fetch user status",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to fetch user status");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.toString()})",
-        );
-      }
+        },
+      );
     }
   }
 
@@ -195,24 +297,14 @@ class UserProfileController extends GetxController
       checkAndUpdateLocalProfileInfo();
     } catch (err) {
       LoggerService.loggerInstance.e(err);
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
-          await UserStore.to.clearStore();
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to Load User Profile",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
           navigateToSignInPage();
-          return; // Stop further error handling
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to load User Profile");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.toString()})",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }
@@ -273,27 +365,14 @@ class UserProfileController extends GetxController
         }
       }
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to ${isReactivate ? "reactivte" : "deactivate"} account",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(
-          err,
-          "Failed to ${isReactivate ? "reactivte" : "deactivate"} account",
-        );
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.toString()})",
-        );
-      }
+        },
+      );
     } finally {
       state.isDeleteLoading.value = false;
     }
@@ -301,45 +380,56 @@ class UserProfileController extends GetxController
 
   Future<void> selectAvatarImage() async {
     if (state.isProfileLoading.value) return;
+    final context = Get.context!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF1E293B) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black;
+
     await Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Change Profile Photo',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            ListTile(
-              leading: Icon(Icons.camera_alt, color: Colors.blue),
-              title: Text('Take Photo'),
-              onTap: () {
-                Get.back();
-                //_getImageFromCamera();
-                _pickImage(ImageSource.camera);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.collections, color: Colors.blue),
-              title: Text('Choose from Gallery'),
-              onTap: () {
-                Get.back();
-                //_getImageFromGallery();
-                _pickImage(ImageSource.gallery);
-              },
-            ),
-            SizedBox(height: 10),
-            TextButton(
-              onPressed: () => Get.back(),
-              child: Text('Cancel', style: TextStyle(color: Colors.red)),
-            ),
-          ],
+      Material(
+        color: bgColor,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Change Profile Photo',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+              SizedBox(height: 20),
+              ListTile(
+                leading: Icon(Icons.camera_alt, color: Colors.blue),
+                title: Text('Take Photo', style: TextStyle(color: textColor)),
+                onTap: () {
+                  Get.back();
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.collections, color: Colors.blue),
+                title: Text(
+                  'Choose from Gallery',
+                  style: TextStyle(color: textColor),
+                ),
+                onTap: () {
+                  Get.back();
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              SizedBox(height: 10),
+              TextButton(
+                onPressed: () => Get.back(),
+                child: Text('Cancel', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -511,8 +601,8 @@ class UserProfileController extends GetxController
     }
 
     final String ext = file.path.split('.').last.toLowerCase();
-    if (!['jpg', 'jpeg', 'png', 'webp'].contains(ext)) {
-      return 'Only JPEG, PNG, WebP images are allowed';
+    if (!['jpg', 'jpeg', 'png'].contains(ext)) {
+      return 'Only JPEG, PNG images are allowed';
     }
 
     final String filename = path.basename(file.path);
@@ -582,6 +672,10 @@ class UserProfileController extends GetxController
   String get role {
     return state.userProfile.value?.role ?? 'ATTENDEE';
   }
+
+  /// Gallery images from extended profile
+  List<String> get galleryImages =>
+      state.userProfile.value?.extendedProfile?.galleryImages ?? [];
 
   /// Check if user is verified
   bool get isVerified {
@@ -657,6 +751,16 @@ class UserProfileController extends GetxController
         if (val == 'refresh') {onTabOpen()},
       },
     );
+  }
+
+  Future<void> navigateToGalleryUpdate() async {
+    final result = await Get.toNamed(
+      RouteName.galleryFormPage,
+      arguments: galleryImages,
+    );
+    if (result == 'refresh') {
+      onTabOpen();
+    }
   }
 
   void navigateToConfigureNotification() {
@@ -758,7 +862,7 @@ class UserProfileController extends GetxController
       return true;
     } catch (err) {
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Failed to send OTP");
+        ApiErrorHandler.handleDioError(err, "Failed to send OTP");
       } else {
         AppSnackbar.error(title: "Error", message: err.toString());
       }
@@ -826,7 +930,10 @@ class UserProfileController extends GetxController
       return true;
     } catch (err) {
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Failed to send verification email");
+        ApiErrorHandler.handleDioError(
+          err,
+          "Failed to send verification email",
+        );
       } else {
         AppSnackbar.error(
           title: "Error",
@@ -909,7 +1016,7 @@ class UserProfileController extends GetxController
       }
     } catch (err) {
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Error");
+        ApiErrorHandler.handleDioError(err, "Error");
       } else {
         AppSnackbar.error(title: "Error", message: "Something went wrong");
       }
@@ -919,7 +1026,15 @@ class UserProfileController extends GetxController
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      refreshPermissions();
+    }
+  }
+
+  @override
   void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
     _resendTimer?.cancel();
     // shakeController.dispose();
     super.onClose();

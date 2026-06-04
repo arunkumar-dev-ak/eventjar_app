@@ -77,7 +77,6 @@ class ThankYouMessageController extends GetxController {
       state.isLoading.value = true;
 
       final data = _buildThankYouMessageData();
-      LoggerService.loggerInstance.dynamic_d(data);
 
       final response = await ThankYouMessageApi.sendThankYouMessage(
         data: data,
@@ -99,7 +98,7 @@ class ThankYouMessageController extends GetxController {
           navigateToSignInPage();
           return;
         }
-        ApiErrorHandler.handleError(err, "Failed to Send Thankyou message");
+        ApiErrorHandler.handleDioError(err, "Failed to Send Thankyou message");
       } else {
         AppSnackbar.error(
           title: "Failed",
@@ -118,20 +117,14 @@ class ThankYouMessageController extends GetxController {
       final response = await ConfigStatusApi.getConfigStatus();
       state.configStatus.value = response;
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to Get Config details",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-        ApiErrorHandler.handleError(err, "Failed to Get Config details");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.configLoading.value = false;
     }

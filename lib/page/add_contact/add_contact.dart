@@ -6,6 +6,7 @@ import 'package:eventjar/page/add_contact/add_contact_header_widgets.dart';
 import 'package:eventjar/page/add_contact/add_contact_multi_tag.dart';
 import 'package:eventjar/page/add_contact/add_contact_stage_dropdown.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_intl_phone_field/country_picker_dialog.dart';
 import 'package:get/get.dart';
 
@@ -20,13 +21,19 @@ class AddContactPage extends GetView<AddContactController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: TextStyle(color: AppColors.textPrimary(context)),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         centerTitle: false,
-        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
-        elevation: 4,
-        backgroundColor: AppColors.cardBg(context),
-        shadowColor: Colors.black.withValues(alpha: 0.5),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
+        ),
+        elevation: 0,
       ),
       body: GestureDetector(
         onTap: () => Get.focusScope?.unfocus(),
@@ -61,7 +68,7 @@ class AddContactPage extends GetView<AddContactController> {
 
                 // Phone 1
                 IntlPhoneField(
-                  decoration: _phoneDecoration('Phone Number *'),
+                  decoration: _phoneDecoration('Phone Number *', context),
                   pickerDialogStyle: _pickerStyle(),
                   initialCountryCode:
                       controller.state.selectedCountry.value.code,
@@ -188,13 +195,17 @@ class AddContactPage extends GetView<AddContactController> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               side: BorderSide(
-                                color: Theme.of(context).brightness == Brightness.dark
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark
                                     ? Colors.blue.shade300
                                     : Colors.blue.shade700,
                                 width: 2,
                               ),
                               backgroundColor: AppColors.cardBg(context),
-                              foregroundColor: Theme.of(context).brightness == Brightness.dark
+                              foregroundColor:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
                                   ? Colors.blue.shade300
                                   : Colors.blue.shade700,
                             ),
@@ -381,8 +392,8 @@ class AddContactPage extends GetView<AddContactController> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4),
                                   ),
-                                  onChanged: (_) =>
-                                      controller.toggleAdditionalField('phone2'),
+                                  onChanged: (_) => controller
+                                      .toggleAdditionalField('phone2'),
                                 )
                               : const SizedBox(width: 16),
                         ),
@@ -392,17 +403,26 @@ class AddContactPage extends GetView<AddContactController> {
                               key: ValueKey(
                                 '${controller.state.selectedPhone2Country.value.code}_${controller.state.phone2FieldKey.value}',
                               ),
-                              decoration: _phoneDecoration('Phone Number'),
+                              decoration: _phoneDecoration(
+                                'Phone Number',
+                                context,
+                              ),
                               pickerDialogStyle: _pickerStyle(),
-                              initialCountryCode:
-                                  controller.state.selectedPhone2Country.value.code,
+                              initialCountryCode: controller
+                                  .state
+                                  .selectedPhone2Country
+                                  .value
+                                  .code,
                               onCountryChanged: (country) {
-                                controller.state.selectedPhone2Country.value = country;
+                                controller.state.selectedPhone2Country.value =
+                                    country;
                               },
                               controller: controller.phone2Controller,
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               validator: (phone) {
-                                final value = controller.phone2Controller.text.trim();
+                                final value = controller.phone2Controller.text
+                                    .trim();
                                 if (value.isEmpty) return null;
                                 if (phone != null && !phone.isValidNumber()) {
                                   return 'Enter valid number';
@@ -498,18 +518,26 @@ class AddContactPage extends GetView<AddContactController> {
     );
   }
 
-  InputDecoration _phoneDecoration(String label) {
+  InputDecoration _phoneDecoration(String label, BuildContext context) {
     return InputDecoration(
       labelText: label,
-      labelStyle: TextStyle(fontSize: 10.sp),
+      labelStyle: TextStyle(
+        fontSize: 10.sp,
+        color: AppColors.textPrimary(context).withValues(alpha: 0.6),
+      ),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.0),
-        borderSide: BorderSide(color: AppColors.borderStatic, width: 1.5),
+        borderSide: BorderSide(color: AppColors.border(context), width: 1.5),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.0),
-        borderSide: BorderSide(color: AppColors.isDark ? Colors.blue.shade300 : Colors.blue.shade700, width: 2.0),
+        borderSide: BorderSide(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.blue.shade300
+              : Colors.blue.shade700,
+          width: 2.0,
+        ),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.0),

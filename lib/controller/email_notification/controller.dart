@@ -178,7 +178,6 @@ class EmailNotificationController extends GetxController {
         Uri.parse(res.authUrl),
         mode: LaunchMode.inAppBrowserView,
       );
-      LoggerService.loggerInstance.dynamic_d("runned after");
 
       await _fetchGoogleStatus(showSnackbar: false);
 
@@ -230,7 +229,7 @@ class EmailNotificationController extends GetxController {
         return;
       }
 
-      ApiErrorHandler.handleError(err, message);
+      ApiErrorHandler.handleDioError(err, message);
     } else if (err is Exception) {
       AppSnackbar.error(title: "Exception", message: err.toString());
     } else {

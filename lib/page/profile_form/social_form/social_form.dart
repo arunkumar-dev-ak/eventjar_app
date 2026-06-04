@@ -18,285 +18,255 @@ class SocialFormPage extends GetView<SocialFormController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: TextStyle(color: AppColors.textPrimary(context)),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         centerTitle: false,
-        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
-        elevation: 4,
-        backgroundColor: AppColors.cardBg(context),
-        shadowColor: Colors.black.withValues(alpha: 0.5),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
+        ),
+        elevation: 0,
       ),
-      body: GestureDetector(
-        onTap: () => Get.focusScope?.unfocus(),
-        child: SizedBox(
-          width: 100.wp,
-          height: MediaQuery.of(context).size.height,
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 3.hp),
-            child: Form(
-              key: controller.formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // LinkedIn
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          FaIcon(
-                            FontAwesomeIcons.linkedin,
-                            size: 14,
-                            color: Colors.blue.shade600,
-                          ),
-                          SizedBox(width: 2.wp),
-                          Text(
-                            'LinkedIn Profile URL',
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 1.hp),
-                      SocialFormElement(
-                        controller: controller.linkedinController,
-                        label: '',
-                        hintText: 'https://linkedin.com/in/yourprofile',
-                        keyboardType: TextInputType.url,
-                        validator: controller.linkedinValidator,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 3.hp),
-
-                  // WhatsApp / Telegram
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          FaIcon(
-                            FontAwesomeIcons.commentDots,
-                            size: 14,
-                            color: Colors.green.shade600,
-                          ),
-                          SizedBox(width: 2.wp),
-                          Text(
-                            'WhatsApp / Telegram',
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 1.hp),
-                      SocialFormElement(
-                        controller: controller.whatsappController,
-                        label: '',
-                        hintText: '+1234567890',
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(15),
-                        ],
-                        // validator: controller.whatsappValidator,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 3.hp),
-
-                  // Instagram
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          FaIcon(
-                            FontAwesomeIcons.instagram,
-                            size: 14,
-                            color: Colors.pink.shade400,
-                          ),
-                          SizedBox(width: 2.wp),
-                          Text(
-                            'Instagram',
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 1.hp),
-                      SocialFormElement(
-                        controller: controller.instagramController,
-                        label: '',
-                        hintText: 'https://instagram.com/yourprofile',
-                        keyboardType: TextInputType.url,
-                        validator: controller.instagramValidator,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 3.hp),
-
-                  // Twitter
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          FaIcon(
-                            FontAwesomeIcons.twitter,
-                            size: 14,
-                            color: Colors.blue.shade400,
-                          ),
-                          SizedBox(width: 2.wp),
-                          Text(
-                            'X (Twitter)',
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 1.hp),
-                      SocialFormElement(
-                        controller: controller.twitterController,
-                        label: '',
-                        hintText: 'https://x.com/yourprofile',
-                        keyboardType: TextInputType.url,
-                        validator: controller.twitterValidator,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 3.hp),
-
-                  // Facebook
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          FaIcon(
-                            FontAwesomeIcons.facebook,
-                            size: 14,
-                            color: Colors.blue.shade700,
-                          ),
-                          SizedBox(width: 2.wp),
-                          Text(
-                            'Facebook',
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 1.hp),
-                      SocialFormElement(
-                        controller: controller.facebookController,
-                        label: '',
-                        hintText: 'https://facebook.com/yourprofile',
-                        keyboardType: TextInputType.url,
-                        validator: controller.facebookValidator,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4.hp),
-
-                  // Contact Visibility Toggle
-                  Container(
-                    padding: EdgeInsets.all(4.wp),
-                    decoration: BoxDecoration(
-                      color: AppColors.scaffoldBg(context),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.divider(context)),
-                    ),
-                    child: Row(
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => Get.focusScope?.unfocus(),
+          child: SizedBox(
+            width: 100.wp,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 3.hp),
+              child: Form(
+                key: controller.formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // LinkedIn
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Contact Visibility',
-                                style: TextStyle(
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.textPrimary(context),
-                                ),
+                        Row(
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.linkedinIn,
+                              size: 14,
+                              color: const Color(0xFF0A66C2),
+                            ),
+                            SizedBox(width: 2.wp),
+                            Text(
+                              'LinkedIn Profile URL',
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w600,
                               ),
-                              Text(
-                                'Allow other attendees to see your contact information',
-                                style: TextStyle(
-                                  fontSize: 9.sp,
-                                  color: AppColors.textSecondary(context),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        Obx(
-                          () => Switch(
-                            value: controller.state.contactVisibility.value,
-                            onChanged: (value) {
-                              controller.state.contactVisibility.value = value;
-                            },
-                          ),
+                        SizedBox(height: 1.hp),
+                        SocialFormElement(
+                          controller: controller.linkedinController,
+                          label: '',
+                          hintText: 'https://linkedin.com/in/yourprofile',
+                          keyboardType: TextInputType.url,
+                          validator: controller.linkedinValidator,
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(height: 5.hp),
+                    SizedBox(height: 3.hp),
 
-                  // Buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: controller.clearForm,
-                          style: OutlinedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 6.wp,
-                              vertical: 1.8.hp,
+                    // WhatsApp / Telegram
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.whatsapp,
+                              size: 14,
+                              color: Colors.green.shade600,
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                            SizedBox(width: 2.wp),
+                            Text(
+                              'WhatsApp / Telegram',
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                            side: BorderSide(
-                              color: Colors.blue.shade700,
-                              width: 2,
-                            ),
-                            backgroundColor: AppColors.cardBg(context),
-                            foregroundColor: Colors.blue.shade700,
-                            elevation: 0,
-                          ),
-                          child: Text(
-                            'Reset',
-                            style: TextStyle(
-                              fontSize: defaultFontSize,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
+                          ],
                         ),
-                      ),
-                      SizedBox(width: 3.wp),
-                      Expanded(
-                        child: Obx(() {
-                          final isLoading = controller.state.isLoading.value;
-                          return ElevatedButton(
-                            onPressed: isLoading
-                                ? null
-                                : () {
-                                    Get.focusScope?.unfocus();
-                                    controller.submitForm(context);
-                                  },
-                            style: ElevatedButton.styleFrom(
+                        SizedBox(height: 1.hp),
+                        SocialFormElement(
+                          controller: controller.whatsappController,
+                          label: '',
+                          hintText: '+1234567890',
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(15),
+                          ],
+                          // validator: controller.whatsappValidator,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 3.hp),
+
+                    // Instagram
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.instagram,
+                              size: 14,
+                              color: const Color(0xFFE4405F),
+                            ),
+                            SizedBox(width: 2.wp),
+                            Text(
+                              'Instagram',
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 1.hp),
+                        SocialFormElement(
+                          controller: controller.instagramController,
+                          label: '',
+                          hintText: 'https://instagram.com/yourprofile',
+                          keyboardType: TextInputType.url,
+                          validator: controller.instagramValidator,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 3.hp),
+
+                    // Twitter
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.xTwitter,
+                              size: 14,
+                              color: AppColors.textPrimary(context),
+                            ),
+                            SizedBox(width: 2.wp),
+                            Text(
+                              'X (Twitter)',
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 1.hp),
+                        SocialFormElement(
+                          controller: controller.twitterController,
+                          label: '',
+                          hintText: 'https://x.com/yourprofile',
+                          keyboardType: TextInputType.url,
+                          validator: controller.twitterValidator,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 3.hp),
+
+                    // Facebook
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            FaIcon(
+                              FontAwesomeIcons.facebookF,
+                              size: 14,
+                              color: const Color(0xFF1877F2),
+                            ),
+                            SizedBox(width: 2.wp),
+                            Text(
+                              'Facebook',
+                              style: TextStyle(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 1.hp),
+                        SocialFormElement(
+                          controller: controller.facebookController,
+                          label: '',
+                          hintText: 'https://facebook.com/yourprofile',
+                          keyboardType: TextInputType.url,
+                          validator: controller.facebookValidator,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 4.hp),
+
+                    // Contact Visibility Toggle
+                    // Container(
+                    //   padding: EdgeInsets.all(4.wp),
+                    //   decoration: BoxDecoration(
+                    //     color: AppColors.scaffoldBg(context),
+                    //     borderRadius: BorderRadius.circular(12),
+                    //     border: Border.all(color: AppColors.divider(context)),
+                    //   ),
+                    //   child: Row(
+                    //     children: [
+                    //       Expanded(
+                    //         child: Column(
+                    //           crossAxisAlignment: CrossAxisAlignment.start,
+                    //           children: [
+                    //             Text(
+                    //               'Contact Visibility',
+                    //               style: TextStyle(
+                    //                 fontSize: 11.sp,
+                    //                 fontWeight: FontWeight.w700,
+                    //                 color: AppColors.textPrimary(context),
+                    //               ),
+                    //             ),
+                    //             Text(
+                    //               'Allow other attendees to see your contact information',
+                    //               style: TextStyle(
+                    //                 fontSize: 9.sp,
+                    //                 color: AppColors.textSecondary(context),
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //       Obx(
+                    //         () => Switch(
+                    //           value: controller.state.contactVisibility.value,
+                    //           onChanged: (value) {
+                    //             controller.state.contactVisibility.value =
+                    //                 value;
+                    //           },
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // SizedBox(height: 5.hp),
+
+                    // Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: controller.clearForm,
+                            style: OutlinedButton.styleFrom(
                               padding: EdgeInsets.symmetric(
                                 horizontal: 6.wp,
                                 vertical: 1.8.hp,
@@ -304,36 +274,74 @@ class SocialFormPage extends GetView<SocialFormController> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              elevation: 5,
-                              shadowColor: Colors.blue.shade700.withValues(
-                                alpha: 0.5,
+                              side: BorderSide(
+                                color: Colors.blue.shade700,
+                                width: 2,
                               ),
-                              backgroundColor: Colors.blue.shade700,
-                              foregroundColor: Colors.white,
+                              backgroundColor: AppColors.cardBg(context),
+                              foregroundColor: Colors.blue.shade700,
+                              elevation: 0,
                             ),
-                            child: isLoading
-                                ? SizedBox(
-                                    height: defaultFontSize,
-                                    width: defaultFontSize,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2,
+                            child: Text(
+                              'Reset',
+                              style: TextStyle(
+                                fontSize: defaultFontSize,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 3.wp),
+                        Expanded(
+                          child: Obx(() {
+                            final isLoading = controller.state.isLoading.value;
+                            return ElevatedButton(
+                              onPressed: isLoading
+                                  ? null
+                                  : () {
+                                      Get.focusScope?.unfocus();
+                                      controller.submitForm(context);
+                                    },
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 6.wp,
+                                  vertical: 1.8.hp,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 5,
+                                shadowColor: Colors.blue.shade700.withValues(
+                                  alpha: 0.5,
+                                ),
+                                backgroundColor: Colors.blue.shade700,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: isLoading
+                                  ? SizedBox(
+                                      height: defaultFontSize,
+                                      width: defaultFontSize,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : Text(
+                                      'Update Info',
+                                      style: TextStyle(
+                                        fontSize: defaultFontSize,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 0.5,
+                                      ),
                                     ),
-                                  )
-                                : Text(
-                                    'Update Info',
-                                    style: TextStyle(
-                                      fontSize: defaultFontSize,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.5,
-                                    ),
-                                  ),
-                          );
-                        }),
-                      ),
-                    ],
-                  ),
-                ],
+                            );
+                          }),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

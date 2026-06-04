@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/schedule_meeting/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -37,7 +38,10 @@ class ScheduleMeetingActionButtons extends StatelessWidget {
                 ),
                 onPressed: (isLoading || configLoading)
                     ? null
-                    : () => controller.resetForm(),
+                    : () {
+                        HapticHelper.light();
+                        controller.resetForm();
+                      },
                 child: Text('Reset', style: TextStyle(fontSize: 9.sp)),
               ),
             ),
@@ -62,6 +66,7 @@ class ScheduleMeetingActionButtons extends StatelessWidget {
                 ),
                 onPressed: isButtonEnabled
                     ? () {
+                        HapticHelper.medium();
                         if (controller.formKey.currentState?.validate() ??
                             false) {
                           controller.scheduleMeeting(context);

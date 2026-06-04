@@ -7,6 +7,8 @@ class RouteName {
   static const authProcessingPage = '/authProcessingPage';
   static const set2fa = '/set2faPage';
   static const changePassword = '/changePasswordPage';
+  static const staffInvitePage = '/staffInvitePage';
+  static const googleCalendarPage = '/googleCalendarPage';
 
   //home page
   static const dashboardpage = '/dashboardPage';
@@ -50,6 +52,7 @@ class RouteName {
   static const networkingFormPage = '/networkingFormPage';
   static const summaryFormPage = '/summaryFormPage';
   static const socialFormPage = '/socialFormPage';
+  static const galleryFormPage = '/galleryFormPage';
 
   //Notification
   static const notificationpage = '/notificationPage';
@@ -67,4 +70,16 @@ class RouteName {
 
   //budget track
   static const budgetTrackPage = '/budgetTrackPage';
+  static const viewTripPage = '/viewTripPage';
+  static const addFriendPage = '/addFriendPage';
+  static const createTripPage = '/createTripPage';
+  static const createExpensePage = '/createExpensePage';
+  static const friendListPage = '/friendListPage';
+  static const transactionPage = '/transactionPage';
+
+  //bio profile page
+  static const bioProfilePage = '/bioProfilePage';
+
+  //more page
+  static const morePage = '/morePage';
 }

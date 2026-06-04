@@ -1,4 +1,5 @@
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
@@ -73,14 +74,17 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
           : (hintText ?? 'Select option');
 
       return GestureDetector(
-        onTap: () => _showModernDialog(
-          context: context,
-          headerColor: headColor,
-          primary: primary,
-          selectedShade1: selectedShade1 ?? Colors.blue.shade50,
-          selectedShade2: selectedShade2 ?? Colors.blue.shade100,
-          selectedShade3: selectedShade3 ?? Colors.blue.shade200,
-        ),
+        onTap: () {
+          HapticHelper.light();
+          _showModernDialog(
+            context: context,
+            headerColor: headColor,
+            primary: primary,
+            selectedShade1: selectedShade1 ?? Colors.blue.shade50,
+            selectedShade2: selectedShade2 ?? Colors.blue.shade100,
+            selectedShade3: selectedShade3 ?? Colors.blue.shade200,
+          );
+        },
         child: Container(
           height: height,
           padding:
@@ -106,7 +110,9 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                 style: TextStyle(
                   fontSize: selectedTextSize ?? 10.sp,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? primary : AppColors.textSecondary(context),
+                  color: isSelected
+                      ? primary
+                      : AppColors.textSecondary(context),
                 ),
               ),
               AnimatedRotation(
@@ -197,9 +203,22 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                     SizedBox(height: 0.7.hp),
                     Obx(() {
                       final selected = selectedItem.value;
-                      return selected != null &&
-                              getKeyValue(selected) !=
-                                  getKeyValue(getDefaultItem())
+                      if (selected == null) return const SizedBox();
+
+                      bool isDefaultItem = false;
+                      try {
+                        // Safely attempt to get the default item.
+                        // If the parent uses .first on an empty list, this will catch the error.
+                        final defaultItem = getDefaultItem();
+                        isDefaultItem =
+                            getKeyValue(selected) == getKeyValue(defaultItem);
+                      } catch (_) {
+                        // Fallback: If it crashes (e.g., list is empty),
+                        // we just assume the current selected item is NOT the default.
+                        isDefaultItem = false;
+                      }
+
+                      return !isDefaultItem
                           ? Text(
                               getDisplayValue(selected),
                               style: TextStyle(
@@ -378,6 +397,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                     child: InkWell(
                                       borderRadius: BorderRadius.circular(16),
                                       onTap: () {
+                                        HapticHelper.selection();
                                         onSelected(item);
                                         Navigator.pop(context);
                                       },
@@ -392,7 +412,9 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                                 shape: BoxShape.circle,
                                                 color: isSelectedItem
                                                     ? headerColor
-                                                    : AppColors.divider(context),
+                                                    : AppColors.divider(
+                                                        context,
+                                                      ),
                                                 border: Border.all(
                                                   color: isSelectedItem
                                                       ? Colors.white
@@ -407,7 +429,9 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                                           .radio_button_unchecked,
                                                 color: isSelectedItem
                                                     ? Colors.white
-                                                    : AppColors.textHint(context),
+                                                    : AppColors.textHint(
+                                                        context,
+                                                      ),
                                                 size: 14,
                                               ),
                                             ),
@@ -422,7 +446,9 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                                       : FontWeight.w500,
                                                   color: isSelectedItem
                                                       ? primary
-                                                      : AppColors.textPrimary(context),
+                                                      : AppColors.textPrimary(
+                                                          context,
+                                                        ),
                                                 ),
                                               ),
                                             ),
@@ -439,7 +465,9 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                             if (isListLoading)
                               Positioned.fill(
                                 child: Container(
-                                  color: AppColors.cardBg(context).withValues(alpha: 0.8),
+                                  color: AppColors.cardBg(
+                                    context,
+                                  ).withValues(alpha: 0.8),
                                   alignment: Alignment.center,
                                   child: CircularProgressIndicator(
                                     color: primary,

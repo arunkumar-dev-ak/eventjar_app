@@ -2,8 +2,10 @@ import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
 
 class UserProfileHeader extends StatelessWidget {
   final controller = Get.find<UserProfileController>();
@@ -28,92 +30,152 @@ class UserProfileHeader extends StatelessWidget {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Column(
+        child: Stack(
           children: [
-            SizedBox(height: 3.hp),
-            // Avatar with verified badge
-            _buildAvatar(initials),
-            // "Edit Photo" or Save/Cancel
-            if (!editing)
-              TextButton(
-                onPressed: controller.selectAvatarImage,
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blue,
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                ),
-                child: Text(
-                  'Edit Photo',
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              )
-            else
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 1.hp),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: controller.state.isProfileLoading.value
-                          ? null
-                          : () async {
-                              await controller.uploadProfileAvatar();
-                            },
-                      icon: controller.state.isProfileLoading.value
-                          ? SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : Icon(Icons.check, size: 16),
-                      label: Text(
-                        controller.state.isLoading.value
-                            ? 'Uploading...'
-                            : 'Save',
+            Column(
+              children: [
+                SizedBox(height: 3.hp),
+                _buildAvatar(initials),
+                if (!editing)
+                  TextButton(
+                    onPressed: controller.selectAvatarImage,
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.blue,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 2,
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 10,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: Text(
+                      'Edit Photo',
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  )
+                else
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 1.hp),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: controller.state.isProfileLoading.value
+                              ? null
+                              : () async {
+                                  await controller.uploadProfileAvatar();
+                                },
+                          icon: controller.state.isProfileLoading.value
+                              ? SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Icon(Icons.check, size: 16),
+                          label: Text(
+                            controller.state.isLoading.value
+                                ? 'Uploading...'
+                                : 'Save',
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 10,
+                            ),
+                          ),
                         ),
-                      ),
+                        SizedBox(width: 20),
+                        TextButton.icon(
+                          onPressed: controller.state.isLoading.value
+                              ? null
+                              : () {
+                                  controller.state.isEditingAvatar.value =
+                                      false;
+                                  controller.state.selectedAvatarFile.value =
+                                      null;
+                                },
+                          icon: Icon(Icons.close, size: 16),
+                          label: Text('Cancel'),
+                        ),
+                      ],
                     ),
-
-                    SizedBox(width: 20),
-                    TextButton.icon(
-                      onPressed: controller.state.isLoading.value
-                          ? null
-                          : () {
-                              controller.state.isEditingAvatar.value = false;
-                              controller.state.selectedAvatarFile.value = null;
-                            },
-                      icon: Icon(Icons.close, size: 16),
-                      label: Text('Cancel'),
+                  ),
+                SizedBox(height: 1.hp),
+                _buildName(),
+                if (controller.username.isNotEmpty) ...[
+                  SizedBox(height: 0.3.hp),
+                  Text(
+                    '@${controller.username}',
+                    style: TextStyle(
+                      fontSize: 9.sp,
+                      color: AppColors.textSecondaryStatic,
                     ),
-                  ],
-                ),
+                  ),
+                ],
+                SizedBox(height: 0.5.hp),
+                _buildCompanyAndRole(),
+                SizedBox(height: 2.hp),
+              ],
+            ),
+            Positioned(
+              top: 1.hp,
+              right: 2.wp,
+              child: Row(
+                children: [
+                  _buildHeaderAction(
+                    icon: Icons.share_outlined,
+                    onTap: () {
+                      final url =
+                          'https://myeventjar.com/members/${controller.username}';
+                      SharePlus.instance.share(ShareParams(text: url));
+                    },
+                  ),
+                  SizedBox(width: 1.wp),
+                  _buildHeaderAction(
+                    icon: Icons.visibility_outlined,
+                    onTap: () {
+                      Get.toNamed(
+                        '${RouteName.bioProfilePage}?username=${controller.username}',
+                      );
+                    },
+                  ),
+                ],
               ),
-            SizedBox(height: 2.hp),
-            _buildName(),
-            SizedBox(height: 0.5.hp),
-            _buildCompanyAndRole(),
-            SizedBox(height: 3.hp),
+            ),
           ],
         ),
       );
     });
   }
 
-  // Helper to get initials from name
+  Widget _buildHeaderAction({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: EdgeInsets.all(2.wp),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, size: 20, color: AppColors.textPrimaryStatic),
+      ),
+    );
+  }
+
   String _getInitials(String name) {
     if (name.isEmpty) return "N/A";
     final parts = name.split(" ");
@@ -194,8 +256,11 @@ class UserProfileHeader extends StatelessWidget {
 
   // Display Name
   Widget _buildName() {
+    final name = controller.displayName.isEmpty
+        ? "N/A"
+        : capitalizeName(controller.displayName);
     return Text(
-      controller.displayName.isEmpty ? "N/A" : controller.displayName,
+      name,
       style: TextStyle(
         fontSize: 16.sp,
         fontWeight: FontWeight.bold,

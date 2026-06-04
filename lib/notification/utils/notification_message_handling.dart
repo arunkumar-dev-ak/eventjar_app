@@ -17,8 +17,6 @@ class NotificationContent {
 
 NotificationContent buildNotificationContent(RemoteMessage message) {
   final String type = message.data['type'] ?? '';
-  final String contactName = message.data['contactName'] ?? '';
-  final String? stage = message.data['stage'];
 
   String title =
       message.data["title"] ??
@@ -29,28 +27,6 @@ NotificationContent buildNotificationContent(RemoteMessage message) {
       message.notification?.body ??
       'You have new activity';
   String? formattedStage;
-
-  if (type.startsWith("CONTACT_LIST")) {
-    formattedStage = formatConatctStageForNotification(stage);
-
-    title = "Contact Update";
-
-    if (type == "CONTACT_LIST") {
-      body = "${capitalize(contactName)} moved to $formattedStage";
-    } else if (type == "CONTACT_LIST_MEETING_SCHEDULED") {
-      title = "Meeting Scheduled";
-      body =
-          "Meeting scheduled with ${capitalize(contactName)} ($formattedStage)";
-    } else if (type == "CONTACT_LIST_MEETING_ACCEPTED") {
-      title = "Meeting Confirmed";
-      body =
-          "${capitalize(contactName)} confirmed the meeting ($formattedStage)";
-    } else if (type == "CONTACT_LIST_MEETING_COMPLETED") {
-      title = "Meeting Completed";
-      body =
-          "Meeting with ${capitalize(contactName)} completed ($formattedStage)";
-    }
-  }
 
   return NotificationContent(
     title: title,

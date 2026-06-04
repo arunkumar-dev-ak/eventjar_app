@@ -1,0 +1,90 @@
+import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class SummaryMultiSelect extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final RxList<String> selectedItems;
+  final List<String> allItems;
+
+  const SummaryMultiSelect({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.selectedItems,
+    required this.allItems,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 10.sp,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary(context),
+          ),
+        ),
+        SizedBox(height: 0.5.hp),
+        Text(
+          subtitle,
+          style: TextStyle(
+            fontSize: 8.5.sp,
+            color: AppColors.textSecondary(context),
+          ),
+        ),
+        SizedBox(height: 1.5.hp),
+        Obx(
+          () => Wrap(
+            spacing: 2.wp,
+            runSpacing: 1.5.hp,
+            children: allItems.map((item) {
+              final isSelected = selectedItems.contains(item);
+              return GestureDetector(
+                onTap: () {
+                  if (isSelected) {
+                    selectedItems.remove(item);
+                  } else {
+                    selectedItems.add(item);
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 3.wp,
+                    vertical: 0.8.hp,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? Colors.green.shade500
+                        : AppColors.chipBg(context),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: isSelected
+                          ? Colors.green.shade600
+                          : AppColors.border(context),
+                    ),
+                  ),
+                  child: Text(
+                    item,
+                    style: TextStyle(
+                      fontSize: 8.5.sp,
+                      color: isSelected
+                          ? Colors.white
+                          : AppColors.textPrimary(context),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+}

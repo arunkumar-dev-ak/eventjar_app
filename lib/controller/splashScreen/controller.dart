@@ -1,11 +1,22 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:eventjar/api/dio_client.dart';
+import 'package:eventjar/controller/splashScreen/state.dart';
+import 'package:eventjar/global/store/language_store.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
+import 'package:eventjar/services/deep_link_handler.dart';
 import 'package:eventjar/services/nfc_intent_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreenController extends GetxController
     with GetTickerProviderStateMixin {
   var title = "Experience Events, Build Connections";
+  var state = SplashScreenState();
 
   // Animation controllers
   late AnimationController mainAnimationController;
@@ -34,6 +45,8 @@ class SplashScreenController extends GetxController
 
   // Network animation
   late Animation<double> networkOpacity;
+
+  Completer<void>? _languageCompleter;
 
   @override
   void onInit() {
@@ -157,20 +170,117 @@ class SplashScreenController extends GetxController
     mainAnimationController.forward();
   }
 
+  void onLanguageSelected() {
+    _languageCompleter?.complete();
+    state.showLanguagePopup.value = false;
+  }
+
+  /*----- Navigation And IOS deeplink handler -----*/
+  void _navigateToHome() async {
+    await Future.delayed(const Duration(milliseconds: 2000));
+
+    // Show language selection popup on first launch
+    if (!LanguageStore.to.isLanguageSelected) {
+      _languageCompleter = Completer<void>();
+      state.showLanguagePopup.value = true;
+      await _languageCompleter!.future;
+    }
+
+    // 1. Cold-start deep link (Universal Links / App Links, plus the
+    //    Android Play Install Referrer fallback). If we have one, it
+    //    decides where to land — no other navigation should override it.
+    final initialUri = await DeepLinkHandler().resolveInitialUri();
+    if (initialUri != null) {
+      await DeepLinkHandler().handleColdStartUri(initialUri);
+    } else {
+      // 2. Otherwise: iOS deferred install token, else dashboard.
+      await _resolveInstallFlow();
+    }
+
+    // 3. Listen for warm-state links (app already running / in background).
+    DeepLinkHandler().listenForLinks();
+
+    // Notify NFC after navigation settles
+    Future.delayed(const Duration(milliseconds: 500), () {
+      NfcIntentHandler().onAppReady();
+    });
+  }
+
+  Future<void> _resolveInstallFlow() async {
+    if (Platform.isIOS) {
+      final token = await getInviteTokenIfAny();
+
+      if (token != null) {
+        Get.offAllNamed(RouteName.signUpPage, arguments: {'token': token});
+        return;
+      }
+    }
+
+    // Default fallback. Use offAllNamed so splash leaves the back stack.
+    Get.offAllNamed(RouteName.dashboardpage);
+  }
+
+  Future<String?> getInviteTokenIfAny() async {
+    const key = "ios_deeplink_checked";
+    if (!Platform.isIOS) return null;
+
+    final prefs = await SharedPreferences.getInstance();
+    final alreadyChecked = prefs.getBool(key) ?? false;
+
+    if (alreadyChecked) return null;
+
+    try {
+      state.isResolvingDeepLink.value = true;
+
+      final deviceData = await _collectDeviceData();
+
+      final response = await DioClient().dio.post(
+        '/mobile/deep-links/match-install',
+        data: deviceData,
+      );
+
+      if (response.data['matched'] == true) {
+        final path = response.data['link_path'];
+
+        if (path != null) {
+          final uri = Uri.parse("https://myeventjar.com$path");
+
+          if (uri.pathSegments.length > 1 &&
+              uri.pathSegments.first == 'invite') {
+            return uri.pathSegments[1];
+          }
+        }
+      }
+    } catch (e) {
+      LoggerService.loggerInstance.e("iOS deep link match error: $e");
+    } finally {
+      state.isResolvingDeepLink.value = false;
+      await prefs.setBool(key, true);
+    }
+
+    return null;
+  }
+
+  Future<Map<String, dynamic>> _collectDeviceData() async {
+    final deviceInfo = DeviceInfoPlugin();
+    final iosInfo = await deviceInfo.iosInfo;
+
+    final view = WidgetsBinding.instance.platformDispatcher.views.first;
+
+    return {
+      "screen_width": view.physicalSize.width.toInt(),
+      "screen_height": view.physicalSize.height.toInt(),
+      "timezone_offset": DateTime.now().timeZoneOffset.inMinutes,
+      "locale": Platform.localeName.split('.').first,
+      "os_version": iosInfo.systemVersion,
+      "device_model": iosInfo.utsname.machine,
+    };
+  }
+
   @override
   void onClose() {
     mainAnimationController.dispose();
     iconAnimationController.dispose();
     super.onClose();
-  }
-
-  void _navigateToHome() async {
-    Future.delayed(const Duration(milliseconds: 2000), () {
-      Get.offNamed(RouteName.dashboardpage);
-      // Notify NFC handler that app is ready to handle NFC intents
-      Future.delayed(const Duration(milliseconds: 500), () {
-        NfcIntentHandler().onAppReady();
-      });
-    });
   }
 }

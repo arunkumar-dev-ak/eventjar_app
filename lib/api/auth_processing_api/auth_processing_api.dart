@@ -60,7 +60,7 @@ class AuthProcessignApi {
   }
 
   static Future<LoginResponse> linkedInSignIn({
-    String? code,
+    String? authSessionId,
     String? cacheKey,
     String? phone,
   }) async {
@@ -69,10 +69,13 @@ class AuthProcessignApi {
       final token = await StorageService.to.getString(storageFcmToken);
       final deviceName = await getDeviceModel();
 
+      final codeVerifier = await StorageService.to.getString(pkceCodeVerifier);
+
       final response = await _dio.post(
-        '/auth/mobile/linkedin',
+        '/auth/mobile/linkedin/verify',
         data: {
-          if (code != null) 'code': code,
+          if (authSessionId != null) 'authSessionId': authSessionId,
+          if (codeVerifier != null) 'codeVerifier': codeVerifier,
           if (cacheKey != null) 'cacheKey': cacheKey,
           if (phone != null && phone.isNotEmpty) 'phone': phone,
           'fcmToken': token,

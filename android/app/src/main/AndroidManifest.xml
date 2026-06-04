@@ -28,6 +28,19 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <!--
+              Disable Flutter's built-in deep-link handling so the intent URI
+              is NOT forwarded as the initial route name. If it were, GetX
+              would try to resolve "/invite/<token>" against `getPages` before
+              splash has mounted and crash inside `initialRoutesGenerate`
+              (Null check operator used on a null value in PageRedirect.page).
+              The URI is instead delivered through the app_links MethodChannel
+              and dispatched by DeepLinkHandler from SplashScreenController —
+              the same pattern used for FCM notifications via getInitialMessage().
+            -->
+            <meta-data
+              android:name="flutter_deeplinking_enabled"
+              android:value="false" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -64,7 +77,45 @@
 
                 <data android:scheme="myeventjar" android:host="auth" />
             </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="myeventjar.com" />
+                <data android:pathPrefix="/invite/" />
+                <data android:pathPrefix="/events/" />
+                <data android:pathPrefix="/staff-invite/" />
+                <!-- <data android:pathPrefix="/trips/join/" /> -->
+                <data android:pathPrefix="/my-tickets" />
+                <data android:pathPrefix="/network" />
+                <data android:pathPrefix="/connections" />
+                <data android:pathPrefix="/find-events" />
+                 <data android:pathPrefix="/members/" />
+            </intent-filter>
+            <!-- Home screen widget deep link -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="myeventjar" android:host="widget" />
+            </intent-filter>
         </activity>
+
+        <!-- Home screen widget -->
+        <receiver
+            android:name=".EventjarWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/eventjar_widget_info" />
+        </receiver>
         <!-- UCrop activity for image_cropper -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"

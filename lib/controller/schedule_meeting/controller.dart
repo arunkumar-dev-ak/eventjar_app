@@ -132,8 +132,6 @@ class ScheduleMeetingController extends GetxController {
 
       final dto = _buildMeetingDto();
 
-      LoggerService.loggerInstance.dynamic_d(dto);
-
       final response = await ScheduleMeetingApi.createMeeting(dto: dto);
       if (response == true) {
         AppSnackbar.success(
@@ -144,20 +142,14 @@ class ScheduleMeetingController extends GetxController {
 
       Navigator.pop(context, true);
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to Schedule Meeting",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-        ApiErrorHandler.handleError(err, "Failed to Schedule Meeting");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }
@@ -170,20 +162,14 @@ class ScheduleMeetingController extends GetxController {
       final response = await ConfigStatusApi.getConfigStatus();
       state.configStatus.value = response;
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to Get Config details",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-        ApiErrorHandler.handleError(err, "Failed to Get Config details");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.configLoading.value = false;
     }

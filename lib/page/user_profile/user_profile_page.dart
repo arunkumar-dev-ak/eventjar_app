@@ -1,11 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eventjar/controller/user_profile/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/store/theme_store.dart';
+import 'package:eventjar/global/utils/helpers.dart';
+import 'package:eventjar/global/widget/language_change_dialog.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/page/user_profile/user_profile_basic_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_business_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_header.dart';
 import 'package:eventjar/page/user_profile/user_profile_network_info.dart';
+import 'package:eventjar/page/user_profile/user_profile_permissions.dart';
 import 'package:eventjar/page/user_profile/user_profile_security/user_profile_security_info.dart';
 import 'package:eventjar/page/user_profile/user_profile_shimmer.dart';
 import 'package:eventjar/page/user_profile/user_profile_social_links.dart';
@@ -23,9 +28,10 @@ class UserProfilePage extends GetView<UserProfileController> {
       backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
-          "Profile",
+          "My Profile",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
+        centerTitle: false,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.light,
@@ -37,18 +43,44 @@ class UserProfilePage extends GetView<UserProfileController> {
         ),
         elevation: 0,
         actions: [
-          Obx(() => IconButton(
-                icon: Icon(
-                  ThemeStore.to.isDarkMode
-                      ? Icons.light_mode_rounded
-                      : Icons.dark_mode_rounded,
-                  color: Colors.white,
+          IconButton(
+            icon: const Icon(Icons.language, color: Colors.white),
+            tooltip: 'Language',
+            onPressed: () => showLanguageChangeDialog(context),
+          ),
+          Obx(() {
+            final mode = ThemeStore.to.themeMode;
+            final IconData icon = switch (mode) {
+              ThemeMode.light => Icons.light_mode_rounded,
+              ThemeMode.dark => Icons.dark_mode_rounded,
+              ThemeMode.system => Icons.phone_android_rounded,
+            };
+            return PopupMenuButton<ThemeMode>(
+              icon: Icon(icon, color: Colors.white),
+              tooltip: 'Theme',
+              onSelected: (selected) => ThemeStore.to.setThemeMode(selected),
+              itemBuilder: (_) => [
+                _buildThemeMenuItem(
+                  ThemeMode.light,
+                  Icons.light_mode_rounded,
+                  'Light',
+                  mode,
                 ),
-                onPressed: () => ThemeStore.to.toggleTheme(),
-                tooltip: ThemeStore.to.isDarkMode
-                    ? 'Switch to Light Mode'
-                    : 'Switch to Dark Mode',
-              )),
+                _buildThemeMenuItem(
+                  ThemeMode.dark,
+                  Icons.dark_mode_rounded,
+                  'Dark',
+                  mode,
+                ),
+                _buildThemeMenuItem(
+                  ThemeMode.system,
+                  Icons.phone_android_rounded,
+                  'System Default',
+                  mode,
+                ),
+              ],
+            );
+          }),
         ],
       ),
       body: Obx(() {
@@ -117,7 +149,14 @@ class UserProfilePage extends GetView<UserProfileController> {
                           },
                         ),
                         SizedBox(height: 2.hp),
+                        _buildGallerySection(context),
                         _buildNotificationsSection(context),
+                        SizedBox(height: 2.hp),
+                        _buildSection(
+                          context,
+                          title: "App Permissions",
+                          child: const UserProfilePermissions(),
+                        ),
                         SizedBox(height: 2.hp),
                         _buildSection(
                           context,
@@ -126,7 +165,12 @@ class UserProfilePage extends GetView<UserProfileController> {
                         ),
                         // SizedBox(height: 2.hp),
                         _buildVersionFooter(context),
-                        SizedBox(height: 2.hp),
+                        SizedBox(
+                          height:
+                              kBottomNavigationBarHeight +
+                              MediaQuery.of(context).viewPadding.bottom +
+                              2.hp,
+                        ),
                       ],
                     ),
                   ),
@@ -134,6 +178,186 @@ class UserProfilePage extends GetView<UserProfileController> {
         );
       }),
     );
+  }
+
+  Widget _buildGallerySection(BuildContext ctx) {
+    const int columns = 3;
+    const int perPage = 6;
+    const double spacing = 8;
+
+    return Obx(() {
+      final images = controller.galleryImages;
+      final hasImages = images.isNotEmpty;
+      final pageCount = hasImages ? (images.length / perPage).ceil() : 0;
+
+      return Column(
+        children: [
+          _buildSection(
+            ctx,
+            title: hasImages ? "Gallery (${images.length})" : "Gallery",
+            isEditEnabled: true,
+            onEdit: () {
+              controller.navigateToGalleryUpdate();
+            },
+            editIcon: hasImages ? Icons.edit_outlined : Icons.add_rounded,
+            child: hasImages
+                ? LayoutBuilder(
+                    builder: (context, constraints) {
+                      final tileSize =
+                          (constraints.maxWidth - spacing * (columns - 1)) /
+                              columns;
+                      final maxItems =
+                          images.length > perPage ? perPage : images.length;
+                      final rows = (maxItems / columns).ceil();
+                      final gridHeight =
+                          rows * tileSize + (rows - 1) * spacing;
+
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: gridHeight,
+                            child: PageView.builder(
+                              itemCount: pageCount,
+                              onPageChanged: (index) {
+                                controller.state.galleryIndex.value = index;
+                              },
+                              itemBuilder: (context, pageIndex) {
+                                final start = pageIndex * perPage;
+                                final end = (start + perPage) > images.length
+                                    ? images.length
+                                    : start + perPage;
+                                final pageImages = images.sublist(start, end);
+
+                                return GridView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  padding: EdgeInsets.zero,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: columns,
+                                    mainAxisSpacing: spacing,
+                                    crossAxisSpacing: spacing,
+                                    childAspectRatio: 1,
+                                  ),
+                                  itemCount: pageImages.length,
+                                  itemBuilder: (context, index) {
+                                    final imgIndex = start + index;
+                                    return GestureDetector(
+                                      onTap: () => Get.toNamed(
+                                        RouteName.imageViewerPage,
+                                        arguments: {
+                                          "fileUrl":
+                                              getFileUrl(images[imgIndex]),
+                                          "header": controller.displayName,
+                                        },
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(12),
+                                        child: CachedNetworkImage(
+                                          imageUrl:
+                                              getFileUrl(images[imgIndex]),
+                                          fit: BoxFit.cover,
+                                          width: tileSize,
+                                          height: tileSize,
+                                          placeholder: (context, url) =>
+                                              Container(
+                                            color: AppColors.chipBg(context),
+                                            child: const Center(
+                                              child:
+                                                  CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                              ),
+                                            ),
+                                          ),
+                                          errorWidget:
+                                              (context, url, error) =>
+                                                  Container(
+                                            color: AppColors.chipBg(context),
+                                            child: Icon(
+                                              Icons.broken_image_outlined,
+                                              size: 28,
+                                              color: AppColors.iconMuted(
+                                                  context),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 1.hp),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.touch_app_outlined,
+                                size: 14,
+                                color: AppColors.textHint(ctx),
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Tap image to view full screen',
+                                style: TextStyle(
+                                  fontSize: 8.sp,
+                                  color: AppColors.textHint(ctx),
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (pageCount > 1) ...[
+                            SizedBox(height: 1.hp),
+                            Obx(
+                              () => Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children:
+                                    List.generate(pageCount, (index) {
+                                  final isActive =
+                                      controller.state.galleryIndex.value ==
+                                          index;
+                                  return AnimatedContainer(
+                                    duration:
+                                        const Duration(milliseconds: 300),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 3),
+                                    width: isActive ? 24 : 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.circular(4),
+                                      color: isActive
+                                          ? AppColors.gradientDarkStart
+                                          : AppColors.gradientDarkStart
+                                              .withValues(alpha: 0.2),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+                          ],
+                        ],
+                      );
+                    },
+                  )
+                : Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 2.hp),
+                      child: Text(
+                        "No gallery images yet",
+                        style: TextStyle(
+                          fontSize: 9.sp,
+                          color: AppColors.textSecondary(ctx),
+                        ),
+                      ),
+                    ),
+                  ),
+          ),
+          SizedBox(height: 2.hp),
+        ],
+      );
+    });
   }
 
   Widget _buildNotificationsSection(BuildContext ctx) {
@@ -205,8 +429,10 @@ class UserProfilePage extends GetView<UserProfileController> {
     required Widget child,
     bool? isEditEnabled,
     VoidCallback? onEdit,
+    IconData? editIcon,
   }) {
     final bool editEnabled = isEditEnabled ?? false;
+    final IconData actionIcon = editIcon ?? Icons.edit_outlined;
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 4.wp),
@@ -248,7 +474,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                     child: Padding(
                       padding: EdgeInsets.all(1.5.wp),
                       child: Icon(
-                        Icons.edit_outlined,
+                        actionIcon,
                         size: 18.sp,
                         color: AppColors.iconMuted(ctx),
                       ),
@@ -301,5 +527,38 @@ class UserProfilePage extends GetView<UserProfileController> {
         ),
       );
     });
+  }
+
+  PopupMenuItem<ThemeMode> _buildThemeMenuItem(
+    ThemeMode mode,
+    IconData icon,
+    String label,
+    ThemeMode currentMode,
+  ) {
+    final isSelected = mode == currentMode;
+    return PopupMenuItem<ThemeMode>(
+      value: mode,
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 20,
+            color: isSelected ? AppColors.gradientDarkStart : Colors.grey,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+              color: isSelected ? AppColors.gradientDarkStart : null,
+            ),
+          ),
+          if (isSelected) ...[
+            const Spacer(),
+            Icon(Icons.check, size: 18, color: AppColors.gradientDarkStart),
+          ],
+        ],
+      ),
+    );
   }
 }

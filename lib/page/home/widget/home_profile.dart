@@ -1,5 +1,7 @@
 import 'package:eventjar/controller/home/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/page/home/widget/scorecard/networking_scorecard.dart';
@@ -7,6 +9,7 @@ import 'package:eventjar/page/home/widget/scorecard/verification_scorecard.dart'
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../global/glitter.dart';
@@ -107,15 +110,67 @@ class HomeProfile extends GetView<HomeController> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      profileData.name.toString().toUpperCase(),
-                                      style: TextStyle(
-                                        color: AppColors.textPrimary(context),
-                                        fontSize: 11.sp,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            capitalizeName(
+                                              profileData.name.toString(),
+                                            ),
+                                            style: TextStyle(
+                                              color: AppColors.textPrimary(
+                                                context,
+                                              ),
+                                              fontSize: 11.sp,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            final username =
+                                                UserStore.to.profile['username']
+                                                    ?.toString() ??
+                                                '';
+                                            if (username.isNotEmpty) {
+                                              SharePlus.instance.share(
+                                                ShareParams(
+                                                  text:
+                                                      'https://myeventjar.com/members/$username',
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(1.5.wp),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.textPrimary(
+                                                context,
+                                              ).withValues(alpha: 0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Transform.flip(
+                                              flipX: true,
+                                              child: Icon(
+                                                Icons.reply_rounded,
+                                                size: 18,
+                                                weight: 700,
+                                                color:
+                                                    Theme.of(
+                                                          context,
+                                                        ).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white
+                                                    : AppColors
+                                                          .gradientDarkStart,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     SizedBox(height: 1.hp),
                                     Text(
@@ -179,6 +234,7 @@ class HomeProfile extends GetView<HomeController> {
   Widget _buildSignInCard() {
     return GestureDetector(
       onTap: () {
+        HapticHelper.light();
         Get.toNamed(RouteName.signInPage);
       },
       child: Container(
@@ -219,7 +275,7 @@ class HomeProfile extends GetView<HomeController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Sign up or Log in to a account',
+                    'Sign in or Sign up to a account',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 10.sp,

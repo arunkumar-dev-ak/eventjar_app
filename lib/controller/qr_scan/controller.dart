@@ -2,25 +2,75 @@ import 'package:eventjar/controller/qr_dashboard/controller.dart';
 import 'package:eventjar/controller/qr_scan/state.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/logger_service.dart';
-import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:eventjar/model/contact/qr_contact_model.dart';
 import 'package:eventjar/services/encryption_service.dart';
+import 'package:eventjar/storage/storage_service.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../../routes/route_name.dart';
 
 class QrScanScreenController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  var appBarTitle = "Network";
+  // var appBarTitle = "Network";
   final state = QrScanScreenState();
   final ImagePicker _imagePicker = ImagePicker();
   MobileScannerController? scannerController;
 
   final QrDashboardController qrDashboard = Get.find();
+
+  // Tour / showcase
+  static const String scanQrScope = 'scan-qr';
+  static const String _tourSeenStorageKey = 'scan_qr_tour_seen_v1';
+  final GlobalKey tourCameraKey = GlobalKey();
+  final GlobalKey tourGalleryKey = GlobalKey();
+
+  final RxBool isTourActive = false.obs;
+
+  List<GlobalKey> get _tourSequence => [tourCameraKey, tourGalleryKey];
+
+  Future<bool> isTourSeen() async {
+    final value = await StorageService.to.getString(_tourSeenStorageKey);
+    return value == '1';
+  }
+
+  Future<void> markTourSeen() async {
+    await StorageService.to.setString(_tourSeenStorageKey, '1');
+  }
+
+  ShowcaseView get _showcase => ShowcaseView.getNamed(scanQrScope);
+
+  Future<void> maybeStartTour(BuildContext context) async {
+    if (await isTourSeen()) return;
+    if (!context.mounted) return;
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (!context.mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!context.mounted) return;
+      isTourActive.value = true;
+      _showcase.startShowCase(_tourSequence);
+    });
+  }
+
+  void skipTour() {
+    _showcase.dismiss();
+    isTourActive.value = false;
+    markTourSeen();
+  }
+
+  void startTourNow() {
+    isTourActive.value = true;
+    _showcase.startShowCase(_tourSequence);
+  }
+
+  void replayTour() {
+    isTourActive.value = true;
+    _showcase.startShowCase(_tourSequence);
+  }
 
   @override
   void onInit() {
@@ -43,6 +93,11 @@ class QrScanScreenController extends GetxController
     }
 
     await startCamera();
+
+    final ctx = Get.context;
+    if (ctx != null && ctx.mounted) {
+      maybeStartTour(ctx);
+    }
   }
 
   Future<void> startCamera() async {
@@ -53,7 +108,7 @@ class QrScanScreenController extends GetxController
       state.isScanning.value = true;
       state.hasNavigated.value = false;
     } catch (e) {
-      LoggerService.loggerInstance.dynamic_d('Error starting camera: $e');
+      LoggerService.loggerInstance.e('Error starting camera: $e');
     }
   }
 
@@ -64,7 +119,7 @@ class QrScanScreenController extends GetxController
       state.isCameraActive.value = false;
       state.isScanning.value = false;
     } catch (e) {
-      LoggerService.loggerInstance.dynamic_d('Error stopping camera: $e');
+      LoggerService.loggerInstance.e('Error stopping camera: $e');
     }
   }
 
@@ -80,7 +135,7 @@ class QrScanScreenController extends GetxController
         state.isCameraAccessGranted.value = false;
       }
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d('error: $err');
+      LoggerService.loggerInstance.e('error: $err');
     } finally {
       state.isRequesting.value = false;
     }
@@ -99,20 +154,18 @@ class QrScanScreenController extends GetxController
 
       await openAppSettings();
     } catch (e) {
-      LoggerService.loggerInstance.dynamic_d('error: $e');
+      LoggerService.loggerInstance.e('error: $e');
     } finally {
       state.isRequesting.value = false;
     }
   }
 
   void processScannedData(String rawData) {
-    LoggerService.loggerInstance.dynamic_d("in processscanner data");
     if (!state.isScanning.value || state.hasNavigated.value) return;
 
     state.isScanning.value = false;
     state.hasNavigated.value = true;
 
-    LoggerService.loggerInstance.dynamic_d("Before encryption");
     // Try to decrypt the QR data
     final jsonData = EncryptionService.decryptJson(rawData);
 
@@ -155,10 +208,6 @@ class QrScanScreenController extends GetxController
 
   // Handle barcode detection
   void onDetect(BarcodeCapture capture) {
-    LoggerService.loggerInstance.dynamic_d(
-      "in on detect - isCameraActive: ${state.isCameraActive.value}, isScanning: ${state.isScanning.value}, hasNavigated: ${state.hasNavigated.value}",
-    );
-
     // Only process if camera is active and scanning is enabled
     if (!state.isCameraActive.value ||
         !state.isScanning.value ||
@@ -166,13 +215,9 @@ class QrScanScreenController extends GetxController
       return;
 
     final List<Barcode> barcodes = capture.barcodes;
-    LoggerService.loggerInstance.dynamic_d(
-      "Barcodes found: ${barcodes.length}",
-    );
 
     for (final barcode in barcodes) {
       final String? rawValue = barcode.rawValue;
-      LoggerService.loggerInstance.dynamic_d("Barcode value: $rawValue");
       if (rawValue != null && rawValue.isNotEmpty) {
         processScannedData(rawValue);
         break;

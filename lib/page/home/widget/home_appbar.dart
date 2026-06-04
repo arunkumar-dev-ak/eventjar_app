@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:eventjar/controller/home/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -111,7 +112,10 @@ class HomeAppBar extends StatelessWidget {
           : '$count';
 
       return GestureDetector(
-        onTap: controller.navigateToNotificationPage,
+        onTap: () {
+          HapticHelper.light();
+          controller.navigateToNotificationPage();
+        },
         child: Stack(
           clipBehavior: Clip.none,
           children: [
@@ -174,7 +178,10 @@ class HomeAppBar extends StatelessWidget {
     required VoidCallback onPressed,
   }) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: () {
+        HapticHelper.light();
+        onPressed();
+      },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: BackdropFilter(
@@ -208,11 +215,11 @@ class HomeAppBar extends StatelessWidget {
           4.wp,
           4.wp + MediaQuery.of(context).padding.bottom,
         ),
-        decoration: BoxDecoration(
+        child: Material(
           color: AppColors.cardBg(context),
           borderRadius: BorderRadius.circular(24),
-        ),
-        child: Column(
+          clipBehavior: Clip.antiAlias,
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
@@ -225,70 +232,80 @@ class HomeAppBar extends StatelessWidget {
               ),
             ),
             SizedBox(height: 2.hp),
-            _buildMenuItem(
-              icon: Icons.person_add_alt_1_rounded,
-              title: 'Add Contact',
-              subtitle: 'Add a new contact manually',
-              gradientColors: [Colors.blue.shade400, Colors.blue.shade600],
-              onTap: () {
-                Navigator.pop(context);
-                controller.navigateToAddContact();
-              },
-            ),
-            Divider(
-              height: 1,
-              indent: 20,
-              endIndent: 20,
-              color: AppColors.divider(context),
-            ),
-            _buildMenuItem(
-              icon: Icons.nfc_rounded,
-              title: 'NFC',
-              subtitle: 'Scan NFC tag to add contact',
-              gradientColors: [Colors.green.shade400, Colors.green.shade600],
-              onTap: () {
-                Navigator.pop(context);
-                //controller.navigateToNfc();
-                controller.navigateToReceive();
-              },
-            ),
-            Divider(
-              height: 1,
-              indent: 20,
-              endIndent: 20,
-              color: AppColors.divider(context),
-            ),
-            _buildMenuItem(
-              icon: Icons.qr_code_scanner_rounded,
-              title: 'QR Scanner',
-              subtitle: 'Scan QR code to add contact',
-              gradientColors: [Colors.purple.shade400, Colors.purple.shade600],
-              onTap: () {
-                Navigator.pop(context);
-                controller.navigateToQrPage();
-              },
-            ),
-            Divider(
-              height: 1,
-              indent: 20,
-              endIndent: 20,
-              color: AppColors.divider(context),
-            ),
-            _buildMenuItem(
-              icon: Icons.document_scanner,
-              title: 'Scan Visiting card',
-              subtitle: 'Scan Visiting card to add contact',
-              gradientColors: [
-                Colors.orangeAccent.shade400,
-                Colors.orangeAccent.shade700,
-              ],
-              onTap: () {
-                Navigator.pop(context);
-                controller.navigateToScanPage();
-              },
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildMenuItem(
+                      icon: Icons.person_add_alt_1_rounded,
+                      title: 'Add Contact',
+                      subtitle: 'Add a new contact manually',
+                      gradientColors: [Colors.blue.shade400, Colors.blue.shade600],
+                      onTap: () {
+                        Navigator.pop(context);
+                        controller.navigateToAddContact();
+                      },
+                    ),
+                    Divider(
+                      height: 1,
+                      indent: 20,
+                      endIndent: 20,
+                      color: AppColors.divider(context),
+                    ),
+                    _buildMenuItem(
+                      icon: Icons.nfc_rounded,
+                      title: 'NFC',
+                      subtitle: 'Scan NFC tag to add contact',
+                      gradientColors: [Colors.green.shade400, Colors.green.shade600],
+                      onTap: () {
+                        Navigator.pop(context);
+                        //controller.navigateToNfc();
+                        controller.navigateToReceive();
+                      },
+                    ),
+                    Divider(
+                      height: 1,
+                      indent: 20,
+                      endIndent: 20,
+                      color: AppColors.divider(context),
+                    ),
+                    _buildMenuItem(
+                      icon: Icons.qr_code_scanner_rounded,
+                      title: 'QR Scanner',
+                      subtitle: 'Scan QR code to add contact',
+                      gradientColors: [Colors.purple.shade400, Colors.purple.shade600],
+                      onTap: () {
+                        Navigator.pop(context);
+                        controller.navigateToQrPage();
+                      },
+                    ),
+                    Divider(
+                      height: 1,
+                      indent: 20,
+                      endIndent: 20,
+                      color: AppColors.divider(context),
+                    ),
+                    _buildMenuItem(
+                      icon: Icons.document_scanner,
+                      title: 'Scan Business Card',
+                      subtitle: 'Scan Business Card to add contact',
+                      gradientColors: [
+                        Colors.orangeAccent.shade400,
+                        Colors.orangeAccent.shade700,
+                      ],
+                      onTap: () {
+                        Navigator.pop(context);
+                        controller.navigateToScanPage();
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
             SizedBox(height: 3.hp),
           ],
+        ),
         ),
       ),
     );
@@ -302,7 +319,10 @@ class HomeAppBar extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return ListTile(
-      onTap: onTap,
+      onTap: () {
+        HapticHelper.light();
+        onTap();
+      },
       contentPadding: EdgeInsets.symmetric(horizontal: 5.wp, vertical: 1.hp),
       leading: Container(
         width: 48,

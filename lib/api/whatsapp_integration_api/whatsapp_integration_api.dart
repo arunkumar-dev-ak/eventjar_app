@@ -20,7 +20,7 @@ class WhatsAppIntegrationApi {
         error: "Something went wrong",
       );
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       rethrow;
     }
   }
@@ -42,7 +42,7 @@ class WhatsAppIntegrationApi {
         error: "Failed to save WhatsApp configuration",
       );
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       rethrow;
     }
   }
@@ -59,7 +59,7 @@ class WhatsAppIntegrationApi {
         );
       }
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       rethrow;
     }
   }

@@ -28,7 +28,7 @@ class AuthProcessingController extends GetxController {
   final TextEditingController otpController = TextEditingController();
   String _idToken = "";
   String _provider = "";
-  String _code = "";
+  String _authSessionId = "";
 
   @override
   void onInit() {
@@ -39,7 +39,7 @@ class AuthProcessingController extends GetxController {
     _handleArgs();
 
     // 2. Start the API call if we have a valid token
-    if (_idToken.isNotEmpty || _code.isNotEmpty) {
+    if (_idToken.isNotEmpty || _authSessionId.isNotEmpty) {
       _processAuth();
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -65,9 +65,9 @@ class AuthProcessingController extends GetxController {
         }
 
         // LinkedIn
-        if (args.containsKey('code')) {
+        if (args.containsKey('authSessionId')) {
           _provider = "linkedin";
-          _code = args['code'];
+          _authSessionId = args['authSessionId'];
         }
       } else if (Get.arguments is String) {
         _provider = "google";
@@ -99,14 +99,14 @@ class AuthProcessingController extends GetxController {
       if (_provider == "google") {
         response = await AuthProcessignApi.googleSignIn(idToken: _idToken);
       } else if (_provider == "linkedin") {
-        response = await AuthProcessignApi.linkedInSignIn(code: _code);
+        response = await AuthProcessignApi.linkedInSignIn(
+          authSessionId: _authSessionId,
+        );
       } else {
         throw Exception("Unsupported provider");
       }
 
       _textTimer.cancel();
-
-      LoggerService.loggerInstance.dynamic_d(response.runtimeType);
 
       // (LinkedIn)
       if (response is MobileRequiredResponse) {
@@ -157,7 +157,10 @@ class AuthProcessingController extends GetxController {
           phoneFocusNode.requestFocus();
         });
       } else {
-        ApiErrorHandler.handleError(e, "Google Authentication Failed");
+        ApiErrorHandler.handleDioError(
+          e,
+          "${_provider == "google" ? "Google" : "Linkedin"} Authentication Failed",
+        );
         Navigator.pop(Get.context!);
       }
     } catch (e) {
@@ -212,9 +215,9 @@ class AuthProcessingController extends GetxController {
       navigateToBackPage();
     } catch (err) {
       state.is2FaLoading.value = false;
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "2FA Error");
+        ApiErrorHandler.handleDioError(err, "2FA Error");
       } else {
         AppSnackbar.error(title: "2FA Error", message: "Something went wrong");
       }
@@ -272,7 +275,7 @@ class AuthProcessingController extends GetxController {
       } catch (err) {
         // --- Error Handling ---
         if (err is DioException) {
-          ApiErrorHandler.handleError(err, "Sign Up Error");
+          ApiErrorHandler.handleDioError(err, "Sign Up Error");
         } else {
           AppSnackbar.error(
             title: "Sign Up Error",

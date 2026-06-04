@@ -2,12 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:eventjar/api/sign_up_api/sign_up_api.dart';
 import 'package:eventjar/controller/signUp/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_intl_phone_field/countries.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -23,6 +25,7 @@ class SignUpController extends GetxController {
 
   final isPasswordHidden = true.obs;
   bool get isLoading => state.isLoading.value;
+  String? invitationToken;
 
   TextEditingController get emailController => _emailController.value;
   TextEditingController get passwordController => _passwordController.value;
@@ -34,6 +37,13 @@ class SignUpController extends GetxController {
   void onInit() {
     UserStore.cancelAllRequests();
     super.onInit();
+
+    final args = Get.arguments;
+
+    if (args != null && args['token'] != null) {
+      invitationToken = args['token'];
+      _resolveInvitation(invitationToken!);
+    }
   }
 
   void navigateToLogin() {
@@ -44,9 +54,10 @@ class SignUpController extends GetxController {
     return {
       "email": emailController.text.trim(),
       "password": passwordController.text.trim(),
-      "name": fullNameController.text.trim(),
+      "name": capitalizeName(fullNameController.text.trim()),
       "phone": mobileNumberController.text.trim(),
       "countryCode": state.selectedCountry.value.code,
+      if (invitationToken != null) "invitationToken": invitationToken,
     };
   }
 
@@ -56,7 +67,7 @@ class SignUpController extends GetxController {
       final signUpData = {
         "email": emailController.text.trim(),
         "password": passwordController.text.trim(),
-        "name": fullNameController.text.trim(),
+        "name": capitalizeName(fullNameController.text.trim()),
         "phone": mobileNumberController.text.trim(),
         "countryCode": '+${state.selectedCountry.value.fullCountryCode}',
         "mobile": mobileNumberController.text.trim(),
@@ -75,7 +86,7 @@ class SignUpController extends GetxController {
     } catch (err) {
       state.isLoading.value = false;
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Sign Up Error");
+        ApiErrorHandler.handleDioError(err, "Sign Up Error");
       } else {
         AppSnackbar.error(
           title: "Sign Up Error",
@@ -87,9 +98,60 @@ class SignUpController extends GetxController {
     }
   }
 
+  /* Handle Invitation */
+  Future<void> _resolveInvitation(String token) async {
+    try {
+      state.isFetchigInvitation.value = true;
+
+      final response = await SignUpApi.resolveInvitation(token);
+      final data = response.data;
+
+      // Prefill fields
+      if (data.name != null) {
+        fullNameController.text = data.name!;
+      }
+
+      if (data.email != null) {
+        emailController.text = data.email!;
+      }
+
+      if (data.phoneParsed != null) {
+        mobileNumberController.text = data.phoneParsed!.phoneNumber;
+
+        //country code
+        final selectedCountryCode = data.phoneParsed?.countryCode ?? "+91";
+        final String cleanCountryCode = selectedCountryCode.replaceAll('+', '');
+        state.selectedCountry.value = countries.firstWhere(
+          (country) => country.fullCountryCode == cleanCountryCode,
+          orElse: () => countries.first,
+        );
+      }
+    } catch (err) {
+      if (err is DioException) {
+        final statusCode = err.response?.statusCode;
+
+        if (statusCode == 404) {
+          AppSnackbar.error(
+            title: "Invalid Invite",
+            message: "Invitation not found",
+          );
+        } else if (statusCode == 410) {
+          AppSnackbar.error(
+            title: "Expired Invite",
+            message: "This invitation has expired",
+          );
+        } else {
+          ApiErrorHandler.handleDioError(err, "Invite Error");
+        }
+      }
+    } finally {
+      state.isFetchigInvitation.value = false;
+    }
+  }
+
   Future<void> handleLinkedIn() async {
     state.isLinkedinLoading.value = true;
-    final url = "${backendBaseUrl()}auth/linkedin?platform=mobile";
+    final url = "${backendBaseUrl()}/auth/linkedin?platform=mobile";
     final Uri authUri = Uri.parse(url);
     try {
       if (await canLaunchUrl(authUri)) {
@@ -98,9 +160,9 @@ class SignUpController extends GetxController {
         throw 'Could not launch browser.Kindly try again after some time.';
       }
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Authentication Failed");
+        ApiErrorHandler.handleDioError(err, "Authentication Failed");
       } else {
         AppSnackbar.error(
           title: "Authentication Failed",

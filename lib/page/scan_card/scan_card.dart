@@ -3,16 +3,125 @@ import 'dart:math' as math;
 import '../../controller/scan_card/controller.dart';
 import '../../global/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../../global/responsive/responsive.dart';
 
-class ScanCard extends GetView<ScanCardController> {
+class ScanCard extends StatefulWidget {
   const ScanCard({super.key});
 
   @override
+  State<ScanCard> createState() => _ScanCardState();
+}
+
+class _ScanCardState extends State<ScanCard> {
+  final ScanCardController controller = Get.find();
+  late final ShowcaseView _showcaseView;
+  OverlayEntry? _skipOverlay;
+  late final Worker _tourWatcher;
+  bool _tourTriggered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _showcaseView = ShowcaseView.register(
+      scope: ScanCardController.scanCardScope,
+      onFinish: () {
+        controller.isTourActive.value = false;
+        controller.markTourSeen();
+      },
+      blurValue: 1,
+    );
+    _tourWatcher = ever(controller.isTourActive, (active) {
+      if (active) {
+        _showSkipOverlay();
+      } else {
+        _removeSkipOverlay();
+      }
+    });
+  }
+
+  void _showSkipOverlay() {
+    _removeSkipOverlay();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !controller.isTourActive.value) return;
+        _skipOverlay = OverlayEntry(
+          builder: (ctx) {
+            final bottomPadding = MediaQuery.of(ctx).padding.bottom;
+            return Positioned(
+              bottom: bottomPadding + 16,
+              right: 16,
+              child: GestureDetector(
+                onTap: () => controller.skipTour(),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black87,
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Text(
+                      'Skip Tour',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+        Overlay.of(context, rootOverlay: true).insert(_skipOverlay!);
+      });
+    });
+  }
+
+  void _removeSkipOverlay() {
+    _skipOverlay?.remove();
+    _skipOverlay = null;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_tourTriggered) return;
+    _tourTriggered = true;
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => controller.maybeStartTour(context),
+    );
+  }
+
+  @override
+  void dispose() {
+    _tourWatcher.dispose();
+    _removeSkipOverlay();
+    _showcaseView.unregister();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    return _buildScaffold(context);
+  }
+
+  Widget _buildScaffold(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -27,6 +136,31 @@ class ScanCard extends GetView<ScanCardController> {
           icon: const Icon(Icons.close_rounded, color: Colors.blueGrey),
           onPressed: () => Get.back(),
         ),
+        actions: [
+          Showcase(
+            scope: ScanCardController.scanCardScope,
+            key: controller.tourHelpKey,
+            title: 'Replay',
+            description: 'Tap anytime to see the tour again.',
+            targetShapeBorder: const CircleBorder(),
+            tooltipBackgroundColor: controller.primaryColor,
+            textColor: Colors.white,
+            titleTextStyle: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
+            ),
+            descTextStyle: const TextStyle(color: Colors.white, fontSize: 12),
+            child: IconButton(
+              icon: const Icon(
+                Icons.help_outline_rounded,
+                color: Colors.blueGrey,
+              ),
+              tooltip: 'Replay tour',
+              onPressed: () => controller.startTourNow(),
+            ),
+          ),
+        ],
       ),
       body: Stack(
         children: [
@@ -97,20 +231,30 @@ class ScanCard extends GetView<ScanCardController> {
       final image = controller.selectedImage.value;
       final isLoading = controller.isLoading.value;
 
+      // When no image selected, show combined placeholder with tips
+      if (image == null) {
+        return Showcase(
+          scope: ScanCardController.scanCardScope,
+          key: controller.tourTipsKey,
+          title: 'Scan a Business Card',
+          description: 'Snap or upload — we extract name, phone & email.',
+          tooltipBackgroundColor: controller.primaryColor,
+          textColor: Colors.white,
+          titleTextStyle: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+          ),
+          descTextStyle: const TextStyle(color: Colors.white, fontSize: 12.5),
+          targetBorderRadius: BorderRadius.circular(20),
+          targetPadding: const EdgeInsets.all(4),
+          child: _buildPlaceholder(),
+        );
+      }
+
       return Container(
         height: 220,
         decoration: BoxDecoration(
-          color: image == null ? AppColors.cardBgStatic : null,
-          gradient: image == null
-              ? LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    controller.primaryColor.withValues(alpha: 0.08),
-                    controller.secondaryColor.withValues(alpha: 0.08),
-                  ],
-                )
-              : null,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: controller.primaryColor.withValues(alpha: 0.2),
@@ -128,15 +272,12 @@ class ScanCard extends GetView<ScanCardController> {
           borderRadius: BorderRadius.circular(18),
           child: Stack(
             children: [
-              if (image != null)
-                Image.file(
-                  image,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                )
-              else
-                _buildPlaceholder(),
+              Image.file(
+                image,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
               if (isLoading) _buildScanningOverlay(),
             ],
           ),
@@ -146,9 +287,37 @@ class ScanCard extends GetView<ScanCardController> {
   }
 
   Widget _buildPlaceholder() {
-    return Center(
+    final tipStyle = TextStyle(
+      fontSize: 9.sp,
+      color: Colors.amber.shade900,
+      fontWeight: FontWeight.w600,
+    );
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            controller.primaryColor.withValues(alpha: 0.08),
+            controller.secondaryColor.withValues(alpha: 0.08),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: controller.primaryColor.withValues(alpha: 0.2),
+          width: 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: controller.primaryColor.withValues(alpha: 0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           ShaderMask(
             shaderCallback: (bounds) => LinearGradient(
@@ -156,20 +325,20 @@ class ScanCard extends GetView<ScanCardController> {
             ).createShader(bounds),
             child: const Icon(
               Icons.credit_card_rounded,
-              size: 72,
+              size: 64,
               color: Colors.white,
             ),
           ),
-          SizedBox(height: 2.hp),
+          SizedBox(height: 1.5.hp),
           Text(
-            'Scan a Visting card to begin',
+            'Scan a Business Card to begin',
             style: TextStyle(
               color: AppColors.textHintStatic,
               fontSize: 10.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 2.hp),
+          SizedBox(height: 1.hp),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
@@ -192,8 +361,51 @@ class ScanCard extends GetView<ScanCardController> {
               ],
             ),
           ),
+          SizedBox(height: 2.hp),
+          Divider(color: Colors.amber.shade200, thickness: 1),
+          SizedBox(height: 1.hp),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.lightbulb_outline_rounded,
+                size: 18,
+                color: Colors.amber.shade800,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'Tips for best results',
+                style: TextStyle(
+                  fontSize: 9.5.sp,
+                  color: Colors.amber.shade900,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 1.hp),
+          _buildTipItem('Hold the card close & zoom in', tipStyle),
+          const SizedBox(height: 6),
+          _buildTipItem('Scan one Business Card at a time', tipStyle),
+          const SizedBox(height: 6),
+          _buildTipItem('Ensure good lighting on the card', tipStyle),
         ],
       ),
+    );
+  }
+
+  Widget _buildTipItem(String text, TextStyle style) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Icon(Icons.circle, size: 6, color: Colors.amber.shade700),
+        ),
+        const SizedBox(width: 8),
+        Text(text, style: style),
+      ],
     );
   }
 
@@ -293,22 +505,58 @@ class ScanCard extends GetView<ScanCardController> {
       return Row(
         children: [
           Expanded(
-            child: _buildAnimatedButton(
-              icon: Icons.camera_alt_rounded,
-              label: 'Camera',
-              onPressed: isLoading ? null : controller.pickImageFromCamera,
-              isPrimary: true,
-              delay: 0,
+            child: Showcase(
+              scope: ScanCardController.scanCardScope,
+              key: controller.tourCameraKey,
+              title: 'Use Camera',
+              description: 'Scan live. Edges auto-detected.',
+              tooltipBackgroundColor: controller.primaryColor,
+              textColor: Colors.white,
+              titleTextStyle: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+              ),
+              descTextStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 12.5,
+              ),
+              targetBorderRadius: BorderRadius.circular(16),
+              child: _buildAnimatedButton(
+                icon: Icons.camera_alt_rounded,
+                label: 'Camera',
+                onPressed: isLoading ? null : controller.pickImageFromCamera,
+                isPrimary: true,
+                delay: 0,
+              ),
             ),
           ),
           const SizedBox(width: 16),
           Expanded(
-            child: _buildAnimatedButton(
-              icon: Icons.photo_library_rounded,
-              label: 'Gallery',
-              onPressed: isLoading ? null : controller.pickImageFromGallery,
-              isPrimary: false,
-              delay: 100,
+            child: Showcase(
+              scope: ScanCardController.scanCardScope,
+              key: controller.tourGalleryKey,
+              title: 'Use Gallery',
+              description: 'Pick an existing photo of the card.',
+              tooltipBackgroundColor: controller.secondaryColor,
+              textColor: Colors.white,
+              titleTextStyle: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 15,
+              ),
+              descTextStyle: const TextStyle(
+                color: Colors.white,
+                fontSize: 12.5,
+              ),
+              targetBorderRadius: BorderRadius.circular(16),
+              child: _buildAnimatedButton(
+                icon: Icons.photo_library_rounded,
+                label: 'Gallery',
+                onPressed: isLoading ? null : controller.pickImageFromGallery,
+                isPrimary: false,
+                delay: 100,
+              ),
             ),
           ),
         ],

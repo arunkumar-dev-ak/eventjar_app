@@ -131,7 +131,7 @@ class CategoriesEventController extends GetxController {
       state.meta.value = response.meta;
     } catch (err) {
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Failed to load Events");
+        ApiErrorHandler.handleDioError(err, "Failed to load Events");
       } else if (err is Exception) {
         AppSnackbar.error(title: "Exception", message: err.toString());
       } else {

@@ -136,7 +136,7 @@ class NotificationService {
 
     // 🔥 4. Initialize local notifications
     await flutterLocalNotificationsPlugin.initialize(
-      initSettings,
+      settings: initSettings,
       onDidReceiveNotificationResponse: onSelectNotification,
     );
 
@@ -201,7 +201,7 @@ class NotificationService {
       android: androidSettings,
     );
 
-    await flutterLocalNotificationsPlugin.initialize(initSettings);
+    await flutterLocalNotificationsPlugin.initialize(settings: initSettings);
     _isFlutterLocalNotificationsInitialized = true;
   }
 
@@ -358,10 +358,10 @@ class NotificationService {
       final content = buildNotificationContent(message);
 
       await flutterLocalNotificationsPlugin.show(
-        notificationId,
-        content.title,
-        content.body,
-        platformDetails,
+        id: notificationId,
+        title: content.title,
+        body: content.body,
+        notificationDetails: platformDetails,
         payload: type,
       );
     } catch (e) {

@@ -22,8 +22,10 @@ Future<void> contactCardAddContactToPhone(
   }
 
   try {
-    final granted = await FlutterContacts.requestPermission();
-    if (!granted) {
+    final status =
+        await FlutterContacts.permissions.request(PermissionType.readWrite);
+    if (status != PermissionStatus.granted &&
+        status != PermissionStatus.limited) {
       AppToast.warning('Contacts permission required to save contact');
       return;
     }
@@ -49,38 +51,39 @@ Future<void> contactCardAddContactToPhone(
       displayName = '${contact.name} ($twoTags)';
     }
 
-    final newContact = Contact()
-      ..name.first = displayName
-      ..notes = [Note(tagsText)];
-
-    if (contact.phoneParsed?.fullNumber.isNotEmpty == true) {
-      newContact.phones = [Phone(contact.phoneParsed!.fullNumber)];
-    }
-
-    if (contact.email.isNotEmpty) {
-      newContact.emails = [Email(contact.email)];
-    }
-
-    if (contact.company != null || contact.position != null) {
-      newContact.organizations = [
-        Organization(
-          company: contact.company ?? '',
-          title: contact.position ?? '',
-        ),
-      ];
-    }
-
-    await FlutterContacts.insertContact(newContact);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${contact.name} saved successfully ✅'),
-        backgroundColor: Colors.green,
-        behavior: SnackBarBehavior.floating,
-      ),
+    final newContact = Contact(
+      name: Name(first: displayName),
+      notes: [Note(note: tagsText)],
+      phones: contact.phoneParsed?.fullNumber.isNotEmpty == true
+          ? [Phone(number: contact.phoneParsed!.fullNumber)]
+          : [],
+      emails: contact.email.isNotEmpty
+          ? [Email(address: contact.email)]
+          : [],
+      organizations:
+          (contact.company != null || contact.position != null)
+              ? [
+                  Organization(
+                    name: contact.company ?? '',
+                    jobTitle: contact.position ?? '',
+                  ),
+                ]
+              : [],
     );
+
+    await FlutterContacts.create(newContact);
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${contact.name} saved successfully ✅'),
+          backgroundColor: Colors.green,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   } catch (e, s) {
-    LoggerService.loggerInstance.dynamic_d('$e\n$s');
+    LoggerService.loggerInstance.e('$e\n$s');
 
     if (context.mounted) {
       AppSnackbar.error(title: "Failed", message: "Could not save contact");
@@ -103,7 +106,9 @@ Future<bool> contactAlreadyExists(MobileContact contact) async {
 
   final newNumber = normalize(fullNumber);
 
-  final contacts = await FlutterContacts.getContacts(withProperties: true);
+  final contacts = await FlutterContacts.getAll(
+    properties: {ContactProperty.phone},
+  );
 
   for (final c in contacts) {
     for (final p in c.phones) {

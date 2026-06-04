@@ -1,4 +1,5 @@
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
@@ -20,10 +21,12 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
   final Color? selectedShade2;
   final Color? selectedShade3;
   final Color? headerColor;
+  final Color? selectedDisplayColor;
   final double? borderWidth;
   final double? height;
   final double? selectedTextSize;
   final double? dropDownIconSize;
+  final IconData? dropdownIcon;
   final EdgeInsetsGeometry? textFieldPadding;
 
   const SingleSelectFilterDropdown({
@@ -41,11 +44,13 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
     this.selectedShade2,
     this.selectedShade3,
     this.headerColor,
+    this.selectedDisplayColor,
     this.borderWidth,
     this.height,
     this.selectedTextSize,
     this.dropDownIconSize,
     this.textFieldPadding,
+    this.dropdownIcon,
   });
 
   @override
@@ -62,14 +67,17 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
           : (hintText ?? 'Select option');
 
       return GestureDetector(
-        onTap: () => _showModernDialog(
-          context: context,
-          headerColor: headColor,
-          primary: primary,
-          selectedShade1: selectedShade1 ?? Colors.blue.shade50,
-          selectedShade2: selectedShade2 ?? Colors.blue.shade100,
-          selectedShade3: selectedShade3 ?? Colors.blue.shade200,
-        ),
+        onTap: () {
+          HapticHelper.light();
+          _showModernDialog(
+            context: context,
+            headerColor: headColor,
+            primary: primary,
+            selectedShade1: selectedShade1 ?? Colors.blue.shade50,
+            selectedShade2: selectedShade2 ?? Colors.blue.shade100,
+            selectedShade3: selectedShade3 ?? Colors.blue.shade200,
+          );
+        },
         child: Container(
           height: height,
           padding:
@@ -95,17 +103,21 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                 style: TextStyle(
                   fontSize: selectedTextSize ?? 10.sp,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  color: isSelected ? primary : AppColors.textSecondary(context),
+                  color: isSelected
+                      ? selectedDisplayColor ?? primary
+                      : AppColors.textSecondary(context),
                 ),
               ),
 
               AnimatedRotation(
                 duration: const Duration(milliseconds: 200),
-                turns: isSelected ? 0.25 : 0,
+                turns: isSelected && dropDownIconSize != null ? 0.25 : 0,
                 child: Icon(
-                  Icons.keyboard_arrow_down_rounded,
+                  dropdownIcon ?? Icons.keyboard_arrow_down_rounded,
                   size: dropDownIconSize ?? 24,
-                  color: isSelected ? primary : AppColors.textHint(context),
+                  color: isSelected
+                      ? selectedDisplayColor ?? primary
+                      : AppColors.textHint(context),
                 ),
               ),
             ],
@@ -204,22 +216,32 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                           selected != null &&
                           getKeyValue(item) == getKeyValue(selected);
 
+                      final isDark =
+                          Theme.of(context).brightness == Brightness.dark;
                       return AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         margin: const EdgeInsets.only(bottom: 12),
                         decoration: BoxDecoration(
-                          color: isSelectedItem ? selectedShade1 : AppColors.cardBg(context),
+                          color: isSelectedItem
+                              ? (isDark
+                                    ? headerColor.withValues(alpha: 0.15)
+                                    : selectedShade1)
+                              : AppColors.cardBg(context),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: isSelectedItem
-                                ? selectedShade3
+                                ? (isDark
+                                      ? headerColor.withValues(alpha: 0.5)
+                                      : selectedShade3)
                                 : AppColors.divider(context),
                             width: 1.5,
                           ),
                           boxShadow: isSelectedItem
                               ? [
                                   BoxShadow(
-                                    color: selectedShade1,
+                                    color: isDark
+                                        ? headerColor.withValues(alpha: 0.2)
+                                        : selectedShade1,
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -231,6 +253,7 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                           child: InkWell(
                             borderRadius: BorderRadius.circular(16),
                             onTap: () {
+                              HapticHelper.selection();
                               onSelected(item);
                               Navigator.pop(context);
                             },

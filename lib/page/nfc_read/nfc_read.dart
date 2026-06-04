@@ -84,7 +84,6 @@ class NfcActionContainer extends GetView<NfcReadController> {
   @override
   Widget build(BuildContext context) {
     final profile = controller.state.profile.value;
-    LoggerService.loggerInstance.dynamic_d(profile);
     final hasProfile = profile != null;
     final isIos = Platform.isIOS;
 

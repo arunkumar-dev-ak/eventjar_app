@@ -1,4 +1,5 @@
 import 'package:eventjar/controller/qualify_lead/controller.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,7 +29,10 @@ class QualifyLeadActionButtons extends StatelessWidget {
               ),
               onPressed: controller.state.isLoading.value
                   ? null
-                  : () => controller.resetForm(),
+                  : () {
+                      HapticHelper.light();
+                      controller.resetForm();
+                    },
               child: Text('Reset', style: TextStyle(fontSize: 9.sp)),
             ),
           ),
@@ -50,6 +54,7 @@ class QualifyLeadActionButtons extends StatelessWidget {
                   if (controller.state.isLoading.value) {
                     return;
                   }
+                  HapticHelper.medium();
                   if (controller.formKey.currentState?.validate() ?? false) {
                     Get.focusScope?.unfocus();
                     controller.qualifyLead(context);

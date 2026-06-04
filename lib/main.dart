@@ -1,11 +1,14 @@
 import 'package:country_code_picker/country_code_picker.dart';
+import 'package:eventjar/controller/splashScreen/binding.dart';
 import 'package:eventjar/global/global_values.dart';
+import 'package:eventjar/global/store/language_store.dart';
 import 'package:eventjar/global/store/theme_store.dart';
 import 'package:eventjar/notification/notification_service.dart';
+import 'package:eventjar/page/splash_screen/splash_screen_page.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/routes/route_page.dart';
-import 'package:eventjar/services/deep_link_handler.dart';
 import 'package:eventjar/services/nfc_intent_handler.dart';
+import 'package:eventjar/services/translation_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +21,7 @@ void main() async {
   await Firebase.initializeApp();
   await Global.onInit();
   await NotificationService().init();
+  await TranslationService.init();
   // final config = ClarityConfig(
   //   projectId: "v6b088h0dw",
   //   logLevel: LogLevel.Verbose,
@@ -37,16 +41,21 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // Initialize NFC intent handler after first frame
+    // NFC intent handler init runs after the first frame.
+    // Deep-link orchestration is owned by SplashScreenController so a
+    // cold-start link can decide where to land instead of being
+    // overridden by splash's default redirect.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       NfcIntentHandler().init();
-      DeepLinkHandler().init();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      translations: TranslationService(),
+      locale: LanguageStore.to.locale,
+      fallbackLocale: const Locale('en'),
       supportedLocales: [const Locale('en'), const Locale('lt')],
       localizationsDelegates: [CountryLocalizations.delegate],
       debugShowCheckedModeBanner: false,
@@ -55,6 +64,18 @@ class _MyAppState extends State<MyApp> {
       darkTheme: _buildDarkTheme(),
       themeMode: ThemeStore.to.isDarkMode ? ThemeMode.dark : ThemeMode.light,
       initialRoute: RouteName.splashScreen,
+      // If the platform side hands the engine an initial route we don't
+      // know about (e.g. on Android cold-start, the intent URI from a
+      // WhatsApp/SMS deep link can leak through as `/invite/<token>`),
+      // fall back to splash. The URI itself is still delivered through
+      // the app_links MethodChannel and dispatched by DeepLinkHandler
+      // from SplashScreenController — same pattern as FCM's
+      // getInitialMessage() for notifications.
+      unknownRoute: GetPage(
+        name: '/notFound',
+        page: () => const SplashScreenPage(),
+        binding: SplashScreenBinding(),
+      ),
       getPages: RoutePage().getPage,
     );
   }

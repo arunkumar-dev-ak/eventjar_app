@@ -52,7 +52,6 @@ class CheckoutController extends GetxController {
   @override
   void onInit() {
     UserStore.cancelAllRequests();
-    // LoggerService.loggerInstance.dynamic_d("In oninit");
     _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _onError);
@@ -61,7 +60,6 @@ class CheckoutController extends GetxController {
       if (eventData == null) return;
       if (state.cartLines.isNotEmpty) return;
       if (eventData.ticketTiers.isEmpty) return;
-      LoggerService.loggerInstance.dynamic_d(eventData);
 
       final firstTier = eventData.ticketTiers.first;
 
@@ -146,27 +144,15 @@ class CheckoutController extends GetxController {
       final response = await CheckoutApi.validateBadge(eventId: eventInfo.id);
 
       state.badgeValidationResponse.value = response;
-
-      LoggerService.loggerInstance.dynamic_d(
-        "Badge validation result: ${response.toJson()}",
-      );
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Badge Validation Failed",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Badge Validation Failed");
-      } else {
-        AppSnackbar.error(
-          title: "Badge Validation Failed",
-          message: "Something went wrong",
-        );
-      }
+        },
+      );
     } finally {
       state.isCheckingBadge.value = false;
     }
@@ -217,10 +203,6 @@ class CheckoutController extends GetxController {
       TicketPaymentModel paymentResponse =
           await TicketBookingApi.createTicketPayment(paymentPayload);
 
-      LoggerService.loggerInstance.dynamic_d(
-        "Payment Response: ${paymentResponse.toJson()}",
-      );
-
       if (!paymentResponse.success) {
         AppSnackbar.error(
           title: "Payment Error",
@@ -262,7 +244,6 @@ class CheckoutController extends GetxController {
   }
 
   Future<void> _handleFreeTicket() async {
-    LoggerService.loggerInstance.dynamic_d("in handleFree ticket");
     final eventInfo = state.eventInfo.value;
     if (eventInfo == null) {
       AppSnackbar.error(title: "Error", message: "Event not found");
@@ -278,10 +259,6 @@ class CheckoutController extends GetxController {
       state.isRegistering.value = true;
 
       final freeTicketPayload = _buildFreeTicketPayload(eventInfo);
-
-      LoggerService.loggerInstance.dynamic_d(
-        "Free Ticket Payload: ${freeTicketPayload.toString()}",
-      );
 
       // Call your free registration API
       await TicketBookingApi.createFreeEventRegistration(freeTicketPayload);
@@ -427,7 +404,7 @@ class CheckoutController extends GetxController {
         navigateToSignInPage();
         return;
       }
-      ApiErrorHandler.handleError(err, "Registration Failed");
+      ApiErrorHandler.handleDioError(err, "Registration Failed");
     } else {
       AppSnackbar.error(title: "Error", message: "Something went wrong");
     }
@@ -483,9 +460,6 @@ class CheckoutController extends GetxController {
   }
 
   void _onError(PaymentFailureResponse response) {
-    // LoggerService.loggerInstance.dynamic_d("failure");
-    LoggerService.loggerInstance.dynamic_d(response);
-    // Get.snackbar("Payment Failed", response.message ?? "Error");
     AppSnackbar.error(
       title: "Payment Failed",
       message: "Payment Failed Please try again",
@@ -515,8 +489,6 @@ class CheckoutController extends GetxController {
         userId: UserStore.to.profile['id'].toString(),
         subtotal: subtotal,
       );
-
-      LoggerService.loggerInstance.dynamic_d(response.toJson());
 
       state.promoCodeResponse.value = response;
 
@@ -560,21 +532,14 @@ class CheckoutController extends GetxController {
       state.eligibilityResponse.value = response;
     } catch (err) {
       state.isCheckingEligibility.value = false;
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Ticket Eligibility Failed",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return; // Stop further error handling
-        }
-        ApiErrorHandler.handleError(err, "Ticket Eligibity Failed");
-      } else {
-        AppSnackbar.error(
-          title: "Ticket Eligibity Failed",
-          message: "Something went wrong",
-        );
-      }
+        },
+      );
     } finally {
       state.isCheckingEligibility.value = false;
     }

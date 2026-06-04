@@ -135,6 +135,38 @@ class EventInfoController extends GetxController
     ]);
   }
 
+  /// Refreshes attendee data without resetting pagination.
+  /// Reloads all currently loaded items to get updated statuses.
+  Future<void> _refreshAttendeeDataInPlace() async {
+    final finalEventId = state.eventInfo.value?.id ?? eventId;
+    final currentOffset = state.attendeeOffset.value;
+    final limit = currentOffset > 0 ? currentOffset : 10;
+
+    try {
+      final attendeeResponse =
+          await EventInfoApiAttendeeList.getEventAttendeeList(
+            finalEventId,
+            offset: 0,
+            limit: limit,
+          );
+
+      state.attendeeList.value = attendeeResponse;
+      final newLength = attendeeResponse.attendee?.length ?? 0;
+      state.attendeeOffset.value = newLength;
+      state.hasMoreAttendees.value = newLength >= limit;
+
+      // Clamp current index to stay within bounds
+      if (state.attendeeCurrentIndex.value >= newLength && newLength > 0) {
+        state.attendeeCurrentIndex.value = newLength - 1;
+      }
+
+      // Also refresh request list
+      await fetchEventAttendeeRequestList(finalEventId);
+    } catch (err) {
+      LoggerService.loggerInstance.e(err);
+    }
+  }
+
   Future<void> fetchEventByTicketId(String ticketId) async {
     try {
       state.isLoading.value = true;
@@ -242,22 +274,15 @@ class EventInfoController extends GetxController
       state.attendeeOffset.value = offset + (response.attendee?.length ?? 0);
       state.hasMoreAttendees.value = (response.attendee?.length ?? 0) >= 10;
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to load attendee list");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message:
-              "Something went wrong. Please try again. in fetchEventAttendeeList",
-        );
-      }
+      LoggerService.loggerInstance.e(err);
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load attendee list",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
     } finally {
       state.attendeeListLoading.value = false;
       state.isLoadingMoreAttendees.value = false;
@@ -284,25 +309,15 @@ class EventInfoController extends GetxController
           await EventInfoApiAttendeeRequestList.getAttendeeRequestList(eventId);
       state.attendeeRequests.value = response;
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
-          return;
-        }
-
-        ApiErrorHandler.handleError(
-          err,
-          "Failed to load attendee meeting requests",
-        );
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message:
-              "Something went wrong. Please try again in fetchEventAttendeeReqList",
-        );
-      }
+      LoggerService.loggerInstance.e(err);
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load attendee meeting requests",
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
     } finally {
       state.attendeeRequestLoading.value = false;
     }
@@ -404,22 +419,16 @@ class EventInfoController extends GetxController
         status,
       );
 
-      await fetchAllAttendeeData();
+      await _refreshAttendeeDataInPlace();
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to Update Status",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-        ApiErrorHandler.handleError(err, "Failed to Update Status");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.buttonLoadingStates[buttonId] = false;
       state.isProcessingRequest.value = false;
@@ -452,22 +461,17 @@ class EventInfoController extends GetxController
 
       await EventInfoApiAttendeeList.sendMeetRequest(payload, eventId);
 
-      await fetchAllAttendeeData();
+      // Refresh attendee list without resetting pagination
+      await _refreshAttendeeDataInPlace();
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to Update Status",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-        ApiErrorHandler.handleError(err, "Failed to Update Status");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.meetReqButtonLoadingStates[buttonId] = false;
       state.isMeetReqProcessingRequest.value = false;

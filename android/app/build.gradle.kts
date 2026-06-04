@@ -17,7 +17,10 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.myeventjar.eventjar_app"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // Pin NDK 27+ so native libs are built with 16 KB page-size alignment,
+    // which Google Play requires for new submissions on Android 15 (API 35)
+    // devices. The Flutter-default NDK can lag behind this requirement.
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true

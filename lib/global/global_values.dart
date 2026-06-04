@@ -1,3 +1,4 @@
+import 'package:eventjar/global/store/language_store.dart';
 import 'package:eventjar/global/store/theme_store.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/storage/storage_service.dart';
@@ -16,6 +17,7 @@ class Global {
     await Get.putAsync<StorageService>(() => StorageService().init());
     Get.put<UserStore>(UserStore());
     Get.put<ThemeStore>(ThemeStore());
+    Get.put<LanguageStore>(LanguageStore());
     // Get.put<ToastController>(ToastController());
   }
 }
@@ -24,7 +26,10 @@ const String storageAccessToken = "myEventJar_accessToken";
 const String storageRefreshToken = "myEventJar_refreshToken";
 const String storageProfile = "myEventJar_profile";
 const String storageFcmToken = "myEventJar_fcmToken";
+const String pkceCodeVerifier = "pkce_code_verifier";
+const String storageLanguageCode = "myEventJar_languageCode";
+const String storageLanguageSelected = "myEventJar_languageSelected";
 String backendBaseUrl() {
-  return "https://myeventjar.com/api";
-  // return "http://10.0.2.2:4000/";
+  // return "https://myeventjar.com/api";
+  return "http://10.0.2.2:4000/";
 } //Base url for Api request

@@ -21,7 +21,6 @@ class AuthService {
           .authenticate();
 
       final String? idToken = googleUser.authentication.idToken;
-      LoggerService.loggerInstance.dynamic_d("idToken is $idToken");
       if (idToken != null) {
         LoggerService.loggerInstance.d("Token: $idToken");
         onSuccess(idToken);

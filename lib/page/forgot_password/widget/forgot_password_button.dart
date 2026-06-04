@@ -1,5 +1,6 @@
 import 'package:eventjar/controller/forgotPassword/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -36,6 +37,7 @@ class ForgotPasswordSubmitButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(16.0),
               onTap: () async {
                 if (isButtonLoading) return;
+                HapticHelper.medium();
                 if (controller.formKey.currentState?.validate() ?? false) {
                   final currentContext = context;
                   final isSuccess = await controller.handleForgotPasswordSubmit(
@@ -113,7 +115,10 @@ void openModel(BuildContext context, {required VoidCallback onTap}) {
                 ),
                 SizedBox(height: 20),
                 InkWell(
-                  onTap: onTap,
+                  onTap: () {
+                    HapticHelper.light();
+                    onTap();
+                  },
                   child: Container(
                     width: 90.wp,
                     height: 60,

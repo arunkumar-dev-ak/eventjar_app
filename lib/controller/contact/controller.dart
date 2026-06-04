@@ -92,8 +92,6 @@ class ContactController extends GetxController
     final currentScroll = contactScrollController.position.pixels;
     const double prefetchThreshold = 200.0;
 
-    // LoggerService.loggerInstance.dynamic_d("$maxScroll, $currentScroll");
-
     if (maxScroll - currentScroll <= prefetchThreshold) {
       if (state.meta.value != null &&
           state.meta.value!.hasNext == true &&
@@ -122,9 +120,6 @@ class ContactController extends GetxController
 
   /*----- fetch contacts ------*/
   String getEndpoint({bool onRefresh = false}) {
-    LoggerService.loggerInstance.dynamic_d(
-      "ffffff ---- ${state.selectedTab.value}",
-    );
     final searchQuery = state.searchQuery.value.trim();
     final stageKey = state.selectedTab.value!.enumKey;
     final page = onRefresh ? _currentPage : _getNextPage();
@@ -171,24 +166,14 @@ class ContactController extends GetxController
       state.contacts.value = response.data.contacts;
       state.meta.value = response.data.pagination;
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load contacts",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to load Contacts");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.runtimeType})",
-        );
-      }
+        },
+      );
     } finally {
       stopLoading();
     }
@@ -221,24 +206,14 @@ class ContactController extends GetxController
       state.contacts.addAll(response.data.contacts);
       state.meta.value = response.data.pagination;
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load contacts",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to load Contacts");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.runtimeType})",
-        );
-      }
+        },
+      );
     } finally {
       state.isFetchingWhileScrolling.value = false;
     }
@@ -261,24 +236,15 @@ class ContactController extends GetxController
 
       await fetchContactsOnFirstLoad();
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
-          // Auth error handling example
+      LoggerService.loggerInstance.e(err);
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to add contact",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to add contact");
-      } else {
-        AppSnackbar.error(
-          title: "Failed",
-          message: "Something went wrong. Please try again.",
-        );
-      }
+        },
+      );
     } finally {
       state.isLoading.value = false;
     }
@@ -357,7 +323,6 @@ class ContactController extends GetxController
   }
 
   void navigateToUpdateContact(MobileContact contact) {
-    LoggerService.loggerInstance.dynamic_d(contact);
     Get.toNamed(RouteName.addContactPage, arguments: contact)?.then(
       (result) async => {
         if (result == 'refresh')
@@ -424,7 +389,6 @@ class ContactController extends GetxController
 
   void navigateToQrPage() {
     Get.toNamed(RouteName.qrDashboardPage)?.then((result) async {
-      LoggerService.loggerInstance.dynamic_d(result);
       if (result == "refresh") {
         await fetchContactsOnFirstLoad();
       }

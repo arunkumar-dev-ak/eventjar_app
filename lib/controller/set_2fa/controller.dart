@@ -66,13 +66,11 @@ class Set2faController extends GetxController {
       await Future.delayed(const Duration(seconds: 2));
       Navigator.pop(Get.context!, "success");
     } catch (err) {
-      LoggerService.loggerInstance.dynamic_d(err);
+      LoggerService.loggerInstance.e(err);
 
       if (err is DioException) {
         final statusCode = err.response?.statusCode;
         final message = err.response?.data?['message']?.toString() ?? '';
-
-        LoggerService.loggerInstance.dynamic_d(statusCode);
 
         //auth
         if (statusCode == 401) {

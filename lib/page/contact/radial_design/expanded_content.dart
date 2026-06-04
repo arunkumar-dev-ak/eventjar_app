@@ -41,6 +41,7 @@ Widget buildExpandedContent(
                   animationValue: 1.0,
                   showText: true,
                   activeStageIndex: contact.stage.index,
+                  isDarkMode: Get.isDarkMode,
                 ),
               ),
 

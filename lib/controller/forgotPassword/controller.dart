@@ -50,7 +50,7 @@ class ForgotPasswordController extends GetxController {
     } catch (err) {
       state.isLoading.value = false;
       if (err is DioException) {
-        ApiErrorHandler.handleError(err, "Email Send Failed");
+        ApiErrorHandler.handleDioError(err, "Email Send Failed");
       } else {
         AppSnackbar.error(
           title: "Email Send Failed",

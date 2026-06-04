@@ -135,12 +135,15 @@ class ExtendedProfile {
   final List<String> interestedInConnecting;
   final List<String> helpOfferings;
   final List<String> discussionTopics;
+  final List<String> knownLanguages;
+  final List<String> skills;
   final String? shortBio;
   final String? availabilitySlots;
   final List<String> preferredLocations;
   final String? linkedinProfile;
   final SocialMediaLinks socialMediaLinks;
   final List<String> eventInterests;
+  final List<String> galleryImages;
   final PhoneParsed? businessPhoneParsed;
 
   ExtendedProfile({
@@ -164,12 +167,15 @@ class ExtendedProfile {
     required this.interestedInConnecting,
     required this.helpOfferings,
     required this.discussionTopics,
+    required this.knownLanguages,
+    required this.skills,
     this.shortBio,
     this.availabilitySlots,
     required this.preferredLocations,
     this.linkedinProfile,
     required this.socialMediaLinks,
     required this.eventInterests,
+    required this.galleryImages,
     this.businessPhoneParsed,
   });
 
@@ -198,6 +204,9 @@ class ExtendedProfile {
         helpOfferings: (json['helpOfferings'] as List?)?.cast<String>() ?? [],
         discussionTopics:
             (json['discussionTopics'] as List?)?.cast<String>() ?? [],
+        knownLanguages:
+            (json['knownLanguages'] as List?)?.cast<String>() ?? [],
+        skills: (json['skills'] as List?)?.cast<String>() ?? [],
         shortBio: json['shortBio'],
         availabilitySlots: json['availabilitySlots'],
         preferredLocations:
@@ -207,6 +216,7 @@ class ExtendedProfile {
             ? SocialMediaLinks.fromJson(json['socialMediaLinks'])
             : SocialMediaLinks.empty(),
         eventInterests: (json['eventInterests'] as List?)?.cast<String>() ?? [],
+        galleryImages: (json['galleryImages'] as List?)?.cast<String>() ?? [],
         businessPhoneParsed: json['businessPhoneParsed'] != null
             ? PhoneParsed.fromJson(json['businessPhoneParsed'])
             : null,
@@ -238,12 +248,15 @@ class ExtendedProfile {
     'interestedInConnecting': interestedInConnecting,
     'helpOfferings': helpOfferings,
     'discussionTopics': discussionTopics,
+    'knownLanguages': knownLanguages,
+    'skills': skills,
     'shortBio': shortBio,
     'availabilitySlots': availabilitySlots,
     'preferredLocations': preferredLocations,
     'linkedinProfile': linkedinProfile,
     'socialMediaLinks': socialMediaLinks.toJson(),
     'eventInterests': eventInterests,
+    'galleryImages': galleryImages,
   };
 }
 

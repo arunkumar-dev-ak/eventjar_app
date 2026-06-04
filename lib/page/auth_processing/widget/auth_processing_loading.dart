@@ -12,7 +12,7 @@ class AuthProcessignLoading extends GetView<AuthProcessingController> {
   Widget build(BuildContext context) {
     return Container(
       width: 100.wp,
-      color: AppColors.liteBlue, // ✅ white background
+      color: AppColors.isDark ? AppColors.darkCard : AppColors.liteBlue,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

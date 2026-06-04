@@ -26,7 +26,14 @@ class MeetingController extends GetxController {
     ) {
       _debouncedFetchMeetings();
     });
-    state.selectedStatus.value = MeetingStatus.ALL;
+    final args = Get.arguments;
+    if (args != null &&
+        args is Map<String, dynamic> &&
+        args['status'] != null) {
+      state.selectedStatus.value = args['status'] as MeetingStatus;
+    } else {
+      state.selectedStatus.value = MeetingStatus.ALL;
+    }
     fetchMeetings(forceRefresh: true);
   }
 
@@ -105,7 +112,6 @@ class MeetingController extends GetxController {
 
       // query params
       final queryParams = gatherQueryData();
-      LoggerService.loggerInstance.dynamic_d('Query params: $queryParams');
 
       final response = await MeetingApi.getConnectionResponse(
         queryParams: queryParams,
@@ -113,24 +119,14 @@ class MeetingController extends GetxController {
 
       state.meetings.value = response.meetings;
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load Meetings",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to load Meetings");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.runtimeType})",
-        );
-      }
+        },
+      );
     } finally {
       if (state.isLoading.value) state.isLoading.value = false;
       if (state.isSearching.value) state.isSearching.value = false;
@@ -193,24 +189,14 @@ class MeetingController extends GetxController {
       );
       fetchMeetings(forceRefresh: true);
     } catch (err) {
-      if (err is DioException) {
-        final statusCode = err.response?.statusCode;
-
-        if (statusCode == 401) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "Failed to load Meetings",
+        onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
-          return;
-        }
-
-        ApiErrorHandler.handleError(err, "Failed to load Meetings");
-      } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
-      } else {
-        AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.runtimeType})",
-        );
-      }
+        },
+      );
     } finally {
       _stopLoading(meetingId);
     }

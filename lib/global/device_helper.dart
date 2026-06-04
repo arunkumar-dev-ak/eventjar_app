@@ -18,8 +18,6 @@ class DeviceIdHelper {
     // ✅ Simple random UUID v4 - Globally unique, no namespace needed
     final deviceId = _uuid.v4();
 
-    LoggerService.loggerInstance.dynamic_d(deviceId);
-
     await prefs.setString(_deviceIdKey, deviceId);
     return deviceId;
   }

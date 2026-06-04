@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:eventjar/controller/signIn/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/social_auth/google_auth.dart';
 import 'package:eventjar/global/social_auth/social_login_button.dart';
@@ -178,6 +181,7 @@ class SignInForm extends StatelessWidget {
                     ),
                   ),
                   onPressed: () async {
+                    HapticHelper.light();
                     controller.navigateToForgotPassword();
                   },
                   child: const Text(
@@ -223,40 +227,41 @@ class SignInForm extends StatelessWidget {
 
             /*----- Social Logins -----*/
             SizedBox(height: 3.hp),
-
-            Row(
-              children: [
-                Expanded(
-                  child: SocialButton(
-                    text: "Google",
-                    assetPath: "assets/app_icon/google.png",
-                    color: Colors.red,
-                    onTap: () => AuthService().signInWithGoogle(
-                      onSuccess: (idToken) =>
-                          controller.navigateToAuthProcessign(idToken),
+            if (Platform.isAndroid) ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: SocialButton(
+                      text: "Google",
+                      assetPath: "assets/app_icon/google.png",
+                      color: Colors.red,
+                      onTap: () => AuthService().signInWithGoogle(
+                        onSuccess: (idToken) =>
+                            controller.navigateToAuthProcessign(idToken),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(width: 3.wp),
-                Obx(() {
-                  return Expanded(
-                    child: SocialButton(
-                      text: "LinkedIn",
-                      assetPath: "assets/app_icon/linkedin.png",
-                      color: Colors.blue,
-                      isLoading: controller.state.isLinkedinLoading.value,
-                      onTap: () {
-                        controller.handleLinkedIn();
-                      },
-                    ),
-                  );
-                }),
-              ],
-            ),
-
-            SizedBox(height: 4.hp),
+                  SizedBox(width: 3.wp),
+                  Obx(() {
+                    return Expanded(
+                      child: SocialButton(
+                        text: "LinkedIn",
+                        assetPath: "assets/app_icon/linkedin.png",
+                        color: Colors.blue,
+                        isLoading: controller.state.isLinkedinLoading.value,
+                        onTap: () {
+                          controller.handleLinkedIn();
+                        },
+                      ),
+                    );
+                  }),
+                ],
+              ),
+              SizedBox(height: 4.hp),
+            ],
             AuthSignUp(
               onPressed: () {
+                HapticHelper.light();
                 controller.navigateToSignUp();
               },
             ),
