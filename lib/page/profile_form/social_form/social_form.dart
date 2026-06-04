@@ -214,50 +214,50 @@ class SocialFormPage extends GetView<SocialFormController> {
                     SizedBox(height: 4.hp),
 
                     // Contact Visibility Toggle
-                    Container(
-                      padding: EdgeInsets.all(4.wp),
-                      decoration: BoxDecoration(
-                        color: AppColors.scaffoldBg(context),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.divider(context)),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Contact Visibility',
-                                  style: TextStyle(
-                                    fontSize: 11.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.textPrimary(context),
-                                  ),
-                                ),
-                                Text(
-                                  'Allow other attendees to see your contact information',
-                                  style: TextStyle(
-                                    fontSize: 9.sp,
-                                    color: AppColors.textSecondary(context),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Obx(
-                            () => Switch(
-                              value: controller.state.contactVisibility.value,
-                              onChanged: (value) {
-                                controller.state.contactVisibility.value =
-                                    value;
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 5.hp),
+                    // Container(
+                    //   padding: EdgeInsets.all(4.wp),
+                    //   decoration: BoxDecoration(
+                    //     color: AppColors.scaffoldBg(context),
+                    //     borderRadius: BorderRadius.circular(12),
+                    //     border: Border.all(color: AppColors.divider(context)),
+                    //   ),
+                    //   child: Row(
+                    //     children: [
+                    //       Expanded(
+                    //         child: Column(
+                    //           crossAxisAlignment: CrossAxisAlignment.start,
+                    //           children: [
+                    //             Text(
+                    //               'Contact Visibility',
+                    //               style: TextStyle(
+                    //                 fontSize: 11.sp,
+                    //                 fontWeight: FontWeight.w700,
+                    //                 color: AppColors.textPrimary(context),
+                    //               ),
+                    //             ),
+                    //             Text(
+                    //               'Allow other attendees to see your contact information',
+                    //               style: TextStyle(
+                    //                 fontSize: 9.sp,
+                    //                 color: AppColors.textSecondary(context),
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //       Obx(
+                    //         () => Switch(
+                    //           value: controller.state.contactVisibility.value,
+                    //           onChanged: (value) {
+                    //             controller.state.contactVisibility.value =
+                    //                 value;
+                    //           },
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // SizedBox(height: 5.hp),
 
                     // Buttons
                     Row(

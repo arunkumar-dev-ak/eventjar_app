@@ -56,7 +56,7 @@ class EventJarInviteBadge extends StatelessWidget {
 
             Flexible(
               child: Text(
-                onEventJar ? 'On EventJar' : 'Invite to MyEventJar',
+                onEventJar ? 'On MyEventJar' : 'Invite to MyEventJar',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(

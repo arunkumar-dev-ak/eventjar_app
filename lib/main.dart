@@ -1,12 +1,14 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:eventjar/controller/splashScreen/binding.dart';
 import 'package:eventjar/global/global_values.dart';
+import 'package:eventjar/global/store/language_store.dart';
 import 'package:eventjar/global/store/theme_store.dart';
 import 'package:eventjar/notification/notification_service.dart';
 import 'package:eventjar/page/splash_screen/splash_screen_page.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/routes/route_page.dart';
 import 'package:eventjar/services/nfc_intent_handler.dart';
+import 'package:eventjar/services/translation_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,6 +21,7 @@ void main() async {
   await Firebase.initializeApp();
   await Global.onInit();
   await NotificationService().init();
+  await TranslationService.init();
   // final config = ClarityConfig(
   //   projectId: "v6b088h0dw",
   //   logLevel: LogLevel.Verbose,
@@ -50,6 +53,9 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      translations: TranslationService(),
+      locale: LanguageStore.to.locale,
+      fallbackLocale: const Locale('en'),
       supportedLocales: [const Locale('en'), const Locale('lt')],
       localizationsDelegates: [CountryLocalizations.delegate],
       debugShowCheckedModeBanner: false,

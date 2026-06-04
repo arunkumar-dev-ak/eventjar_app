@@ -40,7 +40,7 @@ class MyQrCodePage extends GetView<MyQrScreenController> {
               key: controller.tourQrKey,
               title: 'Your QR Code',
               description:
-                  'Show this to someone so they can scan and instantly save your contact in Eventjar.',
+                  'Show this to someone so they can scan and instantly save your contact in MyEventjar.',
               tooltipBackgroundColor: AppColors.gradientLightStart,
               textColor: Colors.white,
               titleTextStyle: const TextStyle(
@@ -48,10 +48,7 @@ class MyQrCodePage extends GetView<MyQrScreenController> {
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
               ),
-              descTextStyle: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-              ),
+              descTextStyle: const TextStyle(color: Colors.white, fontSize: 12),
               child: Stack(
                 alignment: Alignment.center,
                 children: [
@@ -67,7 +64,7 @@ class MyQrCodePage extends GetView<MyQrScreenController> {
               key: controller.tourShareKey,
               title: 'Share your QR',
               description:
-                  'Tap to send the QR as an image via any app — WhatsApp, email, AirDrop, and more.',
+                  'Tap to send the QR as an image via any app — WhatsApp, Email, and more.',
               tooltipBackgroundColor: AppColors.gradientLightEnd,
               textColor: Colors.white,
               titleTextStyle: const TextStyle(
@@ -75,17 +72,14 @@ class MyQrCodePage extends GetView<MyQrScreenController> {
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
               ),
-              descTextStyle: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-              ),
+              descTextStyle: const TextStyle(color: Colors.white, fontSize: 12),
               child: MyQrShareButton(),
             ),
             SizedBox(height: 3.hp),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Text(
-                'Scan to save my contacts in Eventjar for flawless networking',
+                'Scan to save my contacts in MyEventjar for flawless networking',
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.6),
                   fontSize: 9.sp,

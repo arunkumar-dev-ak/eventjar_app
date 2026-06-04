@@ -25,7 +25,7 @@ class UserProfilePermissions extends GetView<UserProfileController> {
             title: 'Camera',
             subtitle: cameraOn
                 ? 'Camera access is enabled'
-                : 'Required for QR scan & card scan',
+                : 'Required for QR scan, card scan and Image upload',
             isEnabled: cameraOn,
             onTap: controller.toggleCameraPermission,
           ),

@@ -601,8 +601,8 @@ class UserProfileController extends GetxController
     }
 
     final String ext = file.path.split('.').last.toLowerCase();
-    if (!['jpg', 'jpeg', 'png', 'webp'].contains(ext)) {
-      return 'Only JPEG, PNG, WebP images are allowed';
+    if (!['jpg', 'jpeg', 'png'].contains(ext)) {
+      return 'Only JPEG, PNG images are allowed';
     }
 
     final String filename = path.basename(file.path);

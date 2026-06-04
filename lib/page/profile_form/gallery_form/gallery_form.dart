@@ -124,7 +124,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  "Max 5MB per image. Supports JPG, PNG, WebP",
+                  "Max 5MB per image. Supports JPG, PNG",
                   style: TextStyle(
                     fontSize: 8.sp,
                     color: AppColors.textSecondary(context),

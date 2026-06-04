@@ -275,7 +275,7 @@ class HomeProfile extends GetView<HomeController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Sign up or Log in to a account',
+                    'Sign in or Sign up to a account',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 10.sp,

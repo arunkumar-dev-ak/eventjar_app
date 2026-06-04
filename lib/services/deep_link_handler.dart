@@ -8,6 +8,7 @@ import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/services/referrer_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DeepLinkHandler {
   static final DeepLinkHandler _instance = DeepLinkHandler._internal();
@@ -19,13 +20,25 @@ class DeepLinkHandler {
   StreamSubscription<Uri>? _sub;
   bool _streamRegistered = false;
 
+  static const _lastConsumedLinkKey = 'last_consumed_deep_link';
+
   /// Cold-start URI resolution. Checks the OS-delivered launch URI first
   /// (Universal Links / App Links), then falls back to the Play Install
   /// Referrer on Android. Returns null if there is no cold-start link.
+  ///
+  /// Guards against stale intents: if the same URI was already consumed in a
+  /// previous session it is ignored so the app doesn't re-navigate to an old
+  /// deep-link destination on every cold start.
   Future<Uri?> resolveInitialUri() async {
     try {
       final initialUri = await _appLinks.getInitialLink();
       if (initialUri != null) {
+        final prefs = await SharedPreferences.getInstance();
+        final lastConsumed = prefs.getString(_lastConsumedLinkKey);
+        if (lastConsumed == initialUri.toString()) {
+          return null;
+        }
+        await prefs.setString(_lastConsumedLinkKey, initialUri.toString());
         return initialUri;
       }
     } catch (e) {
