@@ -701,8 +701,6 @@ class ViewTripController extends GetxController
     )?.then((result) async {
       if (result == "refresh") {
         await fetchViewTripData();
-      } else {
-        Get.back();
       }
     });
   }

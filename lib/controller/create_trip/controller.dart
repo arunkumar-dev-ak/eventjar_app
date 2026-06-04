@@ -127,7 +127,7 @@ class CreateTripController extends GetxController {
         "description": descriptionController.text.trim(),
         "destination": destinationController.text.trim(),
         "totalBudget": budget,
-        "currency": state.selectedCurrency.value.code,
+        "currency": state.selectedCurrency.value.symbol,
         "members": state.selectedFriendsMap.values
             .map((f) => _buildMemberEntry(f))
             .toList(),

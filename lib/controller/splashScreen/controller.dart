@@ -180,11 +180,11 @@ class SplashScreenController extends GetxController
     await Future.delayed(const Duration(milliseconds: 2000));
 
     // Show language selection popup on first launch
-    if (!LanguageStore.to.isLanguageSelected) {
-      _languageCompleter = Completer<void>();
-      state.showLanguagePopup.value = true;
-      await _languageCompleter!.future;
-    }
+    // if (!LanguageStore.to.isLanguageSelected) {
+    //   _languageCompleter = Completer<void>();
+    //   state.showLanguagePopup.value = true;
+    //   await _languageCompleter!.future;
+    // }
 
     // 1. Cold-start deep link (Universal Links / App Links, plus the
     //    Android Play Install Referrer fallback). If we have one, it

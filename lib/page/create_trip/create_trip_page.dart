@@ -9,6 +9,7 @@ import 'package:eventjar/global/dropdown/multi_select_paginated_dropdown.dart';
 import 'package:eventjar/model/budget_track/split_track_friend_model.dart';
 import 'package:eventjar/page/profile_form/summary_form/widget/summary_form_element.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class CreateTripPage extends GetView<CreateTripController> {
@@ -16,17 +17,27 @@ class CreateTripPage extends GetView<CreateTripController> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg(context),
 
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: TextStyle(color: AppColors.textPrimary(context)),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
-        backgroundColor: AppColors.cardBg(context),
-        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
-        elevation: 4,
+        centerTitle: false,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
+        ),
+        elevation: 0,
       ),
 
       body: GestureDetector(
@@ -135,8 +146,8 @@ class CreateTripPage extends GetView<CreateTripController> {
 
                 /// Invite Friends (Multi Select)
                 MultiSelectPaginatedDropdown<SplitTrackFriend>(
-                  title: "Invite Friends",
-                  hintText: "Select Friends",
+                  title: 'Invite Friends',
+                  hintText: 'Select Friends',
                   items: controller.state.friends,
                   selectedItemsMap: controller.state.selectedFriendsMap,
                   getDisplayValue: (item) => item.name,
@@ -153,30 +164,88 @@ class CreateTripPage extends GetView<CreateTripController> {
                         return item.status;
                     }
                   },
-                  getLeadingWidget: (item) {
-                    final initial = item.name.isNotEmpty
-                        ? item.name[0].toUpperCase()
-                        : '?';
-                    return CircleAvatar(
-                      radius: 18,
-                      backgroundColor: AppColors.gradientDarkStart.withValues(
-                        alpha: 0.15,
-                      ),
-                      child: Text(
-                        initial,
-                        style: TextStyle(
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.gradientDarkStart,
+                  getTrailingWidget: (item) {
+                    if (item.status == 'accepted') {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
                         ),
-                      ),
-                    );
+                        decoration: BoxDecoration(
+                          color: Colors.green.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.green.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Text(
+                          'Accepted',
+                          style: TextStyle(
+                            fontSize: 7.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.green.shade700,
+                          ),
+                        ),
+                      );
+                    }
+                    if (item.status == 'pending') {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.orange.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Text(
+                          'Pending',
+                          style: TextStyle(
+                            fontSize: 7.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.orange.shade700,
+                          ),
+                        ),
+                      );
+                    }
+                    if (item.status == 'rejected') {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.red.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Text(
+                          'Declined',
+                          style: TextStyle(
+                            fontSize: 7.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.red.shade700,
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
                   },
                   onChanged: controller.onSearchChanged,
                   onLoadMore: controller.onLoadMoreClicked,
                   onRefresh: controller.onRefreshClicked,
                   isLoading: controller.state.isDropdownLoading,
                   isLoadMoreLoading: controller.state.isDropdownLoadMoreLoading,
+                  headerColor: AppColors.gradientDarkStart,
+                  themeColor: AppColors.gradientDarkStart,
+                  selectedShade1: (isDark ? Colors.white : Colors.grey)
+                      .withValues(alpha: 0.15),
+                  selectedDisplayColor: AppColors.textPrimary(context),
                 ),
 
                 SizedBox(height: 2.hp),

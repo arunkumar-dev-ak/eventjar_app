@@ -314,20 +314,7 @@ class ExpenseList extends GetView<ViewTripController> {
 
             const Spacer(),
 
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 2.5.wp,
-                vertical: 0.5.hp,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.chipBg(context),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                "$splitCount Members",
-                style: TextStyle(fontSize: 7.5.sp, fontWeight: FontWeight.w600),
-              ),
-            ),
+            _buildMemberAvatars(context, splitCount),
 
             SizedBox(width: 1.wp),
 
@@ -354,6 +341,77 @@ class ExpenseList extends GetView<ViewTripController> {
     } catch (_) {
       return null;
     }
+  }
+
+  Widget _buildMemberAvatars(BuildContext context, int totalCount) {
+    if (totalCount <= 0) return const SizedBox.shrink();
+
+    const maxShow = 5;
+    const double size = 22;
+    const double overlap = 6;
+
+    final showCount = totalCount > maxShow ? maxShow : totalCount;
+    final extra = totalCount - maxShow;
+    final totalCircles = showCount + (extra > 0 ? 1 : 0);
+
+    final colors = [
+      Colors.blue.shade400,
+      Colors.green.shade400,
+      Colors.orange.shade400,
+      Colors.purple.shade400,
+      Colors.teal.shade400,
+    ];
+
+    return SizedBox(
+      height: size,
+      width: totalCircles * (size - overlap) + overlap,
+      child: Stack(
+        children: [
+          for (int i = 0; i < showCount; i++)
+            Positioned(
+              left: i * (size - overlap),
+              child: Container(
+                width: size,
+                height: size,
+                decoration: BoxDecoration(
+                  color: colors[i % colors.length],
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.cardBg(context),
+                    width: 1.5,
+                  ),
+                ),
+                child: const Icon(Icons.person, size: 12, color: Colors.white),
+              ),
+            ),
+          if (extra > 0)
+            Positioned(
+              left: showCount * (size - overlap),
+              child: Container(
+                width: size,
+                height: size,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade600,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.cardBg(context),
+                    width: 1.5,
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  '+$extra',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 8,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
 
