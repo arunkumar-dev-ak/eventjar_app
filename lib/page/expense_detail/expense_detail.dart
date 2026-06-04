@@ -1,31 +1,28 @@
+// expense_detail_page.dart
+import 'package:eventjar/controller/expense_detail/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/view_trip/trip_expense_model.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
-class ExpenseDetailPage extends StatelessWidget {
-  final TripExpenseModel expense;
-
-  const ExpenseDetailPage({super.key, required this.expense});
+class ExpenseDetailPage extends GetView<ExpenseDetailController> {
+  const ExpenseDetailPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     final currentUserId = UserStore.to.profile['id'];
-    final isYou = expense.paidById == currentUserId;
-
-    final splitCount =
-        expense.count?.participants ?? expense.participants.length;
-
-    final myParticipant = _myParticipant(expense, currentUserId);
 
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
-        title: Text(
-          expense.title,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
+        title: Obx(
+          () => Text(
+            controller.state.appBarTitle.value,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
+          ),
         ),
         centerTitle: false,
         systemOverlayStyle: const SystemUiOverlayStyle(
@@ -39,32 +36,47 @@ class ExpenseDetailPage extends StatelessWidget {
         ),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(5.wp),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _summaryCard(context, isYou, splitCount, myParticipant),
-            SizedBox(height: 3.hp),
+      body: Obx(() {
+        // final expense = controller.state.expense;
+        final expense = [];
 
-            _sectionTitle(context, "SPLIT DETAILS"),
-            SizedBox(height: 1.5.hp),
+        // Safety check in case arguments weren't passed
+        if (expense == null) {
+          return const Center(child: Text("No Expense Data Found"));
+        }
 
-            ...expense.participants.map(
-              (p) => _splitRow(
-                context,
-                p.userId,
-                p.shareAmount,
-                p.isPaid,
-                p.userId == expense.paidById,
+        final isYou = expense.paidById == currentUserId;
+        final splitCount =
+            expense.count?.participants ?? expense.participants.length;
+        final myParticipant = _myParticipant(expense, currentUserId);
+
+        return SingleChildScrollView(
+          padding: EdgeInsets.all(5.wp),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _summaryCard(context, expense, isYou, splitCount, myParticipant),
+              SizedBox(height: 3.hp),
+
+              _sectionTitle(context, "SPLIT DETAILS"),
+              SizedBox(height: 1.5.hp),
+
+              ...expense.participants.map(
+                (p) => _splitRow(
+                  context,
+                  p.userId,
+                  p.shareAmount,
+                  p.isPaid,
+                  p.userId == expense.paidById,
+                ),
               ),
-            ),
 
-            SizedBox(height: 3.hp),
-            _totalRow(context, splitCount),
-          ],
-        ),
-      ),
+              SizedBox(height: 3.hp),
+              _totalRow(context, expense, splitCount),
+            ],
+          ),
+        );
+      }),
     );
   }
 
@@ -72,6 +84,7 @@ class ExpenseDetailPage extends StatelessWidget {
 
   Widget _summaryCard(
     BuildContext context,
+    TripExpenseModel expense,
     bool isYou,
     int splitCount,
     TripExpenseParticipant? myParticipant,
@@ -87,9 +100,7 @@ class ExpenseDetailPage extends StatelessWidget {
       child: Column(
         children: [
           const Icon(Icons.receipt_long_rounded, size: 40, color: Colors.blue),
-
           SizedBox(height: 2.hp),
-
           Text(
             "₹${expense.amount.toStringAsFixed(0)}",
             style: TextStyle(
@@ -98,9 +109,7 @@ class ExpenseDetailPage extends StatelessWidget {
               color: AppColors.textPrimary(context),
             ),
           ),
-
           SizedBox(height: 0.5.hp),
-
           Text(
             "Paid by ${_paidByName(expense)}",
             style: TextStyle(
@@ -109,9 +118,7 @@ class ExpenseDetailPage extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-
           SizedBox(height: 1.hp),
-
           Container(
             padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 0.8.hp),
             decoration: BoxDecoration(
@@ -126,7 +133,6 @@ class ExpenseDetailPage extends StatelessWidget {
               ),
             ),
           ),
-
           if (myParticipant != null) ...[
             SizedBox(height: 1.5.hp),
             Text(
@@ -179,20 +185,16 @@ class ExpenseDetailPage extends StatelessWidget {
               ),
             ),
           ),
-
           SizedBox(width: 3.wp),
-
           Expanded(
             child: Text(
               userId,
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 9.5.sp),
             ),
           ),
-
-          if (isPaid) Icon(Icons.check_circle, color: Colors.green, size: 18),
-
+          if (isPaid)
+            const Icon(Icons.check_circle, color: Colors.green, size: 18),
           SizedBox(width: 2.wp),
-
           Text(
             "₹${share.toStringAsFixed(0)}",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10.sp),
@@ -204,7 +206,11 @@ class ExpenseDetailPage extends StatelessWidget {
 
   // ---------------- TOTAL ----------------
 
-  Widget _totalRow(BuildContext context, int splitCount) {
+  Widget _totalRow(
+    BuildContext context,
+    TripExpenseModel expense,
+    int splitCount,
+  ) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 2.hp),
       decoration: BoxDecoration(
