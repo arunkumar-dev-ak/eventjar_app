@@ -38,44 +38,45 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
       ),
       body: Obx(() {
         // final expense = controller.state.expense;
-        final expense = [];
 
-        // Safety check in case arguments weren't passed
-        if (expense == null) {
-          return const Center(child: Text("No Expense Data Found"));
-        }
+        // // Safety check in case arguments weren't passed
+        // if (expense == null) {
+        //   return const Center(child: Text("No Expense Data Found"));
+        // }
 
-        final isYou = expense.paidById == currentUserId;
-        final splitCount =
-            expense.count?.participants ?? expense.participants.length;
-        final myParticipant = _myParticipant(expense, currentUserId);
+        // final isYou = expense.paidById == currentUserId;
+        // final splitCount =
+        //     expense.count?.participants ?? expense.participants.length;
+        // final myParticipant = _myParticipant(expense, currentUserId);
 
-        return SingleChildScrollView(
-          padding: EdgeInsets.all(5.wp),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _summaryCard(context, expense, isYou, splitCount, myParticipant),
-              SizedBox(height: 3.hp),
+        // return SingleChildScrollView(
+        //   padding: EdgeInsets.all(5.wp),
+        //   child: Column(
+        //     crossAxisAlignment: CrossAxisAlignment.start,
+        //     children: [
+        //       _summaryCard(context, expense, isYou, splitCount, myParticipant),
+        //       SizedBox(height: 3.hp),
 
-              _sectionTitle(context, "SPLIT DETAILS"),
-              SizedBox(height: 1.5.hp),
+        //       _sectionTitle(context, "SPLIT DETAILS"),
+        //       SizedBox(height: 1.5.hp),
 
-              ...expense.participants.map(
-                (p) => _splitRow(
-                  context,
-                  p.userId,
-                  p.shareAmount,
-                  p.isPaid,
-                  p.userId == expense.paidById,
-                ),
-              ),
+        //       ...expense.participants.map(
+        //         (p) => _splitRow(
+        //           context,
+        //           p.userId,
+        //           p.shareAmount,
+        //           p.isPaid,
+        //           p.userId == expense.paidById,
+        //         ),
+        //       ),
 
-              SizedBox(height: 3.hp),
-              _totalRow(context, expense, splitCount),
-            ],
-          ),
-        );
+        //       SizedBox(height: 3.hp),
+        //       _totalRow(context, expense, splitCount),
+        //     ],
+        //   ),
+        // );
+
+        return Text("Hi");
       }),
     );
   }
