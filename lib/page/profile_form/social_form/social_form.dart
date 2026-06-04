@@ -57,7 +57,7 @@ class SocialFormPage extends GetView<SocialFormController> {
                             ),
                             SizedBox(width: 2.wp),
                             Text(
-                              'LinkedIn Profile URL',
+                              'linkedin_url'.tr,
                               style: TextStyle(
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w600,
@@ -127,7 +127,7 @@ class SocialFormPage extends GetView<SocialFormController> {
                             ),
                             SizedBox(width: 2.wp),
                             Text(
-                              'Instagram',
+                              'instagram'.tr,
                               style: TextStyle(
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w600,
@@ -160,7 +160,7 @@ class SocialFormPage extends GetView<SocialFormController> {
                             ),
                             SizedBox(width: 2.wp),
                             Text(
-                              'X (Twitter)',
+                              'x_twitter'.tr,
                               style: TextStyle(
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w600,
@@ -193,7 +193,7 @@ class SocialFormPage extends GetView<SocialFormController> {
                             ),
                             SizedBox(width: 2.wp),
                             Text(
-                              'Facebook',
+                              'facebook'.tr,
                               style: TextStyle(
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w600,
@@ -283,7 +283,7 @@ class SocialFormPage extends GetView<SocialFormController> {
                               elevation: 0,
                             ),
                             child: Text(
-                              'Reset',
+                              'reset'.tr,
                               style: TextStyle(
                                 fontSize: defaultFontSize,
                                 fontWeight: FontWeight.w600,
@@ -328,7 +328,7 @@ class SocialFormPage extends GetView<SocialFormController> {
                                       ),
                                     )
                                   : Text(
-                                      'Update Info',
+                                      'update_info'.tr,
                                       style: TextStyle(
                                         fontSize: defaultFontSize,
                                         fontWeight: FontWeight.w700,

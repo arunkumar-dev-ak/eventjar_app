@@ -60,7 +60,7 @@ class AddMultiSelectTagsInput extends StatelessWidget {
                     SizedBox(width: 2.wp),
                     Expanded(
                       child: Text(
-                        'Add tags',
+                        'add_tags'.tr,
                         style: TextStyle(fontSize: 10.sp),
                       ),
                     ),
@@ -305,8 +305,8 @@ class TagSearchPopup extends StatelessWidget {
                             size: 48,
                             color: AppColors.textHint(context),
                           ),
-                          const SizedBox(height: 12),
-                          const Text('No tags found'),
+                          SizedBox(height: 12),
+                          Text('no_tags_found'.tr),
                         ],
                       ),
                     );

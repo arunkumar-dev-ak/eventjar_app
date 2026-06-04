@@ -200,7 +200,7 @@ class ContactCardHeader extends StatelessWidget {
                                         ),
                                         SizedBox(width: 8),
                                         Text(
-                                          'Send Mail',
+                                          'send_mail'.tr,
                                           style: TextStyle(
                                             color: AppColors.textPrimary(context),
                                           ),
@@ -219,7 +219,7 @@ class ContactCardHeader extends StatelessWidget {
                                         ),
                                         SizedBox(width: 8),
                                         Text(
-                                          'Call',
+                                          'call'.tr,
                                           style: TextStyle(
                                             color: AppColors.textPrimary(context),
                                           ),
@@ -239,7 +239,7 @@ class ContactCardHeader extends StatelessWidget {
                                           ),
                                           SizedBox(width: 8),
                                           Text(
-                                            'Invite to MyEventJar',
+                                            'invite_to_myeventjar'.tr,
                                             style: TextStyle(
                                               color: AppColors.textPrimary(context),
                                             ),
@@ -258,7 +258,7 @@ class ContactCardHeader extends StatelessWidget {
                                         ),
                                         SizedBox(width: 8),
                                         Text(
-                                          'Add to Phone',
+                                          'add_to_phone'.tr,
                                           style: TextStyle(
                                             color: AppColors.textPrimary(context),
                                           ),
@@ -277,7 +277,7 @@ class ContactCardHeader extends StatelessWidget {
                                         ),
                                         SizedBox(width: 8),
                                         Text(
-                                          'Edit Contact',
+                                          'edit_contact'.tr,
                                           style: TextStyle(
                                             color: AppColors.textPrimary(context),
                                           ),
@@ -296,7 +296,7 @@ class ContactCardHeader extends StatelessWidget {
                                         ),
                                         SizedBox(width: 8),
                                         Text(
-                                          'Delete Contact',
+                                          'delete_contact'.tr,
                                           style: TextStyle(
                                             color: AppColors.textPrimary(context),
                                           ),
@@ -511,7 +511,7 @@ Widget _buildNameWithCallButton({
               Icon(Icons.call, size: 14, color: Colors.green),
               SizedBox(width: 4),
               Text(
-                "Call",
+                'call'.tr,
                 style: TextStyle(
                   fontSize: callFontSize.sp,
                   color: Colors.green,

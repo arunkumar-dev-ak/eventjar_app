@@ -15,8 +15,8 @@ Future<void> contactCardAddContactToPhone(
 
   if (controller.state.isSavingContact.value) {
     AppSnackbar.warning(
-      title: "Please wait",
-      message: "Another contact is currently being saved",
+      title: 'please_wait'.tr,
+      message: 'another_contact_saving'.tr,
     );
     return;
   }
@@ -36,8 +36,8 @@ Future<void> contactCardAddContactToPhone(
 
     if (alreadyExists) {
       AppSnackbar.warning(
-        title: "Already exists",
-        message: "Contact already saved on this phone",
+        title: 'already_exists'.tr,
+        message: 'contact_already_saved_phone'.tr,
       );
       return;
     }
@@ -86,7 +86,7 @@ Future<void> contactCardAddContactToPhone(
     LoggerService.loggerInstance.e('$e\n$s');
 
     if (context.mounted) {
-      AppSnackbar.error(title: "Failed", message: "Could not save contact");
+      AppSnackbar.error(title: 'failed'.tr, message: 'could_not_save_contact'.tr);
     }
   } finally {
     controller.state.savingContact.value = null;

@@ -8,6 +8,7 @@ import 'package:eventjar/page/set_2fa/widget/qr_code_set_2fa.dart';
 import 'package:eventjar/page/set_2fa/widget/secret_set_2fa.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 
 class Set2faVerifySection extends GetView<Set2faController> {
@@ -41,7 +42,7 @@ class Set2faVerifySection extends GetView<Set2faController> {
           SizedBox(height: 2.hp),
 
           Text(
-            "Setup Your Authenticator App",
+            'setup_authenticator_app'.tr,
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.bold,
@@ -53,7 +54,7 @@ class Set2faVerifySection extends GetView<Set2faController> {
           SizedBox(height: 1.hp),
 
           Text(
-            "Scan the QR code or enter the secret manually",
+            'scan_qr_or_secret_desc'.tr,
             style: TextStyle(fontSize: 9.sp, color: AppColors.textSecondary(context)),
             textAlign: TextAlign.center,
           ),
@@ -69,7 +70,7 @@ class Set2faVerifySection extends GetView<Set2faController> {
           SizedBox(height: 2.hp),
 
           Text(
-            "Enter this secret manually",
+            'enter_secret_manually'.tr,
             style: TextStyle(
               fontSize: 10.sp,
               fontWeight: FontWeight.bold,

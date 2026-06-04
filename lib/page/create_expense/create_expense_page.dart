@@ -64,12 +64,12 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   title: "Trip Category",
                   items: controller.state.categories,
                   selectedItem: controller.state.selectedCategory,
-                  getDefaultItem: () => "Shopping",
+                  getDefaultItem: () => 'shopping'.tr,
                   getDisplayValue: (item) => item,
                   getKeyValue: (item) => item,
                   onSelected: (val) =>
                       controller.state.selectedCategory.value = val,
-                  hintText: "Select Category",
+                  hintText: 'select_category'.tr,
                   headerColor: AppColors.gradientDarkStart,
                   themeColor: AppColors.gradientDarkStart,
                   selectedShade1: (isDark ? Colors.white : Colors.grey)
@@ -93,7 +93,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   getKeyValue: (item) => item,
 
                   onSelected: (val) => controller.state.paidBy.value = val,
-                  hintText: "Select Payer",
+                  hintText: 'select_payer'.tr,
                   onChanged: controller.onSearchMembers,
                   onRefresh: controller.onRefreshMembers,
                   onClickedLoadMore: controller.onLoadMoreMembers,
@@ -113,7 +113,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                 // SPLIT WITH (Multi Select)
                 MultiSelectPaginatedDropdown<dynamic>(
                   // Assuming dynamic is TripFriendModel
-                  title: "Split With",
+                  title: 'split_with'.tr,
                   items: controller.state.members,
                   selectedItemsMap: controller.state.selectedMembers,
                   getDisplayValue: (item) => item.displayName,
@@ -123,7 +123,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   onRefresh: controller.onRefreshMembers,
                   isLoading: controller.state.isMembersLoading,
                   isLoadMoreLoading: controller.state.isMembersLoadMoreLoading,
-                  hintText: "Select Members",
+                  hintText: 'select_members'.tr,
                   selectedShade1: (isDark ? Colors.white : Colors.grey)
                       .withValues(alpha: 0.15),
                   selectedDisplayColor: AppColors.textPrimary(context),
@@ -166,7 +166,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                 // DESCRIPTION
                 ContactFormElement(
                   controller: controller.descriptionController,
-                  label: "Description",
+                  label: 'description'.tr,
                   maxLines: 3,
                 ),
                 SizedBox(height: 3.hp),
@@ -179,7 +179,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                         child: Obx(() {
                           final isLoading = controller.state.isLoading.value;
                           return FormButton(
-                            text: "Clear",
+                            text: 'clear'.tr,
                             isLoading: false,
                             type: FormButtonType.outline,
                             onPressed: () {
@@ -195,7 +195,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                         child: Obx(() {
                           final isLoading = controller.state.isLoading.value;
                           return FormButton(
-                            text: isLoading ? "Creating..." : "Create Expense",
+                            text: isLoading ? "Creating..." : 'create_expense'.tr,
                             isLoading: isLoading,
                             type: FormButtonType.primary,
                             icon: Icons.receipt_long,

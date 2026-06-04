@@ -275,7 +275,7 @@ class HomeProfile extends GetView<HomeController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Sign in or Sign up to a account',
+                    'sign_in_or_sign_up'.tr,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 10.sp,
@@ -284,7 +284,7 @@ class HomeProfile extends GetView<HomeController> {
                   ),
                   SizedBox(height: 0.5.hp),
                   Text(
-                    'Access your profile, events & contacts',
+                    'access_profile_events_contacts'.tr,
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 7.5.sp,

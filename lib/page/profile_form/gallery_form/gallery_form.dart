@@ -20,7 +20,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
       backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
-          "Manage Gallery",
+          'manage_gallery'.tr,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         centerTitle: false,
@@ -51,7 +51,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
                     _buildHeader(context, totalCount),
                     SizedBox(height: 2.hp),
                     if (existing.isNotEmpty) ...[
-                      _buildSectionLabel(context, "Current Images"),
+                      _buildSectionLabel(context, 'current_images'.tr),
                       SizedBox(height: 1.hp),
                       _buildExistingImagesGrid(context, existing),
                       SizedBox(height: 1.hp),
@@ -65,7 +65,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Tap image to view full screen',
+                            'tap_image_full_screen'.tr,
                             style: TextStyle(
                               fontSize: 8.sp,
                               color: AppColors.textHint(context),
@@ -168,7 +168,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
               RouteName.imageViewerPage,
               arguments: {
                 "fileUrl": getFileUrl(images[index]),
-                "header": "Gallery",
+                "header": 'gallery'.tr,
               },
             ),
             child: ClipRRect(

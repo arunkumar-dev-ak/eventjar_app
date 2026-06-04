@@ -161,7 +161,7 @@ class SplashScreenPage extends GetView<SplashScreenController> {
             Obx(
               () => FullScreenLoader(
                 isLoading: controller.state.isResolvingDeepLink.value,
-                message: "Preparing your experience...",
+                message: 'preparing_experience'.tr,
               ),
             ),
           ],

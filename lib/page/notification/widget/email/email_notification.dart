@@ -27,7 +27,7 @@ class EmailNotificationTab extends StatelessWidget {
             const EmailUnconfiguredCard()
           else if (config.authType == 'oauth_google')
             _StatusBanner(
-              title: 'Gmail Connected',
+              title: 'gmail_connected'.tr,
               subtitle:
                   'Sending emails as ${config.oauthEmail ?? config.fromEmail}',
               onDisconnect: controller.disconnectEmail,
@@ -35,7 +35,7 @@ class EmailNotificationTab extends StatelessWidget {
             )
           else if (config.authType == 'oauth_microsoft')
             _StatusBanner(
-              title: 'Outlook Connected',
+              title: 'outlook_connected'.tr,
               subtitle:
                   'Sending emails as ${config.oauthEmail ?? config.fromEmail}',
               onDisconnect: controller.disconnectEmail,
@@ -43,7 +43,7 @@ class EmailNotificationTab extends StatelessWidget {
             )
           else if (config.authType == 'password')
             _StatusBanner(
-              title: '${config.providerName ?? 'Email'} Active',
+              title: '${config.providerName ?? 'email'.tr} Active',
               subtitle: 'SMTP verified • ${config.fromEmail ?? ''}',
               onDisconnect: controller.disconnectEmail,
               isDeleting: controller.state.isDeleting.value,

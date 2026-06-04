@@ -92,7 +92,7 @@ class NfcReadScanningZone extends GetView<NfcReadController> {
               SizedBox(height: 3.hp),
 
               Text(
-                'Tap NFC Behind Camera',
+                'tap_nfc_behind_camera'.tr,
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
@@ -101,7 +101,7 @@ class NfcReadScanningZone extends GetView<NfcReadController> {
               ),
               SizedBox(height: 1.hp),
               Text(
-                'Hold your NFC card against the back of your phone',
+                'hold_nfc_instructions'.tr,
                 style: TextStyle(fontSize: 8.sp, color: AppColors.textSecondary(context)),
                 textAlign: TextAlign.center,
               ),

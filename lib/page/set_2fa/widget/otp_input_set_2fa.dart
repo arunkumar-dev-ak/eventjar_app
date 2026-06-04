@@ -4,6 +4,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 
 class Set2faOtpInputSection extends GetView<Set2faController> {
@@ -14,7 +15,7 @@ class Set2faOtpInputSection extends GetView<Set2faController> {
     return Column(
       children: [
         Text(
-          "Enter the 6-digit code",
+          'enter_six_digit_code'.tr,
           style: TextStyle(
             fontSize: 9.sp,
             fontWeight: FontWeight.w500,

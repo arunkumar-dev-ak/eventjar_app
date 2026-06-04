@@ -50,7 +50,7 @@ class AddFriendPage extends GetView<AddFriendController> {
                 SizedBox(height: 1.5.hp),
 
                 SingleSelectFilterDropdown<AddFriendType>(
-                  title: "Select Method",
+                  title: 'select_method'.tr,
 
                   items: AddFriendType.values,
 
@@ -63,7 +63,7 @@ class AddFriendPage extends GetView<AddFriendController> {
                       case AddFriendType.newFriend:
                         return "New Friend";
                       case AddFriendType.contact:
-                        return "From My Contacts";
+                        return 'from_my_contacts'.tr;
                     }
                   },
 
@@ -73,7 +73,7 @@ class AddFriendPage extends GetView<AddFriendController> {
                     controller.changeType(type);
                   },
 
-                  hintText: "Choose how to add friend",
+                  hintText: 'choose_how_add_friend'.tr,
 
                   // Optional theming (nice touch)
                   headerColor: AppColors.gradientDarkStart,
@@ -110,7 +110,7 @@ class AddFriendPage extends GetView<AddFriendController> {
                       // CLEAR
                       Expanded(
                         child: FormButton(
-                          text: "Clear",
+                          text: 'clear'.tr,
                           isLoading: false,
                           type: FormButtonType.outline,
                           onPressed: () {
@@ -127,7 +127,7 @@ class AddFriendPage extends GetView<AddFriendController> {
                           final isLoading = controller.state.isLoading.value;
 
                           return FormButton(
-                            text: isLoading ? "Sending..." : "Send Invitation",
+                            text: isLoading ? "Sending..." : 'send_invitation_btn'.tr,
                             isLoading: isLoading,
                             type: FormButtonType.primary,
                             icon: Icons.person_add,

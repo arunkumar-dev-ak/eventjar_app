@@ -35,13 +35,13 @@ Widget userProfileBuildNetworkInfo() {
       SizedBox(height: 2.hp),
       if (extended != null && extended.helpOfferings.isNotEmpty)
         userProfileBuildChipSection(
-          label: "How can you help others?",
+          label: 'how_help_others'.tr,
           chips: extended.helpOfferings,
         )
       else
         userProfilebuildInfoRow(
           icon: Icons.help_outline,
-          label: "How can you help others?",
+          label: 'how_help_others'.tr,
           value: "Not specified",
           iconColor: Colors.green,
         ),

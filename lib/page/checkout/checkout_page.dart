@@ -109,7 +109,7 @@ class CheckoutPage extends GetView<CheckoutController> {
         final eventInfo = controller.state.eventInfo.value;
 
         if (eventInfo == null) {
-          return const Center(child: Text("No event available"));
+          return Center(child: Text('no_event_available'.tr));
         }
 
         return Column(

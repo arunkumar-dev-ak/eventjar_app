@@ -39,14 +39,14 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                   // Contact Info Cards
                   _buildContactInfoCard(
                     icon: Icons.person,
-                    title: 'Name',
+                    title: 'name'.tr,
                     value: controller.state.contact.value?.name ?? '',
                     color: Colors.blue,
                   ),
                   SizedBox(height: 1.hp),
                   _buildContactInfoCard(
                     icon: Icons.email,
-                    title: 'Email',
+                    title: 'email'.tr,
                     value: controller.state.contact.value?.email ?? '',
                     color: Colors.green,
                   ),
@@ -54,7 +54,7 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                     SizedBox(height: 1.hp),
                     _buildContactInfoCard(
                       icon: Icons.phone,
-                      title: 'Phone',
+                      title: 'phone'.tr,
                       value: controller.state.contact.value!.phone!,
                       color: Colors.teal,
                     ),
@@ -140,7 +140,7 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
 
                   Obx(
                     () => thankYouMessageBuildMethodCard(
-                      title: 'Email',
+                      title: 'email'.tr,
                       icon: Icons.email_outlined,
                       isSelected: controller.state.emailChecked.value,
                       isLoading: controller.state.configLoading.value,
@@ -155,7 +155,7 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
 
                   Obx(
                     () => thankYouMessageBuildMethodCard(
-                      title: 'WhatsApp',
+                      title: 'whatsapp'.tr,
                       icon: Icons.message_outlined,
                       isSelected: controller.state.whatsappChecked.value,
                       badgeText: controller.canSendWhatsApp
@@ -175,7 +175,7 @@ class ThankYouMessagePage extends GetView<ThankYouMessageController> {
                     minLines: 4,
                     expands: false,
                     decoration: InputDecoration(
-                      labelText: 'Message',
+                      labelText: 'message'.tr,
                       hintText: 'Hi [Name],\n\nThank you for connecting...',
                       alignLabelWithHint: true,
                       border: OutlineInputBorder(

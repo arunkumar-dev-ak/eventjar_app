@@ -281,7 +281,7 @@ class EventInfoHeader extends StatelessWidget {
         ],
       ),
       child: Text(
-        eventInfo.isPaid ? '\$${eventInfo.ticketPrice ?? 'Paid'}' : 'FREE',
+        eventInfo.isPaid ? '\$${eventInfo.ticketPrice ?? 'paid'.tr}' : 'FREE',
         style: TextStyle(
           color: eventInfo.isPaid ? Colors.grey.shade800 : Colors.white,
           fontSize: 10.sp,
@@ -626,7 +626,7 @@ class EventInfoHeader extends StatelessWidget {
       final uri = Uri.tryParse(normalised);
       if (uri == null || !await canLaunchUrl(uri)) {
         Get.snackbar(
-          'Invalid Link',
+          'invalid_link'.tr,
           'Could not open the meeting link. Please check the link and try again.',
           snackPosition: SnackPosition.BOTTOM,
         );
@@ -763,7 +763,7 @@ class EventInfoHeader extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'Tap to view agenda',
+                            'tap_to_view_agenda'.tr,
                             style: TextStyle(
                               color: AppColors.textHintStatic,
                               fontSize: 8.sp,
@@ -817,8 +817,8 @@ class EventInfoHeader extends StatelessWidget {
                         children: [
                           Text(
                             eventInfo.isVirtual
-                                ? 'Online'
-                                : (eventInfo.city ?? 'Location'),
+                                ? 'online'.tr
+                                : (eventInfo.city ?? 'location'.tr),
                             style: TextStyle(
                               color: eventInfo.isVirtual
                                   ? Colors.blue.shade600

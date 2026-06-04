@@ -25,7 +25,7 @@ class SchedulerStatusDropdown extends StatelessWidget {
         ),
         SizedBox(height: 8),
         SingleSelectFilterDropdown<MeetingStatusForReschedule>(
-          title: "Select Status",
+          title: 'select_status'.tr,
           items: MeetingStatusForReschedule.values,
           selectedItem: controller.state.selectedStatus,
           getDefaultItem: () => MeetingStatusForReschedule.SCHEDULED,

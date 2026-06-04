@@ -42,7 +42,7 @@ class EmailProvidersList extends StatelessWidget {
                   currentProvider != tappedProvider &&
                   currentProvider.isNotEmpty) {
                 AppSnackbar.warning(
-                  title: "Disconnect Required",
+                  title: 'disconnect_required'.tr,
                   message:
                       "Kindly disconnect the current email provider before switching.",
                 );
@@ -165,7 +165,7 @@ class ProviderCard extends StatelessWidget {
 
   Widget _action() {
     if (isConfigured || isOAuthConnected) {
-      return ElevatedButton(onPressed: onTap, child: const Text("Change"));
+      return ElevatedButton(onPressed: onTap, child: Text('change'.tr));
     }
 
     return ElevatedButton(onPressed: onTap, child: const Text("Use"));

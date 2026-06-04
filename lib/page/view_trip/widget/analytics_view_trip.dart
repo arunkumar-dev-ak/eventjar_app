@@ -87,7 +87,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                             ),
                             SizedBox(width: 1.5.wp),
                             Text(
-                              "Settle Up",
+                              'settle_up'.tr,
                               style: TextStyle(
                                 fontSize: 8.sp,
                                 color: Colors.white,

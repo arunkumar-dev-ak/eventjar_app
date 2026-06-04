@@ -49,7 +49,7 @@ Widget userProfileBuildBasicInfo() {
           Expanded(
             child: userProfilebuildInfoRow(
               icon: Icons.email,
-              label: "Email Address",
+              label: 'email_address'.tr,
               value: controller.email.isEmpty ? "N/A" : controller.email,
               iconColor: Colors.red,
             ),
@@ -69,7 +69,7 @@ Widget userProfileBuildBasicInfo() {
                     Icon(Icons.check_circle, color: Colors.green, size: 16),
                     SizedBox(width: 1.wp),
                     Text(
-                      'Verified',
+                      'verified'.tr,
                       style: TextStyle(
                         fontSize: 8.sp,
                         color: Colors.green.shade700,
@@ -116,7 +116,7 @@ Widget userProfileBuildBasicInfo() {
           Expanded(
             child: userProfilebuildInfoRow(
               icon: Icons.phone,
-              label: "Mobile Number",
+              label: 'mobile_number'.tr,
               value: controller.phone.isEmpty
                   ? "Not provided"
                   : controller.phone,
@@ -138,7 +138,7 @@ Widget userProfileBuildBasicInfo() {
                     Icon(Icons.check_circle, color: Colors.green, size: 16),
                     SizedBox(width: 1.wp),
                     Text(
-                      'Verified',
+                      'verified'.tr,
                       style: TextStyle(
                         fontSize: 8.sp,
                         color: Colors.green.shade700,
@@ -194,7 +194,7 @@ Widget userProfileBuildBasicInfo() {
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
         icon: Icons.work,
-        label: "Professional Title",
+        label: 'professional_title'.tr,
         value: controller.professionalTitle.isEmpty
             ? "Not specified"
             : controller.professionalTitle,

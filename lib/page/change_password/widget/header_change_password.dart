@@ -3,6 +3,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/widget/gradient_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 class ChangePasswordHeader extends StatelessWidget {
   const ChangePasswordHeader({super.key});
@@ -19,7 +20,7 @@ class ChangePasswordHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Change Password",
+                  'change_password'.tr,
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     color: Colors.white,

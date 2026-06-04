@@ -141,7 +141,7 @@ Widget buildExpandedContent(
                       ),
                       SizedBox(height: 4),
                       Text(
-                        "Qualified", // ✅ Success message
+                        'qualified'.tr, // ✅ Success message
                         style: TextStyle(
                           fontSize: isSmallScreen ? 9 : 11,
                           fontWeight: FontWeight.w800,
@@ -304,7 +304,7 @@ Widget _buildCompletedChip() {
         SizedBox(width: 4),
         Flexible(
           child: Text(
-            "Completed",
+            'completed'.tr,
             style: TextStyle(
               fontSize: 11,
               color: Colors.green,

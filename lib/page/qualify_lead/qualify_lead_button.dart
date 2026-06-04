@@ -33,7 +33,7 @@ class QualifyLeadActionButtons extends StatelessWidget {
                       HapticHelper.light();
                       controller.resetForm();
                     },
-              child: Text('Reset', style: TextStyle(fontSize: 9.sp)),
+              child: Text('reset'.tr, style: TextStyle(fontSize: 9.sp)),
             ),
           ),
           SizedBox(width: 2.wp),
@@ -71,7 +71,7 @@ class QualifyLeadActionButtons extends StatelessWidget {
                           ),
                         ),
                       )
-                    : Text('Qualify Lead', style: TextStyle(fontSize: 9.sp)),
+                    : Text('qualify_lead'.tr, style: TextStyle(fontSize: 9.sp)),
               ),
             ),
           ),

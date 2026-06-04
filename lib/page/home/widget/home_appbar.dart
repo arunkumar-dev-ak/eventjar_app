@@ -69,7 +69,7 @@ class HomeAppBar extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Discover Networking',
+                    'discover_networking'.tr,
                     style: TextStyle(
                       fontSize: 8.sp,
                       color: Colors.white.withValues(alpha: 0.8),
@@ -220,92 +220,101 @@ class HomeAppBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           clipBehavior: Clip.antiAlias,
           child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 12),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: AppColors.border(context),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            SizedBox(height: 2.hp),
-            Flexible(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildMenuItem(
-                      icon: Icons.person_add_alt_1_rounded,
-                      title: 'Add Contact',
-                      subtitle: 'Add a new contact manually',
-                      gradientColors: [Colors.blue.shade400, Colors.blue.shade600],
-                      onTap: () {
-                        Navigator.pop(context);
-                        controller.navigateToAddContact();
-                      },
-                    ),
-                    Divider(
-                      height: 1,
-                      indent: 20,
-                      endIndent: 20,
-                      color: AppColors.divider(context),
-                    ),
-                    _buildMenuItem(
-                      icon: Icons.nfc_rounded,
-                      title: 'NFC',
-                      subtitle: 'Scan NFC tag to add contact',
-                      gradientColors: [Colors.green.shade400, Colors.green.shade600],
-                      onTap: () {
-                        Navigator.pop(context);
-                        //controller.navigateToNfc();
-                        controller.navigateToReceive();
-                      },
-                    ),
-                    Divider(
-                      height: 1,
-                      indent: 20,
-                      endIndent: 20,
-                      color: AppColors.divider(context),
-                    ),
-                    _buildMenuItem(
-                      icon: Icons.qr_code_scanner_rounded,
-                      title: 'QR Scanner',
-                      subtitle: 'Scan QR code to add contact',
-                      gradientColors: [Colors.purple.shade400, Colors.purple.shade600],
-                      onTap: () {
-                        Navigator.pop(context);
-                        controller.navigateToQrPage();
-                      },
-                    ),
-                    Divider(
-                      height: 1,
-                      indent: 20,
-                      endIndent: 20,
-                      color: AppColors.divider(context),
-                    ),
-                    _buildMenuItem(
-                      icon: Icons.document_scanner,
-                      title: 'Scan Business Card',
-                      subtitle: 'Scan Business Card to add contact',
-                      gradientColors: [
-                        Colors.orangeAccent.shade400,
-                        Colors.orangeAccent.shade700,
-                      ],
-                      onTap: () {
-                        Navigator.pop(context);
-                        controller.navigateToScanPage();
-                      },
-                    ),
-                  ],
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.border(context),
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
-            ),
-            SizedBox(height: 3.hp),
-          ],
-        ),
+              SizedBox(height: 2.hp),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildMenuItem(
+                        icon: Icons.person_add_alt_1_rounded,
+                        title: 'Add Contact',
+                        subtitle: 'add_contact_manually'.tr,
+                        gradientColors: [
+                          Colors.blue.shade400,
+                          Colors.blue.shade600,
+                        ],
+                        onTap: () {
+                          Navigator.pop(context);
+                          controller.navigateToAddContact();
+                        },
+                      ),
+                      Divider(
+                        height: 1,
+                        indent: 20,
+                        endIndent: 20,
+                        color: AppColors.divider(context),
+                      ),
+                      _buildMenuItem(
+                        icon: Icons.nfc_rounded,
+                        title: 'NFC',
+                        subtitle: 'scan_nfc_tag'.tr,
+                        gradientColors: [
+                          Colors.green.shade400,
+                          Colors.green.shade600,
+                        ],
+                        onTap: () {
+                          Navigator.pop(context);
+                          //controller.navigateToNfc();
+                          controller.navigateToReceive();
+                        },
+                      ),
+                      Divider(
+                        height: 1,
+                        indent: 20,
+                        endIndent: 20,
+                        color: AppColors.divider(context),
+                      ),
+                      _buildMenuItem(
+                        icon: Icons.qr_code_scanner_rounded,
+                        title: 'qr_scanner'.tr,
+                        subtitle: 'scan_qr_code'.tr,
+                        gradientColors: [
+                          Colors.purple.shade400,
+                          Colors.purple.shade600,
+                        ],
+                        onTap: () {
+                          Navigator.pop(context);
+                          controller.navigateToQrPage();
+                        },
+                      ),
+                      Divider(
+                        height: 1,
+                        indent: 20,
+                        endIndent: 20,
+                        color: AppColors.divider(context),
+                      ),
+                      _buildMenuItem(
+                        icon: Icons.document_scanner,
+                        title: 'scan_business_card'.tr,
+                        subtitle: 'scan_card_to_add_contact'.tr,
+                        gradientColors: [
+                          Colors.orangeAccent.shade400,
+                          Colors.orangeAccent.shade700,
+                        ],
+                        onTap: () {
+                          Navigator.pop(context);
+                          controller.navigateToScanPage();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 3.hp),
+            ],
+          ),
         ),
       ),
     );

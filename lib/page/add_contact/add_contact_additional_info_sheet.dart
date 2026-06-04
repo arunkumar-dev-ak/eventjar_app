@@ -54,27 +54,27 @@ class AddContactAdditionalInfoSheet extends GetView<AddContactController> {
 
             _AdditionalField(
               fieldKey: 'phone2',
-              label: 'Phone 2',
+              label: 'phone_2'.tr,
               icon: Icons.phone_outlined,
               textController: controller.phone2Controller,
               keyboardType: TextInputType.phone,
             ),
             _AdditionalField(
               fieldKey: 'company',
-              label: 'Company',
+              label: 'company'.tr,
               icon: Icons.business_outlined,
               textController: controller.companyController,
             ),
             _AdditionalField(
               fieldKey: 'website',
-              label: 'Website',
+              label: 'website'.tr,
               icon: Icons.language_outlined,
               textController: controller.websiteController,
               keyboardType: TextInputType.url,
             ),
             _AdditionalField(
               fieldKey: 'address',
-              label: 'Address',
+              label: 'address'.tr,
               icon: Icons.location_on_outlined,
               textController: controller.addressController,
               maxLines: 2,

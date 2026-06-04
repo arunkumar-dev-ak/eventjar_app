@@ -44,7 +44,7 @@ class WhatsAppInstructionCard extends GetView<NotificationController> {
               ),
               SizedBox(width: 2.5.wp),
               Text(
-                "WhatsApp Integration",
+                'whatsapp_integration'.tr,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 11.sp,

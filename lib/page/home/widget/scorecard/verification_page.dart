@@ -52,8 +52,8 @@ List<Widget> scorecardBuildVerificationPages() {
       Obx(
         () => _buildActionPage(
           icon: Icons.phone_outlined,
-          title: 'Verify number',
-          subtitle: 'Confirm your phone number',
+          title: 'verify_number'.tr,
+          subtitle: 'confirm_phone_number'.tr,
           buttonLabel: 'Verify',
           isLoading: controller.state.isSendingOtp.value,
           onTap: controller.state.isSendingOtp.value
@@ -72,8 +72,8 @@ List<Widget> scorecardBuildVerificationPages() {
     completed.add(
       _buildActionPage(
         icon: Icons.phone_outlined,
-        title: 'Number verified',
-        subtitle: 'Phone number confirmed',
+        title: 'number_verified'.tr,
+        subtitle: 'phone_number_confirmed'.tr,
         isCompleted: true,
       ),
     );
@@ -84,8 +84,8 @@ List<Widget> scorecardBuildVerificationPages() {
     pending.add(
       _buildActionPage(
         icon: Icons.email_outlined,
-        title: 'Verify email',
-        subtitle: 'Confirm your email address',
+        title: 'verify_email'.tr,
+        subtitle: 'confirm_email_address'.tr,
         buttonLabel: 'Verify',
         onTap: () => _showEmailVerifyDialog(Get.context!),
       ),
@@ -94,8 +94,8 @@ List<Widget> scorecardBuildVerificationPages() {
     completed.add(
       _buildActionPage(
         icon: Icons.email_outlined,
-        title: 'Email verified',
-        subtitle: 'Email address confirmed',
+        title: 'email_verified'.tr,
+        subtitle: 'email_address_confirmed'.tr,
         isCompleted: true,
       ),
     );
@@ -106,8 +106,8 @@ List<Widget> scorecardBuildVerificationPages() {
     pending.add(
       _buildActionPage(
         icon: Icons.person_add_outlined,
-        title: 'Add first contact',
-        subtitle: 'Start building your network',
+        title: 'add_first_contact'.tr,
+        subtitle: 'start_building_network'.tr,
         buttonLabel: 'Add',
         onTap: () => controller.navigateToAddContact(),
       ),
@@ -116,8 +116,8 @@ List<Widget> scorecardBuildVerificationPages() {
     completed.add(
       _buildActionPage(
         icon: Icons.person_add_outlined,
-        title: 'Contact added',
-        subtitle: 'First contact saved',
+        title: 'contact_added'.tr,
+        subtitle: 'first_contact_saved'.tr,
         isCompleted: true,
       ),
     );

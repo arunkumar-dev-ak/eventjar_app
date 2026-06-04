@@ -38,7 +38,7 @@ class MyQrCodePage extends GetView<MyQrScreenController> {
             Showcase(
               scope: MyQrScreenController.myQrScope,
               key: controller.tourQrKey,
-              title: 'Your QR Code',
+              title: 'your_qr_code'.tr,
               description:
                   'Show this to someone so they can scan and instantly save your contact in MyEventjar.',
               tooltipBackgroundColor: AppColors.gradientLightStart,

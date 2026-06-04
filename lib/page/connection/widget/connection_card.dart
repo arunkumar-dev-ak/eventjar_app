@@ -293,7 +293,7 @@ class ConnectionCard extends GetView<ConnectionController> {
                                   )
                                 : const Icon(Icons.check, size: 16),
                             label: Text(
-                              isLoading ? 'Accepting...' : 'Accept',
+                              isLoading ? 'Accepting...' : 'accept'.tr,
                               style: TextStyle(fontSize: 8.5.sp),
                             ),
                             style: ElevatedButton.styleFrom(
@@ -319,7 +319,7 @@ class ConnectionCard extends GetView<ConnectionController> {
                                 : () => onReject(request.id, request.eventId),
                             icon: const Icon(Icons.close, size: 16),
                             label: Text(
-                              'Decline',
+                              'decline'.tr,
                               style: TextStyle(fontSize: 8.5.sp),
                             ),
                             style: ElevatedButton.styleFrom(

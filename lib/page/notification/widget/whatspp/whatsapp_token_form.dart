@@ -46,7 +46,7 @@ class WhatsAppTokenForm extends GetView<NotificationController> {
               },
               autovalidateMode: AutovalidateMode.onUserInteraction,
               decoration: InputDecoration(
-                hintText: "Integration Token",
+                hintText: 'integration_token'.tr,
                 floatingLabelBehavior: FloatingLabelBehavior.always,
                 prefixIcon: Icon(Icons.lock_outline, size: 18.sp),
                 suffixIcon: IconButton(

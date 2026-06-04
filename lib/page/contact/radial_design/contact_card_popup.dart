@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 // class ContactCardDeletePopup extends StatelessWidget {
 //   final String contactName;
@@ -109,7 +110,7 @@ class ContactCardDeletePopup extends StatelessWidget {
 
             // Title
             Text(
-              'Delete Contact',
+              'delete_contact'.tr,
               style: TextStyle(
                 fontSize: 11.sp,
                 fontWeight: FontWeight.bold,
@@ -179,7 +180,7 @@ class ContactCardDeletePopup extends StatelessWidget {
                     ),
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
-                      'Cancel',
+                      'cancel'.tr,
                       style: TextStyle(
                         fontSize: 9.sp,
                         fontWeight: FontWeight.w600,

@@ -269,7 +269,7 @@ class InactiveTripCard extends GetView<BudgetTrackController> {
     showDialog(
       context: context,
       builder: (_) => DeleteConfirmDialog(
-        title: "Delete Trip",
+        title: 'delete_trip'.tr,
         itemName: trip.name,
         warningText:
             "This action cannot be undone and will permanently delete this trip and all its data.",

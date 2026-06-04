@@ -111,20 +111,20 @@ Future<void> _launchURL(String url) async {
       );
       if (!launched) {
         AppSnackbar.error(
-          title: "Launch Failed",
-          message: "Unable to open the link. Please try again later.",
+          title: 'launch_failed'.tr,
+          message: 'unable_to_open_link_desc'.tr,
         );
       }
     } else {
       AppSnackbar.error(
-        title: "Invalid Link",
+        title: 'invalid_link'.tr,
         message: "The provided URL cannot be opened: $url",
       );
     }
   } catch (e) {
     AppSnackbar.error(
-      title: "Error",
-      message: "An unexpected error occurred while opening the link.",
+      title: 'error'.tr,
+      message: 'error_opening_link'.tr,
     );
   }
 }

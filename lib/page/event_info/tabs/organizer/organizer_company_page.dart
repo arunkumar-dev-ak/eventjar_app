@@ -42,7 +42,7 @@ Widget buildCompanySection(Organizer organizer, EventInfo eventInfo) {
     items.add(
       _infoRow(
         Icons.language,
-        "Website",
+        'website'.tr,
         organizer.website!,
         onTap: () => _launchURL(
           organizer.website!.startsWith('http')
@@ -61,7 +61,7 @@ Widget buildCompanySection(Organizer organizer, EventInfo eventInfo) {
     items.add(
       _infoRow(
         Icons.link,
-        "LinkedIn",
+        'linkedin'.tr,
         organizer.linkedin!,
         onTap: () => _launchURL(
           organizer.linkedin!.startsWith('http')

@@ -204,7 +204,7 @@ class SignUpForm extends StatelessWidget {
             // Full Name
             SignUpTextFormField(
               controller: controller.fullNameController,
-              label: "Full Name",
+              label: 'full_name'.tr,
               validator: (val) => controller.validateFullName(val),
               isFieldValid: controller.state.isFullNamelValid,
               isFieldFocused: controller.state.focusFullName,
@@ -216,7 +216,7 @@ class SignUpForm extends StatelessWidget {
             // Email
             SignUpTextFormField(
               controller: controller.emailController,
-              label: "Email",
+              label: 'email'.tr,
               validator: (val) => controller.validateEmail(val),
               isFieldValid: controller.state.isEmailValid,
               isFieldFocused: controller.state.focusEmail,
@@ -230,7 +230,7 @@ class SignUpForm extends StatelessWidget {
               () => IntlPhoneField(
                 controller: controller.mobileNumberController,
                 decoration: _getFieldDecoration(
-                  'Mobile Number',
+                  'mobile_number'.tr,
                   controller.state.isMobileNumberValid,
                   controller.state.focusMobileNumber,
                 ),
@@ -266,7 +266,7 @@ class SignUpForm extends StatelessWidget {
             Obx(
               () => SignUpTextFormField(
                 controller: controller.passwordController,
-                label: "Password",
+                label: 'password'.tr,
                 isPassword: true,
                 isPasswordHidden: controller.state.isPasswordHidden.value,
                 togglePasswordVisibility: () =>
@@ -333,7 +333,7 @@ class SignUpForm extends StatelessWidget {
                   Obx(() {
                     return Expanded(
                       child: SocialButton(
-                        text: "LinkedIn",
+                        text: 'linkedin'.tr,
                         assetPath: "assets/app_icon/linkedin.png",
                         color: Colors.blue,
                         isLoading: controller.state.isLinkedinLoading.value,

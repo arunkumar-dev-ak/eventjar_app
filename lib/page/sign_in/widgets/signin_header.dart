@@ -3,6 +3,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/widget/gradient_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 class SignInHeader extends StatelessWidget {
   const SignInHeader({super.key});
@@ -30,7 +31,7 @@ class SignInHeader extends StatelessWidget {
               ),
               SizedBox(height: 0.5.hp),
               GradientText(
-                content: "Sign in to continue",
+                content: 'sign_in_to_continue'.tr,
                 textSize: 14.sp,
                 gradientStart: AppColors.gradientDarkStart,
                 gradientEnd: AppColors.gradientDarkEnd,

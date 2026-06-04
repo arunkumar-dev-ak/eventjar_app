@@ -98,7 +98,7 @@ class AddContactPage extends GetView<AddContactController> {
                 // Notes
                 ContactFormElement(
                   controller: controller.notesController,
-                  label: 'Notes',
+                  label: 'notes'.tr,
                   maxLines: 4,
                   minLines: 3,
                 ),
@@ -404,7 +404,7 @@ class AddContactPage extends GetView<AddContactController> {
                                 '${controller.state.selectedPhone2Country.value.code}_${controller.state.phone2FieldKey.value}',
                               ),
                               decoration: _phoneDecoration(
-                                'Phone Number',
+                                'phone_number'.tr,
                                 context,
                               ),
                               pickerDialogStyle: _pickerStyle(),
@@ -441,7 +441,7 @@ class AddContactPage extends GetView<AddContactController> {
                     fieldKey: 'company',
                     child: ContactFormElement(
                       controller: controller.companyController,
-                      label: 'Company',
+                      label: 'company'.tr,
                       keyboardType: TextInputType.text,
                       onTap: () => _autoCheck('company'),
                     ),
@@ -452,7 +452,7 @@ class AddContactPage extends GetView<AddContactController> {
                     fieldKey: 'website',
                     child: ContactFormElement(
                       controller: controller.websiteController,
-                      label: 'Website',
+                      label: 'website'.tr,
                       keyboardType: TextInputType.url,
                       onTap: () => _autoCheck('website'),
                     ),
@@ -463,7 +463,7 @@ class AddContactPage extends GetView<AddContactController> {
                     fieldKey: 'address',
                     child: ContactFormElement(
                       controller: controller.addressController,
-                      label: 'Address',
+                      label: 'address'.tr,
                       maxLines: 2,
                       minLines: 2,
                       onTap: () => _autoCheck('address'),

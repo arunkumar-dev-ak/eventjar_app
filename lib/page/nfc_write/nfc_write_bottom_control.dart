@@ -32,7 +32,7 @@ class NfcWriteBottomControls extends StatelessWidget {
               ),
             ),
             child: Text(
-              isIos ? 'Go Back' : 'Try Again',
+              isIos ? 'Go Back' : 'try_again'.tr,
               style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold),
             ),
           ),

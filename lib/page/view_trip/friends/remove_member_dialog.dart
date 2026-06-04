@@ -128,7 +128,7 @@ class RemoveMemberDialog extends GetView<ViewTripController> {
                           ? null
                           : () => Navigator.of(context).pop(false),
                       child: Text(
-                        'Cancel',
+                        'cancel'.tr,
                         style: TextStyle(
                           fontSize: 9.sp,
                           fontWeight: FontWeight.w600,

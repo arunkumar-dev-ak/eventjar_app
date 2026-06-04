@@ -106,7 +106,7 @@ class ForgotPasswordForm extends StatelessWidget {
             // Email
             ForgotPasswordTextFormField(
               controller: controller.emailController,
-              label: "Email",
+              label: 'email'.tr,
               validator: (val) => controller.validateEmail(val),
               isFieldValid: controller.state.isEmailValid,
               isFieldFocused: controller.state.focusEmail,

@@ -69,8 +69,8 @@ class ContactStageDropdown extends StatelessWidget {
                               : Colors.blue.shade50,
                         ),
                         onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          'Cancel',
+                        child: Text(
+                          'cancel'.tr,
                           style: TextStyle(fontSize: 16),
                         ),
                       ),

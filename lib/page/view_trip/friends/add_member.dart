@@ -80,7 +80,7 @@ void showAddMemberPopup(BuildContext context) {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: 'Search friends...',
+                  hintText: 'search_friends'.tr,
                   filled: true,
                   fillColor: AppColors.cardBg(context),
                   contentPadding: const EdgeInsets.symmetric(
@@ -183,7 +183,7 @@ void showAddMemberPopup(BuildContext context) {
                               padding: const EdgeInsets.symmetric(vertical: 20),
                               alignment: Alignment.center,
                               child: Text(
-                                'Load More',
+                                'load_more'.tr,
                                 style: TextStyle(
                                   fontSize: 9.sp,
                                   fontWeight: FontWeight.w600,

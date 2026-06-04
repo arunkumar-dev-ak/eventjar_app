@@ -37,8 +37,8 @@ class FriendsList extends GetView<ViewTripController> {
             height: 60.hp,
             child: EmptyStateWidget(
               icon: Icons.group_off,
-              title: "No friends added yet",
-              subtitle: "Add friends to start splitting expenses",
+              title: 'no_friends_added_yet'.tr,
+              subtitle: 'add_friends_split_desc'.tr,
             ),
           ),
         );

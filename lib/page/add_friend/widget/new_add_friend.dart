@@ -46,7 +46,7 @@ class NewAddFriend extends GetView<AddFriendController> {
 
         FormElement(
           controller: controller.emailController,
-          label: "Email",
+          label: 'email'.tr,
           keyboardType: TextInputType.emailAddress,
         ),
 

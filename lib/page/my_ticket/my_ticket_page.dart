@@ -148,7 +148,7 @@ class MyTicketPage extends GetView<MyTicketController> {
                   onChanged: controller.onSearch,
                 )
               : Text(
-                  'My Tickets',
+                  'my_tickets_plural'.tr,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.sp,

@@ -82,7 +82,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                   // Full Name
                   BasicInfoFormElement(
                     controller: controller.fullNameController,
-                    label: 'Full Name',
+                    label: 'full_name'.tr,
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) {
                         return 'Full name is required';
@@ -245,7 +245,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                   // Professional Title
                   BasicInfoFormElement(
                     controller: controller.professionalTitleController,
-                    label: 'Professional Title',
+                    label: 'professional_title'.tr,
                     validator: (val) => null, // Optional field
                   ),
                   SizedBox(height: 3.hp),
@@ -274,7 +274,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                             elevation: 0,
                           ),
                           child: Text(
-                            'Reset',
+                            'reset'.tr,
                             style: TextStyle(
                               fontSize: defaultFontSize,
                               fontWeight: FontWeight.w600,
@@ -319,7 +319,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                                     ),
                                   )
                                 : Text(
-                                    'Update Info',
+                                    'update_info'.tr,
                                     style: TextStyle(
                                       fontSize: defaultFontSize,
                                       fontWeight: FontWeight.w700,
@@ -558,7 +558,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                                     if (success && ctx.mounted) {
                                       Navigator.of(ctx).pop();
                                       AppSnackbar.success(
-                                        title: "Verified",
+                                        title: 'verified'.tr,
                                         message:
                                             "Phone number verified successfully",
                                       );

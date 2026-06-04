@@ -20,13 +20,13 @@ class ViewTripTabs extends GetView<ViewTripController> {
           children: [
             _tabItem(
               context,
-              "Expenses",
+              'expenses'.tr,
               controller.state.selectedTab.value == 0,
               0,
             ),
             _tabItem(
               context,
-              "Friends",
+              'friends'.tr,
               controller.state.selectedTab.value == 1,
               1,
             ),

@@ -56,7 +56,7 @@ Widget userProfileBuildSecurity() {
                             Text(
                               is2FaEnabled
                                   ? "Disable 2FA Authentication"
-                                  : "Enable 2FA Authentication",
+                                  : 'enable_2fa_auth'.tr,
                               style: TextStyle(
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w600,
@@ -66,7 +66,7 @@ Widget userProfileBuildSecurity() {
                             Text(
                               is2FaEnabled
                                   ? "This will make your account less secure"
-                                  : "Add extra security to your account",
+                                  : 'add_extra_security_desc'.tr,
                               style: TextStyle(
                                 fontSize: 8.sp,
                                 color: AppColors.textSecondaryStatic,
@@ -103,7 +103,7 @@ Widget userProfileBuildSecurity() {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Change Password",
+                            'change_password'.tr,
                             style: TextStyle(
                               fontSize: 10.sp,
                               fontWeight: FontWeight.w600,
@@ -111,7 +111,7 @@ Widget userProfileBuildSecurity() {
                             ),
                           ),
                           Text(
-                            "Update your password regularly",
+                            'update_password_regularly'.tr,
                             style: TextStyle(
                               fontSize: 8.sp,
                               color: AppColors.textSecondaryStatic,
@@ -381,7 +381,7 @@ void showDeletedAccountDialog(UserProfileController controller) {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text("Close"),
+                child: Text('close'.tr),
               ),
             ),
           ],

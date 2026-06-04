@@ -49,7 +49,7 @@ class SignUpSubmitButton extends StatelessWidget {
                   child: isButtonLoading
                       ? CircularProgressIndicator(color: Colors.white)
                       : Text(
-                          "Create Account",
+                          'create_account_btn'.tr,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 11.sp,

@@ -63,7 +63,7 @@ class ScanQrCameraSection extends StatelessWidget {
           child: Showcase(
             scope: QrScanScreenController.scanQrScope,
             key: controller.tourCameraKey,
-            title: 'Scan a QR',
+            title: 'scan_a_qr'.tr,
             description: 'Hold the QR inside the frame.',
             tooltipBackgroundColor:
                 Theme.of(context).brightness == Brightness.dark

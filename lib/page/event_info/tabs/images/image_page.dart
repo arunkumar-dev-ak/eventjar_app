@@ -16,7 +16,7 @@ class ImagesPage extends StatelessWidget {
       final eventInfo = controller.state.eventInfo.value;
 
       if (eventInfo == null) {
-        return const Center(child: Text("No event info available"));
+        return Center(child: Text('no_event_info_available'.tr));
       }
 
       final images = eventInfo.galleryImages;

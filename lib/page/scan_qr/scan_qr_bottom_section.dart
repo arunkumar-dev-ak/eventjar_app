@@ -116,7 +116,7 @@ class ScanQrBottomSection extends StatelessWidget {
           Showcase(
             scope: QrScanScreenController.scanQrScope,
             key: controller.tourGalleryKey,
-            title: 'From Gallery',
+            title: 'from_gallery'.tr,
             description: 'Pick an image containing a QR.',
             tooltipBackgroundColor: Theme.of(context).brightness == Brightness.dark
                 ? const Color(0xFF1E293B)

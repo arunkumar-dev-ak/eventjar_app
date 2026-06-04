@@ -2,6 +2,7 @@ import 'package:eventjar/controller/set_2fa/controller.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 
 class Enable2FAButton extends GetView<Set2faController> {
@@ -45,7 +46,7 @@ class Enable2FAButton extends GetView<Set2faController> {
                   Text(
                     state.isLoading.value
                         ? "Enabling..."
-                        : "Enable Two-Factor Authentication",
+                        : 'enable_two_factor_auth'.tr,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 10.sp,

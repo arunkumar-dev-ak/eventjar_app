@@ -85,7 +85,7 @@ class EventInfoPage extends GetView<EventInfoController> {
         }
 
         final tabCount = tabController.length;
-        final tabNames = ["Overview", if (tabCount > 1) "Attendees"];
+        final tabNames = ['overview'.tr, if (tabCount > 1) 'attendees'.tr];
         final tabIcons = [
           Icons.info_outline_rounded,
           if (tabCount > 1) Icons.people_outline_rounded,

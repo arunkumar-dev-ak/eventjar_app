@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class InstructionSection extends StatelessWidget {
   const InstructionSection({super.key});
@@ -17,10 +18,10 @@ class InstructionSection extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          InstructionStep(step: 1, text: "Install an authenticator app"),
-          InstructionStep(step: 2, text: "Scan QR or enter secret manually"),
-          InstructionStep(step: 3, text: "Enter the 6-digit code below"),
+        children: [
+          InstructionStep(step: 1, text: 'install_authenticator_app'.tr),
+          const InstructionStep(step: 2, text: "Scan QR or enter secret manually"),
+          InstructionStep(step: 3, text: 'enter_six_digit_code_below'.tr),
         ],
       ),
     );

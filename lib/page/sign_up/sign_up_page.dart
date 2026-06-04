@@ -80,7 +80,7 @@ class SignUpPage extends GetView<SignUpController> {
           Obx(
             () => FullScreenLoader(
               isLoading: controller.state.isFetchigInvitation.value,
-              message: "Fetching invitation...",
+              message: 'fetching_invitation'.tr,
             ),
           ),
         ],

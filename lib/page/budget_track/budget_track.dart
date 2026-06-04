@@ -27,7 +27,7 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Trips",
+              'trips'.tr,
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 15.sp,

@@ -28,7 +28,7 @@ class UserProfilePage extends GetView<UserProfileController> {
       backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
-          "My Profile",
+          'my_profile'.tr,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         centerTitle: false,
@@ -101,7 +101,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                         SizedBox(height: 2.hp),
                         _buildSection(
                           context,
-                          title: "Basic Information",
+                          title: 'basic_information'.tr,
                           child: userProfileBuildBasicInfo(),
                           isEditEnabled: true,
                           onEdit: () {
@@ -111,7 +111,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                         SizedBox(height: 2.hp),
                         _buildSection(
                           context,
-                          title: "Business Information",
+                          title: 'business_information'.tr,
                           child: userProfileBuildBusinessInfo(),
                           isEditEnabled: true,
                           onEdit: () {
@@ -121,7 +121,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                         SizedBox(height: 2.hp),
                         _buildSection(
                           context,
-                          title: "Networking & Interests",
+                          title: 'networking_and_interests'.tr,
                           child: userProfileBuildNetworkInfo(),
                           isEditEnabled: true,
                           onEdit: () {
@@ -131,7 +131,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                         SizedBox(height: 2.hp),
                         _buildSection(
                           context,
-                          title: "Professional Summary",
+                          title: 'professional_summary'.tr,
                           child: userProfilebuildSummary(),
                           isEditEnabled: true,
                           onEdit: () {
@@ -141,7 +141,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                         SizedBox(height: 2.hp),
                         _buildSection(
                           context,
-                          title: "Social & Contact Links",
+                          title: 'social_and_contact_links'.tr,
                           child: userProfileBuildSocialLinks(),
                           isEditEnabled: true,
                           onEdit: () {
@@ -154,13 +154,13 @@ class UserProfilePage extends GetView<UserProfileController> {
                         SizedBox(height: 2.hp),
                         _buildSection(
                           context,
-                          title: "App Permissions",
+                          title: 'app_permissions'.tr,
                           child: const UserProfilePermissions(),
                         ),
                         SizedBox(height: 2.hp),
                         _buildSection(
                           context,
-                          title: "Security & Sessions",
+                          title: 'security_and_sessions'.tr,
                           child: userProfileBuildSecurity(),
                         ),
                         // SizedBox(height: 2.hp),
@@ -194,7 +194,7 @@ class UserProfilePage extends GetView<UserProfileController> {
         children: [
           _buildSection(
             ctx,
-            title: hasImages ? "Gallery (${images.length})" : "Gallery",
+            title: hasImages ? "Gallery (${images.length})" : 'gallery'.tr,
             isEditEnabled: true,
             onEdit: () {
               controller.navigateToGalleryUpdate();
@@ -299,7 +299,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                'Tap image to view full screen',
+                                'tap_image_full_screen'.tr,
                                 style: TextStyle(
                                   fontSize: 8.sp,
                                   color: AppColors.textHint(ctx),

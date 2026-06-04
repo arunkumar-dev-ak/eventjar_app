@@ -91,22 +91,22 @@ class MorePage extends GetView<MoreController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // Budget Section
-                        _buildSectionTitle(context, "BUDGET"),
+                        _buildSectionTitle(context, 'budget'.tr),
                         SizedBox(height: 1.5.hp),
                         _buildIconGrid(context, isDark, [
                           _GridItem(
                             icon: Icons.flight_outlined,
-                            label: "Trips",
+                            label: 'trips'.tr,
                             onTap: controller.navigateToBudgetTrack,
                           ),
                           _GridItem(
                             icon: Icons.people_outline,
-                            label: "Friends",
+                            label: 'friends'.tr,
                             onTap: controller.navigateToFriendList,
                           ),
                           _GridItem(
                             icon: Icons.receipt_long_outlined,
-                            label: "Transactions",
+                            label: 'transactions'.tr,
                             onTap: controller.navigateToTransaction,
                           ),
                         ]),
@@ -114,7 +114,7 @@ class MorePage extends GetView<MoreController> {
                         SizedBox(height: 3.hp),
 
                         // Your Contact Section
-                        _buildSectionTitle(context, "CONTACT"),
+                        _buildSectionTitle(context, 'contact'.tr),
                         SizedBox(height: 1.5.hp),
                         _buildIconGrid(context, isDark, [
                           _GridItem(
@@ -142,7 +142,7 @@ class MorePage extends GetView<MoreController> {
                         SizedBox(height: 3.hp),
 
                         // Your Network Section
-                        _buildSectionTitle(context, "YOUR NETWORK"),
+                        _buildSectionTitle(context, 'your_network_caps'.tr),
                         SizedBox(height: 1.5.hp),
                         _buildIconGrid(context, isDark, [
                           _GridItem(
@@ -180,17 +180,17 @@ class MorePage extends GetView<MoreController> {
                         SizedBox(height: 3.hp),
 
                         // Connections Section
-                        _buildSectionTitle(context, "CONNECTIONS"),
+                        _buildSectionTitle(context, 'connections_caps'.tr),
                         SizedBox(height: 1.5.hp),
                         _buildIconGrid(context, isDark, [
                           _GridItem(
                             icon: Icons.send_outlined,
-                            label: "Send",
+                            label: 'send'.tr,
                             onTap: controller.navigateToConnectionSend,
                           ),
                           _GridItem(
                             icon: Icons.call_received_outlined,
-                            label: "Received",
+                            label: 'received'.tr,
                             onTap: controller.navigateToConnectionReceived,
                           ),
                         ]),
@@ -208,32 +208,32 @@ class MorePage extends GetView<MoreController> {
                           ),
                           _GridItem(
                             icon: Icons.event_outlined,
-                            label: "Scheduled",
+                            label: 'scheduled'.tr,
                             onTap: controller.navigateToScheduledMeetings,
                           ),
                           _GridItem(
                             icon: Icons.check_circle_outline,
-                            label: "Confirmed",
+                            label: 'confirmed'.tr,
                             onTap: controller.navigateToConfirmedMeetings,
                           ),
                           _GridItem(
                             icon: Icons.cancel_outlined,
-                            label: "Declined",
+                            label: 'declined'.tr,
                             onTap: controller.navigateToDeclinedMeetings,
                           ),
                           _GridItem(
                             icon: Icons.block_outlined,
-                            label: "Cancelled",
+                            label: 'cancelled'.tr,
                             onTap: controller.navigateToCancelledMeetings,
                           ),
                           _GridItem(
                             icon: Icons.task_alt_outlined,
-                            label: "Completed",
+                            label: 'completed'.tr,
                             onTap: controller.navigateToCompletedMeetings,
                           ),
                           _GridItem(
                             icon: Icons.person_off_outlined,
-                            label: "No Show",
+                            label: 'no_show'.tr,
                             onTap: controller.navigateToNoShowMeetings,
                           ),
                         ]),
@@ -241,23 +241,23 @@ class MorePage extends GetView<MoreController> {
                         SizedBox(height: 3.hp),
 
                         // Automation Section
-                        _buildSectionTitle(context, "AUTOMATION"),
+                        _buildSectionTitle(context, 'automation'.tr),
                         SizedBox(height: 1.5.hp),
                         _buildIconGrid(context, isDark, [
                           _GridItem(
                             icon: Icons.email_outlined,
-                            label: "Email",
+                            label: 'email'.tr,
                             onTap: controller.navigateToEmailAutomation,
                           ),
                           _GridItem(
                             icon: FontAwesomeIcons.whatsapp,
-                            label: "WhatsApp",
+                            label: 'whatsapp'.tr,
                             isFontAwesome: true,
                             onTap: controller.navigateToWhatsAppAutomation,
                           ),
                           _GridItem(
                             icon: Icons.calendar_month_outlined,
-                            label: "Google Calendar",
+                            label: 'google_calendar'.tr,
                             onTap:
                                 controller.navigateToGoogleCalendarAutomation,
                           ),
@@ -266,17 +266,17 @@ class MorePage extends GetView<MoreController> {
                         SizedBox(height: 3.hp),
 
                         // Others Section
-                        _buildSectionTitle(context, "OTHERS"),
+                        _buildSectionTitle(context, 'others'.tr),
                         SizedBox(height: 1.5.hp),
                         _buildIconGrid(context, isDark, [
                           _GridItem(
                             icon: Icons.event_outlined,
-                            label: "Events",
+                            label: 'events'.tr,
                             onTap: controller.navigateToCategoryEvent,
                           ),
                           _GridItem(
                             icon: Icons.shield_outlined,
-                            label: "2FA",
+                            label: 'two_fa'.tr,
                             onTap: controller.navigateToSet2FA,
                           ),
                           _GridItem(

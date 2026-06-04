@@ -17,21 +17,21 @@ Widget userProfileBuildBusinessInfo() {
     children: [
       userProfilebuildInfoRow(
         icon: Icons.business,
-        label: "Business Name",
+        label: 'business_name'.tr,
         value: user?.company ?? "Not provided",
         iconColor: Colors.purple,
       ),
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
         icon: Icons.category,
-        label: "Business Category",
+        label: 'business_category'.tr,
         value: extended?.businessCategory ?? "Not specified",
         iconColor: Colors.teal,
       ),
       SizedBox(height: 2.hp),
       buildSocialLinkRow(
         icon: Icons.language,
-        platform: "Website",
+        platform: 'website'.tr,
         url: socialLinks['website']!.isEmpty
             ? "Not provided"
             : socialLinks['website']!,
@@ -41,21 +41,21 @@ Widget userProfileBuildBusinessInfo() {
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
         icon: Icons.email_outlined,
-        label: "Business Email",
+        label: 'business_email'.tr,
         value: extended?.businessEmail ?? "Not provided",
         iconColor: Colors.red,
       ),
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
         icon: Icons.phone_in_talk,
-        label: "Business Phone",
+        label: 'business_phone'.tr,
         value: extended?.businessPhoneParsed?.fullNumber ?? "Not provided",
         iconColor: Colors.green,
       ),
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
         icon: Icons.location_city,
-        label: "Business Address",
+        label: 'business_address'.tr,
         value: user?.location ?? "Not provided",
         iconColor: Colors.orange,
       ),
@@ -64,13 +64,13 @@ Widget userProfileBuildBusinessInfo() {
         opearingRegionBuildChipSection(
           icon: Icons.public,
           iconColor: Colors.blue,
-          label: "Operating Regions",
+          label: 'operating_regions'.tr,
           chips: extended.preferredLocations,
         )
       else
         userProfilebuildInfoRow(
           icon: Icons.public,
-          label: "Operating Regions",
+          label: 'operating_regions'.tr,
           value: "Not specified",
           iconColor: Colors.blue,
         ),

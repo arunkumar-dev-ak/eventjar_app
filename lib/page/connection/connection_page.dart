@@ -16,7 +16,7 @@ class ConnectionPage extends GetView<ConnectionController> {
       backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
-          "Connections",
+          'connections'.tr,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         flexibleSpace: Container(

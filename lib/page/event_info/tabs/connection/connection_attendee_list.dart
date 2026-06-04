@@ -130,9 +130,9 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
               children: [
                 _buildFilterChip('All', '', selected),
                 SizedBox(width: 2.wp),
-                _buildFilterChip('Sent', 'sent', selected),
+                _buildFilterChip('sent'.tr, 'sent', selected),
                 SizedBox(width: 2.wp),
-                _buildFilterChip('Received', 'received', selected),
+                _buildFilterChip('received'.tr, 'received', selected),
               ],
             );
           }),
@@ -221,8 +221,8 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                         controller: controller.searchController,
                         autofocus: true,
                         textAlignVertical: TextAlignVertical.center,
-                        decoration: const InputDecoration(
-                          hintText: "Search name or company",
+                        decoration: InputDecoration(
+                          hintText: 'search_name_or_company'.tr,
                           border: InputBorder.none,
                           isCollapsed: true,
                           prefixIcon: Icon(
@@ -274,7 +274,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                         ),
                         const SizedBox(width: 3),
                         Text(
-                          "Reset",
+                          'reset'.tr,
                           style: TextStyle(
                             fontSize: 8.5.sp,
                             color: AppColors.iconMuted(context),
@@ -322,8 +322,8 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                     SizedBox(height: 2.hp),
                     TextButton.icon(
                       onPressed: () => controller.closeAttendeeSearch(),
-                      icon: const Icon(Icons.close, size: 16),
-                      label: const Text("Clear search"),
+                      icon: Icon(Icons.close, size: 16),
+                      label: Text('clear_search'.tr),
                     ),
                   ],
                   if (!searchExpanded &&
@@ -331,8 +331,8 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                     SizedBox(height: 2.hp),
                     TextButton.icon(
                       onPressed: () => controller.onStatusFilterChanged(''),
-                      icon: const Icon(Icons.filter_alt_off, size: 16),
-                      label: const Text("Show all attendees"),
+                      icon: Icon(Icons.filter_alt_off, size: 16),
+                      label: Text('show_all_attendees'.tr),
                     ),
                   ],
                 ],
@@ -395,14 +395,14 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                 ),
                 SizedBox(width: 1.wp),
                 Text(
-                  "Swipe left for next",
+                  'swipe_left_for_next'.tr,
                   style: TextStyle(fontSize: 8.sp, color: AppColors.iconMuted(context)),
                 ),
                 SizedBox(width: 2.wp),
                 Container(width: 1, height: 10, color: AppColors.border(context)),
                 SizedBox(width: 2.wp),
                 Text(
-                  "Swipe right for previous",
+                  'swipe_right_for_previous'.tr,
                   style: TextStyle(fontSize: 8.sp, color: AppColors.iconMuted(context)),
                 ),
                 SizedBox(width: 1.wp),
@@ -619,11 +619,11 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
               final text = buttonState['text'] as String;
               final colorType = buttonState['color'] as String;
               final isDisabled = buttonState['disabled'] as bool;
-              final isSendable = text == 'Send Request';
+              final isSendable = text == 'send_request'.tr;
 
               if (isSendable) {
                 return ConnectionAttendeeListCustomSendButton(
-                  label: "Send Request",
+                  label: 'send_request'.tr,
                   attendeeId: attendee.id ?? '',
                   onPressed: () => controller.sendMeetingRequest(
                     attendee.id ?? '',

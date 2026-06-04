@@ -172,7 +172,7 @@ class EmailNotificationPage extends GetView<EmailNotificationController> {
                 // REPLY TO
                 EmailNotificationFormElement(
                   controller: controller.replyToEmail,
-                  label: 'Reply To Email (Optional)',
+                  label: 'reply_to_email_optional'.tr,
                   validator: (v) {
                     if (v == null || v.isEmpty) return null;
 
@@ -191,7 +191,7 @@ class EmailNotificationPage extends GetView<EmailNotificationController> {
                   () => SwitchListTile(
                     value: controller.state.isSecure.value,
                     onChanged: (v) => controller.state.isSecure.value = v,
-                    title: const Text("Use Secure Connection (TLS/SSL)"),
+                    title: Text('use_secure_connection'.tr),
                     subtitle: const Text(
                       "Enable secure connection to SMTP server",
                     ),

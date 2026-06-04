@@ -140,7 +140,7 @@ class _ScanCardState extends State<ScanCard> {
           Showcase(
             scope: ScanCardController.scanCardScope,
             key: controller.tourHelpKey,
-            title: 'Replay',
+            title: 'replay'.tr,
             description: 'Tap anytime to see the tour again.',
             targetShapeBorder: const CircleBorder(),
             tooltipBackgroundColor: controller.primaryColor,
@@ -374,7 +374,7 @@ class _ScanCardState extends State<ScanCard> {
               ),
               const SizedBox(width: 6),
               Text(
-                'Tips for best results',
+                'tips_for_best_results'.tr,
                 style: TextStyle(
                   fontSize: 9.5.sp,
                   color: Colors.amber.shade900,
@@ -388,7 +388,7 @@ class _ScanCardState extends State<ScanCard> {
           const SizedBox(height: 6),
           _buildTipItem('Scan one Business Card at a time', tipStyle),
           const SizedBox(height: 6),
-          _buildTipItem('Ensure good lighting on the card', tipStyle),
+          _buildTipItem('tip_good_lighting'.tr, tipStyle),
         ],
       ),
     );
@@ -524,7 +524,7 @@ class _ScanCardState extends State<ScanCard> {
               targetBorderRadius: BorderRadius.circular(16),
               child: _buildAnimatedButton(
                 icon: Icons.camera_alt_rounded,
-                label: 'Camera',
+                label: 'camera'.tr,
                 onPressed: isLoading ? null : controller.pickImageFromCamera,
                 isPrimary: true,
                 delay: 0,
@@ -536,7 +536,7 @@ class _ScanCardState extends State<ScanCard> {
             child: Showcase(
               scope: ScanCardController.scanCardScope,
               key: controller.tourGalleryKey,
-              title: 'Use Gallery',
+              title: 'use_gallery'.tr,
               description: 'Pick an existing photo of the card.',
               tooltipBackgroundColor: controller.secondaryColor,
               textColor: Colors.white,
@@ -552,7 +552,7 @@ class _ScanCardState extends State<ScanCard> {
               targetBorderRadius: BorderRadius.circular(16),
               child: _buildAnimatedButton(
                 icon: Icons.photo_library_rounded,
-                label: 'Gallery',
+                label: 'gallery'.tr,
                 onPressed: isLoading ? null : controller.pickImageFromGallery,
                 isPrimary: false,
                 delay: 100,
@@ -723,7 +723,7 @@ class _ScanCardState extends State<ScanCard> {
                         IconButton(
                           icon: Icon(Icons.clear, color: Colors.red),
                           onPressed: controller.clearData,
-                          tooltip: 'Clear',
+                          tooltip: 'clear'.tr,
                         ),
                       ],
                     ),
@@ -735,21 +735,21 @@ class _ScanCardState extends State<ScanCard> {
                         if (info.name != null)
                           _buildInfoRow(
                             Icons.person_outline,
-                            'Name',
+                            'name'.tr,
                             info.name!,
                             0,
                           ),
                         if (info.email != null)
                           _buildInfoRow(
                             Icons.email_outlined,
-                            'Email',
+                            'email'.tr,
                             info.email!,
                             1,
                           ),
                         if (info.phone != null)
                           _buildInfoRow(
                             Icons.phone_outlined,
-                            'Phone',
+                            'phone'.tr,
                             info.phoneParsed?.fullNumber ?? info.phone!,
                             2,
                           ),
@@ -757,7 +757,7 @@ class _ScanCardState extends State<ScanCard> {
 
                         _buildAnimatedButton(
                           icon: Icons.save_as,
-                          label: 'Edit or Save',
+                          label: 'edit_or_save'.tr,
                           onPressed: () {
                             controller.navigateToAddContact(context);
                           },

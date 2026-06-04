@@ -141,7 +141,7 @@ class SignInForm extends StatelessWidget {
           children: [
             LoginTextFormField(
               controller: controller.emailController,
-              label: "Email",
+              label: 'email'.tr,
               validator: controller.validateEmail,
               isPassword: false,
               isPasswordHidden: false,
@@ -156,7 +156,7 @@ class SignInForm extends StatelessWidget {
             Obx(
               () => LoginTextFormField(
                 controller: controller.passwordController,
-                label: "Password",
+                label: 'password'.tr,
                 validator: controller.validatePassword,
                 isPassword: true,
                 isPasswordHidden: controller.state.isPasswordHidden.value,
@@ -245,7 +245,7 @@ class SignInForm extends StatelessWidget {
                   Obx(() {
                     return Expanded(
                       child: SocialButton(
-                        text: "LinkedIn",
+                        text: 'linkedin'.tr,
                         assetPath: "assets/app_icon/linkedin.png",
                         color: Colors.blue,
                         isLoading: controller.state.isLinkedinLoading.value,

@@ -40,8 +40,8 @@ class ExpenseList extends GetView<ViewTripController> {
             height: 60.hp,
             child: EmptyStateWidget(
               icon: Icons.receipt_long,
-              title: "No expenses yet",
-              subtitle: "Start adding expenses for this trip",
+              title: 'no_expenses_yet'.tr,
+              subtitle: 'start_adding_expenses'.tr,
             ),
           ),
         );
@@ -217,7 +217,7 @@ class ExpenseList extends GetView<ViewTripController> {
               children: [
                 if (!isYou)
                   Text(
-                    "Paid by",
+                    'paid_by'.tr,
                     style: TextStyle(
                       fontSize: 7.sp,
                       color: AppColors.textSecondary(context),
@@ -486,7 +486,7 @@ class _CloseExpenseDialog extends StatelessWidget {
                           ? null
                           : () => Navigator.of(context).pop(false),
                       child: Text(
-                        'Cancel',
+                        'cancel'.tr,
                         style: TextStyle(
                           fontSize: 9.sp,
                           fontWeight: FontWeight.w600,
@@ -522,7 +522,7 @@ class _CloseExpenseDialog extends StatelessWidget {
                               ),
                             )
                           : Text(
-                              'Close',
+                              'close'.tr,
                               style: TextStyle(
                                 fontSize: 9.sp,
                                 fontWeight: FontWeight.bold,

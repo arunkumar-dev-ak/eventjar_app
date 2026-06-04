@@ -19,13 +19,13 @@ class MyTicketTabs extends GetView<MyTicketController> {
               return Row(
                 children: [
                   MyTicketTab(
-                    label: 'Upcoming',
+                    label: 'upcoming'.tr,
                     selected: controller.state.selectedTab.value == 0,
                     onTap: () => controller.changeTab(0),
                   ),
                   SizedBox(width: 3.wp),
                   MyTicketTab(
-                    label: 'Completed',
+                    label: 'completed'.tr,
                     selected: controller.state.selectedTab.value == 1,
                     onTap: () => controller.changeTab(1),
                   ),

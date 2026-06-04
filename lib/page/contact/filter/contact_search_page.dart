@@ -101,14 +101,14 @@ class ContactsSearchAndFilters extends GetView<ContactController> {
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.only(left: 14, right: 14),
                       children: [
-                        _DropdownPill(label: 'Tags', icon: Icons.label),
+                        _DropdownPill(label: 'tags'.tr, icon: Icons.label),
                         SizedBox(width: 8),
                         _DropdownPill(
-                          label: 'Stages',
+                          label: 'stages'.tr,
                           icon: Icons.track_changes,
                         ),
                         SizedBox(width: 8),
-                        _DropdownPill(label: 'Sort', icon: Icons.sort),
+                        _DropdownPill(label: 'sort'.tr, icon: Icons.sort),
                       ],
                     ),
                   ),

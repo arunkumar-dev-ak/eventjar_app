@@ -47,7 +47,7 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
                 // 2. Multi-select 1
                 CommonMultiSelectDropdown(
                   title: "Interested in connecting with",
-                  subtitle: "Select all that apply",
+                  subtitle: 'select_all_that_apply'.tr,
                   selectedItems: controller.state.selectedConnectionTypes,
                   allItems: controller.connectionTypes,
                   fieldKey: 'interestedInConnecting',
@@ -56,7 +56,7 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
 
                 // 3. Multi-select 2
                 CommonMultiSelectDropdown(
-                  title: "How can you help others?",
+                  title: 'how_help_others'.tr,
                   subtitle: "Select services or expertise you can offer",
                   selectedItems: controller.state.selectedHelpOfferings,
                   allItems: controller.helpOfferings,
@@ -67,7 +67,7 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
                 // 4. Multi-select 3
                 CommonMultiSelectDropdown(
                   title: "Topics you're open to discussing",
-                  subtitle: "Select relevant business topics",
+                  subtitle: 'select_relevant_business_topics'.tr,
                   selectedItems: controller.state.selectedDiscussionTopics,
                   allItems: controller.discussionTopics,
                   fieldKey: 'discussionTopics',
@@ -99,7 +99,7 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
                           elevation: 0,
                         ),
                         child: Text(
-                          'Reset',
+                          'reset'.tr,
                           style: TextStyle(
                             fontSize: defaultFontSize,
                             fontWeight: FontWeight.w600,
@@ -146,7 +146,7 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
                                   ),
                                 )
                               : Text(
-                                  'Update Info',
+                                  'update_info'.tr,
                                   style: TextStyle(
                                     fontSize: defaultFontSize,
                                     fontWeight: FontWeight.w700,

@@ -56,7 +56,7 @@ class MeetingCardButton extends GetView<MeetingController> {
                     size: 16,
                     color: Colors.orange.shade600,
                   ),
-                  label: Text('Reschedule', style: TextStyle(fontSize: 8.sp)),
+                  label: Text('reschedule'.tr, style: TextStyle(fontSize: 8.sp)),
                   style: OutlinedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 8),
                     side: BorderSide(color: Colors.orange.shade600),

@@ -38,14 +38,14 @@ class QualifyLeadPage extends GetView<QualifyLeadController> {
                   // Contact Info Cards
                   buildLeadCard(
                     icon: Icons.person,
-                    title: 'Name',
+                    title: 'name'.tr,
                     value: controller.state.contact.value?.name ?? '',
                     color: Colors.blue,
                   ),
                   SizedBox(height: 1.hp),
                   buildLeadCard(
                     icon: Icons.email,
-                    title: 'Email',
+                    title: 'email'.tr,
                     value: controller.state.contact.value?.email ?? '',
                     color: Colors.green,
                   ),
@@ -57,7 +57,7 @@ class QualifyLeadPage extends GetView<QualifyLeadController> {
                   SizedBox(height: 0.5.hp),
                   qualifyLeadTextField(
                     controller: controller.leadScoreController,
-                    label: 'Lead Score (1-10)',
+                    label: 'lead_score'.tr,
                     prefixIcon: Icons.star,
                     keyboardType: TextInputType.number,
                     maxLength: 2,
@@ -80,7 +80,7 @@ class QualifyLeadPage extends GetView<QualifyLeadController> {
 
                   qualifyLeadTextField(
                     controller: controller.interestsController,
-                    label: 'Interests/Needs',
+                    label: 'interests_needs'.tr,
                     prefixIcon: Icons.lightbulb_outline,
                     maxLines: 3,
                     minLines: 1,
@@ -89,21 +89,21 @@ class QualifyLeadPage extends GetView<QualifyLeadController> {
                   SizedBox(height: 2.hp),
                   qualifyLeadTextField(
                     controller: controller.budgetController,
-                    label: 'Budget Range',
+                    label: 'budget_range'.tr,
                     prefixIcon: Icons.attach_money,
                   ),
 
                   SizedBox(height: 2.hp),
                   qualifyLeadTextField(
                     controller: controller.timelineController,
-                    label: 'Decision Timeline',
+                    label: 'decision_timeline'.tr,
                     prefixIcon: Icons.schedule,
                   ),
 
                   SizedBox(height: 2.hp),
                   qualifyLeadTextField(
                     controller: controller.notesController,
-                    label: 'Qualification Notes',
+                    label: 'qualification_notes'.tr,
                     maxLines: 4,
                     minLines: 2,
                   ),

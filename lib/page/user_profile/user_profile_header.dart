@@ -49,7 +49,7 @@ class UserProfileHeader extends StatelessWidget {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     child: Text(
-                      'Edit Photo',
+                      'edit_photo'.tr,
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w500,
@@ -83,7 +83,7 @@ class UserProfileHeader extends StatelessWidget {
                           label: Text(
                             controller.state.isLoading.value
                                 ? 'Uploading...'
-                                : 'Save',
+                                : 'save'.tr,
                           ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.green,
@@ -105,7 +105,7 @@ class UserProfileHeader extends StatelessWidget {
                                       null;
                                 },
                           icon: Icon(Icons.close, size: 16),
-                          label: Text('Cancel'),
+                          label: Text('cancel'.tr),
                         ),
                       ],
                     ),

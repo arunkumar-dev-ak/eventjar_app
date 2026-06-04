@@ -59,11 +59,11 @@ class MyQrShareButton extends StatelessWidget {
                     )
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(Icons.share_rounded),
-                        SizedBox(width: 8),
+                      children: [
+                        const Icon(Icons.share_rounded),
+                        const SizedBox(width: 8),
                         Text(
-                          'Share QR Code',
+                          'share_qr_code'.tr,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

@@ -28,7 +28,7 @@ class NfcReadBottomControls extends StatelessWidget {
               ),
             ),
             child: Text(
-              'Try Again',
+              'try_again'.tr,
               style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold),
             ),
           ),

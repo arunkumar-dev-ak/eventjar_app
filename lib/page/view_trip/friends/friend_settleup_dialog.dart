@@ -49,7 +49,7 @@ class SettleUpDialog extends GetView<ViewTripController> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          type == PaymentActionType.record ? "Record" : "Settle Up",
+          type == PaymentActionType.record ? "Record" : 'settle_up'.tr,
           style: TextStyle(
             fontSize: 12.sp,
             fontWeight: FontWeight.bold,
@@ -97,7 +97,7 @@ class SettleUpDialog extends GetView<ViewTripController> {
         child: FormButton(
           text: isLoading
               ? (isRecord ? "Recording..." : "Settling...")
-              : (isRecord ? "Record Payment" : "Settle Up"),
+              : (isRecord ? "Record Payment" : 'settle_up'.tr),
           isLoading: isLoading,
           type: FormButtonType.primary,
           icon: isRecord ? Icons.receipt_long : Icons.check_circle,
@@ -137,7 +137,7 @@ class SettleUpDialog extends GetView<ViewTripController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Amount",
+            'amount'.tr,
             style: TextStyle(
               fontSize: 9.sp,
               color: AppColors.textSecondary(context),

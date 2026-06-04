@@ -5,6 +5,7 @@ import 'package:eventjar/helper/date_handler.dart';
 import 'package:eventjar/model/my_ticket/my_ticket_model.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_card_page_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget myTicketBuildTicketCard(
   MyTicket ticket,
@@ -18,7 +19,7 @@ Widget myTicketBuildTicketCard(
   final isFree = tier?.price.toString() == '0';
 
   final eventTitle = event?.title ?? "Event";
-  final tierName = tier?.name ?? "Ticket";
+  final tierName = tier?.name ?? 'ticket'.tr;
   final price = tier?.price ?? "0";
 
   final rawVenue = event?.venue ?? '';
@@ -26,7 +27,7 @@ Widget myTicketBuildTicketCard(
   final hasVenue = rawVenue.isNotEmpty;
   final venueDisplay = hasVenue
       ? '$rawVenue${address.isNotEmpty ? ', $address' : ''}'
-      : 'Online Event';
+      : 'online_event'.tr;
 
   final startDate = event?.startDate;
   final imageUrl = event?.featuredImageUrl;
@@ -250,7 +251,7 @@ Widget myTicketBuildTicketCard(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'View QR',
+                                'view_qr'.tr,
                                 style: TextStyle(
                                   fontSize: 9.sp,
                                   color: Colors.green.shade700,

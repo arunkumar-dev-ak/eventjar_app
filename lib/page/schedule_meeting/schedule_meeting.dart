@@ -46,14 +46,14 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                   // Contact Info Cards
                   _buildContactInfoCard(
                     icon: Icons.person,
-                    title: 'Name',
+                    title: 'name'.tr,
                     value: controller.state.contact.value?.name ?? '',
                     color: Colors.blue,
                   ),
                   SizedBox(height: 1.hp),
                   _buildContactInfoCard(
                     icon: Icons.email,
-                    title: 'Email',
+                    title: 'email'.tr,
                     value: controller.state.contact.value?.email ?? '',
                     color: Colors.green,
                   ),
@@ -65,7 +65,7 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                     readOnly: true,
                     controller: controller.meetingDateController,
                     decoration: InputDecoration(
-                      labelText: 'Meeting Date',
+                      labelText: 'meeting_date'.tr,
                       suffixIcon: Icon(Icons.calendar_today),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -82,7 +82,7 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                     readOnly: true,
                     controller: controller.meetingTimeController,
                     decoration: InputDecoration(
-                      labelText: 'Meeting Time',
+                      labelText: 'meeting_time'.tr,
                       suffixIcon: Icon(Icons.access_time),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -176,7 +176,7 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                   // ✅ Email Card with Config + Loading
                   Obx(
                     () => scheduleMeetingMessageBuildMethodCard(
-                      title: 'Email',
+                      title: 'email'.tr,
                       icon: Icons.email_outlined,
                       isSelected: controller.state.meetingEmailChecked.value,
                       isLoading: controller.state.configLoading.value,
@@ -192,7 +192,7 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                   // ✅ WhatsApp Card with Config + Loading
                   Obx(
                     () => scheduleMeetingMessageBuildMethodCard(
-                      title: 'WhatsApp',
+                      title: 'whatsapp'.tr,
                       icon: Icons.message_outlined,
                       isSelected: controller.state.meetingWhatsappChecked.value,
                       isLoading: controller.state.configLoading.value,

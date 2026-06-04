@@ -48,7 +48,7 @@ class CheckoutPromoCodeSection extends GetView<CheckoutController> {
                     enabled: !isApplied && !isLoading,
                     textCapitalization: TextCapitalization.characters,
                     decoration: InputDecoration(
-                      hintText: "Enter promo code",
+                      hintText: 'enter_promo_code'.tr,
                       errorText: hasError ? promo.message : null,
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: 3.wp,

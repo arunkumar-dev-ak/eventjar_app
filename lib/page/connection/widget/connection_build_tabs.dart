@@ -18,14 +18,14 @@ class ConnectionBuildTabs extends GetView<ConnectionController> {
           Row(
             children: [
               ConnectionTab(
-                label: 'Sent',
+                label: 'sent'.tr,
                 count: controller.state.sendCount.value,
                 selected: controller.state.selectedTab.value == 0,
                 onTap: () => controller.changeTab(0),
               ),
               SizedBox(width: 2.wp),
               ConnectionTab(
-                label: 'Received',
+                label: 'received'.tr,
                 count: controller.state.receivedCount.value,
                 selected: controller.state.selectedTab.value == 1,
                 onTap: () => controller.changeTab(1),
@@ -36,7 +36,7 @@ class ConnectionBuildTabs extends GetView<ConnectionController> {
           SizedBox(width: 2.wp),
 
           SingleSelectFilterDropdown<String>(
-            title: 'Filter Status',
+            title: 'filter_status'.tr,
             items: controller.state.statusItems,
             selectedItem: controller.state.selectedStatus,
             getDefaultItem: () => 'All',

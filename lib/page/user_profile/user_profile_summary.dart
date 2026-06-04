@@ -13,7 +13,7 @@ Widget userProfilebuildSummary() {
     children: [
       userProfilebuildInfoRow(
         icon: Icons.description,
-        label: "Short Bio",
+        label: 'short_bio'.tr,
         value: controller.bio.isEmpty ? "No bio added yet" : controller.bio,
         iconColor: Colors.blue,
         maxLines: 5,
@@ -21,7 +21,7 @@ Widget userProfilebuildSummary() {
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
         icon: Icons.work_history,
-        label: "Experience",
+        label: 'experience'.tr,
         value: extended?.yearsInBusiness != null
             ? "${extended!.yearsInBusiness}"
             : "Not specified",
@@ -30,7 +30,7 @@ Widget userProfilebuildSummary() {
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
         icon: Icons.video_call,
-        label: "Available for 1-on-1 Meeting",
+        label: 'available_for_1_on_1'.tr,
         value: extended?.availabilitySlots ?? "Availability not set",
         iconColor: Colors.green,
       ),
@@ -39,7 +39,7 @@ Widget userProfilebuildSummary() {
         opearingRegionBuildChipSection(
           icon: Icons.translate,
           iconColor: Colors.teal,
-          label: "Known Languages",
+          label: 'known_languages'.tr,
           chips: extended.knownLanguages,
         ),
       ],
@@ -48,7 +48,7 @@ Widget userProfilebuildSummary() {
         opearingRegionBuildChipSection(
           icon: Icons.lightbulb_outline,
           iconColor: Colors.orange,
-          label: "Skills",
+          label: 'skills'.tr,
           chips: extended.skills,
         ),
       ],

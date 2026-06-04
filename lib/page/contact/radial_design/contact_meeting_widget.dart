@@ -2,6 +2,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ContactMeetingSection {
   static Widget buildDynamicMeetingSection(
@@ -69,7 +70,7 @@ class ContactMeetingSection {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Scheduled Meeting',
+                        'scheduled_meeting'.tr,
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -127,7 +128,7 @@ class ContactMeetingSection {
         borderRadius: BorderRadius.circular(3.wp),
       ),
       child: Text(
-        isConfirmed ? 'Confirmed' : 'Pending',
+        isConfirmed ? 'Confirmed' : 'pending'.tr,
         style: TextStyle(
           color: AppColors.textPrimaryStatic,
           fontSize: 8.sp,

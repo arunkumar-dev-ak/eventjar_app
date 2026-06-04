@@ -34,7 +34,7 @@ class NfcReadPage extends GetView<NfcReadController> {
             Icon(Icons.nfc, size: 22, color: Colors.blue.shade700),
             SizedBox(width: 8),
             Text(
-              'Read Card',
+              'read_card'.tr,
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 11.sp,
@@ -90,7 +90,7 @@ class NfcActionContainer extends GetView<NfcReadController> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 2.hp),
       child: NfcActionCard(
-        title: isIos ? 'Write Not Available on iOS' : 'Write Contact',
+        title: isIos ? 'Write Not Available on iOS' : 'write_contact'.tr,
         subtitle: isIos
             ? 'NFC card writing is not supported on iOS. Use an Android device.'
             : hasProfile

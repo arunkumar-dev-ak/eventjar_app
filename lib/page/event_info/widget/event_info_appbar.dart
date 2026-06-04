@@ -49,7 +49,7 @@ class EventInfoAppBar extends GetView<EventInfoController> {
           // Title
           Expanded(
             child: Text(
-              'Event Info',
+              'event_info'.tr,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 13.sp,
@@ -65,8 +65,8 @@ class EventInfoAppBar extends GetView<EventInfoController> {
               final eventInfo = controller.state.eventInfo.value;
               if (eventInfo == null) {
                 AppSnackbar.warning(
-                  message: "Kindly try again later",
-                  title: "Event Not Found",
+                  message: 'try_again_later'.tr,
+                  title: 'event_not_found'.tr,
                 );
                 return;
               }
@@ -196,7 +196,7 @@ $dateTimeLocation
 
     final location = eventInfo.isVirtual
         ? '📍 Virtual Event'
-        : '📍 ${eventInfo.city ?? 'Location'}';
+        : '📍 ${eventInfo.city ?? 'location'.tr}';
 
     return '📅 $startDateStr at $timeDisplay | $location';
   }

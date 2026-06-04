@@ -2,6 +2,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/global/whatsapp_chat.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class EventJarInviteBadge extends StatelessWidget {
   final bool onEventJar;
@@ -56,7 +57,7 @@ class EventJarInviteBadge extends StatelessWidget {
 
             Flexible(
               child: Text(
-                onEventJar ? 'On MyEventJar' : 'Invite to MyEventJar',
+                onEventJar ? 'On MyEventJar' : 'invite_to_myeventjar'.tr,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(

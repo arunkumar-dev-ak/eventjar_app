@@ -4,6 +4,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/whatsapp_integration/whatsapp_integration_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 
 class WhatsAppConnectedCard extends GetView<NotificationController> {
@@ -65,7 +66,7 @@ class WhatsAppConnectedCard extends GetView<NotificationController> {
               SizedBox(width: 2.5.wp),
               Expanded(
                 child: Text(
-                  "Mybotify WhatsApp Connected",
+                  'mybotify_whatsapp_connected'.tr,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 11.sp,
@@ -108,7 +109,7 @@ class WhatsAppConnectedCard extends GetView<NotificationController> {
                   ),
                 ),
                 Text(
-                  "Secured",
+                  'secured'.tr,
                   style: TextStyle(
                     fontSize: 8.sp,
                     color: Colors.green.shade700,
@@ -140,7 +141,7 @@ class WhatsAppConnectedCard extends GetView<NotificationController> {
                       )
                     : const Icon(Icons.link_off),
                 label: Text(
-                  isLoading ? "Disconnecting..." : "Disconnect Integration",
+                  isLoading ? "Disconnecting..." : 'disconnect_integration'.tr,
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
                 style: ElevatedButton.styleFrom(

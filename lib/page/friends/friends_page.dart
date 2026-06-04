@@ -26,7 +26,7 @@ class FriendsPage extends GetView<FriendsController> {
           onPressed: () => Get.back(),
         ),
         title: Text(
-          "Friends",
+          'friends'.tr,
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 15.sp,
@@ -53,7 +53,7 @@ class FriendsPage extends GetView<FriendsController> {
         if (friends.isEmpty) {
           return EmptyStateWidget(
             icon: Icons.people_outline,
-            title: "No friends yet",
+            title: 'no_friends_yet'.tr,
             subtitle: "Add friends and start splitting expenses",
           );
         }

@@ -24,7 +24,7 @@ class SchedulerDurationDropdown extends StatelessWidget {
         ),
         SizedBox(height: 8),
         SingleSelectFilterDropdown<Map<String, String>>(
-          title: "Select Duration",
+          title: 'select_duration'.tr,
           items: controller.state.durations,
           selectedItem: controller.state.selectedDurationMap,
           getDefaultItem: () => controller.state.durations.first,

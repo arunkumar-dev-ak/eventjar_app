@@ -22,7 +22,7 @@ class UserProfilePermissions extends GetView<UserProfileController> {
             icon: Icons.camera_alt_outlined,
             iconColor: Colors.blue,
             iconBgColor: Colors.blue.shade50,
-            title: 'Camera',
+            title: 'camera'.tr,
             subtitle: cameraOn
                 ? 'Camera access is enabled'
                 : 'Required for QR scan, card scan and Image upload',
@@ -34,7 +34,7 @@ class UserProfilePermissions extends GetView<UserProfileController> {
             icon: Icons.notifications_outlined,
             iconColor: Colors.orange,
             iconBgColor: Colors.orange.shade50,
-            title: 'Notifications',
+            title: 'notifications'.tr,
             subtitle: notifOn
                 ? 'Push notifications are enabled'
                 : 'Stay updated with contact activity',

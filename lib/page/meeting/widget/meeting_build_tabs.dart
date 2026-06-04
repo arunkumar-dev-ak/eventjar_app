@@ -17,7 +17,7 @@ class MeetingBuildTabs extends GetView<MeetingController> {
 
         // Status Filter
         SingleSelectFilterDropdown<MeetingStatus>(
-          title: 'Status',
+          title: 'status'.tr,
           items: MeetingStatus.values,
           selectedItem: controller.state.selectedStatus,
           getDefaultItem: () => MeetingStatus.SCHEDULED,

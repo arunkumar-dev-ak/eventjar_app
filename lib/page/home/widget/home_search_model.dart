@@ -45,7 +45,7 @@ void openSearchModel(BuildContext context) {
                   children: [
                     TextButton(
                       onPressed: () => Get.back(),
-                      child: Text("Cancel", style: TextStyle(fontSize: 10.sp)),
+                      child: Text('cancel'.tr, style: TextStyle(fontSize: 10.sp)),
                     ),
                     Text(
                       "Search Event",
@@ -57,7 +57,7 @@ void openSearchModel(BuildContext context) {
                     ),
                     TextButton(
                       onPressed: () {},
-                      child: Text("Search", style: TextStyle(fontSize: 10.sp)),
+                      child: Text('search'.tr, style: TextStyle(fontSize: 10.sp)),
                     ),
                   ],
                 ),
@@ -96,7 +96,7 @@ Widget homeSearchModel(HomeController controller) {
               child: TextField(
                 controller: controller.searchBarController,
                 decoration: InputDecoration(
-                  hintText: 'Search by event name, type or location',
+                  hintText: 'search_event_placeholder'.tr,
                   border: InputBorder.none,
                   hintStyle: TextStyle(
                     color: AppColors.textHintStatic,

@@ -57,7 +57,7 @@ class RescheduleMeetingContactList
                       readOnly: true,
                       onTap: isLoading ? null : controller.pickMeetingDate,
                       decoration: InputDecoration(
-                        labelText: "Select Date",
+                        labelText: 'select_date'.tr,
                         filled: true,
                         fillColor: AppColors.inputBg(context),
                         suffixIcon: Icon(Icons.calendar_today, size: 15.sp),
@@ -76,7 +76,7 @@ class RescheduleMeetingContactList
                       readOnly: true,
                       onTap: isLoading ? null : controller.pickMeetingTime,
                       decoration: InputDecoration(
-                        labelText: "Select Time",
+                        labelText: 'select_time'.tr,
                         filled: true,
                         fillColor: AppColors.inputBg(context),
                         suffixIcon: Icon(Icons.access_time, size: 15.sp),

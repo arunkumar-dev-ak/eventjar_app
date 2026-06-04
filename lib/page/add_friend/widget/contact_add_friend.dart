@@ -15,7 +15,7 @@ class ContactAddFriendContactView extends GetView<AddFriendController> {
       children: [
         // CONTACT DROPDOWN (TOP)
         SingleSelectPaginatedFilterDropdown<MobileContact>(
-          title: "Select Contact",
+          title: 'select_contact'.tr,
 
           items: controller.state.contacts,
           selectedItem: controller.state.selectedContact,

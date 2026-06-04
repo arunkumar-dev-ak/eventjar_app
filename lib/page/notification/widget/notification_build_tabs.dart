@@ -15,14 +15,14 @@ class NotificationBuildTabs extends GetView<NotificationController> {
         child: Row(
           children: [
             NotificationTab(
-              label: 'Email',
+              label: 'email'.tr,
               count: 0,
               selected: controller.state.selectedTab.value == 0,
               onTap: () => controller.changeTab(0),
             ),
             SizedBox(width: 2.wp),
             NotificationTab(
-              label: 'WhatsApp',
+              label: 'whatsapp'.tr,
               count: 0,
               selected: controller.state.selectedTab.value == 1,
               onTap: () => controller.changeTab(1),
