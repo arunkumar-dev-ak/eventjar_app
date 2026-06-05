@@ -10,6 +10,7 @@ import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/budget_track/trip_model.dart';
 import 'package:eventjar/model/view_trip/dropdown_friend_model.dart';
+import 'package:eventjar/model/view_trip/trip_expense_model.dart';
 import 'package:eventjar/model/view_trip/trip_friend_model.dart';
 import 'package:eventjar/page/view_trip/friends/friend_settleup_dialog.dart';
 import 'package:flutter/material.dart';
@@ -700,10 +701,15 @@ class ViewTripController extends GetxController
     )?.then((result) async {
       if (result == "refresh") {
         await fetchViewTripData();
-      } else {
-        Get.back();
       }
     });
+  }
+
+  void navigateToExpenseDetailPage(TripExpenseModel expense) {
+    Get.toNamed(
+      RouteName.expenseDetailPage,
+      arguments: {'expense': expense},
+    )?.then((result) async {});
   }
 
   Future<bool> removeMemberFromTrip(String memberId) async {

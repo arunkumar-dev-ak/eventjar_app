@@ -23,6 +23,9 @@ class AddFriendState {
 
   Rxn<Meta> meta = Rxn<Meta>();
 
+  RxBool get hasMoreContacts =>
+      (meta.value?.hasNext ?? false).obs;
+
   final RxBool sendViaEmail = false.obs;
   final RxBool sendViaPhone = false.obs;
 }

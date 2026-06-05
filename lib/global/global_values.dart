@@ -30,6 +30,7 @@ const String pkceCodeVerifier = "pkce_code_verifier";
 const String storageLanguageCode = "myEventJar_languageCode";
 const String storageLanguageSelected = "myEventJar_languageSelected";
 String backendBaseUrl() {
-  // return "https://myeventjar.com/api";
-  return "http://10.0.2.2:4000/";
+  return "https://myeventjar.com/api";
+  // return "http://10.0.2.2:4000/";
+  // return "https://darkroom-gizzard-tingle.ngrok-free.dev";
 } //Base url for Api request

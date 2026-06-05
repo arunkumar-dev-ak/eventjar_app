@@ -73,12 +73,13 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
         ),
       ),
 
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           HapticHelper.medium();
           controller.navigateToCreateTrip();
         },
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text("New Trip"),
       ),
     );
   }

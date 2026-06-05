@@ -12,6 +12,7 @@ import 'package:eventjar/controller/create_trip/binding.dart';
 import 'package:eventjar/controller/dashboard/binding.dart';
 import 'package:eventjar/controller/email_notification/binding.dart';
 import 'package:eventjar/controller/event_info/binding.dart';
+import 'package:eventjar/controller/expense_detail/binding.dart';
 import 'package:eventjar/controller/forgotPassword/binding.dart';
 import 'package:eventjar/controller/friends/binding.dart';
 import 'package:eventjar/controller/google_calendar/binding.dart';
@@ -95,6 +96,7 @@ import '../controller/categories_event/binding.dart';
 import '../controller/bio_profile/binding.dart';
 import '../controller/scan_card/binding.dart';
 import '../page/category_events/event_list.dart';
+import '../page/expense_detail/expense_detail.dart';
 import '../page/scan_card/scan_card.dart';
 
 class RoutePage {
@@ -381,6 +383,13 @@ class RoutePage {
       binding: FriendsBinding(),
       middlewares: [LoginMiddleware()],
     ),
+    GetPage(
+      name: RouteName.expenseDetailPage,
+      page: () => ExpenseDetailPage(),
+      binding: ExpenseDetailBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+
     //trip
     GetPage(
       name: RouteName.createTripPage,

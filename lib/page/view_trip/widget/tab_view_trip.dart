@@ -26,7 +26,7 @@ class ViewTripTabs extends GetView<ViewTripController> {
             ),
             _tabItem(
               context,
-              "Friends",
+              "Members",
               controller.state.selectedTab.value == 1,
               1,
             ),

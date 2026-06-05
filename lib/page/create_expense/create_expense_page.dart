@@ -9,6 +9,7 @@ import 'package:eventjar/global/widget/form_submit_button.dart';
 import 'package:eventjar/model/budget_track/drop_down_response_model.dart';
 import 'package:eventjar/page/add_contact/add_contact_form_element.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class CreateExpensePage extends GetView<CreateExpenseController> {
@@ -23,12 +24,19 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: TextStyle(color: AppColors.textPrimary(context)),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         centerTitle: false,
-        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
-        elevation: 4,
-        backgroundColor: AppColors.cardBg(context),
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
+        ),
+        elevation: 0,
       ),
       body: GestureDetector(
         onTap: () => Get.focusScope?.unfocus(),
@@ -85,20 +93,20 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
 
                 // PAID BY (Single Select)
                 SingleSelectPaginatedFilterDropdown<DropdownMemberModel>(
-                  title: "Paid By",
+                  title: 'Paid by',
                   items: controller.state.members,
                   selectedItem: controller.state.paidBy,
                   getDefaultItem: () => controller.state.members.first,
                   getDisplayValue: (item) => item.displayName,
                   getKeyValue: (item) => item,
-
                   onSelected: (val) => controller.state.paidBy.value = val,
-                  hintText: "Select Payer",
+                  hintText: 'Select payer',
                   onChanged: controller.onSearchMembers,
                   onRefresh: controller.onRefreshMembers,
                   onClickedLoadMore: controller.onLoadMoreMembers,
                   onDropdownListLoading: controller.state.isMembersLoading,
                   onLoadMoreLoading: controller.state.isMembersLoadMoreLoading,
+                  hasMore: controller.state.hasMoreMembers,
                   headerColor: AppColors.gradientDarkStart,
                   themeColor: AppColors.gradientDarkStart,
                   selectedShade1: (isDark ? Colors.white : Colors.grey)
@@ -107,6 +115,8 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                       .withValues(alpha: 0.25),
                   selectedShade3: (isDark ? Colors.white : Colors.grey)
                       .withValues(alpha: 0.4),
+                  selectedDisplayColor: AppColors.textPrimary(context),
+                  dropdownIcon: Icons.keyboard_arrow_down_rounded,
                 ),
                 SizedBox(height: 2.hp),
 

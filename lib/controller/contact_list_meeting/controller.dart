@@ -160,7 +160,8 @@ class ContactListMeetingController extends GetxController {
     final date = state.meetingDate.value;
     final time = state.meetingTime.value;
 
-    final scheduledAt = DateTime(
+    // 1. Combine date and time (creates a localized DateTime object)
+    final localScheduledAt = DateTime(
       date.year,
       date.month,
       date.day,
@@ -168,11 +169,14 @@ class ContactListMeetingController extends GetxController {
       time.minute,
     );
 
+    // 2. Explicitly convert to UTC so it appends the 'Z' properly
+    final utcScheduledAt = localScheduledAt.toUtc();
+
     final meetingTimeFormatted =
         '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
 
     return {
-      'scheduledAt': scheduledAt.toIso8601String(),
+      'scheduledAt': utcScheduledAt.toIso8601String(),
       'meetingTime': meetingTimeFormatted,
     };
   }
@@ -209,21 +213,29 @@ class ContactListMeetingController extends GetxController {
     final meeting = state.currentMeeting.value;
     if (meeting == null) return;
 
-    // Pre-fill existing values
-    updateMeetingDate(meeting.scheduledAt);
-    final timeParts = meeting.meetingTime?.split(":");
-    if (timeParts != null) {
+    // 1. FIXED: Convert the UTC database time to the user's local device time
+    final localDateTime = meeting.scheduledAt.toLocal();
+    LoggerService.loggerInstance.dynamic_d(localDateTime);
+    updateMeetingDate(localDateTime);
+
+    // 2. Fallback check for time parsing
+    if (meeting.meetingTime != null && meeting.meetingTime!.contains(':')) {
+      final timeParts = meeting.meetingTime!.split(":");
       updateMeetingTime(
         TimeOfDay(
           hour: int.parse(timeParts[0]),
           minute: int.parse(timeParts[1]),
         ),
       );
+    } else {
+      // If meetingTime is missing or corrupt, fallback cleanly to the localDateTime hours/minutes
+      updateMeetingTime(
+        TimeOfDay(hour: localDateTime.hour, minute: localDateTime.minute),
+      );
     }
 
     final result = await Get.dialog(
       RescheduleMeetingContactList(meetingId: meeting.id),
-      // barrierDismissible: false,
     );
 
     if (result == true) {

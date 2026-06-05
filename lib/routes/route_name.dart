@@ -76,6 +76,7 @@ class RouteName {
   static const createExpensePage = '/createExpensePage';
   static const friendListPage = '/friendListPage';
   static const transactionPage = '/transactionPage';
+  static const expenseDetailPage = '/expenseDetailPage';
 
   //bio profile page
   static const bioProfilePage = '/bioProfilePage';

@@ -1,5 +1,6 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/utils/date_utils.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:flutter/material.dart';
 
@@ -29,8 +30,10 @@ class ContactMeetingSection {
     final meeting = contact.activeMeeting!;
     final isConfirmed = meeting.status.toLowerCase() == 'confirmed';
 
-    final dateText = _formatDate(meeting.scheduledAt);
-    final timeText = meeting.meetingTime ?? _formatTime(meeting.scheduledAt);
+    final (dateText, timeText, timezoneText) = formatUtcToLocal(
+      meeting.scheduledAt,
+      context,
+    );
 
     return GestureDetector(
       onTap: onMeetingClick,
@@ -103,7 +106,7 @@ class ContactMeetingSection {
                       ),
                       SizedBox(width: 1.5.wp),
                       Text(
-                        timeText,
+                        '$timeText ($timezoneText)',
                         style: TextStyle(color: Colors.white, fontSize: 9.sp),
                       ),
                     ],

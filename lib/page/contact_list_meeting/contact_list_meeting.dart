@@ -2,6 +2,7 @@ import 'package:eventjar/controller/contact_list_meeting/controller.dart';
 import 'package:eventjar/controller/contact_list_meeting/state.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/utils/date_utils.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -128,6 +129,10 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
   Widget _buildMeetingDetailsCard() {
     final meeting = controller.state.currentMeeting.value;
     final method = meeting?.method;
+    final (dateText, timeText, timezoneText) = formatUtcToLocal(
+      controller.state.currentMeeting.value!.scheduledAt,
+      Get.context!,
+    );
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(2.wp),
@@ -149,12 +154,13 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
             style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600),
           ),
           SizedBox(height: 2.hp),
+          _buildDetailRow(Icons.calendar_today, 'Date', dateText),
+
           _buildDetailRow(
-            Icons.calendar_today,
-            'Date',
-            controller.formattedDate,
+            Icons.access_time,
+            'Time',
+            '$timeText ($timezoneText)',
           ),
-          _buildDetailRow(Icons.access_time, 'Time', controller.formattedTime),
           _buildDetailRow(
             Icons.email,
             'Method',
@@ -303,7 +309,10 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
                         ? null
                         : controller.onRescheduleMeeting,
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppColors.borderStatic, width: 1.5),
+                      side: BorderSide(
+                        color: AppColors.borderStatic,
+                        width: 1.5,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

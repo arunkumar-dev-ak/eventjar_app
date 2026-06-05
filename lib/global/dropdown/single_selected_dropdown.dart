@@ -311,6 +311,32 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
                   );
                 }),
               ),
+
+              // Close button
+              Padding(
+                padding: EdgeInsets.fromLTRB(24, 0, 24, 2.hp),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        side: BorderSide(color: AppColors.border(context)),
+                      ),
+                    ),
+                    child: Text(
+                      'Close',
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textSecondary(context),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
