@@ -64,7 +64,7 @@ Widget buildCheckoutContinueButton() {
                   ),
                   SizedBox(width: 2.wp),
                   Text(
-                    "Checking eligibility...",
+                    "checking_eligibility".tr,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 11.sp,
@@ -82,7 +82,7 @@ Widget buildCheckoutContinueButton() {
                   ),
                   SizedBox(width: 2.wp),
                   Text(
-                    "Processing registration...",
+                    "processing_registration".tr,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 11.sp,
@@ -93,7 +93,7 @@ Widget buildCheckoutContinueButton() {
                   Icon(Icons.block, color: Colors.white, size: 20),
                   SizedBox(width: 2.wp),
                   Text(
-                    "Not Eligible to Register",
+                    "not_eligible_to_register".tr,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 11.sp,
@@ -102,7 +102,7 @@ Widget buildCheckoutContinueButton() {
                   ),
                 ] else ...[
                   Text(
-                    "Click To Book Ticket",
+                    "click_to_book_ticket".tr,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 11.sp,

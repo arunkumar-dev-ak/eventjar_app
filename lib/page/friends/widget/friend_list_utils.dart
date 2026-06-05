@@ -2,6 +2,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/model/budget_track/split_track_friend_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 bool isSenderForFriendList(SplitTrackFriend friend) {
   return friend.userId == UserStore.to.profile['id'];
@@ -13,17 +14,17 @@ bool isReceiverForFriendList(SplitTrackFriend friend) {
 
 String getStatusTextForFriendList(SplitTrackFriend friend) {
   if (friend.status == "accepted") {
-    return "Friend";
+    return "friend".tr;
   }
 
   if (friend.status == "pending") {
     return isSenderForFriendList(friend)
-        ? "Invitation Sent"
-        : "Invitation Received";
+        ? "invitation_sent".tr
+        : "invitation_received".tr;
   }
 
   if (friend.status == "rejected") {
-    return "Invitation Rejected";
+    return "invitation_rejected".tr;
   }
 
   return friend.status;

@@ -98,8 +98,8 @@ void showLanguageChangeDialog(BuildContext context) {
                       languageStore.setLanguage(selected.value);
                       Navigator.pop(dialogContext);
                       Get.snackbar(
-                        'Language Updated',
-                        'Language changed to ${languageStore.selectedLanguageName}',
+                        'language_updated'.tr,
+                        '${'language_changed_to'.tr} ${languageStore.selectedLanguageName}',
                         snackPosition: SnackPosition.BOTTOM,
                         backgroundColor: Theme.of(context).colorScheme.primary,
                         colorText: Colors.white,

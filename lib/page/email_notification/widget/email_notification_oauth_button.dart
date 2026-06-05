@@ -31,7 +31,7 @@ Widget emailNotificationOauthButton(EmailProvider provider) {
   }
 
   final title =
-      "Connect with ${capitalize(provider.oauthProvider ?? 'Provider')}";
+      "${'connect_with'.tr} ${capitalize(provider.oauthProvider ?? 'Provider')}";
 
   return Obx(() {
     final isLoading = controller.state.isOauthLoading.value;

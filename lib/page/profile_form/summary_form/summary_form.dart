@@ -56,7 +56,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                     ),
                   ),
                   Text(
-                    'This will be visible in attendee lists and matchmaking cards',
+                    'bio_visibility_desc'.tr,
                     style: TextStyle(
                       fontSize: 8.5.sp,
                       color: AppColors.textSecondary(context),
@@ -83,7 +83,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Availability for 1-on-1 Meetings',
+                        'availability_for_1_on_1'.tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w600,
@@ -113,7 +113,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                   // Skills
                   SummaryTagInput(
                     title: 'skills'.tr,
-                    subtitle: 'Add your key skills and expertise',
+                    subtitle: 'add_skills_desc'.tr,
                     hintText: 'e.g., Leadership, Marketing',
                     items: controller.state.selectedSkills,
                   ),

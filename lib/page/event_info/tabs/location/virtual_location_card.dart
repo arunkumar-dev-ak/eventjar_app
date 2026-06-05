@@ -23,7 +23,7 @@ Widget buildVirtualEventCard({required String platform, String? meetingLink}) {
           SizedBox(width: 3.wp),
           //Platform
           Text(
-            "Platform",
+            'platform'.tr,
             style: TextStyle(
               color: AppColors.textPrimaryStatic,
               fontSize: 8.sp,
@@ -186,7 +186,7 @@ IconData _getJoinButtonIcon(
 /// ✅ 3. Text only changes
 String _getJoinButtonText(EventInfoController controller, String? meetingLink) {
   if (!_shouldEnableJoinButton(controller, meetingLink)) {
-    return "Register to Join Meeting";
+    return 'register_to_join_meeting'.tr;
   }
 
   final eventInfo = controller.state.eventInfo.value!;
@@ -196,11 +196,11 @@ String _getJoinButtonText(EventInfoController controller, String? meetingLink) {
 
   if (isOrganizer) {
     return meetingLink != null && meetingLink.isNotEmpty
-        ? "You're the Organizer!"
-        : "Your Event Link";
+        ? 'you_are_the_organizer'.tr
+        : 'your_event_link'.tr;
   }
 
   return meetingLink != null && meetingLink.isNotEmpty
-      ? "Click to Join Meeting"
-      : "Link Not Available Yet";
+      ? 'click_to_join_meeting'.tr
+      : 'link_not_available_yet'.tr;
 }

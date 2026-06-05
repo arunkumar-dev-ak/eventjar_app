@@ -62,7 +62,7 @@ class _QRBottomSheet extends StatelessWidget {
 
           // Header
           Text(
-            'Your Ticket',
+            'your_ticket'.tr,
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.bold,
@@ -119,7 +119,7 @@ class _QRBottomSheet extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  'Confirmation Code',
+                  'confirmation_code'.tr,
                   style: TextStyle(
                     fontSize: 8.sp,
                     color: AppColors.textSecondary(context),

@@ -204,8 +204,8 @@ class NetworkingFormController extends GetxController {
       await UserProfileApi.updateUserProfile(data);
 
       AppSnackbar.success(
-        title: "Success",
-        message: "Networking info updated successfully",
+        title: "success".tr,
+        message: "networking_info_updated".tr,
       );
 
       Navigator.pop(context, "refresh");
@@ -221,7 +221,7 @@ class NetworkingFormController extends GetxController {
       } else {
         AppSnackbar.error(
           title: "Failed",
-          message: "Something went wrong. Please try again.",
+          message: "generic_try_again_error".tr,
         );
       }
     } finally {

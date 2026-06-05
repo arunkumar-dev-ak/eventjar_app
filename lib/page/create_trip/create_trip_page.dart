@@ -40,7 +40,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                 /// Trip Name
                 FormElement(
                   controller: controller.tripNameController,
-                  label: "Trip Name *",
+                  label: "trip_name".tr,
                   validator: (val) =>
                       val == null || val.isEmpty ? "Required" : null,
                 ),
@@ -50,7 +50,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                 /// Destination
                 FormElement(
                   controller: controller.destinationController,
-                  label: "Destination *",
+                  label: "destination".tr,
                   validator: (val) =>
                       val == null || val.isEmpty ? "Required" : null,
                 ),

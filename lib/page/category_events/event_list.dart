@@ -64,7 +64,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                     ),
                     SizedBox(width: 1.5.wp),
                     Text(
-                      'Date filter: ',
+                      '${"date_filter".tr} ',
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w500,
@@ -177,7 +177,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                               ),
                               SizedBox(height: 2.hp),
                               Text(
-                                'No events found',
+                                'no_events_found'.tr,
                                 style: TextStyle(
                                   fontSize: 10.sp,
                                   color: AppColors.textHint(context),
@@ -231,7 +231,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                   controller: controller.searchController,
                   autofocus: true,
                   decoration: InputDecoration(
-                    hintText: 'Search events...',
+                    hintText: 'search_events'.tr,
                     hintStyle: TextStyle(
                       color: Colors.white70,
                       fontSize: 10.sp,

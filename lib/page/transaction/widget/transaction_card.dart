@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class TransactionCard extends StatelessWidget {
   final String name;
@@ -43,7 +44,7 @@ class TransactionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isReceived ? "Received from $name" : "Paid to $name",
+                  isReceived ? "${"received_from".tr} $name" : "${"paid_to".tr} $name",
                   style: TextStyle(
                     fontSize: 9.sp,
                     fontWeight: FontWeight.w600,

@@ -47,7 +47,7 @@ class GalleryFormController extends GetxController {
   Future<void> pickFromGallery() async {
     if (remaining <= 0) {
       AppSnackbar.error(
-        title: 'Limit Reached',
+        title: 'limit_reached'.tr,
         message: 'You can add up to ${GalleryFormState.maxImages} images',
       );
       return;
@@ -63,7 +63,7 @@ class GalleryFormController extends GetxController {
   Future<void> pickFromCamera() async {
     if (remaining <= 0) {
       AppSnackbar.error(
-        title: 'Limit Reached',
+        title: 'limit_reached'.tr,
         message: 'You can add up to ${GalleryFormState.maxImages} images',
       );
       return;
@@ -81,7 +81,7 @@ class GalleryFormController extends GetxController {
     for (final xFile in files) {
       if (totalCount + added >= GalleryFormState.maxImages) {
         AppSnackbar.error(
-          title: 'Limit Reached',
+          title: 'limit_reached'.tr,
           message:
               'Only ${GalleryFormState.maxImages} images allowed. Some images were skipped.',
         );
@@ -93,7 +93,7 @@ class GalleryFormController extends GetxController {
 
       if (size > GalleryFormState.maxFileSizeBytes) {
         AppSnackbar.error(
-          title: 'File Too Large',
+          title: 'file_too_large'.tr,
           message: '${xFile.name} exceeds 5MB limit and was skipped',
         );
         continue;
@@ -102,7 +102,7 @@ class GalleryFormController extends GetxController {
       final ext = xFile.path.split('.').last.toLowerCase();
       if (!['jpg', 'jpeg', 'png', 'webp'].contains(ext)) {
         AppSnackbar.error(
-          title: 'Invalid Format',
+          title: 'invalid_format'.tr,
           message: '${xFile.name} is not a supported image format',
         );
         continue;
@@ -209,7 +209,7 @@ class GalleryFormController extends GetxController {
       state.isSaving.value = false;
       AppSnackbar.error(
         title: 'Failed',
-        message: 'Something went wrong. Please try again.',
+        message: 'generic_try_again_error'.tr,
       );
       return;
     }
@@ -218,8 +218,8 @@ class GalleryFormController extends GetxController {
     Navigator.of(Get.context!).pop('refresh');
     Future.delayed(const Duration(milliseconds: 300), () {
       AppSnackbar.success(
-        title: 'Success',
-        message: 'Gallery updated successfully',
+        title: 'success'.tr,
+        message: 'gallery_updated_success'.tr,
       );
     });
   }

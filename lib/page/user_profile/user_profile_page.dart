@@ -363,7 +363,7 @@ class UserProfilePage extends GetView<UserProfileController> {
   Widget _buildNotificationsSection(BuildContext ctx) {
     return _buildSection(
       ctx,
-      title: "Automation",
+      title: 'automation'.tr,
       child: GestureDetector(
         onTap: () {
           controller.navigateToConfigureNotification();

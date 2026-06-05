@@ -98,7 +98,7 @@ class UserProfileController extends GetxController
     final status = await Permission.camera.status;
     if (status.isGranted) {
       _showSettingsDialog(
-        title: 'Disable Camera',
+        title: 'disable_camera'.tr,
         message:
             'To disable camera access, you need to turn it off in your device settings.',
       );
@@ -106,7 +106,7 @@ class UserProfileController extends GetxController
     }
     if (status.isPermanentlyDenied || status.isRestricted) {
       _showSettingsDialog(
-        title: 'Enable Camera',
+        title: 'enable_camera'.tr,
         message:
             'Camera permission was previously denied. Please enable it in your device settings to use QR scan and card scan.',
       );
@@ -120,7 +120,7 @@ class UserProfileController extends GetxController
     final status = await Permission.notification.status;
     if (status.isGranted) {
       _showSettingsDialog(
-        title: 'Disable Notifications',
+        title: 'disable_notifications'.tr,
         message:
             'To disable notifications, you need to turn them off in your device settings.',
       );
@@ -128,7 +128,7 @@ class UserProfileController extends GetxController
     }
     if (status.isPermanentlyDenied || status.isRestricted) {
       _showSettingsDialog(
-        title: 'Enable Notifications',
+        title: 'enable_notifications'.tr,
         message:
             'Notification permission was previously denied. Please enable it in your device settings to stay updated.',
       );
@@ -299,7 +299,7 @@ class UserProfileController extends GetxController
       LoggerService.loggerInstance.e(err);
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to Load User Profile",
+        title: "failed_load_profile".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -451,7 +451,7 @@ class UserProfileController extends GetxController
           aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
           uiSettings: [
             AndroidUiSettings(
-              toolbarTitle: 'Crop Profile Photo',
+              toolbarTitle: 'crop_profile_photo'.tr,
               toolbarColor: const Color(0xFF1A73E8),
               toolbarWidgetColor: Colors.white,
               initAspectRatio: CropAspectRatioPreset.square,
@@ -460,7 +460,7 @@ class UserProfileController extends GetxController
               showCropGrid: true,
             ),
             IOSUiSettings(
-              title: 'Crop Profile Photo',
+              title: 'crop_profile_photo'.tr,
               aspectRatioLockEnabled: true,
               resetAspectRatioEnabled: false,
             ),
@@ -485,7 +485,7 @@ class UserProfileController extends GetxController
           // Fallback: use cropped image as-is if bg removal fails
           state.selectedAvatarFile.value = File(croppedFile.path);
           AppSnackbar.error(
-            title: 'Background removal failed',
+            title: 'background_removal_failed'.tr,
             message: result.errorMessage ?? 'Using original image',
           );
         }
@@ -546,7 +546,7 @@ class UserProfileController extends GetxController
     if (file == null) {
       AppSnackbar.error(
         title: 'Invalid',
-        message: "Something went wrong, Kindly reupload file",
+        message: "reupload_file_error".tr,
       );
       return;
     }
@@ -567,8 +567,8 @@ class UserProfileController extends GetxController
         imageCache.clear();
         imageCache.clearLiveImages();
         AppSnackbar.success(
-          title: 'Success',
-          message: 'Profile picture updated!',
+          title: 'success'.tr,
+          message: 'profile_picture_updated'.tr,
         );
         state.isEditingAvatar.value = false;
         state.selectedAvatarFile.value = null;
@@ -583,10 +583,10 @@ class UserProfileController extends GetxController
       final msg = e.response?.data is Map
           ? e.response?.data['error']?.toString()
           : 'Failed to upload';
-      AppSnackbar.error(title: 'Error', message: msg ?? 'Failed to upload');
+      AppSnackbar.error(title: 'error'.tr, message: msg ?? 'failed_upload'.tr);
     } catch (e) {
       LoggerService.loggerInstance.e(e);
-      AppSnackbar.error(title: 'Error', message: 'Failed to upload');
+      AppSnackbar.error(title: 'error'.tr, message: 'failed_upload'.tr);
     } finally {
       state.isProfileLoading.value = false;
     }
@@ -830,7 +830,7 @@ class UserProfileController extends GetxController
     UserStore.to.clearStore();
     Get.offAllNamed(RouteName.dashboardpage);
     AppSnackbar.success(
-      title: "Logged Out Successfully",
+      title: "logged_out_success".tr,
       message: "You have been logged out.",
     );
   }
@@ -848,8 +848,8 @@ class UserProfileController extends GetxController
         state.userProfile.value?.phoneParsed?.fullNumber;
     if (phone == null || phone.isEmpty) {
       AppSnackbar.error(
-        title: "Error",
-        message: "No phone number found on your profile",
+        title: "error".tr,
+        message: "no_phone_on_profile".tr,
       );
       return false;
     }
@@ -864,7 +864,7 @@ class UserProfileController extends GetxController
       if (err is DioException) {
         ApiErrorHandler.handleDioError(err, "Failed to send OTP");
       } else {
-        AppSnackbar.error(title: "Error", message: err.toString());
+        AppSnackbar.error(title: "error".tr, message: err.toString());
       }
       return false;
     } finally {
@@ -936,8 +936,8 @@ class UserProfileController extends GetxController
         );
       } else {
         AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong. Please try again.",
+          title: "error".tr,
+          message: "generic_try_again_error".tr,
         );
       }
       return false;
@@ -973,10 +973,10 @@ class UserProfileController extends GetxController
           } catch (_) {}
         }
       }
-      AppSnackbar.error(title: "Error", message: "No email app found.");
+      AppSnackbar.error(title: "error".tr, message: "no_email_app_found".tr);
     } catch (e) {
       LoggerService.loggerInstance.e(e);
-      AppSnackbar.error(title: "Error", message: "Could not open email app.");
+      AppSnackbar.error(title: "error".tr, message: "could_not_open_email_app".tr);
     }
   }
 
@@ -992,8 +992,8 @@ class UserProfileController extends GetxController
 
     if (password.isEmpty) {
       AppSnackbar.error(
-        title: "Required",
-        message: "Please enter your password",
+        title: "required".tr,
+        message: "enter_password_error".tr,
       );
       return;
     }
@@ -1010,15 +1010,15 @@ class UserProfileController extends GetxController
         onTabOpen();
 
         AppSnackbar.success(
-          title: "Success",
-          message: "Two-Factor Authentication disabled",
+          title: "success".tr,
+          message: "two_fa_disabled".tr,
         );
       }
     } catch (err) {
       if (err is DioException) {
         ApiErrorHandler.handleDioError(err, "Error");
       } else {
-        AppSnackbar.error(title: "Error", message: "Something went wrong");
+        AppSnackbar.error(title: "error".tr, message: "generic_try_again_error".tr);
       }
     } finally {
       state.isDisabling2FA.value = false;

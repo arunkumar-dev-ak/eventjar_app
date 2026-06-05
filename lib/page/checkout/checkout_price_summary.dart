@@ -43,7 +43,7 @@ Widget buildCheckoutPriceSummarySection() {
               const Icon(Icons.receipt_long, color: Colors.white, size: 20),
               SizedBox(width: 3.wp),
               Text(
-                "Price Summary",
+                "price_summary".tr,
                 style: TextStyle(
                   fontSize: 11.sp,
                   fontWeight: FontWeight.bold,
@@ -85,7 +85,7 @@ Widget buildCheckoutPriceSummarySection() {
 
                 /// Subtotal
                 _buildPriceRowWhite(
-                  "Subtotal",
+                  "subtotal".tr,
                   "₹${subtotal.toStringAsFixed(2)}",
                 ),
                 SizedBox(height: 1.5.hp),
@@ -93,7 +93,7 @@ Widget buildCheckoutPriceSummarySection() {
                 /// Promo Discount
                 if (isPromoApplied) ...[
                   _buildPriceRowWhite(
-                    "Promo Discount",
+                    "promo_discount".tr,
                     "- ₹${promoDiscount.toStringAsFixed(2)}",
                   ),
                   SizedBox(height: 1.5.hp),
@@ -103,7 +103,7 @@ Widget buildCheckoutPriceSummarySection() {
 
                 /// Platform Fee
                 _buildPriceRowWhite(
-                  "Platform Fee",
+                  "platform_fee".tr,
                   "₹${platformFee.toStringAsFixed(2)}",
                 ),
                 SizedBox(height: 1.5.hp),
@@ -119,7 +119,7 @@ Widget buildCheckoutPriceSummarySection() {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Total",
+                      "total".tr,
                       style: TextStyle(
                         fontSize: 11.sp,
                         fontWeight: FontWeight.bold,

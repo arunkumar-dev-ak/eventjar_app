@@ -54,7 +54,7 @@ Widget buildExpandedContent(
                         contact.stage.index < 4 && !hasActiveMeeting;
                     if (!canMoveNext) {
                       AppToast.warning(
-                        'Complete meeting to move to next stage',
+                        'complete_meeting_next_stage'.tr,
                       );
                       return;
                     }
@@ -90,7 +90,7 @@ Widget buildExpandedContent(
                         ),
                         SizedBox(height: 2),
                         Text(
-                          "Tap for",
+                          "tap_for".tr,
                           style: TextStyle(
                             fontSize: isSmallScreen ? 6 : 7,
                             fontWeight: FontWeight.w600,

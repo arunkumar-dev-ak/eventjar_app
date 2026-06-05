@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Set2faController extends GetxController {
-  var appBarTitle = "Two-Factor Authentication";
+  var appBarTitle = "two_factor_authentication".tr;
   final state = Set2faState();
 
   final TextEditingController otpController = TextEditingController();

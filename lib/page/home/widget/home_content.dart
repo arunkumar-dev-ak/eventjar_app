@@ -477,7 +477,7 @@ class HomeContent extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'View All Events',
+                          'view_all_events'.tr,
                           style: TextStyle(
                             fontSize: 10.sp,
                             fontWeight: FontWeight.w600,

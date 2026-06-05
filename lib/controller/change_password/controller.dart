@@ -51,15 +51,15 @@ class ChangePasswordController extends GetxController {
         Navigator.pop(Get.context!);
 
         AppSnackbar.success(
-          title: "Success",
-          message: "Password changed successfully",
+          title: "success".tr,
+          message: "password_changed_success".tr,
         );
       }
     } catch (err) {
       if (err is DioException) {
         ApiErrorHandler.handleDioError(err, "Change Password Failed");
       } else {
-        AppSnackbar.error(title: "Error", message: "Something went wrong");
+        AppSnackbar.error(title: "error".tr, message: "generic_try_again_error".tr);
       }
     } finally {
       state.isLoading.value = false;

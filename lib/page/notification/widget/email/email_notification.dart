@@ -44,7 +44,7 @@ class EmailNotificationTab extends StatelessWidget {
           else if (config.authType == 'password')
             _StatusBanner(
               title: '${config.providerName ?? 'email'.tr} Active',
-              subtitle: 'SMTP verified • ${config.fromEmail ?? ''}',
+              subtitle: '${'smtp_verified'.tr} • ${config.fromEmail ?? ''}',
               onDisconnect: controller.disconnectEmail,
               isDeleting: controller.state.isDeleting.value,
             ),
@@ -137,8 +137,8 @@ class _StatusBanner extends StatelessWidget {
                     )
                   : TextButton(
                       onPressed: onDisconnect,
-                      child: const Text(
-                        "Disconnect",
+                      child: Text(
+                        'disconnect'.tr,
                         style: TextStyle(color: Colors.red),
                       ),
                     ),
@@ -148,7 +148,7 @@ class _StatusBanner extends StatelessWidget {
           /// TEXT BELOW FULL ROW
           SizedBox(height: 1.hp),
           Text(
-            "To use a different provider, kindly disconnect the current one first.",
+            'disconnect_provider_first_error'.tr,
             style: TextStyle(
               color: AppColors.textSecondary(context),
               fontSize: 7.5.sp,

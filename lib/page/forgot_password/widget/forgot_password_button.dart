@@ -97,7 +97,7 @@ void openModel(BuildContext context, {required VoidCallback onTap}) {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Check your email',
+                  'check_email'.tr,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -128,7 +128,7 @@ void openModel(BuildContext context, {required VoidCallback onTap}) {
                     ),
                     child: Center(
                       child: Text(
-                        'Check Email',
+                        'check_email'.tr,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 11.sp,

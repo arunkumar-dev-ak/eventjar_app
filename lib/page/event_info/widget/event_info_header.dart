@@ -70,7 +70,7 @@ class EventInfoHeader extends StatelessWidget {
         color: AppColors.cardBgStatic,
         width: double.infinity,
         child: Text(
-          eventInfo?.title ?? 'Event Details',
+          eventInfo?.title ?? 'event_details'.tr,
           style: TextStyle(
             color: AppColors.textPrimaryStatic,
             fontSize: 12.sp,
@@ -302,7 +302,7 @@ class EventInfoHeader extends StatelessWidget {
             Icon(Icons.image_outlined, color: Colors.grey.shade400, size: 48),
             const SizedBox(height: 8),
             Text(
-              'No Image',
+              'no_image'.tr,
               style: TextStyle(color: AppColors.textHintStatic, fontSize: 12),
             ),
           ],
@@ -460,7 +460,7 @@ class EventInfoHeader extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          'Organised by',
+                          'organised_by'.tr,
                           style: TextStyle(
                             fontSize: 8.5.sp,
                             color: AppColors.textHintStatic,
@@ -613,8 +613,8 @@ class EventInfoHeader extends StatelessWidget {
       final link = eventInfo.virtualLink;
       if (link == null || link.isEmpty) {
         Get.snackbar(
-          'No Link',
-          'No meeting link available for this event.',
+          'no_link'.tr,
+          'no_meeting_link_available'.tr,
           snackPosition: SnackPosition.BOTTOM,
         );
         return;
@@ -627,7 +627,7 @@ class EventInfoHeader extends StatelessWidget {
       if (uri == null || !await canLaunchUrl(uri)) {
         Get.snackbar(
           'invalid_link'.tr,
-          'Could not open the meeting link. Please check the link and try again.',
+          'meeting_link_open_error'.tr,
           snackPosition: SnackPosition.BOTTOM,
         );
         return;
@@ -655,19 +655,19 @@ class EventInfoHeader extends StatelessWidget {
 
   Widget _buildQuickInfoRow(EventInfo eventInfo) {
     // Format date display
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+    final months = [
+      'jan'.tr,
+      'feb'.tr,
+      'mar'.tr,
+      'apr'.tr,
+      'may'.tr,
+      'jun'.tr,
+      'jul'.tr,
+      'aug'.tr,
+      'sep'.tr,
+      'oct'.tr,
+      'nov'.tr,
+      'dec'.tr,
     ];
     final startDate = eventInfo.startDate;
 
@@ -834,7 +834,7 @@ class EventInfoHeader extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            eventInfo.isVirtual ? 'Tap to join' : 'Tap to View',
+                            eventInfo.isVirtual ? 'tap_to_join'.tr : 'tap_to_view'.tr,
                             style: TextStyle(
                               color: AppColors.textHintStatic,
                               fontSize: 8.sp,

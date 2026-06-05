@@ -16,14 +16,14 @@ class WhatsAppTokenForm extends GetView<NotificationController> {
         children: [
           /// Title
           Text(
-            "Mybotify Integration Token",
+            'mybotify_integration_token'.tr,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 11.sp),
           ),
 
           SizedBox(height: 0.6.hp),
 
           Text(
-            "Paste your Mybotify WhatsApp API token below to enable notifications.",
+            'paste_token_desc'.tr,
             style: TextStyle(fontSize: 8.sp, color: AppColors.textSecondary(context)),
           ),
 
@@ -37,10 +37,10 @@ class WhatsAppTokenForm extends GetView<NotificationController> {
               style: TextStyle(fontSize: 10.sp),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return "Token is required";
+                  return 'token_required_error'.tr;
                 }
                 if (value.trim().length <= 10) {
-                  return "Token must be greater than 10 characters";
+                  return 'token_length_error'.tr;
                 }
                 return null;
               },
@@ -95,7 +95,7 @@ class WhatsAppTokenForm extends GetView<NotificationController> {
               SizedBox(width: 1.5.wp),
               Expanded(
                 child: Text(
-                  "Token is securely encrypted and never shared.",
+                  'token_encrypted_desc'.tr,
                   style: TextStyle(fontSize: 8.sp, color: AppColors.textSecondary(context)),
                 ),
               ),
@@ -134,7 +134,7 @@ class WhatsAppTokenForm extends GetView<NotificationController> {
                           ),
                           SizedBox(width: 2.wp),
                           Text(
-                            "Saving Token...",
+                            'saving_token'.tr,
                             style: TextStyle(
                               fontSize: 10.sp,
                               fontWeight: FontWeight.w600,
@@ -149,7 +149,7 @@ class WhatsAppTokenForm extends GetView<NotificationController> {
                           const Icon(Icons.save_outlined, color: Colors.white),
                           SizedBox(width: 2.wp),
                           Text(
-                            "Save Token",
+                            'save_token'.tr,
                             style: TextStyle(
                               fontSize: 10.sp,
                               fontWeight: FontWeight.w600,

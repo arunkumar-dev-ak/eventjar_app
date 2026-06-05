@@ -26,8 +26,8 @@ class ConnectionRequestAttendee extends StatelessWidget {
       if (requestState == null) {
         return connectionReqEmptyPlaceholder(
           message: tabIndex == 0
-              ? "No sent requests."
-              : "No received requests.",
+              ? 'no_sent_requests'.tr
+              : 'no_received_requests'.tr,
           icon: tabIndex == 0
               ? Icons.outbox_outlined
               : Icons.move_to_inbox_outlined,
@@ -40,8 +40,8 @@ class ConnectionRequestAttendee extends StatelessWidget {
       if (list.isEmpty) {
         return connectionReqEmptyPlaceholder(
           message: tabIndex == 0
-              ? "No sent requests."
-              : "No received requests.",
+              ? 'no_sent_requests'.tr
+              : 'no_received_requests'.tr,
           icon: tabIndex == 0
               ? Icons.outbox_outlined
               : Icons.move_to_inbox_outlined,

@@ -24,14 +24,14 @@ Widget buildPhysicalEventCard(EventInfo eventInfo) {
       if (eventInfo.parkingInfo != null &&
           eventInfo.parkingInfo!.isNotEmpty) ...[
         Divider(height: 3.hp, color: AppColors.borderStatic),
-        _infoRow(Icons.local_parking, "Parking", eventInfo.parkingInfo!),
+        _infoRow(Icons.local_parking, 'parking'.tr, eventInfo.parkingInfo!),
       ],
       if (eventInfo.accessibilityInfo != null &&
           eventInfo.accessibilityInfo!.isNotEmpty) ...[
         Divider(height: 3.hp, color: AppColors.borderStatic),
         _infoRow(
           Icons.accessible,
-          "Accessibility",
+          'accessibility'.tr,
           eventInfo.accessibilityInfo!,
         ),
       ],

@@ -160,16 +160,16 @@ class CheckoutController extends GetxController {
 
   Future<void> proceedToCheckout() async {
     if (state.cartLines.isEmpty) {
-      AppSnackbar.error(title: "Error", message: "Please select a ticket tier");
+      AppSnackbar.error(title: "error".tr, message: "select_ticket_tier_error".tr);
       return;
     }
 
     if (state.eligibilityResponse.value?.eligible == false) {
       AppSnackbar.error(
-        title: "Not Eligible",
+        title: "not_eligible".tr,
         message:
             state.eligibilityResponse.value?.reason ??
-            "You already have a ticket",
+            "something_went_wrong".tr,
       );
       return;
     }
@@ -189,12 +189,12 @@ class CheckoutController extends GetxController {
     try {
       final eventInfo = state.eventInfo.value;
       if (eventInfo == null) {
-        AppSnackbar.error(title: "Error", message: "Event not found");
+        AppSnackbar.error(title: "error".tr, message: "event_not_found".tr);
         return;
       }
 
       if (state.cartLines.isEmpty) {
-        AppSnackbar.error(title: "Error", message: "No tickets in cart");
+        AppSnackbar.error(title: "error".tr, message: "no_tickets_in_cart".tr);
         return;
       }
 
@@ -205,8 +205,8 @@ class CheckoutController extends GetxController {
 
       if (!paymentResponse.success) {
         AppSnackbar.error(
-          title: "Payment Error",
-          message: paymentResponse.error ?? "Failed to initialize payment",
+          title: "payment_error".tr,
+          message: paymentResponse.error ?? "something_went_wrong".tr,
         );
         return;
       }
@@ -214,8 +214,8 @@ class CheckoutController extends GetxController {
       // ✅ CHECK RAZORPAY READY
       if (!paymentResponse.canOpenRazorpay) {
         AppSnackbar.error(
-          title: "Payment Error",
-          message: "Payment gateway not ready. Please try again.",
+          title: "payment_error".tr,
+          message: "payment_gateway_not_ready".tr,
         );
         return;
       }
@@ -235,8 +235,8 @@ class CheckoutController extends GetxController {
     } catch (e) {
       LoggerService.loggerInstance.e('Payment init failed: $e');
       AppSnackbar.error(
-        title: "Payment Error",
-        message: "Failed to start payment: $e",
+        title: "payment_error".tr,
+        message: "something_went_wrong".tr,
       );
     } finally {
       state.isRegistering.value = false;
@@ -246,12 +246,12 @@ class CheckoutController extends GetxController {
   Future<void> _handleFreeTicket() async {
     final eventInfo = state.eventInfo.value;
     if (eventInfo == null) {
-      AppSnackbar.error(title: "Error", message: "Event not found");
+      AppSnackbar.error(title: "error".tr, message: "event_not_found".tr);
       return;
     }
 
     if (state.cartLines.isEmpty) {
-      AppSnackbar.error(title: "Error", message: "No tickets in cart");
+      AppSnackbar.error(title: "error".tr, message: "no_tickets_in_cart".tr);
       return;
     }
 
@@ -406,7 +406,7 @@ class CheckoutController extends GetxController {
       }
       ApiErrorHandler.handleDioError(err, "Registration Failed");
     } else {
-      AppSnackbar.error(title: "Error", message: "Something went wrong");
+      AppSnackbar.error(title: "error".tr, message: "something_went_wrong".tr);
     }
   }
 
@@ -416,7 +416,7 @@ class CheckoutController extends GetxController {
 
       final eventInfo = state.eventInfo.value;
       if (eventInfo == null) {
-        AppSnackbar.error(title: "Error", message: "Event not found");
+        AppSnackbar.error(title: "error".tr, message: "event_not_found".tr);
         return;
       }
 
@@ -450,9 +450,8 @@ class CheckoutController extends GetxController {
     } catch (e) {
       LoggerService.loggerInstance.e('Payment verification failed: $e');
       AppSnackbar.error(
-        title: "Verification Failed",
-        message:
-            "Payment succeeded but ticket creation failed. Contact support.",
+        title: "verification_failed".tr,
+        message: "something_went_wrong".tr,
       );
     } finally {
       state.isRegistering.value = false;
@@ -461,8 +460,8 @@ class CheckoutController extends GetxController {
 
   void _onError(PaymentFailureResponse response) {
     AppSnackbar.error(
-      title: "Payment Failed",
-      message: "Payment Failed Please try again",
+      title: "payment_failed".tr,
+      message: "payment_failed_retry".tr,
     );
     state.isRegistering.value = false;
   }
@@ -494,8 +493,8 @@ class CheckoutController extends GetxController {
 
       if (response.valid) {
         AppSnackbar.success(
-          title: "Success",
-          message: "Promo code applied successfully",
+          title: "success".tr,
+          message: "promo_applied_success".tr,
         );
       }
     } catch (e) {

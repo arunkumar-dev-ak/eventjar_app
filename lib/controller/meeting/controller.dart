@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MeetingController extends GetxController {
-  var appBarTitle = "My Meetings";
+  var appBarTitle = "my_meetings".tr;
   final state = MeetingState();
   late Worker debounceWorker;
 
@@ -121,7 +121,7 @@ class MeetingController extends GetxController {
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load Meetings",
+        title: "failed_load_meetings".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -184,14 +184,14 @@ class MeetingController extends GetxController {
       }
       await MeetingApi.completeMeeting(id: meetingId);
       AppSnackbar.success(
-        title: 'Meeting Completed!',
-        message: 'This meeting has been marked as completed successfully.',
+        title: 'meeting_completed'.tr,
+        message: 'meeting_marked_completed'.tr,
       );
       fetchMeetings(forceRefresh: true);
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load Meetings",
+        title: "failed_load_meetings".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

@@ -42,7 +42,7 @@ class LanguageSelectionPopup extends StatelessWidget {
                 ),
                 SizedBox(height: 1.5.hp),
                 Text(
-                  'Choose Your Language',
+                  'choose_your_language'.tr,
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
@@ -51,7 +51,7 @@ class LanguageSelectionPopup extends StatelessWidget {
                 ),
                 SizedBox(height: 0.5.hp),
                 Text(
-                  'Select your preferred language',
+                  'select_preferred_language'.tr,
                   style: TextStyle(
                     fontSize: 10.sp,
                     color: Colors.grey.shade600,
@@ -139,7 +139,7 @@ class LanguageSelectionPopup extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Continue',
+                        'continue_btn'.tr,
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w600,

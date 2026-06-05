@@ -187,12 +187,12 @@ class BusinessInfoFormController extends GetxController {
     try {
       state.isLoading.value = true;
       await UserProfileApi.updateUserProfile(data); // Your API
-      AppSnackbar.success(title: "Success", message: "Business info updated");
+      AppSnackbar.success(title: "success".tr, message: "business_info_updated".tr);
       Navigator.pop(Get.context!, "refresh");
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to update business info",
+        title: "failed_update_business_info".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

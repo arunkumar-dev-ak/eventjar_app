@@ -32,7 +32,7 @@ class OverViewPage extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 5.wp),
             child: Text(
               eventInfo.description ??
-                  "No description available for this event.",
+                  'no_event_description'.tr,
               style: TextStyle(
                 fontSize: 8.sp,
                 color: AppColors.textSecondaryStatic,

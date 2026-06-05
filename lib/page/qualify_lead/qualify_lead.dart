@@ -53,7 +53,7 @@ class QualifyLeadPage extends GetView<QualifyLeadController> {
                   SizedBox(height: 3.hp),
 
                   // Common TextFormFields
-                  _buildSectionTitle('Lead Score'),
+                  _buildSectionTitle('lead_score'.tr),
                   SizedBox(height: 0.5.hp),
                   qualifyLeadTextField(
                     controller: controller.leadScoreController,
@@ -63,11 +63,11 @@ class QualifyLeadPage extends GetView<QualifyLeadController> {
                     maxLength: 2,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Enter lead score';
+                        return 'enter_lead_score'.tr;
                       }
                       final score = int.tryParse(value);
                       if (score == null || score < 1 || score > 10) {
-                        return 'Score must be 1-10';
+                        return 'score_range_error'.tr;
                       }
 
                       return null;
@@ -75,7 +75,7 @@ class QualifyLeadPage extends GetView<QualifyLeadController> {
                   ),
 
                   SizedBox(height: 2.hp),
-                  _buildSectionTitle('Qualification Details'),
+                  _buildSectionTitle('qualification_details'.tr),
                   SizedBox(height: 0.5.hp),
 
                   qualifyLeadTextField(

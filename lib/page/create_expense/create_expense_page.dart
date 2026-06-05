@@ -43,7 +43,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                 // TITLE
                 ContactFormElement(
                   controller: controller.titleController,
-                  label: "Expense Title *",
+                  label: "expense_title".tr,
                   validator: (val) =>
                       val == null || val.isEmpty ? "Required" : null,
                 ),
@@ -52,7 +52,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                 // AMOUNT
                 ContactFormElement(
                   controller: controller.amountController,
-                  label: "Amount *",
+                  label: "amount".tr,
                   keyboardType: TextInputType.number,
                   validator: (val) =>
                       val == null || val.isEmpty ? "Enter amount" : null,
@@ -61,7 +61,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
 
                 // CATEGORY DROPDOWN
                 SingleSelectFilterDropdown<String>(
-                  title: "Trip Category",
+                  title: "trip_category".tr,
                   items: controller.state.categories,
                   selectedItem: controller.state.selectedCategory,
                   getDefaultItem: () => 'shopping'.tr,
@@ -85,7 +85,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
 
                 // PAID BY (Single Select)
                 SingleSelectPaginatedFilterDropdown<DropdownMemberModel>(
-                  title: "Paid By",
+                  title: "paid_by".tr,
                   items: controller.state.members,
                   selectedItem: controller.state.paidBy,
                   getDefaultItem: () => controller.state.members.first,

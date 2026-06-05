@@ -239,7 +239,7 @@ class HomeAppBar extends StatelessWidget {
                     children: [
                       _buildMenuItem(
                         icon: Icons.person_add_alt_1_rounded,
-                        title: 'Add Contact',
+                        title: 'add_contacts'.tr,
                         subtitle: 'add_contact_manually'.tr,
                         gradientColors: [
                           Colors.blue.shade400,
@@ -258,7 +258,7 @@ class HomeAppBar extends StatelessWidget {
                       ),
                       _buildMenuItem(
                         icon: Icons.nfc_rounded,
-                        title: 'NFC',
+                        title: 'nfc'.tr,
                         subtitle: 'scan_nfc_tag'.tr,
                         gradientColors: [
                           Colors.green.shade400,

@@ -49,7 +49,7 @@ class SettleUpDialog extends GetView<ViewTripController> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          type == PaymentActionType.record ? "Record" : 'settle_up'.tr,
+          type == PaymentActionType.record ? "record".tr : 'settle_up'.tr,
           style: TextStyle(
             fontSize: 12.sp,
             fontWeight: FontWeight.bold,
@@ -74,7 +74,7 @@ class SettleUpDialog extends GetView<ViewTripController> {
         onChanged: (v) {
           if (v != null) controller.state.paymentMethod.value = v;
         },
-        decoration: _inputDecoration(context, "Payment Method", null),
+        decoration: _inputDecoration(context, "payment_method".tr, null),
       );
     });
   }
@@ -83,7 +83,7 @@ class SettleUpDialog extends GetView<ViewTripController> {
     return TextField(
       controller: controller.settleNotesController,
       maxLines: 2,
-      decoration: _inputDecoration(context, "Notes (optional)", null),
+      decoration: _inputDecoration(context, "notes_optional".tr, null),
     );
   }
 
@@ -96,7 +96,7 @@ class SettleUpDialog extends GetView<ViewTripController> {
         width: double.infinity,
         child: FormButton(
           text: isLoading
-              ? (isRecord ? "Recording..." : "Settling...")
+              ? (isRecord ? "recording".tr : "settling".tr)
               : (isRecord ? "Record Payment" : 'settle_up'.tr),
           isLoading: isLoading,
           type: FormButtonType.primary,

@@ -210,7 +210,7 @@ class DashboardController extends GetxController {
             "statusCard": NetworkStatusCardData(
               key: 'overdue',
               enumKey: 'overdue',
-              label: 'Overdue',
+              label: 'overdue'.tr,
               icon: Icons.warning_amber_rounded,
               color: Colors.red,
             ),

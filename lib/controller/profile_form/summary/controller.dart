@@ -153,8 +153,8 @@ class SummaryFormController extends GetxController {
       await UserProfileApi.updateUserProfile(data);
 
       AppSnackbar.success(
-        title: "Success",
-        message: "Profile summary updated successfully",
+        title: "success".tr,
+        message: "profile_summary_updated".tr,
       );
 
       Navigator.pop(context, "refresh");
@@ -170,7 +170,7 @@ class SummaryFormController extends GetxController {
       } else {
         AppSnackbar.error(
           title: "Failed",
-          message: "Something went wrong. Please try again.",
+          message: "generic_try_again_error".tr,
         );
       }
     } finally {

@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ReviewsPage extends StatelessWidget {
   const ReviewsPage({super.key});
@@ -39,7 +40,7 @@ class ReviewsPage extends StatelessWidget {
 
             // Title
             Text(
-              "No Reviews Yet",
+              'no_reviews_yet'.tr,
               style: TextStyle(
                 fontSize: 9.sp,
                 fontWeight: FontWeight.w600,

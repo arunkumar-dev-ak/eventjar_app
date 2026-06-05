@@ -42,7 +42,7 @@ class RescheduleMeetingContactList
                   children: [
                     // Title
                     Text(
-                      "Reschedule Meeting",
+                      "reschedule_meeting".tr,
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
@@ -126,7 +126,7 @@ class RescheduleMeetingContactList
                                   ),
                                   SizedBox(width: 3.wp),
                                   Text(
-                                    "Confirming...",
+                                    "confirming".tr,
                                     style: TextStyle(
                                       fontSize: 11.sp,
                                       color: Colors.white,
@@ -135,7 +135,7 @@ class RescheduleMeetingContactList
                                 ],
                               )
                             : Text(
-                                "Confirm",
+                                "confirm".tr,
                                 style: TextStyle(
                                   fontSize: 11.sp,
                                   fontWeight: FontWeight.w600,

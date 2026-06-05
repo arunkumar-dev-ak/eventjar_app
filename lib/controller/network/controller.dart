@@ -13,7 +13,7 @@ import 'package:get/get.dart';
 
 class NetworkScreenController extends GetxController
     with GetTickerProviderStateMixin {
-  var appBarTitle = "Network";
+  var appBarTitle = "network".tr;
   final state = NetworkScreenState();
   DashboardController dashboardController = Get.find();
 
@@ -33,7 +33,7 @@ class NetworkScreenController extends GetxController
   final List<NetworkStatusCardData> statusCards = [
     NetworkStatusCardData(
       key: 'totalContacts',
-      label: 'Total Contacts',
+      label: 'total_contacts'.tr,
       enumKey: 'all',
       icon: Icons.people,
       color: Colors.blue,
@@ -41,34 +41,34 @@ class NetworkScreenController extends GetxController
     NetworkStatusCardData(
       key: 'new',
       enumKey: 'new',
-      label: 'New',
+      label: 'new'.tr,
       icon: Icons.fiber_new,
       color: Colors.green,
     ),
     NetworkStatusCardData(
       key: 'followup24h',
-      label: '24H Followup',
+      label: 'twenty_four_h_followup'.tr,
       enumKey: 'followup_24h',
       icon: Icons.access_time,
       color: Colors.orange,
     ),
     NetworkStatusCardData(
       key: 'followup7d',
-      label: '7D Followup',
+      label: 'seven_d_followup'.tr,
       enumKey: 'followup_7d',
       icon: Icons.calendar_view_week,
       color: Colors.purple,
     ),
     NetworkStatusCardData(
       key: 'followup30d',
-      label: '30D Followup',
+      label: 'thirty_d_followup'.tr,
       enumKey: 'followup_30d',
       icon: Icons.calendar_month,
       color: Colors.teal,
     ),
     NetworkStatusCardData(
       key: 'qualified',
-      label: 'Qualified',
+      label: 'qualified'.tr,
       enumKey: 'qualified',
       icon: Icons.verified,
       color: Colors.indigo,
@@ -76,7 +76,7 @@ class NetworkScreenController extends GetxController
     NetworkStatusCardData(
       key: 'overdue',
       enumKey: 'overdue',
-      label: 'Overdue',
+      label: 'overdue'.tr,
       icon: Icons.warning_amber_rounded,
       color: Colors.red,
     ),

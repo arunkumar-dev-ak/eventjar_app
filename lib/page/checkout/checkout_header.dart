@@ -77,7 +77,7 @@ Widget buildCheckoutEventInfo(EventInfo eventInfo, BuildContext context) {
                 ? 'online'.tr
                 : eventInfo.venue != null && eventInfo.venue!.isNotEmpty
                 ? "${eventInfo.venue}${eventInfo.city != null && eventInfo.city!.isNotEmpty ? ', ${eventInfo.city}' : ''}"
-                : "Location not specified",
+                : "location_not_specified".tr,
             eventInfo.isVirtual ? Colors.blue.shade400 : Colors.red.shade400,
           ),
 

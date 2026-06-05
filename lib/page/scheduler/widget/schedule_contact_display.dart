@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget buildContactDisplayForSchedulePage(ContactMeeting? meeting) {
   if (meeting == null) {
@@ -40,7 +41,7 @@ Widget buildContactDisplayForSchedulePage(ContactMeeting? meeting) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                meeting.contact?.name ?? 'Unknown Contact',
+                meeting.contact?.name ?? 'unknown_contact'.tr,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,

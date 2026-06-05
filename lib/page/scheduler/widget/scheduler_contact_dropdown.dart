@@ -16,7 +16,7 @@ class SchedulerContactDropdown extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Select Qualified Contact *',
+          'select_qualified_contact'.tr,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,

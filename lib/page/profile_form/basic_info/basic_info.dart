@@ -85,10 +85,10 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                     label: 'full_name'.tr,
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) {
-                        return 'Full name is required';
+                        return 'full_name_required'.tr;
                       }
                       if (val.trim().length < 2) {
-                        return 'Full name must be at least 2 characters';
+                        return 'full_name_length_error'.tr;
                       }
                       return null;
                     },
@@ -99,7 +99,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                   Obx(() {
                     return IntlPhoneField(
                       decoration: InputDecoration(
-                        labelText: 'Mobile Number *',
+                        labelText: 'mobile_number'.tr,
                         labelStyle: TextStyle(fontSize: 14),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
@@ -153,7 +153,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                       controller: controller.mobileController,
                       validator: (value) {
                         if (value == null || !value.isValidNumber()) {
-                          return 'Invalid phone number';
+                          return 'invalid_phone_number'.tr;
                         }
                         return null;
                       },

@@ -118,8 +118,8 @@ class SocialFormController extends GetxController {
       await UserProfileApi.updateUserProfile(data);
 
       AppSnackbar.success(
-        title: "Success",
-        message: "Social links updated successfully",
+        title: "success".tr,
+        message: "social_links_updated".tr,
       );
 
       Navigator.pop(context, "refresh");
@@ -135,7 +135,7 @@ class SocialFormController extends GetxController {
       } else {
         AppSnackbar.error(
           title: "Failed",
-          message: "Something went wrong. Please try again.",
+          message: "generic_try_again_error".tr,
         );
       }
     } finally {

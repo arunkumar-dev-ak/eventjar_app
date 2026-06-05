@@ -128,7 +128,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
             final selected = controller.state.attendeeStatusFilter.value;
             return Row(
               children: [
-                _buildFilterChip('All', '', selected),
+                _buildFilterChip('all'.tr, '', selected),
                 SizedBox(width: 2.wp),
                 _buildFilterChip('sent'.tr, 'sent', selected),
                 SizedBox(width: 2.wp),
@@ -167,7 +167,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
             return Padding(
               padding: EdgeInsets.symmetric(vertical: 6.hp),
               child: Text(
-                "No attendees found.",
+                'no_attendees_found'.tr,
                 style: TextStyle(
                   fontSize: 10.sp,
                   color: AppColors.textHint(context),
@@ -311,8 +311,8 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                   SizedBox(height: 1.hp),
                   Text(
                     searchExpanded
-                        ? "No attendees match your search."
-                        : "No attendees found.",
+                        ? 'no_attendees_match_search'.tr
+                        : 'no_attendees_found'.tr,
                     style: TextStyle(
                       fontSize: 10.sp,
                       color: AppColors.textHint(context),
@@ -578,7 +578,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                             : AppColors.border(context),
                         text: positionText.isNotEmpty
                             ? positionText
-                            : "No job title added",
+                            : 'no_job_title_added'.tr,
                         isEmpty: positionText.isEmpty,
                       ),
                       SizedBox(height: 0.3.hp),
@@ -589,7 +589,7 @@ class _ConnectionAttendeeListState extends State<ConnectionAttendeeList>
                             : AppColors.border(context),
                         text: locationText.isNotEmpty
                             ? locationText
-                            : "No location added",
+                            : 'no_location_added'.tr,
                         isEmpty: locationText.isEmpty,
                       ),
                       if (bioText.isNotEmpty) ...[

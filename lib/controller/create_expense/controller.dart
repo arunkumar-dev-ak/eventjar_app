@@ -17,7 +17,7 @@ class CreateExpenseController extends GetxController {
   final amountController = TextEditingController();
   final descriptionController = TextEditingController();
 
-  final appBarTitle = "Create Expense";
+  var appBarTitle = "create_expense".tr;
 
   // Trip ID from arguments
   late final String tripId;
@@ -157,8 +157,8 @@ class CreateExpenseController extends GetxController {
     final payer = state.paidBy.value;
     if (payer == null) {
       Get.snackbar(
-        "Error",
-        "Please select who paid for the expense",
+        "error".tr,
+        "something_went_wrong".tr,
         snackPosition: SnackPosition.BOTTOM,
       );
       return;
@@ -166,8 +166,8 @@ class CreateExpenseController extends GetxController {
 
     if (state.selectedMembers.isEmpty) {
       Get.snackbar(
-        "Error",
-        "Please select at least one member to split with",
+        "error".tr,
+        "select_friend_error".tr,
         snackPosition: SnackPosition.BOTTOM,
       );
       return;
@@ -199,8 +199,8 @@ class CreateExpenseController extends GetxController {
     try {
       await CreateExpenseApi.createExpense(data: data);
       AppSnackbar.success(
-        title: "Expense Created",
-        message: "The expense was successfully added to the trip.",
+        title: "expense_created".tr,
+        message: "success".tr,
       );
       Navigator.pop(Get.context!, "refresh");
     } catch (error) {

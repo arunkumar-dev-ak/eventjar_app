@@ -84,7 +84,7 @@ class ContactCardHeader extends StatelessWidget {
                             _buildInfoRow(
                               Icons.phone_outlined,
                               AppColors.textSecondary(context),
-                              contact.phone ?? 'No phone',
+                              contact.phone ?? 'no_phone'.tr,
                             ),
                           SizedBox(height: 12),
                           // _buildStageBadge(stageColor, contact.stage.index),

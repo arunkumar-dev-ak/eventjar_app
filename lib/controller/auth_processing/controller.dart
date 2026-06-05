@@ -44,8 +44,8 @@ class AuthProcessingController extends GetxController {
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         AppSnackbar.error(
-          title: "Error",
-          message: "Invalid Authentication token.",
+          title: "error".tr,
+          message: "invalid_auth_token".tr,
         );
 
         Navigator.pop(Get.context!);
@@ -139,7 +139,7 @@ class AuthProcessingController extends GetxController {
       await UserStore.to.handleSetLocalData(response);
 
       AppSnackbar.success(
-        title: "Login Successful",
+        title: "login_successful".tr,
         message: "User Logged in successfully",
       );
 
@@ -166,8 +166,8 @@ class AuthProcessingController extends GetxController {
     } catch (e) {
       _textTimer.cancel();
       AppSnackbar.error(
-        title: "Error",
-        message: "An unexpected error occurred.",
+        title: "error".tr,
+        message: "unexpected_error".tr,
       );
       Navigator.pop(Get.context!);
     }
@@ -178,7 +178,7 @@ class AuthProcessingController extends GetxController {
     Get.focusScope?.unfocus();
     if (state.tempToken == null) {
       AppSnackbar.warning(
-        title: "Verification Error",
+        title: "verification_error".tr,
         message: "Session expired. Please login again.",
       );
       return;
@@ -188,8 +188,8 @@ class AuthProcessingController extends GetxController {
 
     if (otp.length != 6) {
       AppSnackbar.warning(
-        title: "Invalid Code",
-        message: "Please enter the 6-digit verification code.",
+        title: "invalid_code".tr,
+        message: "enter_six_digit_code_error".tr,
       );
       return;
     }
@@ -206,8 +206,8 @@ class AuthProcessingController extends GetxController {
       await UserStore.to.handleSetLocalData(normalResponse);
 
       AppSnackbar.success(
-        title: "Login Successful",
-        message: "2FA verified successfully",
+        title: "login_successful".tr,
+        message: "two_fa_verified_success".tr,
       );
 
       state.is2FaLoading.value = false;
@@ -219,7 +219,7 @@ class AuthProcessingController extends GetxController {
       if (err is DioException) {
         ApiErrorHandler.handleDioError(err, "2FA Error");
       } else {
-        AppSnackbar.error(title: "2FA Error", message: "Something went wrong");
+        AppSnackbar.error(title: "2FA Error", message: "generic_try_again_error".tr);
       }
     }
   }
@@ -267,7 +267,7 @@ class AuthProcessingController extends GetxController {
         await UserStore.to.handleSetLocalData(response);
 
         AppSnackbar.success(
-          title: "Login Successful",
+          title: "login_successful".tr,
           message: "User Logged in successfully",
         );
 
@@ -275,11 +275,11 @@ class AuthProcessingController extends GetxController {
       } catch (err) {
         // --- Error Handling ---
         if (err is DioException) {
-          ApiErrorHandler.handleDioError(err, "Sign Up Error");
+          ApiErrorHandler.handleDioError(err, "sign_up_error".tr);
         } else {
           AppSnackbar.error(
-            title: "Sign Up Error",
-            message: "Something went wrong",
+            title: "sign_up_error".tr,
+            message: "generic_try_again_error".tr,
           );
         }
       } finally {

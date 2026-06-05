@@ -73,7 +73,7 @@ class NextStageActionButton extends GetView<ContactController> {
     return GestureDetector(
       onTap: () {
         if (hasActiveMeeting) {
-          AppToast.warning('Complete meeting to move to next stage');
+          AppToast.warning('complete_meeting_next_stage'.tr);
           return;
         }
 

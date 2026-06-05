@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget userProfilebuildInfoRow({
   required IconData icon,
@@ -13,10 +14,10 @@ Widget userProfilebuildInfoRow({
   // Check if value indicates empty state
   final isEmpty =
       value == "N/A" ||
-      value == "Not provided" ||
-      value == "Not specified" ||
-      value == "No bio added yet" ||
-      value == "Availability not set";
+      value == 'not_provided'.tr ||
+      value == 'not_specified'.tr ||
+      value == 'no_bio_added'.tr ||
+      value == 'availability_not_set'.tr;
 
   return Row(
     crossAxisAlignment: CrossAxisAlignment.start,

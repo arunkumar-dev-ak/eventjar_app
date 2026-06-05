@@ -42,7 +42,7 @@ class MorePage extends GetView<MoreController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "explore",
+                              'explore'.tr,
                               style: TextStyle(
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w400,
@@ -119,22 +119,22 @@ class MorePage extends GetView<MoreController> {
                         _buildIconGrid(context, isDark, [
                           _GridItem(
                             icon: Icons.person_add_alt_1_rounded,
-                            label: "Add\nContact",
+                            label: 'add_contacts'.tr,
                             onTap: controller.navigateToAddContact,
                           ),
                           _GridItem(
                             icon: Icons.nfc_rounded,
-                            label: "Tap NFC\nCard",
+                            label: 'tap_nfc_card'.tr,
                             onTap: controller.navigateToNfcRead,
                           ),
                           _GridItem(
                             icon: Icons.qr_code_scanner_rounded,
-                            label: "QR\nScanner",
+                            label: 'qr_scanner'.tr,
                             onTap: controller.navigateToQrDashboard,
                           ),
                           _GridItem(
                             icon: Icons.document_scanner,
-                            label: "Scan\nBusiness Card",
+                            label: 'scan_business_card'.tr,
                             onTap: controller.navigateToScanCard,
                           ),
                         ]),
@@ -147,32 +147,32 @@ class MorePage extends GetView<MoreController> {
                         _buildIconGrid(context, isDark, [
                           _GridItem(
                             icon: Icons.contacts_outlined,
-                            label: "Total\nContacts",
+                            label: 'total_contacts'.tr,
                             onTap: controller.navigateToTotalContacts,
                           ),
                           _GridItem(
                             icon: Icons.fiber_new_outlined,
-                            label: "New\nContacts",
+                            label: 'new_contacts'.tr,
                             onTap: controller.navigateToNewContacts,
                           ),
                           _GridItem(
                             icon: Icons.schedule,
-                            label: "24H\nFollowup",
+                            label: 'twenty_four_h_followup'.tr,
                             onTap: controller.navigateTo24hFollowup,
                           ),
                           _GridItem(
                             icon: Icons.date_range_outlined,
-                            label: "7D\nFollowup",
+                            label: 'seven_d_followup'.tr,
                             onTap: controller.navigateTo7dFollowup,
                           ),
                           _GridItem(
                             icon: Icons.calendar_month_outlined,
-                            label: "30D\nFollowup",
+                            label: 'thirty_d_followup'.tr,
                             onTap: controller.navigateTo30dFollowup,
                           ),
                           _GridItem(
                             icon: Icons.verified_outlined,
-                            label: "Qualified\nContacts",
+                            label: 'qualified_contacts'.tr,
                             onTap: controller.navigateToQualifiedContacts,
                           ),
                         ]),
@@ -198,12 +198,12 @@ class MorePage extends GetView<MoreController> {
                         SizedBox(height: 3.hp),
 
                         // Meeting Section
-                        _buildSectionTitle(context, "MEETING"),
+                        _buildSectionTitle(context, 'meeting_caps'.tr),
                         SizedBox(height: 1.5.hp),
                         _buildIconGrid(context, isDark, [
                           _GridItem(
                             icon: Icons.list_alt_outlined,
-                            label: "All",
+                            label: 'all'.tr,
                             onTap: controller.navigateToAllMeetings,
                           ),
                           _GridItem(
@@ -281,7 +281,7 @@ class MorePage extends GetView<MoreController> {
                           ),
                           _GridItem(
                             icon: Icons.lock_reset_outlined,
-                            label: "Change\nPassword",
+                            label: 'change_password'.tr,
                             onTap: controller.navigateToChangePassword,
                           ),
                         ]),
@@ -387,7 +387,7 @@ class MorePage extends GetView<MoreController> {
         : AppColors.gradientDarkStart;
     return IconButton(
       icon: Icon(Icons.language, color: iconColor),
-      tooltip: 'Language',
+      tooltip: 'language'.tr,
       onPressed: () => showLanguageChangeDialog(context),
     );
   }
@@ -405,25 +405,25 @@ class MorePage extends GetView<MoreController> {
       };
       return PopupMenuButton<ThemeMode>(
         icon: Icon(icon, color: iconColor),
-        tooltip: 'Theme',
+        tooltip: 'theme'.tr,
         onSelected: (selected) => ThemeStore.to.setThemeMode(selected),
         itemBuilder: (_) => [
           _buildThemeMenuItem(
             ThemeMode.light,
             Icons.light_mode_rounded,
-            'Light',
+            'light'.tr,
             mode,
           ),
           _buildThemeMenuItem(
             ThemeMode.dark,
             Icons.dark_mode_rounded,
-            'Dark',
+            'dark'.tr,
             mode,
           ),
           _buildThemeMenuItem(
             ThemeMode.system,
             Icons.phone_android_rounded,
-            'System Default',
+            'system_default'.tr,
             mode,
           ),
         ],

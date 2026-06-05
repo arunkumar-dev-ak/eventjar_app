@@ -56,7 +56,7 @@ class RemoveMemberDialog extends GetView<ViewTripController> {
             ),
             SizedBox(height: 1.hp),
             Text(
-              'Remove Member',
+              'remove_member'.tr,
               style: TextStyle(
                 fontSize: 11.sp,
                 fontWeight: FontWeight.bold,
@@ -92,7 +92,7 @@ class RemoveMemberDialog extends GetView<ViewTripController> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'This will remove their access to the trip and recalculate balances.',
+                      'remove_member_warning'.tr,
                       style: TextStyle(
                         fontSize: 9.sp,
                         color: AppColors.textSecondary(context),
@@ -164,7 +164,7 @@ class RemoveMemberDialog extends GetView<ViewTripController> {
                               ),
                             )
                           : Text(
-                              'Remove',
+                              'remove'.tr,
                               style: TextStyle(
                                 fontSize: 9.sp,
                                 fontWeight: FontWeight.bold,

@@ -93,7 +93,7 @@ class CheckoutPage extends GetView<CheckoutController> {
 
       appBar: AppBar(
         title: Text(
-          "Checkout",
+          "checkout".tr,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 13.sp,

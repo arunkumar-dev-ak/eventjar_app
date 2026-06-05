@@ -417,7 +417,7 @@ class BioProfilePage extends GetView<BioProfileController> {
               context,
               icon: Icons.people_outline_rounded,
               count: controller.contactsCount.toString(),
-              label: 'Total \nContacts',
+              label: 'total_contacts'.tr,
               color: AppColors.gradientLightEnd,
             ),
           ),
@@ -526,7 +526,7 @@ class BioProfilePage extends GetView<BioProfileController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Networking Goal',
+                    'networking_goal'.tr,
                     style: TextStyle(
                       fontSize: 8.sp,
                       fontWeight: FontWeight.w600,
@@ -707,7 +707,7 @@ class BioProfilePage extends GetView<BioProfileController> {
     return _buildCard(
       context,
       icon: Icons.info_outline_rounded,
-      title: 'About',
+      title: 'about'.tr,
       child: Text(
         controller.bio,
         style: TextStyle(
@@ -1062,7 +1062,7 @@ class BioProfilePage extends GetView<BioProfileController> {
             },
             icon: const Icon(Icons.calendar_month_outlined, size: 20),
             label: Text(
-              'Schedule 1-on-1 Meeting',
+              'schedule_1_on_1_meeting'.tr,
               style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w700),
             ),
             style: ElevatedButton.styleFrom(

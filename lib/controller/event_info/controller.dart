@@ -174,7 +174,7 @@ class EventInfoController extends GetxController
       state.eventInfo.value = response.event;
     } catch (e) {
       LoggerService.loggerInstance.e('Failed to load event info by ticket: $e');
-      AppSnackbar.error(title: "Error fetching event", message: e.toString());
+      AppSnackbar.error(title: "error_fetching_event".tr, message: e.toString());
     } finally {
       state.isLoading.value = false;
     }
@@ -187,7 +187,7 @@ class EventInfoController extends GetxController
       state.eventInfo.value = response;
     } catch (e) {
       LoggerService.loggerInstance.e('Failed to load event info: $e');
-      AppSnackbar.error(title: "error", message: e.toString());
+      AppSnackbar.error(title: "error".tr, message: e.toString());
     } finally {
       state.isLoading.value = false;
     }
@@ -277,7 +277,7 @@ class EventInfoController extends GetxController
       LoggerService.loggerInstance.e(err);
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load attendee list",
+        title: "failed_load_attendees".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -312,7 +312,7 @@ class EventInfoController extends GetxController
       LoggerService.loggerInstance.e(err);
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load attendee meeting requests",
+        title: "failed_load_meeting_requests".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -364,8 +364,8 @@ class EventInfoController extends GetxController
 
     if (isEventOwner) {
       AppSnackbar.warning(
-        title: "Organizer access",
-        message: "This event belongs to you, so booking is disabled.",
+        title: "organizer_access".tr,
+        message: "booking_disabled_own_event".tr,
       );
       return;
     }
@@ -404,8 +404,8 @@ class EventInfoController extends GetxController
   ) async {
     if (state.isProcessingRequest.value) {
       AppSnackbar.warning(
-        title: "Please wait a moment",
-        message: "Handling your previous request",
+        title: "please_wait_moment".tr,
+        message: "handling_previous_request".tr,
       );
       return;
     }
@@ -423,7 +423,7 @@ class EventInfoController extends GetxController
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to Update Status",
+        title: "failed_update_status".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -439,8 +439,8 @@ class EventInfoController extends GetxController
     final buttonId = toUserId;
     if (state.isMeetReqProcessingRequest.value) {
       AppSnackbar.warning(
-        title: "Please wait a moment",
-        message: "Handling your previous request",
+        title: "please_wait_moment".tr,
+        message: "handling_previous_request".tr,
       );
       return;
     }
@@ -466,7 +466,7 @@ class EventInfoController extends GetxController
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to Update Status",
+        title: "failed_update_status".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

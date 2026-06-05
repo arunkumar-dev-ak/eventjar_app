@@ -36,7 +36,7 @@ class InactiveTripCard extends GetView<BudgetTrackController> {
     final diff = DateTime.now().difference(date);
 
     if (diff.inMinutes < 1) {
-      return 'Just now';
+      return 'just_now'.tr;
     }
 
     if (diff.inHours < 1) {
@@ -48,7 +48,7 @@ class InactiveTripCard extends GetView<BudgetTrackController> {
     }
 
     if (diff.inDays == 1) {
-      return 'Yesterday';
+      return 'yesterday'.tr;
     }
 
     if (diff.inDays < 7) {

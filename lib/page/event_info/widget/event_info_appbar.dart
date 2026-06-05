@@ -165,18 +165,18 @@ $dateTimeLocation
 
   String _formatEventDateTimeForShare(EventInfo eventInfo) {
     final months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      'jan'.tr,
+      'feb'.tr,
+      'mar'.tr,
+      'apr'.tr,
+      'may'.tr,
+      'jun'.tr,
+      'jul'.tr,
+      'aug'.tr,
+      'sep'.tr,
+      'oct'.tr,
+      'nov'.tr,
+      'dec'.tr,
     ];
 
     // Start date
@@ -185,7 +185,7 @@ $dateTimeLocation
         '${start.day} ${months[start.month - 1]}, ${start.year}';
 
     // Start time
-    String startTimeStr = 'Time TBA';
+    String startTimeStr = 'time_tba'.tr;
 
     startTimeStr = controller.generateDateTimeAndFormatTime(
       eventInfo.startTime,

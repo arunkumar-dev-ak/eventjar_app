@@ -37,7 +37,7 @@ class LocationPage extends StatelessWidget {
                 title: 'virtual_event'.tr,
                 icon: Icons.monitor,
                 child: buildVirtualEventCard(
-                  platform: eventInfo.virtualPlatform ?? "Online Platform",
+                  platform: eventInfo.virtualPlatform ?? 'online_platform'.tr,
                   meetingLink: eventInfo.virtualLink,
                 ),
               ),

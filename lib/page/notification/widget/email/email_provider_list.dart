@@ -44,7 +44,7 @@ class EmailProvidersList extends StatelessWidget {
                 AppSnackbar.warning(
                   title: 'disconnect_required'.tr,
                   message:
-                      "Kindly disconnect the current email provider before switching.",
+                      'disconnect_email_provider_warning'.tr,
                 );
                 return;
               }
@@ -168,6 +168,6 @@ class ProviderCard extends StatelessWidget {
       return ElevatedButton(onPressed: onTap, child: Text('change'.tr));
     }
 
-    return ElevatedButton(onPressed: onTap, child: const Text("Use"));
+    return ElevatedButton(onPressed: onTap, child: Text('use'.tr));
   }
 }

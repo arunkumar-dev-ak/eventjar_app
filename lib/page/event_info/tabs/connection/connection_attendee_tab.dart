@@ -20,7 +20,7 @@ class ConnectionAttendeesTab extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "Request",
+            'request'.tr,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 9.sp),
           ),
           Container(

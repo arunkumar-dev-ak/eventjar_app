@@ -15,7 +15,7 @@ class SchedulerDurationDropdown extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Duration *',
+          'duration'.tr,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -33,7 +33,7 @@ class SchedulerDurationDropdown extends StatelessWidget {
           onSelected: (duration) {
             return controller.selectDuration(duration);
           },
-          hintText: "Select duration",
+          hintText: "select_duration".tr,
         ),
       ],
     );

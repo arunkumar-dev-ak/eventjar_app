@@ -161,7 +161,7 @@ class ScheduleMeetingDialog extends StatelessWidget {
                 ),
                 SizedBox(height: 1.2.hp),
                 Text(
-                  'Schedule a Meeting',
+                  'schedule_a_meeting'.tr,
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
@@ -377,7 +377,7 @@ class ScheduleMeetingDialog extends StatelessWidget {
             ),
             const SizedBox(width: 6),
             Text(
-              'Message for $_firstName',
+              'message_for'.tr + ' $_firstName',
               style: TextStyle(
                 fontSize: 9.sp,
                 fontWeight: FontWeight.w600,
@@ -470,8 +470,8 @@ class ScheduleMeetingDialog extends StatelessWidget {
               : const Icon(Icons.calendar_month_outlined, size: 20),
           label: Text(
             controller.state.isMeetingSubmitting.value
-                ? 'Submitting...'
-                : 'Confirm Meeting',
+                ? 'submitting'.tr
+                : 'confirm_meeting'.tr,
             style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w700),
           ),
           style: ElevatedButton.styleFrom(

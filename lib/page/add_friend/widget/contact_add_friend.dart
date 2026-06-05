@@ -30,7 +30,7 @@ class ContactAddFriendContactView extends GetView<AddFriendController> {
             controller.onContactSelected(item);
           },
 
-          hintText: "Choose contact",
+          hintText: "choose_contact".tr,
 
           onChanged: controller.onSearchChanged,
           onRefresh: controller.onRefreshClicked,

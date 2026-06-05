@@ -104,7 +104,7 @@ class NfcController extends GetxController
       if (result == "refresh") {
         final statusCard = NetworkStatusCardData(
           key: 'totalContacts',
-          label: 'Total Contacts',
+          label: 'total_contacts'.tr,
           enumKey: 'all',
           icon: Icons.people,
           color: Colors.blue,
@@ -139,8 +139,8 @@ class NfcController extends GetxController
 
   void showNfcErrorPrompt() {
     AppSnackbar.warning(
-      title: 'NFC Error',
-      message: 'NFC is not available on this device',
+      title: 'nfc_error'.tr,
+      message: 'nfc_not_available'.tr,
     );
   }
 

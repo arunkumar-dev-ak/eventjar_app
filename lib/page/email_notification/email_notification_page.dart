@@ -17,7 +17,7 @@ class EmailNotificationPage extends GetView<EmailNotificationController> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Email Configuration",
+          'email_configuration'.tr,
           style: TextStyle(color: AppColors.textPrimary(context)),
         ),
         centerTitle: false,
@@ -52,8 +52,8 @@ class EmailNotificationPage extends GetView<EmailNotificationController> {
                 // 🔹 SMTP HOST
                 EmailNotificationFormElement(
                   controller: controller.smtpHost,
-                  label: 'SMTP Host *',
-                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                  label: 'smtp_host'.tr,
+                  validator: (v) => v!.isEmpty ? 'required'.tr : null,
                 ),
 
                 SizedBox(height: 2.hp),
@@ -61,14 +61,14 @@ class EmailNotificationPage extends GetView<EmailNotificationController> {
                 // SMTP PORT
                 EmailNotificationFormElement(
                   controller: controller.smtpPort,
-                  label: 'SMTP Port *',
+                  label: 'smtp_port'.tr,
                   keyboardType: TextInputType.number,
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Required';
+                    if (v == null || v.isEmpty) return 'required'.tr;
 
                     final port = int.tryParse(v);
-                    if (port == null) return 'Port must be a number';
-                    if (port < 1 || port > 65535) return 'Invalid port';
+                    if (port == null) return 'port_number_error'.tr;
+                    if (port < 1 || port > 65535) return 'invalid_port'.tr;
 
                     return null;
                   },
@@ -79,8 +79,8 @@ class EmailNotificationPage extends GetView<EmailNotificationController> {
                 // USERNAME
                 EmailNotificationFormElement(
                   controller: controller.username,
-                  label: 'Username / Email *',
-                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                  label: 'username_email'.tr,
+                  validator: (v) => v!.isEmpty ? 'required'.tr : null,
                 ),
 
                 SizedBox(height: 2.hp),
@@ -137,7 +137,7 @@ class EmailNotificationPage extends GetView<EmailNotificationController> {
                       ),
                       errorStyle: const TextStyle(height: 0),
                     ),
-                    validator: (v) => v!.isEmpty ? 'Required' : null,
+                    validator: (v) => v!.isEmpty ? 'required'.tr : null,
                   ),
                 ),
 
@@ -146,8 +146,8 @@ class EmailNotificationPage extends GetView<EmailNotificationController> {
                 // FROM NAME
                 EmailNotificationFormElement(
                   controller: controller.fromName,
-                  label: 'From Name *',
-                  validator: (v) => v!.isEmpty ? 'Required' : null,
+                  label: 'from_name'.tr,
+                  validator: (v) => v!.isEmpty ? 'required'.tr : null,
                 ),
 
                 SizedBox(height: 2.hp),
@@ -155,13 +155,13 @@ class EmailNotificationPage extends GetView<EmailNotificationController> {
                 // FROM EMAIL
                 EmailNotificationFormElement(
                   controller: controller.fromEmail,
-                  label: 'From Email *',
+                  label: 'from_email'.tr,
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Required';
+                    if (v == null || v.isEmpty) return 'required'.tr;
 
                     final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$');
 
-                    if (!emailRegex.hasMatch(v)) return 'Enter valid email';
+                    if (!emailRegex.hasMatch(v)) return 'enter_valid_email'.tr;
 
                     return null;
                   },
@@ -178,7 +178,7 @@ class EmailNotificationPage extends GetView<EmailNotificationController> {
 
                     final emailRegex = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$');
 
-                    if (!emailRegex.hasMatch(v)) return 'Enter valid email';
+                    if (!emailRegex.hasMatch(v)) return 'enter_valid_email'.tr;
 
                     return null;
                   },

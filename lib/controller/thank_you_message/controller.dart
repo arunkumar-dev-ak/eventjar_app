@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ThankYouMessageController extends GetxController {
-  var appBarTitle = "Send Thank you Message";
+  var appBarTitle = "send_thank_you_message".tr;
   final state = ThankYouMessageState();
 
   final formKey = GlobalKey<FormState>();
@@ -84,8 +84,8 @@ class ThankYouMessageController extends GetxController {
       );
       if (response == true) {
         AppSnackbar.success(
-          title: "Thank you message sent",
-          message: "Contact Updated Successfully",
+          title: "thank_you_sent".tr,
+          message: "contact_updated_success".tr,
         );
       }
 
@@ -102,7 +102,7 @@ class ThankYouMessageController extends GetxController {
       } else {
         AppSnackbar.error(
           title: "Failed",
-          message: "Something went wrong. Please try again.",
+          message: "generic_try_again_error".tr,
         );
       }
     } finally {
@@ -119,7 +119,7 @@ class ThankYouMessageController extends GetxController {
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to Get Config details",
+        title: "failed_get_config".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

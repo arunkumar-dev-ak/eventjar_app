@@ -38,7 +38,7 @@ class AddContactAdditionalInfoSheet extends GetView<AddContactController> {
             ),
             SizedBox(height: 2.hp),
             Text(
-              'Additional Info from Card',
+              'additional_info_from_card'.tr,
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w700,
@@ -47,7 +47,7 @@ class AddContactAdditionalInfoSheet extends GetView<AddContactController> {
             ),
             SizedBox(height: 0.5.hp),
             Text(
-              'Check the fields you want to save with this contact.',
+              'check_fields_to_save_desc'.tr,
               style: TextStyle(fontSize: 9.sp, color: AppColors.textSecondary(context)),
             ),
             SizedBox(height: 2.hp),
@@ -95,7 +95,7 @@ class AddContactAdditionalInfoSheet extends GetView<AddContactController> {
                   elevation: 4,
                 ),
                 child: Text(
-                  'Apply',
+                  'apply'.tr,
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.w600,

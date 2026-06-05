@@ -52,7 +52,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                     controller: controller.businessNameController,
                     label: 'business_name'.tr,
                     validator: (val) => val == null || val.trim().isEmpty
-                        ? 'Business name is required'
+                        ? 'business_name_required'.tr
                         : null,
                   ),
                   SizedBox(height: 2.hp),
@@ -75,7 +75,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                       );
                       return urlRegex.hasMatch(val.trim())
                           ? null
-                          : 'Enter valid URL';
+                          : 'enter_valid_url'.tr;
                     },
                   ),
                   SizedBox(height: 2.hp),
@@ -92,7 +92,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                       final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
                       return emailRegex.hasMatch(val.trim())
                           ? null
-                          : 'Enter valid email';
+                          : 'enter_valid_email'.tr;
                     },
                   ),
                   SizedBox(height: 2.hp),
@@ -102,7 +102,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                   Obx(() {
                     return IntlPhoneField(
                       decoration: InputDecoration(
-                        labelText: 'Mobile Number *',
+                        labelText: 'mobile_number'.tr,
                         labelStyle: TextStyle(fontSize: 14),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
@@ -156,7 +156,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                       controller: controller.businessPhoneController,
                       validator: (value) {
                         if (value == null || !value.isValidNumber()) {
-                          return 'Invalid phone number';
+                          return 'invalid_phone_number'.tr;
                         }
                         return null;
                       },

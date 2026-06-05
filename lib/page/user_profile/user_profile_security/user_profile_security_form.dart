@@ -152,7 +152,7 @@ class DeleteDialogButtons extends StatelessWidget {
                         ),
                         SizedBox(width: 8),
                         Text(
-                          "Processing...",
+                          'processing'.tr,
                           style: TextStyle(
                             fontSize: 10.sp,
                             fontWeight: FontWeight.w500,
@@ -161,7 +161,7 @@ class DeleteDialogButtons extends StatelessWidget {
                       ],
                     )
                   : Text(
-                      hasPendingDeletion ? "Reactivate" : "Delete",
+                      hasPendingDeletion ? 'reactivate'.tr : 'delete'.tr,
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.bold,

@@ -225,7 +225,7 @@ class TagSearchPopup extends StatelessWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            '"$searchText" is already created', // ✅ Clear feedback
+                            '"$searchText" ${'is_already_created'.tr}',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.green.shade800,
@@ -250,7 +250,7 @@ class TagSearchPopup extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            '"$searchText" is not in the list',
+                            '"$searchText" ${'is_not_in_the_list'.tr}',
                             style: const TextStyle(fontSize: 14),
                           ),
                         ),
@@ -273,8 +273,8 @@ class TagSearchPopup extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: const Text(
-                            'Create',
+                          child: Text(
+                            'create'.tr,
                             style: TextStyle(fontSize: 12),
                           ),
                         ),

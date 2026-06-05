@@ -61,7 +61,7 @@ class AddFriendPage extends GetView<AddFriendController> {
                   getDisplayValue: (type) {
                     switch (type) {
                       case AddFriendType.newFriend:
-                        return "New Friend";
+                        return 'new_friend'.tr;
                       case AddFriendType.contact:
                         return 'from_my_contacts'.tr;
                     }
@@ -127,7 +127,7 @@ class AddFriendPage extends GetView<AddFriendController> {
                           final isLoading = controller.state.isLoading.value;
 
                           return FormButton(
-                            text: isLoading ? "Sending..." : 'send_invitation_btn'.tr,
+                            text: isLoading ? 'sending'.tr : 'send_invitation_btn'.tr,
                             isLoading: isLoading,
                             type: FormButtonType.primary,
                             icon: Icons.person_add,

@@ -16,7 +16,7 @@ import 'package:path_provider/path_provider.dart';
 
 class MyQrScreenController extends GetxController
     with GetTickerProviderStateMixin {
-  var appBarTitle = "My QR";
+  var appBarTitle = "my_qr".tr;
   late AnimationController pulseController;
   late AnimationController rotateController;
   late Animation<double> pulseAnimation;

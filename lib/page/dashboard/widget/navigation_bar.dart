@@ -372,7 +372,7 @@ class _AnimatedCenterButtonState extends State<_AnimatedCenterButton>
         ],
       ).createShader(bounds),
       child: Text(
-        "Profile",
+        'profile'.tr,
         maxLines: 1,
         overflow: TextOverflow.visible,
         style: TextStyle(

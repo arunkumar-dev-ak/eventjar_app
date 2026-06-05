@@ -199,7 +199,7 @@ class EventInfoTicketSheet extends StatelessWidget {
                                 const SizedBox(height: 15),
                                 if (ticket.registeredAt != null) ...[
                                   Text(
-                                    "Registered On ${formatDate(ticket.registeredAt!)}",
+                                    "${'registered_on'.tr} ${formatDate(ticket.registeredAt!)}",
                                     style: TextStyle(
                                       color: AppColors.textSecondary(context),
                                     ),

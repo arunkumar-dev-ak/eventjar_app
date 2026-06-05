@@ -46,7 +46,7 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
                 SizedBox(height: 4.hp),
                 // 2. Multi-select 1
                 CommonMultiSelectDropdown(
-                  title: "Interested in connecting with",
+                  title: 'interested_in_connecting_with'.tr,
                   subtitle: 'select_all_that_apply'.tr,
                   selectedItems: controller.state.selectedConnectionTypes,
                   allItems: controller.connectionTypes,
@@ -57,7 +57,7 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
                 // 3. Multi-select 2
                 CommonMultiSelectDropdown(
                   title: 'how_help_others'.tr,
-                  subtitle: "Select services or expertise you can offer",
+                  subtitle: 'select_services_or_expertise'.tr,
                   selectedItems: controller.state.selectedHelpOfferings,
                   allItems: controller.helpOfferings,
                   fieldKey: 'helpOfferings',
@@ -66,7 +66,7 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
 
                 // 4. Multi-select 3
                 CommonMultiSelectDropdown(
-                  title: "Topics you're open to discussing",
+                  title: 'topics_open_to_discussing'.tr,
                   subtitle: 'select_relevant_business_topics'.tr,
                   selectedItems: controller.state.selectedDiscussionTopics,
                   allItems: controller.discussionTopics,

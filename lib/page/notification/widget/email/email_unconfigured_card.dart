@@ -38,7 +38,7 @@ class EmailUnconfiguredCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Configure SMTP to send tickets, reminders, and notifications.',
+                    'configure_smtp_desc'.tr,
                     style: TextStyle(fontSize: 13, color: AppColors.textSecondary(context)),
                   ),
                 ],

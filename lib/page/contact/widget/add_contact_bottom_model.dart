@@ -30,7 +30,7 @@ void addContactBottomModel(BuildContext context, ContactController controller) {
             SizedBox(height: 2.hp),
             _buildMenuItem(
               icon: Icons.person_add_alt_1_rounded,
-              title: 'Add Contact',
+              title: 'add_contact'.tr,
               subtitle: 'add_contact_manually'.tr,
               gradientColors: [Colors.blue.shade400, Colors.blue.shade600],
               onTap: () {

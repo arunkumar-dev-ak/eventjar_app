@@ -122,7 +122,7 @@ class ContactCardDeletePopup extends StatelessWidget {
 
             // Subtitle
             Text(
-              'Are you sure you want to delete "$contactName"?',
+              '${"delete_confirm_prompt".tr} "$contactName"?',
               style: TextStyle(
                 fontSize: 10.sp,
                 color: AppColors.textSecondary(context),
@@ -205,7 +205,7 @@ class ContactCardDeletePopup extends StatelessWidget {
                       onDelete(); // Execute delete
                     },
                     child: Text(
-                      'Delete',
+                      'delete'.tr,
                       style: TextStyle(
                         fontSize: 9.sp,
                         fontWeight: FontWeight.bold,

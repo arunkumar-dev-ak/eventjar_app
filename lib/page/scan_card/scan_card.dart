@@ -74,8 +74,8 @@ class _ScanCardState extends State<ScanCard> {
                         ),
                       ],
                     ),
-                    child: const Text(
-                      'Skip Tour',
+                    child: Text(
+                      'skip_tour'.tr,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 13,
@@ -156,7 +156,7 @@ class _ScanCardState extends State<ScanCard> {
                 Icons.help_outline_rounded,
                 color: Colors.blueGrey,
               ),
-              tooltip: 'Replay tour',
+              tooltip: 'replay_tour'.tr,
               onPressed: () => controller.startTourNow(),
             ),
           ),

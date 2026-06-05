@@ -29,7 +29,7 @@ class ChangePasswordHeader extends StatelessWidget {
                 ),
                 SizedBox(height: 0.5.hp),
                 GradientAutoSizeText(
-                  content: "Update your password securely.",
+                  content: 'update_password_securely'.tr,
                   textSize: 12.sp,
                   gradientStart: AppColors.gradientDarkStart,
                   gradientEnd: AppColors.gradientDarkEnd,

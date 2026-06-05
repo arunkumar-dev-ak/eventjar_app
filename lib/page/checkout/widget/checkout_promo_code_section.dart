@@ -29,7 +29,7 @@ class CheckoutPromoCodeSection extends GetView<CheckoutController> {
           children: [
             /// Title
             Text(
-              "Savings Corner",
+              "savings_corner".tr,
               style: TextStyle(
                 fontSize: 9.5.sp,
                 fontWeight: FontWeight.w600,
@@ -105,7 +105,7 @@ class CheckoutPromoCodeSection extends GetView<CheckoutController> {
                             ),
                           )
                         : Text(
-                            isApplied ? "Remove" : "Apply",
+                            isApplied ? "remove".tr : "apply".tr,
                             style: TextStyle(
                               fontSize: 8.5.sp,
                               fontWeight: FontWeight.w600,

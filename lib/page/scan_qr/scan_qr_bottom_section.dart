@@ -60,7 +60,7 @@ class ScanQrBottomSection extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Point camera at QR code',
+                          'point_camera_at_qr'.tr,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: colorScheme.onSurface,
@@ -69,8 +69,8 @@ class ScanQrBottomSection extends StatelessWidget {
                         SizedBox(height: 0.5.hp),
                         Text(
                           hasCamera
-                              ? 'Camera is ready. Hold the QR code inside the frame.'
-                              : 'Enable camera to scan the QR code on another device.',
+                              ? 'camera_ready_frame_desc'.tr
+                              : 'enable_camera_scan_desc'.tr,
                           style: TextStyle(
                             fontSize: 7.5.sp,
                             color: colorScheme.onSurface.withValues(alpha: 0.7),
@@ -97,8 +97,8 @@ class ScanQrBottomSection extends StatelessWidget {
                         ),
                         elevation: 4,
                       ),
-                      child: const Text(
-                        'Enable camera',
+                      child: Text(
+                        'enable_camera'.tr,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -117,7 +117,7 @@ class ScanQrBottomSection extends StatelessWidget {
             scope: QrScanScreenController.scanQrScope,
             key: controller.tourGalleryKey,
             title: 'from_gallery'.tr,
-            description: 'Pick an image containing a QR.',
+            description: 'pick_image_with_qr'.tr,
             tooltipBackgroundColor: Theme.of(context).brightness == Brightness.dark
                 ? const Color(0xFF1E293B)
                 : AppColors.gradientDarkStart,
@@ -157,8 +157,8 @@ class ScanQrBottomSection extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: () => controller.scanFromGallery(),
                 icon: const Icon(Icons.photo_library_rounded),
-                label: const Text(
-                  'Scan from Gallery',
+                label: Text(
+                  'scan_from_gallery'.tr,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(

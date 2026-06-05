@@ -360,7 +360,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Uploading...',
+                        'uploading'.tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w700,
@@ -369,7 +369,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
                     ],
                   )
                 : Text(
-                    'Save Gallery',
+                    'save_gallery'.tr,
                     style: TextStyle(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w700,

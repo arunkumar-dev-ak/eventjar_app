@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:get/get.dart';
 import 'package:google_mlkit_selfie_segmentation/google_mlkit_selfie_segmentation.dart';
 import 'package:image/image.dart' as img;
 
@@ -57,7 +58,7 @@ class ProfileImageProcessor {
 
       if (mask == null) {
         return BackgroundRemovalResult.error(
-          'No person detected in the image.',
+          'no_person_detected_error'.tr,
         );
       }
 

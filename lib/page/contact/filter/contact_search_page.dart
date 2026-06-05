@@ -22,7 +22,7 @@ class ContactsSearchAndFilters extends GetView<ContactController> {
                   child: TextField(
                     controller: controller.searchController,
                     decoration: InputDecoration(
-                      hintText: 'Search contacts',
+                      hintText: 'search_contacts'.tr,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,

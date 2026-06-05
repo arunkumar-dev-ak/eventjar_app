@@ -20,8 +20,8 @@ class NfcActionContainer extends GetView<NfcController> {
             NfcActionCard(
               title: 'write_contact'.tr,
               subtitle: hasProfile
-                  ? 'Write your contact to NFC card'
-                  : 'Set up your profile to write contact',
+                  ? 'write_your_contact_to_nfc'.tr
+                  : 'set_up_profile_to_write_contact'.tr,
               icon: Icons.nfc,
               gradientColors: const [Color(0xFF4CAF50), Color(0xFF2E7D32)],
               enabled: hasProfile,

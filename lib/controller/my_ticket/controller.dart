@@ -188,7 +188,7 @@ class MyTicketController extends GetxController {
 
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load Tickets",
+        title: "failed_load_tickets".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -220,7 +220,7 @@ class MyTicketController extends GetxController {
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load more tickets",
+        title: "failed_load_more_tickets".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

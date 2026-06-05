@@ -80,7 +80,7 @@ class WhatsAppConnectedCard extends GetView<NotificationController> {
           SizedBox(height: 1.2.hp),
 
           Text(
-            "Your integration token is securely stored and ready to send WhatsApp notifications.",
+            'token_stored_ready_desc'.tr,
             style: TextStyle(fontSize: 9.sp, color: AppColors.textPrimary(context)),
           ),
 
@@ -141,7 +141,7 @@ class WhatsAppConnectedCard extends GetView<NotificationController> {
                       )
                     : const Icon(Icons.link_off),
                 label: Text(
-                  isLoading ? "Disconnecting..." : 'disconnect_integration'.tr,
+                  isLoading ? 'disconnecting'.tr : 'disconnect_integration'.tr,
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
                 style: ElevatedButton.styleFrom(

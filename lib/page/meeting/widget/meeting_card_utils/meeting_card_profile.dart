@@ -23,7 +23,7 @@ class MeetingCardProfile extends GetView<MeetingController> {
 
   String get contactInfo {
     final contact = meeting.contact;
-    if (contact == null) return 'No contact';
+    if (contact == null) return 'no_contact'.tr;
 
     List<String> parts = [];
     if (contact.name != null) parts.add(contact.name!);
@@ -84,7 +84,7 @@ class MeetingCardProfile extends GetView<MeetingController> {
             children: [
               // 1. NAME (Bold, prominent)
               Text(
-                meeting.contact?.name ?? 'Unknown Contact',
+                meeting.contact?.name ?? 'unknown_contact'.tr,
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w700,
@@ -115,7 +115,7 @@ class MeetingCardProfile extends GetView<MeetingController> {
               // 3. Scheduled By (if exists)
               if (meeting.scheduledByUser?.name != null)
                 Text(
-                  'Scheduled by ${meeting.scheduledByUser!.name}',
+                  '${"scheduled_by".tr} ${meeting.scheduledByUser!.name}',
                   style: TextStyle(
                     fontSize: 8.sp,
                     color: AppColors.textHint(context),

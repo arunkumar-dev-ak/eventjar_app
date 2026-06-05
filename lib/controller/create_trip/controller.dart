@@ -16,7 +16,7 @@ class CreateTripController extends GetxController {
 
   final formKey = GlobalKey<FormState>();
 
-  final appBarTitle = "Create Trip";
+  var appBarTitle = "create_trip".tr;
 
   static const _limit = 20;
 
@@ -113,7 +113,7 @@ class CreateTripController extends GetxController {
     if (state.isLoading.value) return;
 
     if (state.selectedFriendsMap.isEmpty) {
-      AppSnackbar.warning(message: "Please select at least one friend");
+      AppSnackbar.warning(message: "select_friend_error".tr);
       return;
     }
 
@@ -139,7 +139,7 @@ class CreateTripController extends GetxController {
 
       Get.back(result: "created");
 
-      AppSnackbar.success(title: "Success", message: "Trip created successfully");
+      AppSnackbar.success(title: "success".tr, message: "trip_created_success".tr);
     } catch (err) {
       LoggerService.loggerInstance.e('Create trip error: $err');
       ApiErrorHandler.handle(

@@ -34,7 +34,7 @@ Widget myTicketBuildTicketCard(
 
   final dateStr = startDate != null
       ? formatDate(startDate)
-      : 'Date unavailable';
+      : 'date_unavailable'.tr;
   final timeStr = startDate != null
       ? formatTimeFromDateTime(startDate, context)
       : '';
@@ -340,7 +340,7 @@ Widget myTicketBuildTicketCard(
                       SizedBox(width: 3.wp),
                       Expanded(
                         child: Text(
-                          'Hope you enjoyed the Show!',
+                          'hope_enjoyed_show'.tr,
                           style: TextStyle(
                             fontSize: 8.sp,
                             color: AppColors.textHintStatic,

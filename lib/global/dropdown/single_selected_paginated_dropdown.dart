@@ -2,8 +2,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/get.dart';
 
 class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
   final String title;
@@ -71,7 +70,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
       final bool isSelected = selected != null;
       final String displayText = selected != null
           ? getDisplayValue(selected)
-          : (hintText ?? 'Select option');
+          : (hintText ?? 'select_option'.tr);
 
       return GestureDetector(
         onTap: () {
@@ -196,7 +195,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                             color: Colors.white,
                           ),
                           onPressed: onRefresh,
-                          tooltip: 'Refresh',
+                          tooltip: 'refresh'.tr,
                         ),
                       ],
                     ),
@@ -300,10 +299,10 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                               SizedBox(height: 8),
                               Text(
                                 isListLoading
-                                    ? 'Loading...'
+                                    ? 'loading'.tr
                                     : items.isEmpty
-                                    ? 'No Data loaded'
-                                    : 'No matches found',
+                                    ? 'no_data_loaded'.tr
+                                    : 'no_matches_found'.tr,
                                 style: TextStyle(
                                   color: AppColors.textSecondary(context),
                                   fontSize: 14,
@@ -350,7 +349,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                           ),
                                           alignment: Alignment.center,
                                           child: Text(
-                                            'Load More',
+                                            'load_more'.tr,
                                             style: TextStyle(
                                               fontSize: 8.sp,
                                               fontWeight: FontWeight.w500,

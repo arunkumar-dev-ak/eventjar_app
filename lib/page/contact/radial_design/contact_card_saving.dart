@@ -26,7 +26,7 @@ Future<void> contactCardAddContactToPhone(
         await FlutterContacts.permissions.request(PermissionType.readWrite);
     if (status != PermissionStatus.granted &&
         status != PermissionStatus.limited) {
-      AppToast.warning('Contacts permission required to save contact');
+      AppToast.warning('contacts_permission_required'.tr);
       return;
     }
 
@@ -43,7 +43,7 @@ Future<void> contactCardAddContactToPhone(
     }
 
     final tags = contact.tags;
-    final tagsText = tags.isNotEmpty ? tags.join(', ') : 'Saved from EventJar';
+    final tagsText = tags.isNotEmpty ? tags.join(', ') : 'saved_from_eventjar'.tr;
 
     String displayName = contact.name;
     if (tags.isNotEmpty) {

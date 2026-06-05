@@ -90,7 +90,7 @@ class SocialFormPage extends GetView<SocialFormController> {
                             ),
                             SizedBox(width: 2.wp),
                             Text(
-                              'WhatsApp / Telegram',
+                              'whatsapp_telegram'.tr,
                               style: TextStyle(
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w600,

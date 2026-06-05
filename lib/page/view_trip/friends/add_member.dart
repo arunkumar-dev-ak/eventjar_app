@@ -51,7 +51,7 @@ void showAddMemberPopup(BuildContext context) {
               child: Row(
                 children: [
                   Text(
-                    "Add a Friend",
+                    "add_a_friend".tr,
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
@@ -131,8 +131,8 @@ void showAddMemberPopup(BuildContext context) {
                       const SizedBox(height: 8),
                       Text(
                         isListLoading
-                            ? 'Loading friends...'
-                            : 'No eligible friends found.',
+                            ? 'loading_friends'.tr
+                            : 'no_eligible_friends'.tr,
                         style: TextStyle(
                           color: AppColors.textSecondary(context),
                           fontSize: 10.sp,

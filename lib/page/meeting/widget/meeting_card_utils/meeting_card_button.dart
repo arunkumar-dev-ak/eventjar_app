@@ -84,7 +84,7 @@ class MeetingCardButton extends GetView<MeetingController> {
                         )
                       : Icon(Icons.check_circle, size: 16, color: Colors.white),
                   label: Text(
-                    isCompleteLoading ? 'Completing...' : 'Complete',
+                    isCompleteLoading ? 'completing'.tr : 'complete'.tr,
                     style: TextStyle(fontSize: 8.sp, color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(

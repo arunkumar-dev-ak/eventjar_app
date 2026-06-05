@@ -157,7 +157,7 @@ class FriendsList extends GetView<ViewTripController> {
   Widget _statusText(BuildContext context, TripFriendModel f) {
     if (f.balance == 0) {
       return Text(
-        "No dues",
+        "no_dues".tr,
         style: TextStyle(
           color: AppColors.textSecondary(context),
           fontSize: 8.5.sp,
@@ -210,7 +210,7 @@ class FriendsList extends GetView<ViewTripController> {
             gradient: AppColors.buttonGradientFor(context),
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Text("SettleUp", style: TextStyle(color: Colors.white)),
+          child: Text("settle_up".tr, style: TextStyle(color: Colors.white)),
         ),
       );
     }
@@ -225,7 +225,7 @@ class FriendsList extends GetView<ViewTripController> {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
-          "Record",
+          "record".tr,
           style: TextStyle(color: Colors.blue, fontSize: 8.5.sp),
         ),
       ),

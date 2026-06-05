@@ -73,7 +73,7 @@ class CheckoutTicketDropDown extends GetView<CheckoutController> {
                         child: Text(
                           totalItems > 0
                               ? "$totalItems tickets"
-                              : "Add Tickets",
+                              : "add_tickets".tr,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 8.sp,
@@ -85,10 +85,10 @@ class CheckoutTicketDropDown extends GetView<CheckoutController> {
                     Expanded(
                       child: Text(
                         isCheckingEligibility
-                            ? "Checking eligibility..."
+                            ? "checking_eligibility".tr
                             : totalItems > 0
                             ? "$totalItems ticket${totalItems != 1 ? 's' : ''} selected"
-                            : "Tap to select tickets",
+                            : "tap_to_select_tickets".tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w600,

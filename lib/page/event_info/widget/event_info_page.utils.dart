@@ -1,5 +1,6 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 Widget eventInfoAppBarImageNotFound() {
@@ -36,7 +37,7 @@ Widget eventInfoAppBarImageNotFound() {
           ),
           const SizedBox(height: 12),
           Text(
-            'No Image Available',
+            'no_image'.tr,
             style: TextStyle(
               color: AppColors.textHintStatic,
               fontSize: 12,

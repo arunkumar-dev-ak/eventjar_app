@@ -191,7 +191,7 @@ Widget userProfileBuildSecurity() {
 
                       SizedBox(width: 8),
 
-                      Text(isLoading ? "Signing Out..." : "Sign Out"),
+                      Text(isLoading ? 'signing_out'.tr : 'sign_out'.tr),
 
                       if (isLoading) ...[
                         SizedBox(width: 10),
@@ -239,7 +239,7 @@ Widget userProfileBuildSecurity() {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Account Deleted",
+                        'account_deleted'.tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w600,
@@ -297,7 +297,7 @@ Widget userProfileBuildSecurity() {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${isPending ? "Reactivate" : "Deactivate"} Your Account",
+                        isPending ? 'reactivate_your_account'.tr : 'deactivate_your_account'.tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w600,
@@ -306,7 +306,7 @@ Widget userProfileBuildSecurity() {
                       ),
                       if (isPending)
                         Text(
-                          "Account scheduled for deletion",
+                          'account_scheduled_deletion'.tr,
                           style: TextStyle(
                             fontSize: 8.sp,
                             color: subtitleColor,
@@ -349,7 +349,7 @@ void showDeletedAccountDialog(UserProfileController controller) {
 
             // Title
             Text(
-              "Account Deleted",
+              'account_deleted'.tr,
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
@@ -424,7 +424,7 @@ void userProfileShowDeleteAccountDialog(
 
               // Title
               Text(
-                hasPendingDeletion ? "Reactivate Account" : "Delete Account",
+                hasPendingDeletion ? 'reactivate_account'.tr : 'delete_account'.tr,
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
@@ -440,8 +440,8 @@ void userProfileShowDeleteAccountDialog(
               // Warning message
               Text(
                 hasPendingDeletion
-                    ? "Enter your password to reactivate your account"
-                    : "Account will be scheduled for deletion in 30 days. You can reactivate anytime before permanent deletion.",
+                    ? 'enter_password_reactivate'.tr
+                    : 'deletion_warning_desc'.tr,
                 style: TextStyle(fontSize: 8.5.sp, color: AppColors.textSecondaryStatic),
                 textAlign: TextAlign.center,
               ),

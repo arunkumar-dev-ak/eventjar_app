@@ -54,7 +54,7 @@ class FriendsPage extends GetView<FriendsController> {
           return EmptyStateWidget(
             icon: Icons.people_outline,
             title: 'no_friends_yet'.tr,
-            subtitle: "Add friends and start splitting expenses",
+            subtitle: "add_friends_split_desc".tr,
           );
         }
 
@@ -198,7 +198,7 @@ class FriendsPage extends GetView<FriendsController> {
                   _menuItem(
                     context,
                     Icons.check_circle,
-                    "Accept Invitation",
+                    "accept_invitation".tr,
                     FriendAction.accept,
                   ),
                 );
@@ -207,7 +207,7 @@ class FriendsPage extends GetView<FriendsController> {
                   _menuItem(
                     context,
                     Icons.cancel,
-                    "Reject Invitation",
+                    "reject_invitation".tr,
                     FriendAction.reject,
                   ),
                 );
@@ -218,7 +218,7 @@ class FriendsPage extends GetView<FriendsController> {
                   _menuItem(
                     context,
                     Icons.delete_outline,
-                    "Remove Invitation",
+                    "remove_invitation".tr,
                     FriendAction.remove,
                   ),
                 );
@@ -229,7 +229,7 @@ class FriendsPage extends GetView<FriendsController> {
                   _menuItem(
                     context,
                     Icons.delete_outline,
-                    "Remove Friend",
+                    "remove_friend".tr,
                     FriendAction.remove,
                   ),
                 );
@@ -263,7 +263,7 @@ class FriendsPage extends GetView<FriendsController> {
   /// ================= STATUS =================
   Widget _statusWidget(BuildContext context, SplitTrackFriend friend) {
     final status = getStatusTextForFriendList(friend);
-    if (status == "Friend") {
+    if (status == "friend".tr) {
       return SizedBox.shrink();
     }
     return Text(

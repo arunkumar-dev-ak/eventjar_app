@@ -54,7 +54,7 @@ class SchedulerPage extends GetView<SchedulerController> {
 
                 ScheduleFormElement(
                   controller: controller.state.dateTimeController,
-                  label: 'Date & Time *',
+                  label: 'date_and_time'.tr,
                   readOnly: true,
                   onTap: () => controller.pickDateTime(context),
                   validator: controller.validateDate,
@@ -114,7 +114,7 @@ class SchedulerPage extends GetView<SchedulerController> {
                         label: 'notes'.tr,
                         value:
                             controller.state.selectedMeeting.value!.notes ??
-                            'No notes added',
+                            'no_notes_added'.tr,
                         icon: Icons.notes_outlined,
                         maxLines: 3,
                       ),
@@ -200,8 +200,8 @@ class SchedulerPage extends GetView<SchedulerController> {
                                   () => Text(
                                     controller.state.selectedMeeting.value !=
                                             null
-                                        ? 'Reschedule Meeting'
-                                        : 'Schedule Meeting',
+                                        ? 'reschedule_meeting'.tr
+                                        : 'schedule_meeting'.tr,
                                     style: TextStyle(
                                       fontSize: 8.sp,
                                       fontWeight: FontWeight.w700,

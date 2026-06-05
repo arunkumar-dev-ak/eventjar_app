@@ -414,7 +414,7 @@ class _CloseExpenseDialog extends StatelessWidget {
             ),
             SizedBox(height: 1.hp),
             Text(
-              'Close Request',
+              'close_request'.tr,
               style: TextStyle(
                 fontSize: 11.sp,
                 fontWeight: FontWeight.bold,
@@ -450,7 +450,7 @@ class _CloseExpenseDialog extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Closing this will cancel the expense and remove it from everyone\'s balances.',
+                      'close_request_warning'.tr,
                       style: TextStyle(
                         fontSize: 9.sp,
                         color: AppColors.textSecondary(context),

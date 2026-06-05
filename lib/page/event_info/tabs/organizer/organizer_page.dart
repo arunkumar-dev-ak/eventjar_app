@@ -36,7 +36,7 @@ class OrganizerPage extends StatelessWidget {
             // About Section
             if (organizer.bio != null && organizer.bio!.isNotEmpty) ...[
               _buildCardSection(
-                title: "About Organizer",
+                title: 'about_organizer'.tr,
                 icon: Icons.info_outline,
                 child: buildAboutSection(organizer.bio!),
               ),

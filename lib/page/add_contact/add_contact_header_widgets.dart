@@ -205,7 +205,7 @@ class AddContactImageToggle extends GetView<AddContactController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Add Contact with Visting Card",
+                          'add_contact_with_visiting_card'.tr,
                           style: TextStyle(
                             fontSize: 9.sp,
                             fontWeight: FontWeight.w600,
@@ -251,7 +251,7 @@ class AddContactImageToggle extends GetView<AddContactController> {
                     SizedBox(width: 2.wp),
                     Expanded(
                       child: Text(
-                        "You can’t send image because it is greater than 5 MB.",
+                        'image_size_limit_error'.tr,
                         style: TextStyle(
                           fontSize: 7.5.sp,
                           color: Colors.red.shade400,

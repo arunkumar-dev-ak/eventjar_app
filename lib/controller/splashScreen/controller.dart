@@ -179,6 +179,8 @@ class SplashScreenController extends GetxController
   void _navigateToHome() async {
     await Future.delayed(const Duration(milliseconds: 2000));
 
+    await LanguageStore.to.initCompleted;
+
     // Show language selection popup on first launch
     if (!LanguageStore.to.isLanguageSelected) {
       _languageCompleter = Completer<void>();

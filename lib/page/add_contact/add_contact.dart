@@ -79,7 +79,7 @@ class AddContactPage extends GetView<AddContactController> {
                   controller: controller.phoneController,
                   validator: (value) {
                     if (value == null || !value.isValidNumber()) {
-                      return 'Invalid phone number';
+                      return 'invalid_phone_number'.tr;
                     }
                     return null;
                   },
@@ -128,7 +128,7 @@ class AddContactPage extends GetView<AddContactController> {
                                   ),
                                 ),
                                 label: Text(
-                                  'Extracting...',
+                                  'extracting'.tr,
                                   style: TextStyle(fontSize: 9.sp),
                                 ),
                                 style: OutlinedButton.styleFrom(
@@ -150,7 +150,7 @@ class AddContactPage extends GetView<AddContactController> {
                                   color: Colors.blue.shade700,
                                 ),
                                 label: Text(
-                                  'Extract Additional Info from Card',
+                                  'extract_additional_info_from_card'.tr,
                                   style: TextStyle(
                                     fontSize: 9.sp,
                                     color: Colors.blue.shade700,
@@ -302,7 +302,7 @@ class AddContactPage extends GetView<AddContactController> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Additional Info',
+                        'additional_info_from_card'.tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w700,
@@ -333,7 +333,7 @@ class AddContactPage extends GetView<AddContactController> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  allChecked ? 'Uncheck All' : 'Check All',
+                                  allChecked ? 'uncheck_all'.tr : 'check_all'.tr,
                                   style: TextStyle(
                                     fontSize: 9.sp,
                                     color: AppColors.textSecondary(context),
@@ -425,7 +425,7 @@ class AddContactPage extends GetView<AddContactController> {
                                     .trim();
                                 if (value.isEmpty) return null;
                                 if (phone != null && !phone.isValidNumber()) {
-                                  return 'Enter valid number';
+                                  return 'enter_valid_number'.tr;
                                 }
                                 return null;
                               },

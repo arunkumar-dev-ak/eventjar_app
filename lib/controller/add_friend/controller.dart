@@ -19,7 +19,7 @@ class AddFriendController extends GetxController {
 
   final formKey = GlobalKey<FormState>();
 
-  final String appBarTitle = "Add Friend";
+  var appBarTitle = "add_friend".tr;
 
   Timer? _debounceTimer;
 
@@ -107,8 +107,8 @@ class AddFriendController extends GetxController {
     if (state.selectedType.value == AddFriendType.contact &&
         state.selectedContact.value == null) {
       AppSnackbar.warning(
-        title: "Contact Required",
-        message: "Please select a contact before sending the invitation.",
+        title: "contact_required".tr,
+        message: "select_contact_before_invite".tr,
       );
       return;
     }
@@ -141,7 +141,7 @@ class AddFriendController extends GetxController {
 
       clearForm();
 
-      AppSnackbar.success(title: 'Added', message: 'Friend Added Successfully');
+      AppSnackbar.success(title: 'added'.tr, message: 'friend_added_success'.tr);
 
       Navigator.pop(Get.context!, "refresh");
     } catch (err) {
@@ -188,8 +188,8 @@ class AddFriendController extends GetxController {
               );
             } else {
               AppSnackbar.error(
-                title: 'Error',
-                message: 'Failed to load contacts',
+                title: 'error'.tr,
+                message: 'failed_load_contacts'.tr,
               );
             }
           })
@@ -199,7 +199,7 @@ class AddFriendController extends GetxController {
     } catch (e) {
       LoggerService.loggerInstance.e(e);
       state.isContactDropdownLoading.value = false;
-      AppSnackbar.error(title: 'Error', message: 'Failed to load contacts');
+      AppSnackbar.error(title: 'error'.tr, message: 'failed_load_contacts'.tr);
     }
   }
 
@@ -238,8 +238,8 @@ class AddFriendController extends GetxController {
                 ApiErrorHandler.handleDioError(error, 'Search failed');
               } else {
                 AppSnackbar.error(
-                  title: 'Search Error',
-                  message: 'Failed to search',
+                  title: 'search_error'.tr,
+                  message: 'search_failed'.tr,
                 );
               }
             })
@@ -249,7 +249,7 @@ class AddFriendController extends GetxController {
       } catch (e) {
         LoggerService.loggerInstance.e(e);
         state.isContactDropdownLoading.value = false;
-        AppSnackbar.error(title: 'Error', message: 'Search failed');
+        AppSnackbar.error(title: 'error'.tr, message: 'search_failed'.tr);
       }
     });
   }
@@ -282,7 +282,7 @@ class AddFriendController extends GetxController {
               }
               ApiErrorHandler.handleDioError(error, 'Load more failed');
             } else {
-              AppSnackbar.error(title: 'Error', message: 'Failed to load more');
+              AppSnackbar.error(title: 'error'.tr, message: 'failed_load_more'.tr);
             }
           })
           .whenComplete(() {
@@ -291,7 +291,7 @@ class AddFriendController extends GetxController {
     } catch (e) {
       LoggerService.loggerInstance.e(e);
       state.isContactDropdownLoadMoreLoading.value = false;
-      AppSnackbar.error(title: 'Error', message: 'Failed to load more');
+      AppSnackbar.error(title: 'error'.tr, message: 'failed_load_more'.tr);
     }
   }
 
@@ -319,8 +319,8 @@ class AddFriendController extends GetxController {
               ApiErrorHandler.handleDioError(error, 'Refresh failed');
             } else {
               AppSnackbar.error(
-                title: 'Refresh Error',
-                message: 'Failed to refresh',
+                title: 'refresh_error'.tr,
+                message: 'failed_refresh'.tr,
               );
             }
           })
@@ -330,7 +330,7 @@ class AddFriendController extends GetxController {
     } catch (e) {
       LoggerService.loggerInstance.e(e);
       state.isContactDropdownLoading.value = false;
-      AppSnackbar.error(title: 'Error', message: 'Failed to refresh');
+      AppSnackbar.error(title: 'error'.tr, message: 'failed_refresh'.tr);
     }
   }
 

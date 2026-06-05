@@ -20,6 +20,6 @@ class ContactListMeetingState {
   Rx<ActiveMeeting?> currentMeeting = Rx<ActiveMeeting?>(null);
 
   // UI states
-  RxString appBarTitle = 'Contact Meeting'.obs;
+  RxString appBarTitle = 'contact_meeting'.tr.obs;
   Rx<MeetingButtonType> primaryButtonType = MeetingButtonType.accept.obs;
 }

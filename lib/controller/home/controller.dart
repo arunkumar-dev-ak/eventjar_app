@@ -367,7 +367,7 @@ class HomeController extends GetxController {
       if (result == "refresh") {
         final statusCard = NetworkStatusCardData(
           key: 'totalContacts',
-          label: 'Total Contacts',
+          label: 'total_contacts'.tr,
           enumKey: 'all',
           icon: Icons.people,
           color: Colors.blue,
@@ -386,7 +386,7 @@ class HomeController extends GetxController {
       if (result == "refresh") {
         final statusCard = NetworkStatusCardData(
           key: 'totalContacts',
-          label: 'Total Contacts',
+          label: 'total_contacts'.tr,
           enumKey: 'all',
           icon: Icons.people,
           color: Colors.blue,
@@ -405,7 +405,7 @@ class HomeController extends GetxController {
       if (result == "refresh") {
         final statusCard = NetworkStatusCardData(
           key: 'totalContacts',
-          label: 'Total Contacts',
+          label: 'total_contacts'.tr,
           enumKey: 'all',
           icon: Icons.people,
           color: Colors.blue,
@@ -424,7 +424,7 @@ class HomeController extends GetxController {
       if (result == "refresh") {
         final statusCard = NetworkStatusCardData(
           key: 'totalContacts',
-          label: 'Total Contacts',
+          label: 'total_contacts'.tr,
           enumKey: 'all',
           icon: Icons.people,
           color: Colors.blue,
@@ -445,8 +445,8 @@ class HomeController extends GetxController {
     final phone = state.userProfile.value?.phone;
     if (phone == null || phone.isEmpty) {
       AppSnackbar.error(
-        title: "Error",
-        message: "No phone number found on your profile",
+        title: "error".tr,
+        message: "no_phone_on_profile".tr,
       );
       return false;
     }
@@ -461,7 +461,7 @@ class HomeController extends GetxController {
       if (err is DioException) {
         ApiErrorHandler.handleDioError(err, "Failed to send OTP");
       } else {
-        AppSnackbar.error(title: "Error", message: err.toString());
+        AppSnackbar.error(title: "error".tr, message: err.toString());
       }
       return false;
     } finally {
@@ -533,8 +533,8 @@ class HomeController extends GetxController {
         );
       } else {
         AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong. Please try again.",
+          title: "error".tr,
+          message: "something_went_wrong".tr,
         );
       }
       return false;
@@ -577,10 +577,10 @@ class HomeController extends GetxController {
           }
         }
       }
-      AppSnackbar.error(title: "Error", message: "No email app found.");
+      AppSnackbar.error(title: "error".tr, message: "no_email_app_found".tr);
     } catch (e) {
       LoggerService.loggerInstance.e(e);
-      AppSnackbar.error(title: "Error", message: "Could not open email app.");
+      AppSnackbar.error(title: "error".tr, message: "could_not_open_email_app".tr);
     }
   }
 

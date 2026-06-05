@@ -23,7 +23,7 @@ class TransactionPage extends GetView<TransactionController> {
           onPressed: () => Get.back(),
         ),
         title: Text(
-          "Transaction",
+          "transaction".tr,
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 15.sp,
