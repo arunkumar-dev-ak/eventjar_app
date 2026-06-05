@@ -41,19 +41,24 @@ class RemoveMemberDialog extends GetView<ViewTripController> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: Colors.red.shade50,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.person_remove_rounded,
-                size: 32,
-                color: Colors.red.shade600,
-              ),
-            ),
+            Builder(builder: (context) {
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              return Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.red.shade900.withValues(alpha: 0.3)
+                      : Colors.red.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.person_remove_rounded,
+                  size: 32,
+                  color: isDark ? Colors.red.shade300 : Colors.red.shade600,
+                ),
+              );
+            }),
             SizedBox(height: 1.hp),
             Text(
               'remove_member'.tr,

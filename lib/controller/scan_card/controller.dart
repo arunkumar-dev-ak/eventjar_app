@@ -165,26 +165,30 @@ class ScanCardController extends GetxController
     return pictures?.map((e) => e as String).toList();
   }
 
-  Future<String> _compressIfNeeded(String imagePath) async {
+  Future<String> _prepareImage(String imagePath) async {
     final file = File(imagePath);
-    final fileSize = await file.length();
-    if (fileSize <= _maxFileSizeBytes) return imagePath;
-
     final bytes = await file.readAsBytes();
     final decoded = img.decodeImage(bytes);
     if (decoded == null) return imagePath;
 
-    var result = decoded;
+    // Apply EXIF orientation so landscape/rotated images have correct pixel
+    // layout before ML Kit processes them. Without this, compressed images
+    // lose the EXIF tag and ML Kit reads text sideways.
+    var result = img.bakeOrientation(decoded);
+
     if (result.width > _maxImageWidth) {
       result = img.copyResize(result, width: _maxImageWidth);
     }
 
-    final compressed = img.encodeJpg(result, quality: 80);
-    final compressedFile = File(
-      '${file.parent.path}/compressed_${file.uri.pathSegments.last}',
+    final fileSize = await file.length();
+    final quality = fileSize > _maxFileSizeBytes ? 80 : 85;
+
+    final processed = img.encodeJpg(result, quality: quality);
+    final processedFile = File(
+      '${file.parent.path}/processed_${file.uri.pathSegments.last}',
     );
-    await compressedFile.writeAsBytes(compressed);
-    return compressedFile.path;
+    await processedFile.writeAsBytes(processed);
+    return processedFile.path;
   }
 
   Future<void> pickImageFromCamera() async {
@@ -204,7 +208,7 @@ class ScanCardController extends GetxController
       if (paths == null || paths.isEmpty) return;
 
       isLoading.value = true;
-      final compressedPath = await _compressIfNeeded(paths.first);
+      final compressedPath = await _prepareImage(paths.first);
       selectedImage.value = File(compressedPath);
       await _processImage(compressedPath);
     } catch (e) {
@@ -233,7 +237,7 @@ class ScanCardController extends GetxController
         return;
       }
 
-      final compressedPath = await _compressIfNeeded(image.path);
+      final compressedPath = await _prepareImage(image.path);
       selectedImage.value = File(compressedPath);
       await _processImage(compressedPath);
     } catch (e) {
@@ -245,30 +249,32 @@ class ScanCardController extends GetxController
 
   Future<void> _processImage(String imagePath) async {
     try {
-      final inputImage = InputImage.fromFilePath(imagePath);
-      final RecognizedText recognizedText = await _textRecognizer.processImage(
-        inputImage,
-      );
+      var recognized = await _recognizeTextFull(imagePath);
 
-      final extractedText = recognizedText.text;
+      // If no text detected, try rotating 90° clockwise — handles images
+      // from scanners/cameras that strip EXIF and save with wrong orientation.
+      if (recognized.text.trim().isEmpty) {
+        final rotatedPath = await _rotateImage90(imagePath);
+        if (rotatedPath != null) {
+          recognized = await _recognizeTextFull(rotatedPath);
+        }
+      }
 
-      // Check if any text was extracted
-      if (extractedText.trim().isEmpty) {
+      if (recognized.text.trim().isEmpty) {
         errorMessage.value =
             'No text detected. Please try again with a clearer image.';
         return;
       }
 
-      // Check if multiple cards are detected
-      if (_hasMultipleCards(extractedText)) {
+      if (_hasMultipleCards(recognized.text)) {
         errorMessage.value =
             'Multiple cards detected. Please scan only one Business Card at a time.';
         return;
       }
 
-      final info = await _extractCardInfo(extractedText);
+      final annotatedLines = _buildAnnotatedLines(recognized);
+      final info = await _extractCardInfo(recognized.text, annotatedLines);
 
-      // Check if any useful data was extracted
       if (!info.hasData) {
         errorMessage.value =
             'Could not recognize card details. Please ensure the card is clearly visible and try again.';
@@ -277,6 +283,44 @@ class ScanCardController extends GetxController
       cardInfo.value = info;
     } catch (e) {
       errorMessage.value = 'Error processing image: $e';
+    }
+  }
+
+  Future<RecognizedText> _recognizeTextFull(String imagePath) async {
+    final inputImage = InputImage.fromFilePath(imagePath);
+    return await _textRecognizer.processImage(inputImage);
+  }
+
+  List<_AnnotatedLine> _buildAnnotatedLines(RecognizedText recognized) {
+    final lines = <_AnnotatedLine>[];
+    for (final block in recognized.blocks) {
+      for (final line in block.lines) {
+        lines.add(_AnnotatedLine(
+          text: line.text,
+          fontSize: line.boundingBox.height,
+          top: line.boundingBox.top,
+        ));
+      }
+    }
+    return lines;
+  }
+
+  Future<String?> _rotateImage90(String imagePath) async {
+    try {
+      final file = File(imagePath);
+      final bytes = await file.readAsBytes();
+      final decoded = img.decodeImage(bytes);
+      if (decoded == null) return null;
+
+      final rotated = img.copyRotate(decoded, angle: 90);
+      final encoded = img.encodeJpg(rotated, quality: 85);
+      final rotatedFile = File(
+        '${file.parent.path}/rotated_${file.uri.pathSegments.last}',
+      );
+      await rotatedFile.writeAsBytes(encoded);
+      return rotatedFile.path;
+    } catch (_) {
+      return null;
     }
   }
 
@@ -312,13 +356,14 @@ class ScanCardController extends GetxController
     return false;
   }
 
-  Future<VisitingCardInfo> _extractCardInfo(String text) async {
+  Future<VisitingCardInfo> _extractCardInfo(
+    String text,
+    List<_AnnotatedLine> annotatedLines,
+  ) async {
     final info = VisitingCardInfo(rawText: text);
 
-    // Extract email - any text containing @ is email
     info.email = _extractEmail(text);
 
-    // Extract up to 2 phone numbers
     final allPhones = await _extractAllPhonesParsed(text);
     if (allPhones.isNotEmpty) {
       info.phoneParsed = allPhones[0];
@@ -329,13 +374,15 @@ class ScanCardController extends GetxController
       info.phone2 = allPhones[1].phoneNumber;
     }
 
-    // Extract additional card info
     info.website = _extractWebsite(text);
     info.address = _extractAddress(text);
-    info.company = _extractCompany(text);
 
-    // Extract name - usually in top portion of card
-    info.name = _extractName(text, info.email, info.phone);
+    // Extract company first (using font size when available) so it can be
+    // excluded from name candidates.
+    info.company = _extractCompany(text, annotatedLines);
+    info.name = _extractName(
+      text, info.email, info.phone, info.company, annotatedLines,
+    );
 
     return info;
   }
@@ -437,27 +484,48 @@ class ScanCardController extends GetxController
     return addressLines.join(', ');
   }
 
-  /// Best-effort company extraction: looks for all-caps multi-word lines
-  /// that contain known business-type words or suffixes.
-  String? _extractCompany(String text) {
+  String? _extractCompany(
+    String text,
+    List<_AnnotatedLine> annotatedLines,
+  ) {
     final lines = text.split('\n');
     final companySuffixes = RegExp(
       r'\b(?:Pvt\.?\s*Ltd|Ltd\.?|LLP|Inc\.?|Corp\.?|Group|Industries|Technologies|Solutions|Services|Enterprises|Agriculture|Agri|Construction|Trading|Exports|Imports|Associates|Consultants|Foundation|Institute|Academy|College|Hospital|Clinic|Pharmacy|Retail|Wholesale|International|Global)\b',
       caseSensitive: false,
     );
 
+    // Pass 1: suffix-based detection (most reliable)
     for (final line in lines) {
       final trimmed = line.trim();
       if (trimmed.isEmpty) continue;
       if (trimmed.contains('@') || trimmed.toLowerCase().contains('www')) {
         continue;
       }
-      // Skip lines heavy with digits
       final digitCount = trimmed.replaceAll(RegExp(r'[^\d]'), '').length;
       if (digitCount > 3) continue;
 
       if (companySuffixes.hasMatch(trimmed)) {
         return trimmed;
+      }
+    }
+
+    // Pass 2: font-size based — largest text containing business terms
+    if (annotatedLines.length >= 3) {
+      final sorted = List.of(annotatedLines)
+        ..sort((a, b) => b.fontSize.compareTo(a.fontSize));
+      final maxSize = sorted.first.fontSize;
+
+      for (final line in sorted) {
+        if (line.fontSize < maxSize * 0.8) break;
+
+        final trimmed = line.text.trim();
+        if (trimmed.isEmpty || trimmed.length < 3) continue;
+        if (trimmed.contains('@')) continue;
+        if (trimmed.replaceAll(RegExp(r'[^\d]'), '').length > 3) continue;
+
+        if (_isCommonBusinessTerm(trimmed)) {
+          return trimmed;
+        }
       }
     }
 
@@ -831,80 +899,68 @@ class ScanCardController extends GetxController
     );
   }
 
-  String? _extractName(String text, String? email, String? phone) {
+  String? _extractName(
+    String text,
+    String? email,
+    String? phone,
+    String? company,
+    List<_AnnotatedLine> annotatedLines,
+  ) {
     final lines = text
         .split('\n')
         .where((line) => line.trim().isNotEmpty)
         .toList();
 
-    // Collect all valid name candidates with their line index (for position scoring)
     final nameCandidates = <MapEntry<int, String>>[];
 
     for (int lineIndex = 0; lineIndex < lines.length; lineIndex++) {
       final line = lines[lineIndex];
       String trimmedLine = line.trim();
 
-      // Skip lines starting with dash/hyphen (like "-TALLY INSTITUTE")
       if (trimmedLine.startsWith('-') || trimmedLine.startsWith('–')) {
         continue;
       }
 
-      // Skip QR code / label texts that start with "For" (e.g. "For Location",
-      // "For New Updates"). OCR may misread these (e.g. "For Locallon") so
-      // match the prefix rather than exact text.
       if (RegExp(r'^for\s+', caseSensitive: false).hasMatch(trimmedLine)) {
         continue;
       }
 
-      // Clean up the line - remove trailing punctuation like commas, dashes
       trimmedLine = trimmedLine.replaceAll(RegExp(r'[,\-:;]+$'), '').trim();
 
-      // Skip if line contains email
       if (email != null &&
           trimmedLine.toLowerCase().contains(email.toLowerCase())) {
         continue;
       }
-      if (trimmedLine.contains('@')) {
+      if (trimmedLine.contains('@')) continue;
+
+      if (phone != null && trimmedLine.contains(phone)) continue;
+
+      // Skip if this line matches the already-detected company name
+      if (company != null &&
+          trimmedLine.toLowerCase() == company.toLowerCase()) {
         continue;
       }
 
-      // Skip if line contains phone number
-      if (phone != null && trimmedLine.contains(phone)) {
-        continue;
-      }
-
-      // Skip if line has too many digits (likely phone/address)
       final digitCount = trimmedLine.replaceAll(RegExp(r'[^\d]'), '').length;
-      if (digitCount > 3) {
-        continue;
-      }
+      if (digitCount > 3) continue;
 
-      // Skip common business terms, designations, and educational qualifications
       if (_isCommonBusinessTerm(trimmedLine) ||
           _isDesignation(trimmedLine) ||
           _isEducationalQualification(trimmedLine)) {
         continue;
       }
 
-      // Skip short abbreviations/logos (like BNI, ABC, etc.)
-      if (_isAbbreviationOrLogo(trimmedLine)) {
-        continue;
-      }
+      if (_isAbbreviationOrLogo(trimmedLine)) continue;
 
-      // Strip trailing qualifications (e.g. "Krishnakumar B.E" → "Krishnakumar")
       final cleaned = _stripTrailingQualifications(trimmedLine);
 
-      // Check if it looks like a name
       if (_looksLikeName(cleaned)) {
         nameCandidates.add(MapEntry(lineIndex, cleaned));
       }
     }
 
-    if (nameCandidates.isEmpty) {
-      return null;
-    }
+    if (nameCandidates.isEmpty) return null;
 
-    // Score candidates and pick the best one
     String? bestCandidate;
     int bestScore = -1;
 
@@ -913,6 +969,7 @@ class ScanCardController extends GetxController
         candidate.value,
         candidate.key,
         lines.length,
+        annotatedLines,
       );
       if (score > bestScore) {
         bestScore = score;
@@ -923,7 +980,12 @@ class ScanCardController extends GetxController
     return bestCandidate;
   }
 
-  int _scoreNameCandidate(String name, int lineIndex, int totalLines) {
+  int _scoreNameCandidate(
+    String name,
+    int lineIndex,
+    int totalLines,
+    List<_AnnotatedLine> annotatedLines,
+  ) {
     int score = 0;
 
     final words = name
@@ -931,28 +993,18 @@ class ScanCardController extends GetxController
         .where((w) => w.isNotEmpty)
         .toList();
 
-    // 2-3 words is ideal for a full name
     if (words.length == 2) score += 10;
     if (words.length == 3) score += 8;
     if (words.length == 1) score += 3;
 
-    // Names with initials like "S.THIYAGARAJAN" or "K. RAJ" are common,
-    // but only give a bonus if it looks like an initial (single letter before dot).
-    // Avoid boosting qualifications like "B.ARCH" or "M.B.A".
     final initialPattern = RegExp(r'^[A-Z]\.');
     if (initialPattern.hasMatch(name) && words.length >= 2) score += 2;
 
-    // All caps names are common on business cards
     if (name == name.toUpperCase()) score += 3;
-
-    // Title case names
     if (_isTitleCase(name)) score += 3;
 
-    // Longer names (but not too long) are more likely to be real names
     if (name.length >= 10 && name.length <= 30) score += 2;
 
-    // Position bonus: name is typically in the top portion of the card.
-    // Lines near the top get a higher bonus.
     if (totalLines > 0) {
       final positionRatio = lineIndex / totalLines;
       if (positionRatio < 0.25) {
@@ -962,7 +1014,39 @@ class ScanCardController extends GetxController
       }
     }
 
+    // Font size scoring: on business cards the person name is typically
+    // the second-largest text (company name is largest).
+    if (annotatedLines.isNotEmpty) {
+      final fontSize = _fontSizeForText(name, annotatedLines);
+      if (fontSize > 0) {
+        final maxSize = annotatedLines
+            .map((l) => l.fontSize)
+            .reduce((a, b) => a > b ? a : b);
+        final ratio = fontSize / maxSize;
+
+        // Largest font is likely the company name — penalise
+        if (ratio > 0.9) score -= 3;
+        // Second-largest band is the sweet spot for person names
+        if (ratio >= 0.5 && ratio <= 0.9) score += 5;
+      }
+    }
+
     return score;
+  }
+
+  double _fontSizeForText(String text, List<_AnnotatedLine> lines) {
+    final normalized = text.trim().toLowerCase();
+    for (final line in lines) {
+      if (line.text.trim().toLowerCase() == normalized) {
+        return line.fontSize;
+      }
+    }
+    for (final line in lines) {
+      if (line.text.trim().toLowerCase().contains(normalized)) {
+        return line.fontSize;
+      }
+    }
+    return 0;
   }
 
   bool _isTitleCase(String text) {
@@ -1128,4 +1212,15 @@ class ScanCardController extends GetxController
     _floatingIconsController?.dispose();
     super.onClose();
   }
+}
+
+class _AnnotatedLine {
+  final String text;
+  final double fontSize;
+  final double top;
+  const _AnnotatedLine({
+    required this.text,
+    required this.fontSize,
+    required this.top,
+  });
 }

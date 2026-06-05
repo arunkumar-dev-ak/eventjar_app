@@ -24,7 +24,7 @@ Widget myTicketShimmer() {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Event Title
-                Container(width: 250, height: 16.0, color: Colors.white),
+                Container(width: 250, height: 16.0, color: AppColors.dividerStatic),
                 SizedBox(height: 1.5.hp),
 
                 // Badges Row
@@ -36,7 +36,7 @@ Widget myTicketShimmer() {
                       width: 80,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.dividerStatic,
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
@@ -44,7 +44,7 @@ Widget myTicketShimmer() {
                       width: 60,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.dividerStatic,
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
@@ -52,7 +52,7 @@ Widget myTicketShimmer() {
                       width: 100,
                       height: 24,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.dividerStatic,
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
@@ -89,8 +89,8 @@ Widget _buildInfoRowShimmer() {
       Container(
         width: 24,
         height: 24,
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: AppColors.dividerStatic,
           shape: BoxShape.circle,
         ),
       ),
@@ -99,9 +99,9 @@ Widget _buildInfoRowShimmer() {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(width: 80, height: 12.0, color: Colors.white),
+            Container(width: 80, height: 12.0, color: AppColors.dividerStatic),
             SizedBox(height: 0.5.hp),
-            Container(width: 150, height: 14.0, color: Colors.white),
+            Container(width: 150, height: 14.0, color: AppColors.dividerStatic),
           ],
         ),
       ),

@@ -8,10 +8,9 @@ class TwoFactorShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final baseColor = isDark ? Colors.grey.shade700 : Colors.grey.shade300;
-    final highlightColor = isDark ? Colors.grey.shade600 : Colors.grey.shade100;
-    final placeholderColor = isDark ? AppColors.darkCardElevated : Colors.grey.shade300;
+    final baseColor = AppColors.divider(context);
+    final highlightColor = AppColors.scaffoldBg(context);
+    final placeholderColor = AppColors.border(context);
 
     return Padding(
       padding: EdgeInsets.all(4.wp),

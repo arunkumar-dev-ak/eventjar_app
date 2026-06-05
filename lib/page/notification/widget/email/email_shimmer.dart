@@ -7,13 +7,12 @@ class ProviderShimmerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: 4,
       itemBuilder: (context, index) => Shimmer.fromColors(
-        baseColor: isDark ? Colors.grey[700]! : Colors.grey[300]!,
-        highlightColor: isDark ? Colors.grey[600]! : Colors.grey[100]!,
+        baseColor: AppColors.divider(context),
+        highlightColor: AppColors.scaffoldBg(context),
         child: Card(
           color: AppColors.cardBg(context),
           child: Padding(

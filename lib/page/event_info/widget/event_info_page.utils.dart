@@ -4,10 +4,13 @@ import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 Widget eventInfoAppBarImageNotFound() {
+  final isDark = AppColors.isDark;
   return Container(
     decoration: BoxDecoration(
       gradient: LinearGradient(
-        colors: [Colors.grey.shade200, Colors.grey.shade300],
+        colors: isDark
+            ? [AppColors.darkCard, AppColors.darkCardElevated]
+            : [Colors.grey.shade200, Colors.grey.shade300],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
@@ -19,7 +22,7 @@ Widget eventInfoAppBarImageNotFound() {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isDark ? AppColors.darkCardElevated : Colors.white,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
@@ -31,7 +34,7 @@ Widget eventInfoAppBarImageNotFound() {
             ),
             child: Icon(
               Icons.image_outlined,
-              color: Colors.grey.shade400,
+              color: AppColors.iconMutedStatic,
               size: 40,
             ),
           ),
@@ -52,9 +55,9 @@ Widget eventInfoAppBarImageNotFound() {
 
 Widget eventInfoAppBarImageShimmer() {
   return Shimmer.fromColors(
-    baseColor: Colors.grey.shade200,
-    highlightColor: Colors.grey.shade50,
+    baseColor: AppColors.dividerStatic,
+    highlightColor: AppColors.chipBgStatic,
     period: const Duration(milliseconds: 1500),
-    child: Container(color: Colors.grey.shade200),
+    child: Container(color: AppColors.dividerStatic),
   );
 }

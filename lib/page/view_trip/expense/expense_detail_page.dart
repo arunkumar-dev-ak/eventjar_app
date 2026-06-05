@@ -101,14 +101,17 @@ class ExpenseDetailPage extends StatelessWidget {
 
           SizedBox(height: 0.5.hp),
 
-          Text(
-            "Paid by ${_paidByName(expense)}",
-            style: TextStyle(
-              fontSize: 10.sp,
-              color: Colors.orange.shade700,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          Builder(builder: (context) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+            return Text(
+              "Paid by ${_paidByName(expense)}",
+              style: TextStyle(
+                fontSize: 10.sp,
+                color: isDark ? Colors.orange.shade300 : Colors.orange.shade700,
+                fontWeight: FontWeight.w600,
+              ),
+            );
+          }),
 
           SizedBox(height: 1.hp),
 
@@ -170,12 +173,12 @@ class ExpenseDetailPage extends StatelessWidget {
             radius: 18,
             backgroundColor: isPayer
                 ? Colors.green.withValues(alpha: 0.2)
-                : Colors.grey.shade300,
+                : AppColors.chipBg(context),
             child: Text(
               userId.isNotEmpty ? userId[0].toUpperCase() : "?",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: isPayer ? Colors.green : Colors.grey,
+                color: isPayer ? Colors.green : AppColors.textSecondary(context),
               ),
             ),
           ),

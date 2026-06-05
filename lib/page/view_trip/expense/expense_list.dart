@@ -231,10 +231,11 @@ class ExpenseList extends GetView<ViewTripController> {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 9.sp,
-                      // Mute the color if closed
                       color: isClosed
                           ? AppColors.textSecondary(context)
-                          : Colors.orange.shade700,
+                          : Theme.of(context).brightness == Brightness.dark
+                              ? Colors.orange.shade300
+                              : Colors.orange.shade700,
                     ),
                   ),
               ],
@@ -275,7 +276,9 @@ class ExpenseList extends GetView<ViewTripController> {
                   "Paid ₹${e.amount.toStringAsFixed(0)}",
                   style: TextStyle(
                     fontSize: 8.5.sp,
-                    color: Colors.green.shade700,
+                    color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.green.shade300
+                          : Colors.green.shade700,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -295,7 +298,9 @@ class ExpenseList extends GetView<ViewTripController> {
                     "Paid ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
                     style: TextStyle(
                       fontSize: 8.5.sp,
-                      color: Colors.green.shade700,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.green.shade300
+                          : Colors.green.shade700,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -438,6 +443,7 @@ class _CloseExpenseDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
@@ -461,13 +467,17 @@ class _CloseExpenseDialog extends StatelessWidget {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: Colors.orange.shade50,
+                color: isDark
+                    ? Colors.orange.shade900.withValues(alpha: 0.3)
+                    : Colors.orange.shade50,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.cancel_presentation_rounded,
                 size: 32,
-                color: Colors.orange.shade600,
+                color: isDark
+                    ? Colors.orange.shade300
+                    : Colors.orange.shade600,
               ),
             ),
             SizedBox(height: 1.hp),

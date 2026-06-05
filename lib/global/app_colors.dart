@@ -162,7 +162,7 @@ class AppColors {
   static Color get budgetScaffoldBgColor =>
       isDark ? darkBackground : Color(0xFFF7F5FF);
   static Color get budgetTabColor =>
-      isDark ? darkBackground : Color.fromARGB(255, 235, 234, 241);
+      isDark ? darkCardElevated : Color.fromARGB(255, 235, 234, 241);
   static Color get budgetTabTextColor =>
       isDark ? Colors.white : Color.fromARGB(255, 64, 60, 83);
 }

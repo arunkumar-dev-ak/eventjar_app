@@ -90,29 +90,6 @@ class MorePage extends GetView<MoreController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Budget Section
-                        _buildSectionTitle(context, 'budget'.tr),
-                        SizedBox(height: 1.5.hp),
-                        _buildIconGrid(context, isDark, [
-                          _GridItem(
-                            icon: Icons.flight_outlined,
-                            label: 'trips'.tr,
-                            onTap: controller.navigateToBudgetTrack,
-                          ),
-                          _GridItem(
-                            icon: Icons.people_outline,
-                            label: 'friends'.tr,
-                            onTap: controller.navigateToFriendList,
-                          ),
-                          _GridItem(
-                            icon: Icons.receipt_long_outlined,
-                            label: 'transactions'.tr,
-                            onTap: controller.navigateToTransaction,
-                          ),
-                        ]),
-
-                        SizedBox(height: 3.hp),
-
                         // Your Contact Section
                         _buildSectionTitle(context, 'contact'.tr),
                         SizedBox(height: 1.5.hp),
@@ -142,25 +119,27 @@ class MorePage extends GetView<MoreController> {
                         SizedBox(height: 3.hp),
 
                         // Budget Section
-                        _buildSectionTitle(context, "BUDGET"),
+                        _buildSectionTitle(context, 'budget'.tr),
                         SizedBox(height: 1.5.hp),
                         _buildIconGrid(context, isDark, [
                           _GridItem(
                             icon: Icons.flight_outlined,
-                            label: "Trips",
+                            label: 'trips'.tr,
                             onTap: controller.navigateToBudgetTrack,
                           ),
                           _GridItem(
                             icon: Icons.people_outline,
-                            label: "Friends",
+                            label: 'friends'.tr,
                             onTap: controller.navigateToFriendList,
                           ),
                           // _GridItem(
                           //   icon: Icons.receipt_long_outlined,
-                          //   label: "Transactions",
+                          //   label: 'transactions'.tr,
                           //   onTap: controller.navigateToTransaction,
                           // ),
                         ]),
+
+                        SizedBox(height: 3.hp),
 
                         SizedBox(height: 3.hp),
 

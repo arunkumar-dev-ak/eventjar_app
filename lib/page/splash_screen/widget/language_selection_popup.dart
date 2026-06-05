@@ -12,6 +12,7 @@ class LanguageSelectionPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     final languageStore = LanguageStore.to;
     final selected = 'en'.obs;
+    final isApplying = false.obs;
 
     return Center(
       child: Material(
@@ -114,7 +115,7 @@ class LanguageSelectionPopup extends StatelessWidget {
                   );
                 }),
                 SizedBox(height: 2.5.hp),
-                SizedBox(
+                Obx(() => SizedBox(
                   width: double.infinity,
                   height: 6.hp,
                   child: DecoratedBox(
@@ -127,28 +128,42 @@ class LanguageSelectionPopup extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: ElevatedButton(
-                      onPressed: () {
-                        languageStore.setLanguage(selected.value);
-                        onLanguageSelected();
-                      },
+                      onPressed: isApplying.value
+                          ? null
+                          : () async {
+                              isApplying.value = true;
+                              await languageStore.setLanguage(selected.value);
+                              isApplying.value = false;
+                              onLanguageSelected();
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent,
+                        disabledBackgroundColor: Colors.transparent,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: Text(
-                        'continue_btn'.tr,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
+                      child: isApplying.value
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : Text(
+                              'continue_btn'.tr,
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
                   ),
-                ),
+                )),
               ],
             ),
           ),
