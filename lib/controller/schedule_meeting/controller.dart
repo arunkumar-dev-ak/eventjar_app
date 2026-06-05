@@ -85,14 +85,16 @@ class ScheduleMeetingController extends GetxController {
     final date = state.meetingDate.value;
     final time = state.meetingTime.value;
 
-    // Combine Date + Time into a single DateTime like web code does. [web:26][web:35]
-    final scheduledAt = DateTime(
+    final localScheduledAt = DateTime(
       date.year,
       date.month,
       date.day,
       time.hour,
       time.minute,
     );
+
+    // 2. Convert it explicitly to UTC so it serializes with the trailing 'Z'
+    final utcScheduledAt = localScheduledAt.toUtc();
 
     // Decide method like web: 'email' | 'whatsapp' | 'both'
     String method;
@@ -116,7 +118,7 @@ class ScheduleMeetingController extends GetxController {
 
     return {
       'contactId': contact.id,
-      'scheduledAt': scheduledAt.toIso8601String(),
+      'scheduledAt': utcScheduledAt.toIso8601String(),
       'meetingTime': meetingTime,
       'duration': 60,
       'method': method,
