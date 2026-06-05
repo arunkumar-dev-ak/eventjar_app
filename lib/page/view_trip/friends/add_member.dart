@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 void showAddMemberPopup(BuildContext context) {
-  // Find the existing controller
   final controller = Get.find<ViewTripController>();
   final currentUserId = UserStore.to.profile['id'] as String;
+  final isDark = Theme.of(context).brightness == Brightness.dark;
 
   final Color primaryColor = AppColors.gradientDarkStart;
-  final Color headerColor = Colors.blue.shade600;
+  final Color headerColor = AppColors.gradientDarkStart;
 
   showDialog(
     context: context,
@@ -22,7 +22,7 @@ void showAddMemberPopup(BuildContext context) {
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
       child: Container(
-        constraints: const BoxConstraints(maxHeight: 600, maxWidth: 400),
+        constraints: BoxConstraints(maxHeight: 70.hp, maxWidth: 90.wp),
         decoration: BoxDecoration(
           color: AppColors.cardBg(context),
           borderRadius: BorderRadius.circular(24),
@@ -37,10 +37,10 @@ void showAddMemberPopup(BuildContext context) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // ---------------- HEADER ----------------
+            // Header
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
+              padding: const EdgeInsets.fromLTRB(24, 24, 16, 16),
               decoration: BoxDecoration(
                 color: headerColor,
                 borderRadius: const BorderRadius.only(
@@ -50,49 +50,61 @@ void showAddMemberPopup(BuildContext context) {
               ),
               child: Row(
                 children: [
-                  Text(
-                    "add_a_friend".tr,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                  Expanded(
+                    child: Text(
+                      "add_a_friend".tr,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.refresh,
-                      size: 20,
-                      color: Colors.white,
+                  SizedBox(
+                    width: 36,
+                    height: 36,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.refresh,
+                        size: 18,
+                        color: Colors.white,
+                      ),
+                      onPressed: controller.onFriendRefreshClicked,
+                      padding: EdgeInsets.zero,
                     ),
-                    onPressed: controller.onFriendRefreshClicked,
-                    tooltip: 'Refresh',
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 1.5.hp),
 
-            // ---------------- SEARCH BAR ----------------
+            // Search bar
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.fromLTRB(24, 1.5.hp, 24, 1.hp),
               child: TextField(
                 decoration: InputDecoration(
                   hintText: 'search_friends'.tr,
+                  hintStyle: TextStyle(
+                    fontSize: 9.5.sp,
+                    color: AppColors.textHint(context),
+                  ),
                   filled: true,
-                  fillColor: AppColors.cardBg(context),
+                  fillColor: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.grey.shade50,
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 12,
                     horizontal: 16,
                   ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: BorderSide(color: AppColors.border(context)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
                     borderSide: BorderSide(color: AppColors.border(context)),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(14),
                     borderSide: BorderSide(color: headerColor, width: 1.5),
                   ),
                   prefixIcon: Icon(
@@ -104,11 +116,9 @@ void showAddMemberPopup(BuildContext context) {
                 onChanged: controller.onFriendSearchChanged,
               ),
             ),
-            SizedBox(height: 1.hp),
 
-            // ---------------- LIST & PAGINATION ----------------
-            SizedBox(
-              height: 350,
+            // List
+            Expanded(
               child: Obx(() {
                 final bool isListLoading =
                     controller.state.isFriendDropdownLoading.value;
@@ -116,45 +126,54 @@ void showAddMemberPopup(BuildContext context) {
                     controller.state.isFriendDropdownLoadMoreLoading.value;
                 final friends = controller.state.dropdownFriends;
 
-                // Empty State
                 if (friends.isEmpty) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        isListLoading
-                            ? Icons.hourglass_empty
-                            : Icons.search_off,
-                        size: 40,
-                        color: AppColors.iconMuted(context),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        isListLoading
-                            ? 'loading_friends'.tr
-                            : 'no_eligible_friends'.tr,
-                        style: TextStyle(
-                          color: AppColors.textSecondary(context),
-                          fontSize: 10.sp,
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isListLoading
+                              ? Icons.hourglass_empty
+                              : Icons.search_off,
+                          size: 40,
+                          color: AppColors.iconMuted(context),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 8),
+                        Text(
+                          isListLoading
+                              ? 'loading_friends'.tr
+                              : 'no_eligible_friends'.tr,
+                          style: TextStyle(
+                            color: AppColors.textSecondary(context),
+                            fontSize: 9.5.sp,
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 }
 
+                final total =
+                    controller
+                        .state
+                        .friendDropdownMeta
+                        .value
+                        ?.paging
+                        .totalCount ??
+                    0;
+                final hasMore = friends.length < total;
+
                 return Stack(
                   children: [
-                    // List View
                     ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                      itemCount: friends.length + 1,
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                      itemCount: friends.length + (hasMore ? 1 : 0),
                       itemBuilder: (context, index) {
-                        // Load More Logic
                         if (index >= friends.length) {
                           if (isLoadMoreLoading) {
-                            return Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              child: Center(
                                 child: SizedBox(
                                   width: 20,
                                   height: 20,
@@ -166,22 +185,18 @@ void showAddMemberPopup(BuildContext context) {
                               ),
                             );
                           }
-
-                          final total =
-                              controller
-                                  .state
-                                  .friendDropdownMeta
-                                  .value
-                                  ?.paging
-                                  ?.totalCount ??
-                              0;
-                          if (friends.length >= total) return const SizedBox();
-
                           return GestureDetector(
                             onTap: controller.onFriendLoadMoreClicked,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              margin: const EdgeInsets.only(top: 4),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                               alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: primaryColor.withValues(alpha: 0.3),
+                                ),
+                              ),
                               child: Text(
                                 'load_more'.tr,
                                 style: TextStyle(
@@ -194,14 +209,14 @@ void showAddMemberPopup(BuildContext context) {
                           );
                         }
 
-                        // Friend Item
                         final friendItem = friends[index];
                         final displayName = friendItem.getFriendDisplayName(
                           currentUserId,
                         );
 
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 8),
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          margin: const EdgeInsets.only(bottom: 12),
                           decoration: BoxDecoration(
                             color: AppColors.cardBg(context),
                             borderRadius: BorderRadius.circular(16),
@@ -216,32 +231,28 @@ void showAddMemberPopup(BuildContext context) {
                               borderRadius: BorderRadius.circular(16),
                               onTap: () {
                                 HapticHelper.selection();
-                                // 1. Close Popup
                                 Navigator.pop(context);
-                                // 2. Call API to Add
                                 controller.addSelectedFriendToTrip(friendItem);
                               },
                               child: Padding(
-                                padding: const EdgeInsets.all(12.0),
+                                padding: const EdgeInsets.all(16),
                                 child: Row(
                                   children: [
-                                    Container(
-                                      width: 36,
-                                      height: 36,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.blue.shade50,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          displayName.isNotEmpty
-                                              ? displayName[0].toUpperCase()
-                                              : '?',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.blue.shade700,
-                                            fontSize: 10.sp,
-                                          ),
+                                    CircleAvatar(
+                                      radius: 18,
+                                      backgroundColor: isDark
+                                          ? headerColor.withValues(alpha: 0.15)
+                                          : Colors.blue.shade50,
+                                      child: Text(
+                                        displayName.isNotEmpty
+                                            ? displayName[0].toUpperCase()
+                                            : '?',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.blue.shade700,
+                                          fontSize: 10.sp,
                                         ),
                                       ),
                                     ),
@@ -251,7 +262,7 @@ void showAddMemberPopup(BuildContext context) {
                                         displayName,
                                         style: TextStyle(
                                           fontSize: 10.sp,
-                                          fontWeight: FontWeight.w600,
+                                          fontWeight: FontWeight.w500,
                                           color: AppColors.textPrimary(context),
                                         ),
                                         maxLines: 1,
@@ -271,8 +282,6 @@ void showAddMemberPopup(BuildContext context) {
                         );
                       },
                     ),
-
-                    // Loading Overlay
                     if (isListLoading)
                       Positioned.fill(
                         child: Container(
@@ -286,6 +295,32 @@ void showAddMemberPopup(BuildContext context) {
                   ],
                 );
               }),
+            ),
+
+            // Close button
+            Padding(
+              padding: EdgeInsets.fromLTRB(24, 0, 24, 2.hp),
+              child: SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      side: BorderSide(color: AppColors.border(context)),
+                    ),
+                  ),
+                  child: Text(
+                    'Close',
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textSecondary(context),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

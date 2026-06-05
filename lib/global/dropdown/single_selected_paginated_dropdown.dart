@@ -20,17 +20,20 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
   final Color? selectedShade2;
   final Color? selectedShade3;
   final Color? headerColor;
+  final Color? selectedDisplayColor;
   final double? borderWidth;
   final double? height;
   final double? selectedTextSize;
   final double? dropDownIconSize;
+  final IconData? dropdownIcon;
   final EdgeInsetsGeometry? textFieldPadding;
 
   // 🔧 Pagination & search
   final Function(String) onChanged;
   final Function() onClickedLoadMore;
-  final RxBool onLoadMoreLoading; // ObxBool, use .value
-  final RxBool onDropdownListLoading; // ObxBool, use .value
+  final RxBool onLoadMoreLoading;
+  final RxBool onDropdownListLoading;
+  final RxBool? hasMore;
   final Function() onRefresh;
 
   const SingleSelectPaginatedFilterDropdown({
@@ -53,11 +56,14 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
     this.height,
     this.selectedTextSize,
     this.dropDownIconSize,
+    this.dropdownIcon,
+    this.selectedDisplayColor,
     this.textFieldPadding,
     required this.onChanged,
     required this.onClickedLoadMore,
     required this.onDropdownListLoading,
     required this.onLoadMoreLoading,
+    this.hasMore,
   });
 
   @override
@@ -110,7 +116,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                   fontSize: selectedTextSize ?? 10.sp,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected
-                      ? primary
+                      ? (selectedDisplayColor ?? primary)
                       : AppColors.textSecondary(context),
                 ),
               ),
@@ -118,7 +124,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                 duration: const Duration(milliseconds: 200),
                 turns: isSelected ? 0.25 : 0,
                 child: Icon(
-                  Icons.keyboard_arrow_down_rounded,
+                  dropdownIcon ?? Icons.keyboard_arrow_down_rounded,
                   size: dropDownIconSize ?? 24,
                   color: isSelected ? primary : AppColors.textHint(context),
                 ),
@@ -138,48 +144,50 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
     required Color selectedShade2,
     required Color selectedShade3,
   }) {
-    final RxString searchText = ''.obs;
-
     showDialog(
       context: context,
       barrierDismissible: true,
       barrierColor: Colors.black.withValues(alpha: 0.4),
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-        child: Container(
-          constraints: const BoxConstraints(maxHeight: 600, maxWidth: 400),
-          decoration: BoxDecoration(
-            color: AppColors.cardBg(context),
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
-                blurRadius: 40,
-                offset: const Offset(0, 20),
-              ),
-            ],
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 40,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Modern Header with Refresh
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-                decoration: BoxDecoration(
-                  color: headerColor,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                  ),
+          child: Container(
+            constraints: BoxConstraints(maxHeight: 70.hp, maxWidth: 90.wp),
+            decoration: BoxDecoration(
+              color: AppColors.cardBg(context),
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 40,
+                  offset: const Offset(0, 20),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(24, 24, 16, 16),
+                  decoration: BoxDecoration(
+                    color: headerColor,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
                           title,
                           style: TextStyle(
                             fontSize: 12.sp,
@@ -187,303 +195,302 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                             color: Colors.white,
                           ),
                         ),
-                        const Spacer(),
-                        IconButton(
-                          icon: Icon(
+                      ),
+                      SizedBox(
+                        width: 36,
+                        height: 36,
+                        child: IconButton(
+                          icon: const Icon(
                             Icons.refresh,
                             size: 18,
                             color: Colors.white,
                           ),
                           onPressed: onRefresh,
+                          padding: EdgeInsets.zero,
                           tooltip: 'refresh'.tr,
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 0.7.hp),
-                    Obx(() {
-                      final selected = selectedItem.value;
-                      if (selected == null) return const SizedBox();
-
-                      bool isDefaultItem = false;
-                      try {
-                        // Safely attempt to get the default item.
-                        // If the parent uses .first on an empty list, this will catch the error.
-                        final defaultItem = getDefaultItem();
-                        isDefaultItem =
-                            getKeyValue(selected) == getKeyValue(defaultItem);
-                      } catch (_) {
-                        // Fallback: If it crashes (e.g., list is empty),
-                        // we just assume the current selected item is NOT the default.
-                        isDefaultItem = false;
-                      }
-
-                      return !isDefaultItem
-                          ? Text(
-                              getDisplayValue(selected),
-                              style: TextStyle(
-                                fontSize: 9.sp,
-                                color: Colors.white.withValues(alpha: 0.9),
-                                fontWeight: FontWeight.w500,
-                              ),
-                              textAlign: TextAlign.center,
-                            )
-                          : const SizedBox();
-                    }),
-                  ],
-                ),
-              ),
-              SizedBox(height: 1.hp),
-
-              // Search bar
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search $title...',
-                    filled: true,
-                    fillColor: AppColors.cardBg(context),
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 16,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: AppColors.border(context)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: headerColor),
-                    ),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      size: 18,
-                      color: AppColors.textHint(context),
-                    ),
+                      ),
+                    ],
                   ),
-                  onChanged: (value) {
-                    searchText.value = value;
-                    onChanged(value);
-                  },
                 ),
-              ),
-              SizedBox(height: 1.hp),
 
-              // Fixed-height container for list + Load More
-              SizedBox(
-                height: 350,
-                child: Column(
-                  children: [
-                    // Scrollable list area
-                    Expanded(
-                      child: Obx(() {
-                        final bool isListLoading = onDropdownListLoading.value;
-                        final T? selected = selectedItem.value;
-                        final List<T> filteredItems = items.isEmpty
-                            ? []
-                            : items;
-                        final bool isLoadMoreLoading = onLoadMoreLoading.value;
+                // Search bar
+                Padding(
+                  padding: EdgeInsets.fromLTRB(24, 1.5.hp, 24, 1.hp),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search $title...',
+                      hintStyle: TextStyle(
+                        fontSize: 9.5.sp,
+                        color: AppColors.textHint(context),
+                      ),
+                      filled: true,
+                      fillColor: isDark
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : Colors.grey.shade50,
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 16,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                          color: AppColors.border(context),
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                          color: AppColors.border(context),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(color: headerColor, width: 1.5),
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        size: 18,
+                        color: AppColors.textHint(context),
+                      ),
+                    ),
+                    onChanged: (value) => onChanged(value),
+                  ),
+                ),
 
-                        // Empty state
-                        if (filteredItems.isEmpty) {
-                          return Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                isListLoading
-                                    ? Icons.hourglass_empty
-                                    : Icons.search_off,
-                                size: 40,
-                                color: AppColors.iconMuted(context),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                isListLoading
-                                    ? 'loading'.tr
-                                    : items.isEmpty
-                                    ? 'no_data_loaded'.tr
-                                    : 'no_matches_found'.tr,
-                                style: TextStyle(
-                                  color: AppColors.textSecondary(context),
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          );
-                        }
+                // List
+                Expanded(
+                  child: Obx(() {
+                    final bool isListLoading = onDropdownListLoading.value;
+                    final T? selected = selectedItem.value;
+                    final List<T> filteredItems = items;
+                    final bool isLoadMoreLoading = onLoadMoreLoading.value;
+                    final bool showLoadMore = hasMore?.value ?? true;
 
-                        return Stack(
-                          children: [
-                            // List
-                            ListView.builder(
-                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                              itemCount: filteredItems.length + 1,
-                              itemBuilder: (context, index) {
-                                if (index >= filteredItems.length) {
-                                  if (isLoadMoreLoading) {
-                                    return Center(
-                                      child: SizedBox(
-                                        width: 16,
-                                        height: 16,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: primary,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                  return GestureDetector(
-                                    onTap: onClickedLoadMore,
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                        16,
-                                        8,
-                                        16,
-                                        16,
-                                      ),
-                                      child: SizedBox(
-                                        width: double.infinity,
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 12,
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            'load_more'.tr,
-                                            style: TextStyle(
-                                              fontSize: 8.sp,
-                                              fontWeight: FontWeight.w500,
-                                              color: primary,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }
+                    // Empty state
+                    if (filteredItems.isEmpty) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            isListLoading
+                                ? Icons.hourglass_empty
+                                : Icons.search_off,
+                            size: 40,
+                            color: AppColors.iconMuted(context),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            isListLoading
+                                ? 'loading'.tr
+                                : items.isEmpty
+                                ? 'no_data_loaded'.tr
+                                : 'no_matches_found'.tr,
+                            style: TextStyle(
+                              color: AppColors.textSecondary(context),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
 
-                                final T item = filteredItems[index];
-                                final bool isSelectedItem =
-                                    selected != null &&
-                                    getKeyValue(item) == getKeyValue(selected);
-
-                                return AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  margin: const EdgeInsets.only(bottom: 8),
-                                  decoration: BoxDecoration(
-                                    color: isSelectedItem
-                                        ? selectedShade1
-                                        : AppColors.cardBg(context),
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(
-                                      color: isSelectedItem
-                                          ? selectedShade3
-                                          : AppColors.divider(context),
-                                      width: 1.5,
-                                    ),
-                                    boxShadow: isSelectedItem
-                                        ? [
-                                            BoxShadow(
-                                              color: selectedShade1,
-                                              blurRadius: 8,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ]
-                                        : null,
-                                  ),
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(16),
-                                      onTap: () {
-                                        HapticHelper.selection();
-                                        onSelected(item);
-                                        Navigator.pop(context);
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(12.0),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              width: 20,
-                                              height: 20,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: isSelectedItem
-                                                    ? headerColor
-                                                    : AppColors.divider(
-                                                        context,
-                                                      ),
-                                                border: Border.all(
-                                                  color: isSelectedItem
-                                                      ? Colors.white
-                                                      : Colors.transparent,
-                                                  width: 2,
-                                                ),
-                                              ),
-                                              child: Icon(
-                                                isSelectedItem
-                                                    ? Icons.check
-                                                    : Icons
-                                                          .radio_button_unchecked,
-                                                color: isSelectedItem
-                                                    ? Colors.white
-                                                    : AppColors.textHint(
-                                                        context,
-                                                      ),
-                                                size: 14,
-                                              ),
-                                            ),
-                                            SizedBox(width: 2.5.wp),
-                                            Expanded(
-                                              child: Text(
-                                                getDisplayValue(item),
-                                                style: TextStyle(
-                                                  fontSize: 11.sp,
-                                                  fontWeight: isSelectedItem
-                                                      ? FontWeight.w600
-                                                      : FontWeight.w500,
-                                                  color: isSelectedItem
-                                                      ? primary
-                                                      : AppColors.textPrimary(
-                                                          context,
-                                                        ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                    return Stack(
+                      children: [
+                        // List
+                        ListView.builder(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                          itemCount: filteredItems.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index >= filteredItems.length) {
+                              if (isLoadMoreLoading) {
+                                return Center(
+                                  child: SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: primary,
                                     ),
                                   ),
                                 );
-                              },
-                            ),
+                              }
+                              return GestureDetector(
+                                onTap: onClickedLoadMore,
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    8,
+                                    16,
+                                    16,
+                                  ),
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'Load More',
+                                        style: TextStyle(
+                                          fontSize: 8.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: primary,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
 
-                            // Full-list overlay loader
-                            if (isListLoading)
-                              Positioned.fill(
-                                child: Container(
-                                  color: AppColors.cardBg(
-                                    context,
-                                  ).withValues(alpha: 0.8),
-                                  alignment: Alignment.center,
-                                  child: CircularProgressIndicator(
-                                    color: primary,
+                            final T item = filteredItems[index];
+                            final bool isSelectedItem =
+                                selected != null &&
+                                getKeyValue(item) == getKeyValue(selected);
+
+                            return AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: isSelectedItem
+                                    ? (isDark
+                                          ? headerColor.withValues(alpha: 0.15)
+                                          : selectedShade1)
+                                    : AppColors.cardBg(context),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: isSelectedItem
+                                      ? (isDark
+                                            ? headerColor.withValues(alpha: 0.5)
+                                            : selectedShade3)
+                                      : AppColors.divider(context),
+                                  width: 1.5,
+                                ),
+                                boxShadow: isSelectedItem
+                                    ? [
+                                        BoxShadow(
+                                          color: isDark
+                                              ? headerColor.withValues(
+                                                  alpha: 0.2,
+                                                )
+                                              : selectedShade1,
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(16),
+                                  onTap: () {
+                                    HapticHelper.selection();
+                                    onSelected(item);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 24,
+                                          height: 24,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: isSelectedItem
+                                                ? headerColor
+                                                : AppColors.divider(context),
+                                            border: Border.all(
+                                              color: isSelectedItem
+                                                  ? Colors.white
+                                                  : Colors.transparent,
+                                              width: 2,
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            isSelectedItem
+                                                ? Icons.check
+                                                : Icons.radio_button_unchecked,
+                                            color: isSelectedItem
+                                                ? Colors.white
+                                                : AppColors.textHint(context),
+                                            size: 16,
+                                          ),
+                                        ),
+                                        SizedBox(width: 3.wp),
+                                        Expanded(
+                                          child: Text(
+                                            getDisplayValue(item),
+                                            style: TextStyle(
+                                              fontSize: 10.sp,
+                                              fontWeight: isSelectedItem
+                                                  ? FontWeight.w600
+                                                  : FontWeight.w500,
+                                              color: isSelectedItem
+                                                  ? primary
+                                                  : AppColors.textPrimary(
+                                                      context,
+                                                    ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                          ],
-                        );
-                      }),
-                    ),
-                  ],
+                            );
+                          },
+                        ),
+                        if (isListLoading)
+                          Positioned.fill(
+                            child: Container(
+                              color: AppColors.cardBg(
+                                context,
+                              ).withValues(alpha: 0.8),
+                              alignment: Alignment.center,
+                              child: CircularProgressIndicator(color: primary),
+                            ),
+                          ),
+                      ],
+                    );
+                  }),
                 ),
-              ),
-            ],
+
+                // Close button
+                Padding(
+                  padding: EdgeInsets.fromLTRB(24, 0, 24, 2.hp),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          side: BorderSide(color: AppColors.border(context)),
+                        ),
+                      ),
+                      child: Text(
+                        'Close',
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textSecondary(context),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

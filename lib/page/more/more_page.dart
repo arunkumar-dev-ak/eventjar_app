@@ -141,6 +141,29 @@ class MorePage extends GetView<MoreController> {
 
                         SizedBox(height: 3.hp),
 
+                        // Budget Section
+                        _buildSectionTitle(context, "BUDGET"),
+                        SizedBox(height: 1.5.hp),
+                        _buildIconGrid(context, isDark, [
+                          _GridItem(
+                            icon: Icons.flight_outlined,
+                            label: "Trips",
+                            onTap: controller.navigateToBudgetTrack,
+                          ),
+                          _GridItem(
+                            icon: Icons.people_outline,
+                            label: "Friends",
+                            onTap: controller.navigateToFriendList,
+                          ),
+                          // _GridItem(
+                          //   icon: Icons.receipt_long_outlined,
+                          //   label: "Transactions",
+                          //   onTap: controller.navigateToTransaction,
+                          // ),
+                        ]),
+
+                        SizedBox(height: 3.hp),
+
                         // Your Network Section
                         _buildSectionTitle(context, 'your_network_caps'.tr),
                         SizedBox(height: 1.5.hp),
@@ -255,12 +278,12 @@ class MorePage extends GetView<MoreController> {
                             isFontAwesome: true,
                             onTap: controller.navigateToWhatsAppAutomation,
                           ),
-                          _GridItem(
-                            icon: Icons.calendar_month_outlined,
-                            label: 'google_calendar'.tr,
-                            onTap:
-                                controller.navigateToGoogleCalendarAutomation,
-                          ),
+                          // _GridItem(
+                          //   icon: Icons.calendar_month_outlined,
+                          //   label: 'google_calendar'.tr,
+                          //   onTap:
+                          //       controller.navigateToGoogleCalendarAutomation,
+                          // ),
                         ]),
 
                         SizedBox(height: 3.hp),

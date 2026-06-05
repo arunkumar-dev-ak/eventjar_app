@@ -74,11 +74,13 @@ class SplitTrackFriendUser {
   final String id;
   final String name;
   final String? email;
+  final String? avatarUrl;
 
   SplitTrackFriendUser({
     required this.id,
     required this.name,
     this.email,
+    this.avatarUrl,
   });
 
   factory SplitTrackFriendUser.fromJson(Map<String, dynamic> json) {
@@ -87,6 +89,7 @@ class SplitTrackFriendUser {
         id: json['id'] ?? '',
         name: json['name'] ?? '',
         email: json['email'],
+        avatarUrl: json['avatarUrl'],
       );
     } catch (e) {
       throw Exception('Error in SplitTrackFriendUser.fromJson: $e');

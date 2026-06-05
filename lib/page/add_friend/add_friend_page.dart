@@ -7,6 +7,7 @@ import 'package:eventjar/global/widget/form_submit_button.dart';
 import 'package:eventjar/page/add_friend/widget/contact_add_friend.dart';
 import 'package:eventjar/page/add_friend/widget/new_add_friend.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class AddFriendPage extends GetView<AddFriendController> {
@@ -21,12 +22,19 @@ class AddFriendPage extends GetView<AddFriendController> {
       appBar: AppBar(
         title: Text(
           controller.appBarTitle,
-          style: TextStyle(color: AppColors.textPrimary(context)),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
-        backgroundColor: AppColors.cardBg(context),
-        iconTheme: IconThemeData(color: AppColors.textPrimary(context)),
-        elevation: 4,
         centerTitle: false,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.appBarGradientFor(context),
+          ),
+        ),
+        elevation: 0,
       ),
 
       body: GestureDetector(

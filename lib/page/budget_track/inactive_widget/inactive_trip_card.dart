@@ -235,9 +235,9 @@ class InactiveTripCard extends GetView<BudgetTrackController> {
                 ),
               ),
 
-              SizedBox(width: 3.wp),
+              SizedBox(width: 2.wp),
 
-              Expanded(
+              Flexible(
                 child: Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 2.2.wp,

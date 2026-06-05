@@ -152,21 +152,16 @@ class HomeProfile extends GetView<HomeController> {
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                             ),
-                                            child: Transform.flip(
-                                              flipX: true,
-                                              child: Icon(
-                                                Icons.reply_rounded,
-                                                size: 18,
-                                                weight: 700,
-                                                color:
-                                                    Theme.of(
-                                                          context,
-                                                        ).brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.white
-                                                    : AppColors
-                                                          .gradientDarkStart,
-                                              ),
+                                            child: Icon(
+                                              Icons.share_rounded,
+                                              size: 18,
+                                              color:
+                                                  Theme.of(
+                                                        context,
+                                                      ).brightness ==
+                                                      Brightness.dark
+                                                  ? Colors.white
+                                                  : AppColors.gradientDarkStart,
                                             ),
                                           ),
                                         ),

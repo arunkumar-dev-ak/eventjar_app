@@ -2,6 +2,7 @@ import 'package:eventjar/controller/friends/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/global/widget/empty_widget.dart';
 import 'package:eventjar/model/budget_track/split_track_friend_model.dart';
 import 'package:eventjar/page/friends/widget/friend_list_shimmer.dart';
@@ -92,12 +93,13 @@ class FriendsPage extends GetView<FriendsController> {
         );
       }),
 
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           HapticHelper.medium();
           controller.navigateToAddFriend();
         },
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text("New Friend"),
       ),
     );
   }
@@ -137,16 +139,7 @@ class FriendsPage extends GetView<FriendsController> {
       padding: EdgeInsets.symmetric(vertical: 1.2.hp),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: isDark
-                ? AppColors.darkCardElevated
-                : Colors.grey.shade300,
-            child: Text(
-              displayName.isNotEmpty ? displayName[0].toUpperCase() : "?",
-              style: TextStyle(color: AppColors.textPrimary(context)),
-            ),
-          ),
+          _buildAvatar(context, friend, displayName, isDark),
 
           SizedBox(width: 3.wp),
 
@@ -257,6 +250,31 @@ class FriendsPage extends GetView<FriendsController> {
           ),
         ],
       ),
+    );
+  }
+
+  /// ================= AVATAR =================
+  Widget _buildAvatar(
+    BuildContext context,
+    SplitTrackFriend friend,
+    String displayName,
+    bool isDark,
+  ) {
+    final avatarUrl = friend.friendUser?.avatarUrl;
+    final hasAvatar = avatarUrl != null && avatarUrl.isNotEmpty;
+
+    return CircleAvatar(
+      radius: 22,
+      backgroundColor: isDark
+          ? AppColors.darkCardElevated
+          : Colors.grey.shade300,
+      backgroundImage: hasAvatar ? NetworkImage(getFileUrl(avatarUrl)) : null,
+      child: hasAvatar
+          ? null
+          : Text(
+              displayName.isNotEmpty ? displayName[0].toUpperCase() : "?",
+              style: TextStyle(color: AppColors.textPrimary(context)),
+            ),
     );
   }
 
