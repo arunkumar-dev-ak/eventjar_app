@@ -133,12 +133,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/razorpay_flutter/ios"
 
 SPEC CHECKSUMS:
-  cunning_document_scanner: 7cb9bd173f7cc7b11696dde98d01492187fc3a67
+  cunning_document_scanner: 43a2bda11ef6a33fd68766b287ed056b4caf6a06
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
-  flutter_libphonenumber_darwin: 2cf18d8bef8004f2bc1f3f051977bdc19d51df73
-  google_mlkit_commons: 1e6ef6605d7281f35baf2b355e6049b9984fd624
-  google_mlkit_selfie_segmentation: e1c74c1433e36a23ca6799d24fa66e31a38d0068
-  google_mlkit_text_recognition: 309a3a493765ea17c7368cadb4a710391e73902c
+  flutter_libphonenumber_darwin: fd0b33a1dc0f2cadfec5dbedad6d778667b413b7
+  google_mlkit_commons: a5e4ffae5bc59ea4c7b9025dc72cb6cb79dc1166
+  google_mlkit_selfie_segmentation: 0317616b7e460f242bd13a805b70f4e0ba636336
+  google_mlkit_text_recognition: b3de5adb786ad7a0fe8e13618387b8d2df0f3c70
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleMLKit: b1eee21a41c57704fe72483b15c85cb2c0cd7444
   GoogleToolboxForMac: d1a2cbf009c453f4d6ded37c105e2f67a32206d8
@@ -153,12 +153,12 @@ SPEC CHECKSUMS:
   MLKitVision: 39a5a812db83c4a0794445088e567f3631c11961
   MLKitXenoCommon: 1a4268c1222a6043047af5bb9435028206c63287
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  PhoneNumberKit: 932b267030c6edde97b58e6945be8b1e47eea628
+  PhoneNumberKit: 040db93c8d8aad1d04c8657b4ba40c49422e7f17
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   razorpay-core-pod: 6da5fb4ed280279d665507fdb50e213d793a5fe2
   razorpay-pod: 4385cf844aa29389313b741e20c72fe668970d49
-  razorpay_flutter: 84b3bfd206ae9c9c2a9ba585524a1b3d8102b6c1
+  razorpay_flutter: 0e98e4fcaae27ad50e011d85f66d85e0a008754a
 
-PODFILE CHECKSUM: a64106f443b01e6a2e1246493b1e57771fa7ce8d
+PODFILE CHECKSUM: 092fb4643adeefd5fe41a206665ee1e2ffb79ffa
 
 COCOAPODS: 1.16.2
