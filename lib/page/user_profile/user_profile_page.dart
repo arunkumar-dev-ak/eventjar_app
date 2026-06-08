@@ -194,7 +194,9 @@ class UserProfilePage extends GetView<UserProfileController> {
         children: [
           _buildSection(
             ctx,
-            title: hasImages ? "Gallery (${images.length})" : 'gallery'.tr,
+            title: hasImages
+                ? "${'gallery'.tr} (${images.length})"
+                : 'gallery'.tr,
             isEditEnabled: true,
             onEdit: () {
               controller.navigateToGalleryUpdate();
@@ -205,12 +207,12 @@ class UserProfilePage extends GetView<UserProfileController> {
                     builder: (context, constraints) {
                       final tileSize =
                           (constraints.maxWidth - spacing * (columns - 1)) /
-                              columns;
-                      final maxItems =
-                          images.length > perPage ? perPage : images.length;
+                          columns;
+                      final maxItems = images.length > perPage
+                          ? perPage
+                          : images.length;
                       final rows = (maxItems / columns).ceil();
-                      final gridHeight =
-                          rows * tileSize + (rows - 1) * spacing;
+                      final gridHeight = rows * tileSize + (rows - 1) * spacing;
 
                       return Column(
                         children: [
@@ -233,11 +235,11 @@ class UserProfilePage extends GetView<UserProfileController> {
                                   padding: EdgeInsets.zero,
                                   gridDelegate:
                                       const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: columns,
-                                    mainAxisSpacing: spacing,
-                                    crossAxisSpacing: spacing,
-                                    childAspectRatio: 1,
-                                  ),
+                                        crossAxisCount: columns,
+                                        mainAxisSpacing: spacing,
+                                        crossAxisSpacing: spacing,
+                                        childAspectRatio: 1,
+                                      ),
                                   itemCount: pageImages.length,
                                   itemBuilder: (context, index) {
                                     final imgIndex = start + index;
@@ -245,41 +247,46 @@ class UserProfilePage extends GetView<UserProfileController> {
                                       onTap: () => Get.toNamed(
                                         RouteName.imageViewerPage,
                                         arguments: {
-                                          "fileUrl":
-                                              getFileUrl(images[imgIndex]),
+                                          "fileUrl": getFileUrl(
+                                            images[imgIndex],
+                                          ),
                                           "header": controller.displayName,
                                         },
                                       ),
                                       child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(12),
+                                        borderRadius: BorderRadius.circular(12),
                                         child: CachedNetworkImage(
-                                          imageUrl:
-                                              getFileUrl(images[imgIndex]),
+                                          imageUrl: getFileUrl(
+                                            images[imgIndex],
+                                          ),
                                           fit: BoxFit.cover,
                                           width: tileSize,
                                           height: tileSize,
                                           placeholder: (context, url) =>
                                               Container(
-                                            color: AppColors.chipBg(context),
-                                            child: const Center(
-                                              child:
-                                                  CircularProgressIndicator(
-                                                strokeWidth: 2,
+                                                color: AppColors.chipBg(
+                                                  context,
+                                                ),
+                                                child: const Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        strokeWidth: 2,
+                                                      ),
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                          errorWidget:
-                                              (context, url, error) =>
-                                                  Container(
-                                            color: AppColors.chipBg(context),
-                                            child: Icon(
-                                              Icons.broken_image_outlined,
-                                              size: 28,
-                                              color: AppColors.iconMuted(
-                                                  context),
-                                            ),
-                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              Container(
+                                                color: AppColors.chipBg(
+                                                  context,
+                                                ),
+                                                child: Icon(
+                                                  Icons.broken_image_outlined,
+                                                  size: 28,
+                                                  color: AppColors.iconMuted(
+                                                    context,
+                                                  ),
+                                                ),
+                                              ),
                                         ),
                                       ),
                                     );
@@ -312,25 +319,23 @@ class UserProfilePage extends GetView<UserProfileController> {
                             Obx(
                               () => Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children:
-                                    List.generate(pageCount, (index) {
+                                children: List.generate(pageCount, (index) {
                                   final isActive =
                                       controller.state.galleryIndex.value ==
-                                          index;
+                                      index;
                                   return AnimatedContainer(
-                                    duration:
-                                        const Duration(milliseconds: 300),
+                                    duration: const Duration(milliseconds: 300),
                                     margin: const EdgeInsets.symmetric(
-                                        horizontal: 3),
+                                      horizontal: 3,
+                                    ),
                                     width: isActive ? 24 : 8,
                                     height: 8,
                                     decoration: BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.circular(4),
+                                      borderRadius: BorderRadius.circular(4),
                                       color: isActive
                                           ? AppColors.gradientDarkStart
                                           : AppColors.gradientDarkStart
-                                              .withValues(alpha: 0.2),
+                                                .withValues(alpha: 0.2),
                                     ),
                                   );
                                 }),
@@ -397,7 +402,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Click to Configure Automations",
+                      "click_to_configure_automation".tr,
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 10.sp,
@@ -507,7 +512,7 @@ class UserProfilePage extends GetView<UserProfileController> {
             ),
             SizedBox(height: 1.hp),
             Text(
-              'App Version $version',
+              '${'app_version'.tr} $version',
               style: TextStyle(
                 fontSize: 8.5.sp,
                 color: AppColors.textHint(ctx),
@@ -517,7 +522,7 @@ class UserProfilePage extends GetView<UserProfileController> {
             ),
             SizedBox(height: 0.5.hp),
             Text(
-              '© EventJar',
+              '© MyEventJar',
               style: TextStyle(
                 fontSize: 7.5.sp,
                 color: AppColors.textSecondary(ctx),

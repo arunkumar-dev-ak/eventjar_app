@@ -13,7 +13,7 @@ class NetworkingGoalDropdown extends GetView<NetworkingFormController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "What are you looking for?",
+          "what_are_you_looking_for".tr,
           style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w600),
         ),
         SizedBox(height: 1.hp),
@@ -38,7 +38,10 @@ class NetworkingGoalDropdown extends GetView<NetworkingFormController> {
                       controller.state.selectedNetworkingGoal.value.isEmpty
                           ? "Select networking goal"
                           : controller.state.selectedNetworkingGoal.value,
-                      style: TextStyle(fontSize: 9.5.sp, color: AppColors.textPrimary(context)),
+                      style: TextStyle(
+                        fontSize: 9.5.sp,
+                        color: AppColors.textPrimary(context),
+                      ),
                     ),
                   ),
                   Icon(
@@ -72,7 +75,7 @@ void showNetworkingGoalDialog(NetworkingFormController controller) {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "What are you looking for?",
+                  "what_are_you_looking_for".tr,
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.bold,
@@ -149,7 +152,9 @@ Widget _buildGoalItem(String goal, NetworkingFormController controller) {
               style: TextStyle(
                 fontSize: 9.5.sp,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                color: isSelected ? Colors.green.shade900 : AppColors.textPrimaryStatic,
+                color: isSelected
+                    ? Colors.green.shade900
+                    : AppColors.textPrimaryStatic,
               ),
             ),
           ),

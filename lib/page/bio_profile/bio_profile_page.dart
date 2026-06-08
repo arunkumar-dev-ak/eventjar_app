@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eventjar/controller/bio_profile/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/page/bio_profile/schedule_meeting_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:logger/web.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
 
@@ -1218,29 +1220,29 @@ class BioProfilePage extends GetView<BioProfileController> {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: items
-              .map(
-                (item) => Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 3.5.wp,
-                    vertical: 0.7.hp,
-                  ),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.07),
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: color.withValues(alpha: 0.2)),
-                  ),
-                  child: Text(
-                    item,
-                    style: TextStyle(
-                      fontSize: 8.5.sp,
-                      fontWeight: FontWeight.w600,
-                      color: color,
-                    ),
-                  ),
+          children: items.map((item) {
+            LoggerService.loggerInstance.dynamic_d("iii $item");
+            LoggerService.loggerInstance.dynamic_d("ihhi ${item.tr}");
+            return Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 3.5.wp,
+                vertical: 0.7.hp,
+              ),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.07),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: color.withValues(alpha: 0.2)),
+              ),
+              child: Text(
+                item.tr,
+                style: TextStyle(
+                  fontSize: 8.5.sp,
+                  fontWeight: FontWeight.w600,
+                  color: color,
                 ),
-              )
-              .toList(),
+              ),
+            );
+          }).toList(),
         ),
       ],
     );

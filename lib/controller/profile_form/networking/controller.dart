@@ -40,39 +40,39 @@ class NetworkingFormController extends GetxController {
   ];
 
   List<String> get connectionTypes => [
-    'investors'.tr,
-    'vendors'.tr,
-    'tech_partners'.tr,
-    'b2b_clients'.tr,
-    'franchise_opportunities'.tr,
-    'mentors'.tr,
-    'industry_experts'.tr,
+    'investors',
+    'vendors',
+    'tech_partners',
+    'b2b_clients',
+    'franchise_opportunities',
+    'mentors',
+    'industry_experts',
   ];
 
   List<String> get helpOfferings => [
-    'funding_investment'.tr,
-    'tech_development'.tr,
-    'digital_marketing'.tr,
-    'business_strategy'.tr,
-    'sales_and_lead_generation'.tr,
-    'product_design'.tr,
-    'legal_services'.tr,
-    'hr_and_talent'.tr,
-    'operations'.tr,
-    'mentoring'.tr,
+    'funding_investment',
+    'tech_development',
+    'digital_marketing',
+    'business_strategy',
+    'sales_and_lead_generation',
+    'product_design',
+    'legal_services',
+    'hr_and_talent',
+    'operations',
+    'mentoring',
   ];
 
   List<String> get discussionTopics => [
-    'business_growth'.tr,
-    'sales_strategy'.tr,
-    'hiring_and_talent'.tr,
-    'saas'.tr,
-    'e_commerce'.tr,
-    'exports'.tr,
-    'digital_transformation'.tr,
-    'funding'.tr,
-    'partnerships'.tr,
-    'technology_trend'.tr,
+    'business_growth',
+    'sales_strategy',
+    'hiring_and_talent',
+    'saas',
+    'e_commerce',
+    'exports',
+    'digital_transformation',
+    'funding',
+    'partnerships',
+    'technology_trend',
   ];
 
   @override

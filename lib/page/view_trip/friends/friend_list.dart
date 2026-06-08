@@ -182,7 +182,7 @@ class FriendsList extends GetView<ViewTripController> {
 
     if (f.balanceType == 'owe') {
       return Text(
-        "You owe ₹${f.myOwe.toStringAsFixed(0)}",
+        "${'you_owe'.tr} ₹${f.myOwe.toStringAsFixed(0)}",
         style: TextStyle(
           color: Colors.red,
           fontSize: 8.5.sp,
@@ -192,7 +192,7 @@ class FriendsList extends GetView<ViewTripController> {
     }
 
     return Text(
-      "You receive ₹${f.myReceive.toStringAsFixed(0)}",
+      "${'you_receive'.tr} ₹${f.myReceive.toStringAsFixed(0)}",
       style: TextStyle(
         color: Colors.green,
         fontSize: 8.5.sp,
@@ -208,8 +208,6 @@ class FriendsList extends GetView<ViewTripController> {
     bool isReceive,
     bool isSettled,
   ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     if (isSettled) {
       return Icon(Icons.check_circle_outline, color: Colors.green, size: 22);
     }

@@ -56,7 +56,9 @@ Widget userProfilebuildInfoRow({
                 fontSize: 10.sp,
                 color: isEmpty
                     ? AppColors.textHintStatic
-                    : (isLink ? Colors.blue.shade700 : AppColors.textPrimaryStatic),
+                    : (isLink
+                          ? Colors.blue.shade700
+                          : AppColors.textPrimaryStatic),
                 fontWeight: isEmpty ? FontWeight.normal : FontWeight.w600,
                 decoration: (isLink && !isEmpty)
                     ? TextDecoration.underline
@@ -101,7 +103,7 @@ Widget userProfileBuildChipSection({
               border: Border.all(color: AppColors.lightBlueBorderStatic),
             ),
             child: Text(
-              chip,
+              chip.tr,
               style: TextStyle(
                 fontSize: 8.sp,
                 color: Colors.blue.shade700,

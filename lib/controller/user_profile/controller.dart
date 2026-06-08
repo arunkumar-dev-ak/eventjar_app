@@ -152,7 +152,7 @@ class UserProfileController extends GetxController
               content: Text(message),
               actions: [
                 CupertinoDialogAction(
-                  child: const Text('Cancel'),
+                  child: Text('cancel'.tr),
                   onPressed: () => Navigator.pop(ctx),
                 ),
                 CupertinoDialogAction(
@@ -176,7 +176,7 @@ class UserProfileController extends GetxController
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
                   child: Text(
-                    'Cancel',
+                    'cancel'.tr,
                     style: TextStyle(color: AppColors.textSecondary(ctx)),
                   ),
                 ),
@@ -429,7 +429,7 @@ class UserProfileController extends GetxController
               SizedBox(height: 10),
               TextButton(
                 onPressed: () => Get.back(),
-                child: Text('Cancel', style: TextStyle(color: Colors.red)),
+                child: Text('cancel'.tr, style: TextStyle(color: Colors.red)),
               ),
             ],
           ),

@@ -32,7 +32,10 @@ class CommonMultiSelectDropdown extends GetView<NetworkingFormController> {
         SizedBox(height: 0.5.hp),
         Text(
           subtitle,
-          style: TextStyle(fontSize: 8.5.sp, color: AppColors.textSecondary(context)),
+          style: TextStyle(
+            fontSize: 8.5.sp,
+            color: AppColors.textSecondary(context),
+          ),
         ),
         SizedBox(height: 1.5.hp),
         Obx(
@@ -67,7 +70,7 @@ class CommonMultiSelectDropdown extends GetView<NetworkingFormController> {
           ),
         ),
         child: Text(
-          item,
+          item.tr,
           style: TextStyle(
             fontSize: 8.5.sp,
             color: isSelected ? Colors.white : AppColors.textPrimaryStatic,

@@ -148,7 +148,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                           ),
                           SizedBox(width: 1.wp),
                           Text(
-                            "ACTIVE",
+                            "active".tr.toUpperCase(),
                             style: TextStyle(
                               color: Colors.green.shade700,
                               fontSize: 6.5.sp,
@@ -190,13 +190,13 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                 Row(
                   children: [
                     _chipInfo(
-                      "${trip.expensesCount} Expenses",
+                      "${trip.expensesCount} ${'expenses'.tr}",
                       Icons.receipt_outlined,
                       context,
                     ),
                     SizedBox(width: 2.wp),
                     _chipInfo(
-                      "${trip.membersCount} Members",
+                      "${trip.membersCount} ${'memebers'.tr})",
                       Icons.people_outline,
                       context,
                     ),
@@ -226,7 +226,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       _analyticsItem(
-                        "YOU OWE",
+                        "you_owe".tr.toUpperCase(),
                         trip.myOwe,
                         Colors.red,
                         context,
@@ -237,7 +237,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                         color: AppColors.divider(context),
                       ),
                       _analyticsItem(
-                        "RECEIVE",
+                        "you_receive".tr.toUpperCase(),
                         trip.myReceive,
                         Colors.green,
                         context,
@@ -248,7 +248,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                         color: AppColors.divider(context),
                       ),
                       _analyticsItem(
-                        "MY SHARE",
+                        "my_share".tr.toUpperCase(),
                         trip.myShare,
                         AppColors.gradientDarkStart,
                         context,
@@ -264,7 +264,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "₹${formatAmount(spent)} spent",
+                      "₹${formatAmount(spent)} ${"spent".tr}",
                       style: TextStyle(
                         fontSize: 7.5.sp,
                         fontWeight: FontWeight.w600,
@@ -274,7 +274,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                       ),
                     ),
                     Text(
-                      "₹${formatAmount(totalBudget)} budget",
+                      "₹${formatAmount(totalBudget)} ${'budget_label'.tr}",
                       style: TextStyle(
                         fontSize: 7.5.sp,
                         color: AppColors.textSecondary(context),
@@ -304,7 +304,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                 Text(
                   isOverBudget
                       ? "Exceeded by ₹${formatAmount(spent - totalBudget)}"
-                      : "₹${formatAmount(totalBudget - spent)} remaining",
+                      : "₹${formatAmount(totalBudget - spent)} ${'remaining'.tr}",
                   style: TextStyle(
                     fontSize: 7.sp,
                     fontWeight: FontWeight.w500,
@@ -421,8 +421,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
       builder: (_) => DeleteConfirmDialog(
         title: 'delete_trip'.tr,
         itemName: trip.name,
-        warningText:
-            "This action cannot be undone and will permanently delete this trip and all its data.",
+        warningText: "permanent_action_warning".tr,
         onDelete: () => controller.deleteTrip(trip),
       ),
     );

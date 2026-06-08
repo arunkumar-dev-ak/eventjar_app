@@ -171,10 +171,7 @@ class GalleryFormController extends GetxController {
               const SizedBox(height: 10),
               TextButton(
                 onPressed: () => Get.back(),
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(color: Colors.red),
-                ),
+                child: Text('cancel'.tr, style: TextStyle(color: Colors.red)),
               ),
             ],
           ),

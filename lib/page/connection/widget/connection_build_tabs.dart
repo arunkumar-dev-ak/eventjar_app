@@ -41,7 +41,7 @@ class ConnectionBuildTabs extends GetView<ConnectionController> {
             selectedItem: controller.state.selectedStatus,
             getDefaultItem: () => 'All',
             getDisplayValue: (String status) {
-              return capitalize(status.toString());
+              return capitalize(status.tr);
             },
             getKeyValue: (String status) {
               return status;
@@ -129,9 +129,7 @@ class ConnectionTab extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: selected
-                    ? Colors.white
-                    : AppColors.textPrimary(context),
+                color: selected ? Colors.white : AppColors.textPrimary(context),
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                 fontSize: 8.5.sp,
                 shadows: selected

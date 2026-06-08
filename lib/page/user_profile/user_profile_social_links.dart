@@ -106,7 +106,7 @@ Widget buildSocialLinkRow({
                 fontSize: 10.sp,
                 color: isConnected ? color : AppColors.textHintStatic,
                 fontWeight: isConnected ? FontWeight.w600 : FontWeight.normal,
-                decoration: isConnected ? TextDecoration.underline : null,
+                decoration: TextDecoration.none,
                 fontStyle: isConnected ? null : FontStyle.italic,
               ),
             ),

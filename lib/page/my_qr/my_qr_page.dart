@@ -79,7 +79,7 @@ class MyQrCodePage extends GetView<MyQrScreenController> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Text(
-                'Scan to save my contacts in MyEventjar for flawless networking',
+                'tour_scan_save_desc'.tr,
                 style: TextStyle(
                   color: colorScheme.onSurface.withValues(alpha: 0.6),
                   fontSize: 9.sp,

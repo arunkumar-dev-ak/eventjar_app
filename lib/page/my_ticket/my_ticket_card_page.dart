@@ -46,7 +46,7 @@ Widget myTicketBuildTicketCard(
       Padding(
         padding: EdgeInsets.only(left: 1.wp, bottom: 0.8.hp),
         child: Text(
-          'Registered on:  ${formatDate(ticket.registeredAt)}',
+          '${'registered_on'.tr}:  ${formatDate(ticket.registeredAt)}',
           style: TextStyle(
             fontSize: 8.sp,
             color: AppColors.textHintStatic,
@@ -204,7 +204,7 @@ Widget myTicketBuildTicketCard(
                 child: Row(
                   children: [
                     Text(
-                      '${ticket.quantity} Ticket${ticket.quantity > 1 ? 's' : ''}',
+                      '${ticket.quantity} ${'ticket'.tr}${ticket.quantity > 1 ? 's' : ''}',
                       style: TextStyle(
                         fontSize: 8.sp,
                         color: AppColors.textSecondaryStatic,
@@ -219,7 +219,7 @@ Widget myTicketBuildTicketCard(
                       ),
                     ),
                     Text(
-                      isFree ? 'FREE' : '₹$price',
+                      isFree ? 'free'.tr : '₹$price',
                       style: TextStyle(
                         fontSize: 8.sp,
                         fontWeight: FontWeight.w600,
@@ -364,7 +364,11 @@ Widget _myTicketImagePlaceholder() {
   return Container(
     color: AppColors.chipBgStatic,
     child: Center(
-      child: Icon(Icons.event_outlined, color: AppColors.borderStatic, size: 32),
+      child: Icon(
+        Icons.event_outlined,
+        color: AppColors.borderStatic,
+        size: 32,
+      ),
     ),
   );
 }

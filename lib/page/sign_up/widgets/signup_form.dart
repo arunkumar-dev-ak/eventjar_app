@@ -27,6 +27,7 @@ class SignUpTextFormField extends StatelessWidget {
   final bool hasOuterBorder;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
+  final IconData icon;
 
   const SignUpTextFormField({
     required this.controller,
@@ -41,6 +42,7 @@ class SignUpTextFormField extends StatelessWidget {
     this.hasOuterBorder = true,
     this.keyboardType,
     this.inputFormatters,
+    required this.icon,
     super.key,
   });
 
@@ -118,10 +120,7 @@ class SignUpTextFormField extends StatelessWidget {
                   )
                 : null,
             prefixIcon: hasOuterBorder
-                ? Icon(
-                    _getFieldIcon(label),
-                    color: AppColors.iconMuted(context),
-                  )
+                ? Icon(icon, color: AppColors.iconMuted(context))
                 : null,
             errorMaxLines: 3,
           ),
@@ -204,6 +203,7 @@ class SignUpForm extends StatelessWidget {
             // Full Name
             SignUpTextFormField(
               controller: controller.fullNameController,
+              icon: Icons.person,
               label: 'full_name'.tr,
               validator: (val) => controller.validateFullName(val),
               isFieldValid: controller.state.isFullNamelValid,
@@ -216,6 +216,7 @@ class SignUpForm extends StatelessWidget {
             // Email
             SignUpTextFormField(
               controller: controller.emailController,
+              icon: Icons.email,
               label: 'email'.tr,
               validator: (val) => controller.validateEmail(val),
               isFieldValid: controller.state.isEmailValid,
@@ -229,6 +230,7 @@ class SignUpForm extends StatelessWidget {
             Obx(
               () => IntlPhoneField(
                 controller: controller.mobileNumberController,
+
                 decoration: _getFieldDecoration(
                   'mobile_number'.tr,
                   controller.state.isMobileNumberValid,
@@ -266,6 +268,7 @@ class SignUpForm extends StatelessWidget {
             Obx(
               () => SignUpTextFormField(
                 controller: controller.passwordController,
+                icon: Icons.lock,
                 label: 'password'.tr,
                 isPassword: true,
                 isPasswordHidden: controller.state.isPasswordHidden.value,
@@ -296,7 +299,7 @@ class SignUpForm extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.wp),
                   child: Text(
-                    "OR",
+                    "or".tr,
                     style: TextStyle(
                       color: AppColors.textHint(context),
                       fontSize: 11.sp,

@@ -53,7 +53,10 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('something_went_wrong'.tr, style: TextStyle(fontSize: 10.sp)),
+                Text(
+                  'something_went_wrong'.tr,
+                  style: TextStyle(fontSize: 10.sp),
+                ),
                 SizedBox(height: 1.hp),
                 FilledButton.icon(
                   onPressed: controller.retry,
@@ -130,7 +133,7 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
           ),
           SizedBox(height: 0.5.hp),
           Text(
-            "Paid by $paidByName",
+            "${'paid_by'.tr} $paidByName",
             style: TextStyle(
               fontSize: 10.sp,
               color: Colors.orange.shade700,

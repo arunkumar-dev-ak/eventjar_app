@@ -24,7 +24,7 @@ class AuthSignUp extends StatelessWidget {
         },
         child: RichText(
           text: TextSpan(
-            text: "Don't have an account? ",
+            text: '${'dont_have_account'.tr} ? ',
             style: TextStyle(
               color: AppColors.textSecondary(context),
               fontSize: 11.sp,

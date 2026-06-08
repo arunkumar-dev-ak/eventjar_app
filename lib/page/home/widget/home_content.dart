@@ -29,9 +29,7 @@ class HomeContent extends StatelessWidget {
       if (controller.state.events.isEmpty) {
         return SliverFillRemaining(
           hasScrollBody: false,
-          child: noEventsFoundWidget(
-            onRefresh: () => controller.onTabOpen(),
-          ),
+          child: noEventsFoundWidget(onRefresh: () => controller.onTabOpen()),
         );
       }
       return SliverList(
@@ -344,7 +342,7 @@ class HomeContent extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                event.isPaid ? 'Paid' : 'free'.tr,
+                                event.isPaid ? 'paid'.tr : 'free'.tr,
                                 style: TextStyle(
                                   color: event.isPaid
                                       ? const Color(0xFFE65100)

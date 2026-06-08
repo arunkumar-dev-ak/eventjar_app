@@ -138,7 +138,7 @@ class _QRBottomSheet extends StatelessWidget {
                 ),
                 SizedBox(height: 1.5.hp),
                 Text(
-                  'Registered On',
+                  'registered_on'.tr,
                   style: TextStyle(
                     fontSize: 8.sp,
                     color: AppColors.textSecondary(context),
@@ -175,10 +175,7 @@ class _QRBottomSheet extends StatelessWidget {
               ),
               child: Text(
                 'close'.tr,
-                style: TextStyle(
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w600),
               ),
             ),
           ),

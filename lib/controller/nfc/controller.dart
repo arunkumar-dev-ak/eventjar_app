@@ -87,7 +87,7 @@ class NfcController extends GetxController
       case NfcStatus.available:
         return 'nfc_ready'.tr;
       case NfcStatus.notAvailable:
-        return 'NFC Not Available';
+        return 'nfc_not_available'.tr;
       case NfcStatus.disabled:
         return 'NFC Disabled';
       case NfcStatus.unknown:

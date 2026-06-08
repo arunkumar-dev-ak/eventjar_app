@@ -115,7 +115,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "$totalCount / ${GalleryFormState.maxImages} images",
+                  "$totalCount / ${GalleryFormState.maxImages} ${'images'.tr}",
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 10.sp,
@@ -124,7 +124,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  "Max 5MB per image. Supports JPG, PNG",
+                  "image_limits_desc".tr,
                   style: TextStyle(
                     fontSize: 8.sp,
                     color: AppColors.textSecondary(context),
@@ -289,7 +289,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
               SizedBox(height: 1.hp),
               Text(
                 canAdd
-                    ? "Tap to add images (${controller.remaining} remaining)"
+                    ? "${'tap_to_add_images'.tr} (${controller.remaining} ${'remaining'.tr})"
                     : "Maximum images reached",
                 style: TextStyle(
                   fontSize: 9.sp,

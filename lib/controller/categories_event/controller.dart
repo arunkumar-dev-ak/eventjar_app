@@ -27,7 +27,7 @@ class CategoriesEventController extends GetxController {
   bool get isLoading => state.isLoading.value;
 
   List<String> get tabs => [
-    'All',
+    'all'.tr,
     ...state.eventcategory.map((e) => e.name ?? ''),
   ];
 

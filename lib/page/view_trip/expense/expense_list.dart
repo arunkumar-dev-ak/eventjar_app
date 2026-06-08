@@ -4,7 +4,6 @@ import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/widget/empty_widget.dart';
 import 'package:eventjar/model/view_trip/trip_expense_model.dart';
-import 'package:eventjar/page/view_trip/expense/expense_detail_page.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/page/view_trip/expense/expense_shimmer_card.dart';
 import 'package:flutter/material.dart';
@@ -234,8 +233,8 @@ class ExpenseList extends GetView<ViewTripController> {
                       color: isClosed
                           ? AppColors.textSecondary(context)
                           : Theme.of(context).brightness == Brightness.dark
-                              ? Colors.orange.shade300
-                              : Colors.orange.shade700,
+                          ? Colors.orange.shade300
+                          : Colors.orange.shade700,
                     ),
                   ),
               ],
@@ -273,18 +272,18 @@ class ExpenseList extends GetView<ViewTripController> {
                 const Icon(Icons.check_circle, size: 14, color: Colors.green),
                 SizedBox(width: 1.wp),
                 Text(
-                  "Paid ₹${e.amount.toStringAsFixed(0)}",
+                  "${'paid'.tr} ₹${e.amount.toStringAsFixed(0)}",
                   style: TextStyle(
                     fontSize: 8.5.sp,
                     color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.green.shade300
-                          : Colors.green.shade700,
+                        ? Colors.green.shade300
+                        : Colors.green.shade700,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 SizedBox(width: 1.5.wp),
                 Text(
-                  "- $splitCount members",
+                  "- $splitCount ${'members'.tr}",
                   style: TextStyle(
                     fontSize: 7.5.sp,
                     color: AppColors.textSecondary(context),
@@ -295,7 +294,7 @@ class ExpenseList extends GetView<ViewTripController> {
                   const Icon(Icons.check_circle, size: 14, color: Colors.green),
                   SizedBox(width: 1.wp),
                   Text(
-                    "Paid ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
+                    "${'paid'.tr} ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
                     style: TextStyle(
                       fontSize: 8.5.sp,
                       color: Theme.of(context).brightness == Brightness.dark
@@ -306,7 +305,7 @@ class ExpenseList extends GetView<ViewTripController> {
                   ),
                 ] else ...[
                   Text(
-                    "Your share ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
+                    "${'my_share'.tr} ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
                     style: TextStyle(
                       fontSize: 9.sp,
                       fontWeight: FontWeight.w600,
@@ -475,9 +474,7 @@ class _CloseExpenseDialog extends StatelessWidget {
               child: Icon(
                 Icons.cancel_presentation_rounded,
                 size: 32,
-                color: isDark
-                    ? Colors.orange.shade300
-                    : Colors.orange.shade600,
+                color: isDark ? Colors.orange.shade300 : Colors.orange.shade600,
               ),
             ),
             SizedBox(height: 1.hp),

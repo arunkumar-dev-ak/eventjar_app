@@ -22,7 +22,7 @@ class ForgotPasswordHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Forgot Password?",
+                  '${"forgot_password".tr} ?',
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     color: Colors.white,

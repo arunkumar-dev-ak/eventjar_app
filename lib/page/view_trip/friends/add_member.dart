@@ -312,7 +312,7 @@ void showAddMemberPopup(BuildContext context) {
                     ),
                   ),
                   child: Text(
-                    'Close',
+                    'close'.tr,
                     style: TextStyle(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w600,

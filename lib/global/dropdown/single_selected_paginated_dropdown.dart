@@ -476,7 +476,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Close',
+                        'close'.tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w600,

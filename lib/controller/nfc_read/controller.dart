@@ -69,16 +69,18 @@ class NfcReadController extends GetxController
     state.nfcStatus.value = await _nfcService.getNfcStatus();
   }
 
-  String getNfcStatusText() {
+  List getNfcStatusText() {
     switch (state.nfcStatus.value) {
       case NfcStatus.available:
-        return 'nfc_ready'.tr;
+        return ['nfc_ready'.tr, Colors.green];
       case NfcStatus.notAvailable:
-        return 'NFC Not Available';
+        return ['nfc_not_available'.tr, Colors.red];
+
       case NfcStatus.disabled:
-        return 'NFC Disabled';
+        return ['NFC Disabled', Colors.orange];
+
       case NfcStatus.unknown:
-        return 'Checking NFC...';
+        return ['Checking NFC...', Colors.blue];
     }
   }
 

@@ -31,9 +31,9 @@ class CheckoutBottomBar extends GetView<CheckoutController> {
       } else if (!hasTicket) {
         buttonText = "Select Ticket to Continue";
       } else if (isLoading) {
-        buttonText = total == 0 ? "Booking..." : "Processing...";
+        buttonText = total == 0 ? "Booking..." : "processing".tr;
       } else {
-        buttonText = total == 0 ? "Click to Book Ticket" : "Proceed to Pay";
+        buttonText = total == 0 ? "click_to_book_ticket".tr : "Proceed to Pay";
       }
 
       return Container(
@@ -41,10 +41,7 @@ class CheckoutBottomBar extends GetView<CheckoutController> {
         decoration: BoxDecoration(
           color: AppColors.cardBg(context),
           boxShadow: [
-            BoxShadow(
-              blurRadius: 10,
-              color: AppColors.shadow(context),
-            ),
+            BoxShadow(blurRadius: 10, color: AppColors.shadow(context)),
           ],
         ),
         child: SafeArea(

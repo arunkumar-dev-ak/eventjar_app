@@ -137,7 +137,7 @@ class ConnectionCard extends GetView<ConnectionController> {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  '$otherUserTotalBadges badges',
+                                  '$otherUserTotalBadges ${'badges'.tr}',
                                   style: TextStyle(
                                     fontSize: 7.5.sp,
                                     color: AppColors.textSecondary(context),
@@ -156,7 +156,11 @@ class ConnectionCard extends GetView<ConnectionController> {
               // Event & Time
               Row(
                 children: [
-                  Icon(Icons.event, size: 18, color: AppColors.textSecondary(context)),
+                  Icon(
+                    Icons.event,
+                    size: 18,
+                    color: AppColors.textSecondary(context),
+                  ),
                   SizedBox(width: 2.wp),
                   Expanded(
                     child: Column(
@@ -196,7 +200,10 @@ class ConnectionCard extends GetView<ConnectionController> {
                   ),
                   child: Text(
                     request.message,
-                    style: TextStyle(fontSize: 8.5.sp, color: AppColors.textPrimary(context)),
+                    style: TextStyle(
+                      fontSize: 8.5.sp,
+                      color: AppColors.textPrimary(context),
+                    ),
                     maxLines: 10,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -218,7 +225,7 @@ class ConnectionCard extends GetView<ConnectionController> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      request.status.toUpperCase(),
+                      request.status.tr.toUpperCase(),
                       style: TextStyle(
                         color: statusColor,
                         fontWeight: FontWeight.bold,
@@ -226,119 +233,153 @@ class ConnectionCard extends GetView<ConnectionController> {
                       ),
                     ),
                   ),
-                  const Spacer(),
+                  SizedBox(width: 2.wp),
 
                   // Action Buttons (conditional)
-                  Obx(() {
-                    final isLoading =
-                        controller.state.buttonLoading[request.id] == true;
+                  Expanded(
+                    child: Obx(() {
+                      final isLoading =
+                          controller.state.buttonLoading[request.id] == true;
 
-                    if (request.status != 'pending') return const SizedBox();
+                      if (request.status != 'pending') {
+                        return const SizedBox();
+                      }
 
-                    if (isSentTab) {
-                      // 🔹 SENT TAB (Withdraw)
-                      return SizedBox(
-                        height: 3.5.hp,
-                        child: ElevatedButton.icon(
-                          onPressed: isLoading
-                              ? null
-                              : () => onCancel(request.id),
-                          icon: isLoading
-                              ? SizedBox(
-                                  width: 12,
-                                  height: 12,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white.withValues(alpha: 0.9),
-                                  ),
-                                )
-                              : Icon(Icons.cancel_outlined, size: 10.sp),
-                          label: Text(
-                            isLoading ? 'Withdrawing...' : 'Withdraw',
-                            style: TextStyle(fontSize: 8.5.sp),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: isLoading
-                                ? Colors
-                                      .grey
-                                      .shade500 // dimmed
-                                : Colors.grey.shade600,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            elevation: 0,
-                          ),
-                        ),
-                      );
-                    }
-
-                    // 🔹 RECEIVED TAB (Accept / Decline)
-                    return Row(
-                      children: [
-                        SizedBox(
-                          height: 3.5.hp,
-                          child: ElevatedButton.icon(
-                            onPressed: isLoading
-                                ? null
-                                : () => onAccept(request.id, request.eventId),
-                            icon: isLoading
-                                ? SizedBox(
-                                    width: 12,
-                                    height: 12,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
+                      if (isSentTab) {
+                        return Align(
+                          alignment: Alignment.centerRight,
+                          child: SizedBox(
+                            height: 3.5.hp,
+                            child: ElevatedButton(
+                              onPressed: isLoading
+                                  ? null
+                                  : () => onCancel(request.id),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: isLoading
+                                    ? Colors.grey.shade500
+                                    : Colors.grey.shade600,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                                padding: EdgeInsets.symmetric(horizontal: 14),
+                                elevation: 0,
+                              ),
+                              child: isLoading
+                                  ? Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        SizedBox(
+                                          width: 12,
+                                          height: 12,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white.withValues(
+                                              alpha: 0.9,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 6),
+                                        Text(
+                                          'withdrawing'.tr,
+                                          style: TextStyle(fontSize: 8.5.sp),
+                                        ),
+                                      ],
+                                    )
+                                  : Text(
+                                      'withdraw'.tr,
+                                      style: TextStyle(fontSize: 8.5.sp),
                                     ),
-                                  )
-                                : const Icon(Icons.check, size: 16),
-                            label: Text(
-                              isLoading ? 'Accepting...' : 'accept'.tr,
-                              style: TextStyle(fontSize: 8.5.sp),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: isLoading
-                                  ? Colors
-                                        .green
-                                        .shade300 // dim
-                                  : Colors.green,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              elevation: 0,
                             ),
                           ),
-                        ),
-                        SizedBox(width: 2.wp),
-                        SizedBox(
-                          height: 3.5.hp,
-                          child: ElevatedButton.icon(
-                            onPressed: isLoading
-                                ? null
-                                : () => onReject(request.id, request.eventId),
-                            icon: const Icon(Icons.close, size: 16),
-                            label: Text(
-                              'decline'.tr,
-                              style: TextStyle(fontSize: 8.5.sp),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: isLoading
-                                  ? Colors
-                                        .red
-                                        .shade300 // dim
-                                  : Colors.red.shade600,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18),
+                        );
+                      }
+
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              height: 3.5.hp,
+                              child: ElevatedButton(
+                                onPressed: isLoading
+                                    ? null
+                                    : () =>
+                                          onAccept(request.id, request.eventId),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isLoading
+                                      ? Colors.green.shade300
+                                      : Colors.green,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                  padding: EdgeInsets.symmetric(horizontal: 8),
+                                  elevation: 0,
+                                ),
+                                child: isLoading
+                                    ? Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          SizedBox(
+                                            width: 12,
+                                            height: 12,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          SizedBox(width: 6),
+                                          Flexible(
+                                            child: Text(
+                                              'accepting'.tr,
+                                              style: TextStyle(
+                                                fontSize: 8.5.sp,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : Text(
+                                        'accept'.tr,
+                                        style: TextStyle(fontSize: 8.5.sp),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                               ),
-                              elevation: 0,
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  }),
+                          SizedBox(width: 2.wp),
+                          Expanded(
+                            child: SizedBox(
+                              height: 3.5.hp,
+                              child: ElevatedButton(
+                                onPressed: isLoading
+                                    ? null
+                                    : () =>
+                                          onReject(request.id, request.eventId),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isLoading
+                                      ? Colors.red.shade300
+                                      : Colors.red.shade600,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                  padding: EdgeInsets.symmetric(horizontal: 8),
+                                  elevation: 0,
+                                ),
+                                child: Text(
+                                  'decline'.tr,
+                                  style: TextStyle(fontSize: 8.5.sp),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+                  ),
                 ],
               ),
             ],

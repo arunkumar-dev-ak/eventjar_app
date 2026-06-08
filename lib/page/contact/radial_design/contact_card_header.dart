@@ -149,11 +149,13 @@ class ContactCardHeader extends StatelessWidget {
                                             contact.phone!,
                                           ),
                                           SizedBox(width: 3.wp),
-                                          EventJarInviteBadge(
-                                            onEventJar: onEventJar,
-                                            phone: contact.phone,
-                                            name: contact.name,
-                                            parentContext: context,
+                                          Flexible(
+                                            child: EventJarInviteBadge(
+                                              onEventJar: onEventJar,
+                                              phone: contact.phone,
+                                              name: contact.name,
+                                              parentContext: context,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -202,7 +204,9 @@ class ContactCardHeader extends StatelessWidget {
                                         Text(
                                           'send_mail'.tr,
                                           style: TextStyle(
-                                            color: AppColors.textPrimary(context),
+                                            color: AppColors.textPrimary(
+                                              context,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -221,7 +225,9 @@ class ContactCardHeader extends StatelessWidget {
                                         Text(
                                           'call'.tr,
                                           style: TextStyle(
-                                            color: AppColors.textPrimary(context),
+                                            color: AppColors.textPrimary(
+                                              context,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -241,7 +247,9 @@ class ContactCardHeader extends StatelessWidget {
                                           Text(
                                             'invite_to_myeventjar'.tr,
                                             style: TextStyle(
-                                              color: AppColors.textPrimary(context),
+                                              color: AppColors.textPrimary(
+                                                context,
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -260,7 +268,9 @@ class ContactCardHeader extends StatelessWidget {
                                         Text(
                                           'add_to_phone'.tr,
                                           style: TextStyle(
-                                            color: AppColors.textPrimary(context),
+                                            color: AppColors.textPrimary(
+                                              context,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -279,7 +289,9 @@ class ContactCardHeader extends StatelessWidget {
                                         Text(
                                           'edit_contact'.tr,
                                           style: TextStyle(
-                                            color: AppColors.textPrimary(context),
+                                            color: AppColors.textPrimary(
+                                              context,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -298,7 +310,9 @@ class ContactCardHeader extends StatelessWidget {
                                         Text(
                                           'delete_contact'.tr,
                                           style: TextStyle(
-                                            color: AppColors.textPrimary(context),
+                                            color: AppColors.textPrimary(
+                                              context,
+                                            ),
                                           ),
                                         ),
                                       ],

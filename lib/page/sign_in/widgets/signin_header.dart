@@ -21,7 +21,7 @@ class SignInHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Welcome Back!",
+                '${"welcome_back".tr} !',
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,

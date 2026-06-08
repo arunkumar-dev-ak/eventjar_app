@@ -151,7 +151,7 @@ class ContactCardDeletePopup extends StatelessWidget {
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'This action cannot be undone and will permanently delete all contact data.',
+                      'permanent_action_warning'.tr,
                       style: TextStyle(
                         fontSize: 9.sp,
                         color: Colors.orange.shade800,

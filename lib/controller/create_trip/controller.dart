@@ -137,7 +137,7 @@ class CreateTripController extends GetxController {
 
       state.isLoading.value = false;
 
-      Get.back(result: "created");
+      Navigator.pop(Get.context!, "refresh");
 
       AppSnackbar.success(
         title: "success".tr,

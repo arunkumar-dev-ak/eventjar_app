@@ -277,7 +277,7 @@
         "sign_in_to_continue": "Sign in to continue",
         "password": "Password",
         "submit": "Submit",
-        "dont_have_account": "Don’t have an Account ? Create Account",
+        "dont_have_account": "Don’t have an Account",
         "all_rights_reserved": "All rights reserved",
         "developed_by": "Developed by",
         "join_us": "Join Us",
@@ -933,6 +933,10 @@
         "no_data_loaded": "No Data loaded",
         "no_matches_found": "No matches found",
         "no_person_detected_error": "No person detected in the image.",
-        "search_ellipsis": "Search..."
+        "search_ellipsis": "Search...",
+        "withdraw": "Withdraw",
+        "withdrawing": "Withdrawing...",
+        "accepting": "Accepting..."
+
     }
 }

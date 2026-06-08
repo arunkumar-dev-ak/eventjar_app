@@ -567,7 +567,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      event.isPaid ? 'Paid' : 'free'.tr,
+                      event.isPaid ? 'paid'.tr : 'free'.tr,
                       style: TextStyle(
                         color: event.isPaid
                             ? const Color(0xFFE65100)

@@ -25,7 +25,7 @@ class UserProfilePermissions extends GetView<UserProfileController> {
             title: 'camera'.tr,
             subtitle: cameraOn
                 ? 'Camera access is enabled'
-                : 'Required for QR scan, card scan and Image upload',
+                : 'camera_permission_desc'.tr,
             isEnabled: cameraOn,
             onTap: controller.toggleCameraPermission,
           ),
@@ -36,7 +36,7 @@ class UserProfilePermissions extends GetView<UserProfileController> {
             iconBgColor: Colors.orange.shade50,
             title: 'notifications'.tr,
             subtitle: notifOn
-                ? 'Push notifications are enabled'
+                ? 'notifications_enabled_desc'.tr
                 : 'Stay updated with contact activity',
             isEnabled: notifOn,
             onTap: controller.toggleNotificationPermission,

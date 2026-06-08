@@ -236,7 +236,7 @@ class _ScanCardState extends State<ScanCard> {
         return Showcase(
           scope: ScanCardController.scanCardScope,
           key: controller.tourTipsKey,
-          title: 'Scan a Business Card',
+          title: 'scan_card_to_begin'.tr,
           description: 'Snap or upload — we extract name, phone & email.',
           tooltipBackgroundColor: controller.primaryColor,
           textColor: Colors.white,
@@ -331,7 +331,7 @@ class _ScanCardState extends State<ScanCard> {
           ),
           SizedBox(height: 1.5.hp),
           Text(
-            'Scan a Business Card to begin',
+            'scan_card_to_begin'.tr,
             style: TextStyle(
               color: AppColors.textHintStatic,
               fontSize: 10.sp,
@@ -351,7 +351,7 @@ class _ScanCardState extends State<ScanCard> {
                 Icon(Icons.touch_app, size: 16, color: controller.primaryColor),
                 SizedBox(width: 2.wp),
                 Text(
-                  'Tap Camera or Gallery below',
+                  'tap_camera_or_gallery_below'.tr,
                   style: TextStyle(
                     fontSize: 8.sp,
                     color: controller.primaryColor,
@@ -384,9 +384,9 @@ class _ScanCardState extends State<ScanCard> {
             ],
           ),
           SizedBox(height: 1.hp),
-          _buildTipItem('Hold the card close & zoom in', tipStyle),
+          _buildTipItem('tip_hold_and_zoom'.tr, tipStyle),
           const SizedBox(height: 6),
-          _buildTipItem('Scan one Business Card at a time', tipStyle),
+          _buildTipItem('tip_one_at_a_time'.tr, tipStyle),
           const SizedBox(height: 6),
           _buildTipItem('tip_good_lighting'.tr, tipStyle),
         ],

@@ -20,7 +20,7 @@ class InstructionSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InstructionStep(step: 1, text: 'install_authenticator_app'.tr),
-          const InstructionStep(step: 2, text: "Scan QR or enter secret manually"),
+          InstructionStep(step: 2, text: 'scan_qr_or_enter_secret'.tr),
           InstructionStep(step: 3, text: 'enter_six_digit_code_below'.tr),
         ],
       ),
@@ -61,7 +61,10 @@ class InstructionStep extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: TextStyle(fontSize: 9.sp, color: AppColors.textSecondary(context)),
+              style: TextStyle(
+                fontSize: 9.sp,
+                color: AppColors.textSecondary(context),
+              ),
             ),
           ),
         ],

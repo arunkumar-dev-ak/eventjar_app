@@ -51,7 +51,7 @@ class Set2faController extends GetxController {
     state.error.value = '';
 
     if (code.length != 6) {
-      state.error.value = 'Enter 6 digit code';
+      state.error.value = 'enter_six_digit_code'.tr;
       return;
     }
 
@@ -101,7 +101,7 @@ class Set2faController extends GetxController {
 
   void updateOtpValidity() {
     final otp = otpController.text;
-    state.error.value = otp.length == 6 ? "" : "Enter 6 digit code";
+    state.error.value = otp.length == 6 ? "" : "enter_six_digit_code".tr;
   }
 
   void navigateToSignInPage() {

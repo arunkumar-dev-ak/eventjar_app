@@ -115,7 +115,9 @@ class _StatusBadge extends GetView<NfcReadController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final nfcStatusText = controller.getNfcStatusText();
+      final nfcStatus = controller.getNfcStatusText();
+      final nfcStatusText = nfcStatus[0];
+      final nfcStatusColor = nfcStatus[1];
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
@@ -129,18 +131,14 @@ class _StatusBadge extends GetView<NfcReadController> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.circle,
-              size: 7.sp,
-              color: _getStatusColor(nfcStatusText),
-            ),
+            Icon(Icons.circle, size: 7.sp, color: nfcStatusColor),
             SizedBox(width: 1.wp),
             Text(
               nfcStatusText,
               style: TextStyle(
                 fontSize: 8.sp,
                 fontWeight: FontWeight.w600,
-                color: _getStatusColor(nfcStatusText),
+                color: nfcStatusColor,
                 letterSpacing: 0.5,
               ),
             ),
@@ -148,17 +146,5 @@ class _StatusBadge extends GetView<NfcReadController> {
         ),
       );
     });
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'NFC Ready':
-        return Colors.green;
-      case 'NFC Not Available':
-      case 'NFC Disabled':
-        return Colors.orange;
-      default:
-        return Colors.blueAccent;
-    }
   }
 }

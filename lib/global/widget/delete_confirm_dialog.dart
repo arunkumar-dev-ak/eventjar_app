@@ -121,7 +121,7 @@ class DeleteConfirmDialog extends StatelessWidget {
                     ),
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
-                      'Cancel',
+                      'cancel'.tr,
                       style: TextStyle(
                         fontSize: 9.sp,
                         fontWeight: FontWeight.w600,

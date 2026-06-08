@@ -21,7 +21,7 @@ class SignUpHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Join Us!",
+                "${'join_us'.tr} !",
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,

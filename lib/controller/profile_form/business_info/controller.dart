@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:eventjar/api/user_profile_api/user_profile_api.dart';
 import 'package:eventjar/controller/profile_form/business_info/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
@@ -11,7 +10,7 @@ import 'package:flutter_intl_phone_field/countries.dart';
 import 'package:get/get.dart';
 
 class BusinessInfoFormController extends GetxController {
-  var appBarTitle = "Update Business Info";
+  var appBarTitle = "update_business_info".tr;
   final state = BusinessInfoFormState();
   final formKey = GlobalKey<FormState>();
 
@@ -40,7 +39,7 @@ class BusinessInfoFormController extends GetxController {
     'Marketing',
     'Real Estate',
     'Food & Beverage',
-    'other_label'.tr,
+    'other_label',
   ];
 
   final List<String> operatingRegions = [

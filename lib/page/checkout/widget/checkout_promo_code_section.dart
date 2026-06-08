@@ -121,7 +121,7 @@ class CheckoutPromoCodeSection extends GetView<CheckoutController> {
             if (isApplied) ...[
               SizedBox(height: 1.hp),
               Text(
-                "Promo applied • You saved ₹${promo!.discountAmount.toStringAsFixed(2)} 🎉",
+                "${'promo_applied'.tr} • You saved ₹${promo!.discountAmount.toStringAsFixed(2)} 🎉",
                 style: TextStyle(
                   fontSize: 8.sp,
                   color: Colors.green.shade700,
