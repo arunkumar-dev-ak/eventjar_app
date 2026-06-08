@@ -157,7 +157,7 @@ class UserProfileController extends GetxController
                 ),
                 CupertinoDialogAction(
                   isDefaultAction: true,
-                  child: const Text('Open Settings'),
+                  child: Text('open_settings'.tr),
                   onPressed: () {
                     Navigator.pop(ctx);
                     openAppSettings();
@@ -186,7 +186,7 @@ class UserProfileController extends GetxController
                     openAppSettings();
                   },
                   child: Text(
-                    'Open Settings',
+                    'open_settings'.tr,
                     style: TextStyle(color: AppColors.gradientLightStart),
                   ),
                 ),
@@ -406,7 +406,10 @@ class UserProfileController extends GetxController
               SizedBox(height: 20),
               ListTile(
                 leading: Icon(Icons.camera_alt, color: Colors.blue),
-                title: Text('Take Photo', style: TextStyle(color: textColor)),
+                title: Text(
+                  'take_photo'.tr,
+                  style: TextStyle(color: textColor),
+                ),
                 onTap: () {
                   Get.back();
                   _pickImage(ImageSource.camera);
@@ -544,10 +547,7 @@ class UserProfileController extends GetxController
   Future<void> uploadProfileAvatar() async {
     final file = state.selectedAvatarFile.value;
     if (file == null) {
-      AppSnackbar.error(
-        title: 'Invalid',
-        message: "reupload_file_error".tr,
-      );
+      AppSnackbar.error(title: 'Invalid', message: "reupload_file_error".tr);
       return;
     }
 
@@ -582,7 +582,7 @@ class UserProfileController extends GetxController
       }
       final msg = e.response?.data is Map
           ? e.response?.data['error']?.toString()
-          : 'Failed to upload';
+          : 'failed_upload'.tr;
       AppSnackbar.error(title: 'error'.tr, message: msg ?? 'failed_upload'.tr);
     } catch (e) {
       LoggerService.loggerInstance.e(e);
@@ -847,10 +847,7 @@ class UserProfileController extends GetxController
         state.userProfile.value?.phone ??
         state.userProfile.value?.phoneParsed?.fullNumber;
     if (phone == null || phone.isEmpty) {
-      AppSnackbar.error(
-        title: "error".tr,
-        message: "no_phone_on_profile".tr,
-      );
+      AppSnackbar.error(title: "error".tr, message: "no_phone_on_profile".tr);
       return false;
     }
 
@@ -976,7 +973,10 @@ class UserProfileController extends GetxController
       AppSnackbar.error(title: "error".tr, message: "no_email_app_found".tr);
     } catch (e) {
       LoggerService.loggerInstance.e(e);
-      AppSnackbar.error(title: "error".tr, message: "could_not_open_email_app".tr);
+      AppSnackbar.error(
+        title: "error".tr,
+        message: "could_not_open_email_app".tr,
+      );
     }
   }
 
@@ -1009,16 +1009,16 @@ class UserProfileController extends GetxController
 
         onTabOpen();
 
-        AppSnackbar.success(
-          title: "success".tr,
-          message: "two_fa_disabled".tr,
-        );
+        AppSnackbar.success(title: "success".tr, message: "two_fa_disabled".tr);
       }
     } catch (err) {
       if (err is DioException) {
         ApiErrorHandler.handleDioError(err, "Error");
       } else {
-        AppSnackbar.error(title: "error".tr, message: "generic_try_again_error".tr);
+        AppSnackbar.error(
+          title: "error".tr,
+          message: "generic_try_again_error".tr,
+        );
       }
     } finally {
       state.isDisabling2FA.value = false;

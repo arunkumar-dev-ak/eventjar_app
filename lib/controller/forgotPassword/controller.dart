@@ -44,7 +44,7 @@ class ForgotPasswordController extends GetxController {
         getForgotPasswordData(),
       );
 
-      AppSnackbar.success(title: "Email Sent", message: message);
+      AppSnackbar.success(title: "email_sent".tr, message: message);
 
       return true;
     } catch (err) {
@@ -68,7 +68,7 @@ class ForgotPasswordController extends GetxController {
     if (email == null || email.isEmpty) {
       return "Email is required";
     } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
-      return "Enter valid email";
+      return "enter_valid_email".tr;
     }
     return null;
   }

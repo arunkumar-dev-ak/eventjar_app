@@ -115,7 +115,7 @@ class NetworkScreenController extends GetxController
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to fetch Analytics",
+        title: "failed_fetch_analytics".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

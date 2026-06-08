@@ -98,7 +98,7 @@ class CreateExpenseController extends GetxController {
               state.meta.value = response.meta;
             })
             .catchError((error) {
-              _handleApiError(error, 'Search failed');
+              _handleApiError(error, 'search_failed'.tr);
             })
             .whenComplete(() {
               state.isMembersLoading.value = false;

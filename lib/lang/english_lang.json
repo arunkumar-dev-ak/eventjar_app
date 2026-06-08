@@ -885,7 +885,7 @@
         "contact_written_nfc_success": "Contact written to NFC card successfully!",
         "card_extraction_failed": "Could not extract info from card image.",
         "card_text_read_failed": "Could not read text from the card image.",
-        "friend_added_to_trip_success": "Friend Successfully to the trip!",
+        "friend_added_to_trip_success": "Friend added successfully to the trip!",
         "gallery_updated_success": "Gallery updated successfully",
         "meeting_request_accepted": "Meeting request accepted",
         "meeting_request_cancelled": "Meeting request cancelled",

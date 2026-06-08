@@ -170,7 +170,7 @@ class _QrCodePageState extends State<QrCodePage> {
                 Icons.help_outline_rounded,
                 color: Colors.blueGrey,
               ),
-              tooltip: 'Replay tour',
+              tooltip: 'replay_tour'.tr,
               onPressed: () {
                 Get.find<QrScanScreenController>().replayTour();
               },

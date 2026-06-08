@@ -72,7 +72,7 @@ class NfcReadController extends GetxController
   String getNfcStatusText() {
     switch (state.nfcStatus.value) {
       case NfcStatus.available:
-        return 'NFC Ready';
+        return 'nfc_ready'.tr;
       case NfcStatus.notAvailable:
         return 'NFC Not Available';
       case NfcStatus.disabled:
@@ -103,7 +103,7 @@ class NfcReadController extends GetxController
 
   void showNfcErrorPrompt() {
     AppSnackbar.warning(
-      title: 'NFC Error',
+      title: 'nfc_error'.tr,
       message:
           'NFC is not available on this device or Please Turn it ON, in your Setting',
     );
@@ -163,7 +163,7 @@ class NfcReadController extends GetxController
   Future<void> navigateToWrite() async {
     if (Platform.isIOS) {
       AppSnackbar.warning(
-        title: 'Not Supported on iOS',
+        title: 'not_supported_ios'.tr,
         message:
             'Writing to NFC cards is not supported on iOS. Use an Android device to write contacts.',
       );

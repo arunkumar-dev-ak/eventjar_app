@@ -24,14 +24,14 @@ Widget userProfilebuildSummary() {
         label: 'experience'.tr,
         value: extended?.yearsInBusiness != null
             ? "${extended!.yearsInBusiness}"
-            : "Not specified",
+            : "not_specified".tr,
         iconColor: Colors.orange,
       ),
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
         icon: Icons.video_call,
         label: 'available_for_1_on_1'.tr,
-        value: extended?.availabilitySlots ?? "Availability not set",
+        value: extended?.availabilitySlots ?? "availability_not_set".tr,
         iconColor: Colors.green,
       ),
       if (extended != null && extended.knownLanguages.isNotEmpty) ...[

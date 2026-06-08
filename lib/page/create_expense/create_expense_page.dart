@@ -73,7 +73,18 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   items: controller.state.categories,
                   selectedItem: controller.state.selectedCategory,
                   getDefaultItem: () => 'shopping'.tr,
-                  getDisplayValue: (item) => item,
+                  getDisplayValue: (item) {
+                    final keyMap = {
+                      'Accommodation': 'accommodation',
+                      'Transportation': 'transportation',
+                      'Food & Drinks': 'food_and_drinks',
+                      'Activities': 'activities',
+                      'Tickets': 'tickets_label',
+                      'Shopping': 'shopping',
+                      'Other': 'other_label',
+                    };
+                    return (keyMap[item] ?? item).tr;
+                  },
                   getKeyValue: (item) => item,
                   onSelected: (val) =>
                       controller.state.selectedCategory.value = val,

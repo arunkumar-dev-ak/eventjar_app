@@ -101,8 +101,8 @@ class ContactListMeetingController extends GetxController {
     try {
       await ContactListMeetingApi.confirmMeeting(id: meetingId);
       AppSnackbar.success(
-        title: 'Meeting Completed!',
-        message: 'This meeting has been marked as accepted successfully.',
+        title: 'meeting_completed'.tr,
+        message: 'meeting_marked_accepted'.tr,
       );
       Navigator.pop(Get.context!, "refresh");
     } catch (err) {
@@ -190,14 +190,14 @@ class ContactListMeetingController extends GetxController {
       await ContactListMeetingApi.rescheduleMeeting(id: meetingId, dto: dto);
       AppSnackbar.success(
         title: "Success",
-        message: "Meeting rescheduled successfully",
+        message: "meeting_rescheduled_success".tr,
       );
 
       return true;
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to change status",
+        title: "failed_change_status".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -249,14 +249,14 @@ class ContactListMeetingController extends GetxController {
     try {
       await ContactListMeetingApi.completeMeeting(id: meetingId);
       AppSnackbar.success(
-        title: 'Meeting Completed!',
+        title: 'meeting_completed'.tr,
         message: 'This meeting has been marked as completed successfully.',
       );
       Navigator.pop(Get.context!, "refresh");
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to change status",
+        title: "failed_change_status".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

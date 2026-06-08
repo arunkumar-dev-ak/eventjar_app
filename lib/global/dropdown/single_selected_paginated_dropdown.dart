@@ -333,7 +333,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                       ),
                                       alignment: Alignment.center,
                                       child: Text(
-                                        'Load More',
+                                        'load_more'.tr,
                                         style: TextStyle(
                                           fontSize: 8.sp,
                                           fontWeight: FontWeight.w500,

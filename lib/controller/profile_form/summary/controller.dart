@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class SummaryFormController extends GetxController {
-  var appBarTitle = "Update Professional Summary";
+  var appBarTitle = "update_professional_summary".tr;
   final state = SummaryFormState();
   final formKey = GlobalKey<FormState>();
 

@@ -45,7 +45,7 @@ class UserProfilePage extends GetView<UserProfileController> {
         actions: [
           IconButton(
             icon: const Icon(Icons.language, color: Colors.white),
-            tooltip: 'Language',
+            tooltip: 'language'.tr,
             onPressed: () => showLanguageChangeDialog(context),
           ),
           Obx(() {
@@ -57,7 +57,7 @@ class UserProfilePage extends GetView<UserProfileController> {
             };
             return PopupMenuButton<ThemeMode>(
               icon: Icon(icon, color: Colors.white),
-              tooltip: 'Theme',
+              tooltip: 'theme'.tr,
               onSelected: (selected) => ThemeStore.to.setThemeMode(selected),
               itemBuilder: (_) => [
                 _buildThemeMenuItem(

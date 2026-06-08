@@ -139,7 +139,7 @@ class BudgetTrackController extends GetxController
       LoggerService.loggerInstance.e('Trip Loads onScroll error: $err');
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load Trips",
+        title: "failed_load_trips".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -161,14 +161,14 @@ class BudgetTrackController extends GetxController
       await SplitTrackApi.deleteTrip(tripId: trip.id);
       state.trips.remove(trip);
       AppSnackbar.success(
-        title: "Success",
-        message: "Trip deleted successfully",
+        title: "success".tr,
+        message: "trip_deleted_success".tr,
       );
     } catch (err) {
       LoggerService.loggerInstance.e('Delete trip error: $err');
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to delete Trip",
+        title: "failed_delete_trip".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

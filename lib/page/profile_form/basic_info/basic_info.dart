@@ -404,7 +404,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Verify Phone Number',
+                      'verify_phone_number'.tr,
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.bold,
@@ -518,8 +518,8 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                                 : () => controller.sendPhoneOtp(),
                             child: Text(
                               cooldown > 0
-                                  ? 'Resend in ${cooldown}s'
-                                  : 'Resend',
+                                  ? '${'resend'.tr} ${cooldown}s'
+                                  : 'resend'.tr,
                               style: TextStyle(
                                 fontSize: 8.sp,
                                 color: cooldown > 0
@@ -550,7 +550,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                                     final otp = pinController.text.trim();
                                     if (otp.length < 6) {
                                       controller.state.otpError.value =
-                                          'Please enter the full 6-digit code';
+                                          'enter_full_six_digit_code_error'.tr;
                                       return;
                                     }
                                     final success = await controller

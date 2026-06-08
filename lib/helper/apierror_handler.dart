@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/logger_service.dart';
+import 'package:get/get.dart';
 
 class ApiErrorHandler {
   static void handle({
@@ -74,10 +75,10 @@ class ApiErrorHandler {
           errorMessage =
               data['error']?.toString() ??
               data['detail']?.toString() ??
-              "Something went wrong";
+              "something_went_wrong".tr;
         }
       } else {
-        errorMessage = err.message ?? "Something went wrong";
+        errorMessage = err.message ?? "something_went_wrong".tr;
       }
     }
 
@@ -89,9 +90,9 @@ class ApiErrorHandler {
         err.response?.statusCode == 502 ||
         err.response?.statusCode == 503 ||
         err.response?.statusCode == 504) {
-      AppSnackbar.warning(title: title ?? "Error", message: errorMessage);
+      AppSnackbar.warning(title: title ?? "error".tr, message: errorMessage);
     } else {
-      AppSnackbar.error(title: title ?? "Error", message: errorMessage);
+      AppSnackbar.error(title: title ?? "error".tr, message: errorMessage);
     }
   }
 }

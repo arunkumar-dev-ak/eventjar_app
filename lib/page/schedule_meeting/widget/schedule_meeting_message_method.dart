@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget scheduleMeetingMessageBuildMethodCard({
   required String title,
@@ -61,7 +62,9 @@ Widget scheduleMeetingMessageBuildMethodCard({
                       )
                     : Icon(
                         icon,
-                        color: isSelected ? Colors.blue : AppColors.textSecondaryStatic,
+                        color: isSelected
+                            ? Colors.blue
+                            : AppColors.textSecondaryStatic,
                       ),
                 SizedBox(width: 3.wp),
                 Expanded(
@@ -95,7 +98,7 @@ Widget scheduleMeetingMessageBuildMethodCard({
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            badgeText ?? 'Automation Enabled',
+                            badgeText ?? 'automation_enabled'.tr,
                             style: TextStyle(
                               fontSize: 7.sp,
                               color: badgeText == null

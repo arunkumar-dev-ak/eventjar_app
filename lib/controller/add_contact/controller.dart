@@ -574,7 +574,7 @@ class AddContactController extends GetxController {
   String? validateEmail(String? val) {
     if (val == null || val.trim().isEmpty) return 'Email is required';
     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-    if (!emailRegex.hasMatch(val.trim())) return 'Enter valid email';
+    if (!emailRegex.hasMatch(val.trim())) return 'enter_valid_email'.tr;
     return null;
   }
 
@@ -622,7 +622,7 @@ class AddContactController extends GetxController {
         foundItems.add(
           _ExtractedItem(
             'company',
-            'Company',
+            'company'.tr,
             info.company!,
             Icons.business_outlined,
           ),
@@ -632,7 +632,7 @@ class AddContactController extends GetxController {
         foundItems.add(
           _ExtractedItem(
             'website',
-            'Website',
+            'website'.tr,
             info.website!,
             Icons.language_outlined,
           ),
@@ -642,7 +642,7 @@ class AddContactController extends GetxController {
         foundItems.add(
           _ExtractedItem(
             'address',
-            'Address',
+            'address'.tr,
             info.address!,
             Icons.location_on_outlined,
           ),
@@ -652,7 +652,7 @@ class AddContactController extends GetxController {
         foundItems.add(
           _ExtractedItem(
             'phone2',
-            'Phone 2',
+            'phone_2'.tr,
             info.phone2Parsed!.fullNumber,
             Icons.phone_outlined,
           ),
@@ -661,7 +661,7 @@ class AddContactController extends GetxController {
         foundItems.add(
           _ExtractedItem(
             'phone2',
-            'Phone 2',
+            'phone_2'.tr,
             info.phone2!,
             Icons.phone_outlined,
           ),

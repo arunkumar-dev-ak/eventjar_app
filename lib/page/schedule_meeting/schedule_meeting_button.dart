@@ -87,7 +87,7 @@ class ScheduleMeetingActionButtons extends StatelessWidget {
                     : Text(
                         configLoading
                             ? 'Loading Config...'
-                            : 'Schedule Meeting',
+                            : 'schedule_meeting'.tr,
                         style: TextStyle(
                           fontSize: 9.sp,
                           fontWeight: isButtonEnabled

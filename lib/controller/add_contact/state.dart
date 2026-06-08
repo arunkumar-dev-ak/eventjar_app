@@ -24,7 +24,7 @@ class AddContactState {
   // Incremented on every reset to force IntlPhoneField to rebuild
   RxInt phone2FieldKey = 0.obs;
 
-  RxString clearButtonTitle = 'Clear'.obs;
+  RxString clearButtonTitle = 'clear'.tr.obs;
 
   // Visiting card extra info
   Rxn<VisitingCardInfo> visitingCardInfo = Rxn();
@@ -44,9 +44,9 @@ class AddContactState {
 
   RxList<Map<String, String>> stages = <Map<String, String>>[
     {'key': 'new', 'value': 'New Contact'},
-    {'key': 'followup_24h', 'value': '24H Followup'},
-    {'key': 'followup_7d', 'value': '7D Followup'},
-    {'key': 'followup_30d', 'value': '30D Followup'},
+    {'key': 'followup_24h', 'value': 'twenty_four_h_followup'},
+    {'key': 'followup_7d', 'value': 'seven_d_followup'},
+    {'key': 'followup_30d', 'value': 'thirty_d_followup'},
     {'key': 'qualified', 'value': 'Qualified Lead'},
   ].obs;
 

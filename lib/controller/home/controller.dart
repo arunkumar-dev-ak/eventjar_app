@@ -444,10 +444,7 @@ class HomeController extends GetxController {
   Future<bool> sendPhoneOtp() async {
     final phone = state.userProfile.value?.phone;
     if (phone == null || phone.isEmpty) {
-      AppSnackbar.error(
-        title: "error".tr,
-        message: "no_phone_on_profile".tr,
-      );
+      AppSnackbar.error(title: "error".tr, message: "no_phone_on_profile".tr);
       return false;
     }
 
@@ -580,7 +577,10 @@ class HomeController extends GetxController {
       AppSnackbar.error(title: "error".tr, message: "no_email_app_found".tr);
     } catch (e) {
       LoggerService.loggerInstance.e(e);
-      AppSnackbar.error(title: "error".tr, message: "could_not_open_email_app".tr);
+      AppSnackbar.error(
+        title: "error".tr,
+        message: "could_not_open_email_app".tr,
+      );
     }
   }
 

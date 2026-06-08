@@ -58,7 +58,7 @@ class CheckoutBottomBar extends GetView<CheckoutController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Total",
+                    "total".tr,
                     style: TextStyle(
                       fontSize: 9.sp,
                       color: AppColors.textSecondary(context),

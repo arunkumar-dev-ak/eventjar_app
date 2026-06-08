@@ -32,5 +32,4 @@ class HomeState {
   RxBool isVerifyingOtp = false.obs;
   RxString otpError = ''.obs;
   RxInt resendCooldown = 0.obs;
-
 }

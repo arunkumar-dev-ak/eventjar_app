@@ -78,9 +78,12 @@ class ScanCardController extends GetxController
 
   void startTourNow() {
     isTourActive.value = true;
-    _showcase.startShowCase(
-      [tourTipsKey, tourCameraKey, tourGalleryKey, tourHelpKey],
-    );
+    _showcase.startShowCase([
+      tourTipsKey,
+      tourCameraKey,
+      tourGalleryKey,
+      tourHelpKey,
+    ]);
   }
 
   AnimationController? _scanLineController;
@@ -295,11 +298,13 @@ class ScanCardController extends GetxController
     final lines = <_AnnotatedLine>[];
     for (final block in recognized.blocks) {
       for (final line in block.lines) {
-        lines.add(_AnnotatedLine(
-          text: line.text,
-          fontSize: line.boundingBox.height,
-          top: line.boundingBox.top,
-        ));
+        lines.add(
+          _AnnotatedLine(
+            text: line.text,
+            fontSize: line.boundingBox.height,
+            top: line.boundingBox.top,
+          ),
+        );
       }
     }
     return lines;
@@ -381,7 +386,11 @@ class ScanCardController extends GetxController
     // excluded from name candidates.
     info.company = _extractCompany(text, annotatedLines);
     info.name = _extractName(
-      text, info.email, info.phone, info.company, annotatedLines,
+      text,
+      info.email,
+      info.phone,
+      info.company,
+      annotatedLines,
     );
 
     return info;
@@ -484,10 +493,7 @@ class ScanCardController extends GetxController
     return addressLines.join(', ');
   }
 
-  String? _extractCompany(
-    String text,
-    List<_AnnotatedLine> annotatedLines,
-  ) {
+  String? _extractCompany(String text, List<_AnnotatedLine> annotatedLines) {
     final lines = text.split('\n');
     final companySuffixes = RegExp(
       r'\b(?:Pvt\.?\s*Ltd|Ltd\.?|LLP|Inc\.?|Corp\.?|Group|Industries|Technologies|Solutions|Services|Enterprises|Agriculture|Agri|Construction|Trading|Exports|Imports|Associates|Consultants|Foundation|Institute|Academy|College|Hospital|Clinic|Pharmacy|Retail|Wholesale|International|Global)\b',

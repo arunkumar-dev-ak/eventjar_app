@@ -25,21 +25,20 @@ class ContactStageDropdown extends StatelessWidget {
                 horizontal: 40,
                 vertical: 24,
               ),
-              child: Container(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.5,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.scaffoldBg(context),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                padding: const EdgeInsets.all(16),
+              child: Material(
+                color: AppColors.scaffoldBg(context),
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.5,
+                  ),
+                  padding: const EdgeInsets.all(16),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Title
                     Text(
-                      'Select Stage',
+                      'select_stage'.tr,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -77,6 +76,7 @@ class ContactStageDropdown extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
               ),
             ),
           );
@@ -117,7 +117,7 @@ class ContactStageDropdown extends StatelessWidget {
           final isSelected = stage['key'] == selectedKey;
 
           return ListTile(
-            title: Text(stage['value'] ?? ''),
+            title: Text((stage['value'] ?? '').tr),
             trailing: isSelected
                 ? Icon(Icons.check_circle, color: Colors.green.shade700)
                 : null,

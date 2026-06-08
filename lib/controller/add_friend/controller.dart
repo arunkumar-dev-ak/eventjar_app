@@ -141,13 +141,16 @@ class AddFriendController extends GetxController {
 
       clearForm();
 
-      AppSnackbar.success(title: 'added'.tr, message: 'friend_added_success'.tr);
+      AppSnackbar.success(
+        title: 'added'.tr,
+        message: 'friend_added_success'.tr,
+      );
 
       Navigator.pop(Get.context!, "refresh");
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to send invitation",
+        title: "failed_send_invitation".tr,
         onUnauthorized: () {
           navigateToSignInPage();
         },
@@ -235,7 +238,7 @@ class AddFriendController extends GetxController {
                   Get.offAllNamed('/sign-in');
                   return;
                 }
-                ApiErrorHandler.handleDioError(error, 'Search failed');
+                ApiErrorHandler.handleDioError(error, 'search_failed'.tr);
               } else {
                 AppSnackbar.error(
                   title: 'search_error'.tr,
@@ -282,7 +285,10 @@ class AddFriendController extends GetxController {
               }
               ApiErrorHandler.handleDioError(error, 'Load more failed');
             } else {
-              AppSnackbar.error(title: 'error'.tr, message: 'failed_load_more'.tr);
+              AppSnackbar.error(
+                title: 'error'.tr,
+                message: 'failed_load_more'.tr,
+              );
             }
           })
           .whenComplete(() {

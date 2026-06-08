@@ -40,9 +40,9 @@ class EventInfoController extends GetxController
   int get tabCount => canShowAttendeesTab ? 2 : 1;
 
   List<String> get tabNames => [
-    "Overview",
+    "overview".tr,
     "Reviews",
-    if (canShowAttendeesTab) "Attendees",
+    if (canShowAttendeesTab) "attendees".tr,
   ];
 
   List<IconData> get tabIcons => [
@@ -174,7 +174,10 @@ class EventInfoController extends GetxController
       state.eventInfo.value = response.event;
     } catch (e) {
       LoggerService.loggerInstance.e('Failed to load event info by ticket: $e');
-      AppSnackbar.error(title: "error_fetching_event".tr, message: e.toString());
+      AppSnackbar.error(
+        title: "error_fetching_event".tr,
+        message: e.toString(),
+      );
     } finally {
       state.isLoading.value = false;
     }
@@ -556,7 +559,7 @@ class EventInfoController extends GetxController
           };
         case 'accepted':
           return {
-            'text': 'Already in Your Contacts',
+            'text': 'already_in_your_contacts'.tr,
             'disabled': false,
             'color': 'green',
             'loading': false,
@@ -580,7 +583,7 @@ class EventInfoController extends GetxController
 
     // Default: Send new request
     return {
-      'text': 'Send Request',
+      'text': 'send_request'.tr,
       'disabled': false,
       'color': 'blue',
       'loading': false,

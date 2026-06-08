@@ -70,7 +70,7 @@ class CreateTripController extends GetxController {
       LoggerService.loggerInstance.e('Fetch friends error: $err');
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load Friends",
+        title: "failed_load_friends".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           Get.toNamed(RouteName.signInPage);
@@ -139,12 +139,15 @@ class CreateTripController extends GetxController {
 
       Get.back(result: "created");
 
-      AppSnackbar.success(title: "success".tr, message: "trip_created_success".tr);
+      AppSnackbar.success(
+        title: "success".tr,
+        message: "trip_created_success".tr,
+      );
     } catch (err) {
       LoggerService.loggerInstance.e('Create trip error: $err');
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to create Trip",
+        title: "failed_create_trip".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           Get.toNamed(RouteName.signInPage);

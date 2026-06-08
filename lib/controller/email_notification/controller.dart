@@ -61,8 +61,8 @@ class EmailNotificationController extends GetxController {
 
       if (showSnackbar && res.connected) {
         AppSnackbar.success(
-          title: "Connected",
-          message: "Microsoft account connected successfully",
+          title: "connected".tr,
+          message: "microsoft_account_connected".tr,
         );
       }
     } catch (err) {
@@ -81,8 +81,8 @@ class EmailNotificationController extends GetxController {
 
       if (showSnackbar && res.connected) {
         AppSnackbar.success(
-          title: "Connected",
-          message: "Google account connected successfully",
+          title: "connected".tr,
+          message: "google_account_connected".tr,
         );
       }
     } catch (err) {
@@ -113,8 +113,8 @@ class EmailNotificationController extends GetxController {
 
       if (success) {
         AppSnackbar.success(
-          title: "Success",
-          message: "Email configuration is valid",
+          title: "success".tr,
+          message: "email_config_valid".tr,
         );
       }
     } catch (err) {
@@ -145,8 +145,8 @@ class EmailNotificationController extends GetxController {
 
       if (success) {
         AppSnackbar.success(
-          title: "Saved",
-          message: "Email configuration saved successfully",
+          title: "saved".tr,
+          message: "email_config_saved".tr,
         );
 
         Navigator.pop(Get.context!, "configured");
@@ -231,10 +231,10 @@ class EmailNotificationController extends GetxController {
 
       ApiErrorHandler.handleDioError(err, message);
     } else if (err is Exception) {
-      AppSnackbar.error(title: "Exception", message: err.toString());
+      AppSnackbar.error(title: "exception".tr, message: err.toString());
     } else {
       AppSnackbar.error(
-        title: "Error",
+        title: "error".tr,
         message: "Something went wrong (${err.runtimeType})",
       );
     }

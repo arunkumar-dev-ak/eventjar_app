@@ -94,8 +94,8 @@ class NfcActionContainer extends GetView<NfcReadController> {
         subtitle: isIos
             ? 'NFC card writing is not supported on iOS. Use an Android device.'
             : hasProfile
-            ? 'Write your contact to NFC card'
-            : 'Set up your profile to write contact',
+            ? 'write_your_contact_to_nfc'.tr
+            : 'set_up_profile_to_write_contact'.tr,
         icon: isIos ? Icons.phone_android : Icons.nfc,
         gradientColors: isIos
             ? const [Color(0xFF9E9E9E), Color(0xFF616161)]

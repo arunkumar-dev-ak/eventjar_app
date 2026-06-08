@@ -179,7 +179,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                           ),
                         ),
                         child: Text(
-                          'Accepted',
+                          'accepted'.tr,
                           style: TextStyle(
                             fontSize: 7.sp,
                             fontWeight: FontWeight.w600,
@@ -202,7 +202,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                           ),
                         ),
                         child: Text(
-                          'Pending',
+                          'pending'.tr,
                           style: TextStyle(
                             fontSize: 7.sp,
                             fontWeight: FontWeight.w600,
@@ -225,7 +225,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                           ),
                         ),
                         child: Text(
-                          'Declined',
+                          'declined'.tr,
                           style: TextStyle(
                             fontSize: 7.sp,
                             fontWeight: FontWeight.w600,

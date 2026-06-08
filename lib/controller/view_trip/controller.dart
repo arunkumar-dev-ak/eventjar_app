@@ -483,7 +483,7 @@ class ViewTripController extends GetxController
               state.friendDropdownMeta.value = response.meta;
             })
             .onError((error, stackTrace) {
-              _handleApiError(error, 'Search failed');
+              _handleApiError(error, 'search_failed'.tr);
             })
             .whenComplete(() {
               state.isFriendDropdownLoading.value = false;

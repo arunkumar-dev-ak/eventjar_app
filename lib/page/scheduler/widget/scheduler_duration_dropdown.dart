@@ -28,7 +28,7 @@ class SchedulerDurationDropdown extends StatelessWidget {
           items: controller.state.durations,
           selectedItem: controller.state.selectedDurationMap,
           getDefaultItem: () => controller.state.durations.first,
-          getDisplayValue: (item) => item['value']!,
+          getDisplayValue: (item) => item['value']!.tr,
           getKeyValue: (item) => item,
           onSelected: (duration) {
             return controller.selectDuration(duration);

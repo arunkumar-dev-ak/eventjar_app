@@ -41,7 +41,7 @@ void addContactBottomModel(BuildContext context, ContactController controller) {
             _divider(),
             _buildMenuItem(
               icon: Icons.nfc_rounded,
-              title: 'NFC',
+              title: 'nfc'.tr,
               subtitle: 'scan_nfc_tag'.tr,
               gradientColors: [Colors.green.shade400, Colors.green.shade600],
               onTap: () {

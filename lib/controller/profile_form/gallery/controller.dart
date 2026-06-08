@@ -148,7 +148,10 @@ class GalleryFormController extends GetxController {
               const SizedBox(height: 20),
               ListTile(
                 leading: const Icon(Icons.camera_alt, color: Colors.blue),
-                title: Text('Take Photo', style: TextStyle(color: textColor)),
+                title: Text(
+                  'take_photo'.tr,
+                  style: TextStyle(color: textColor),
+                ),
                 onTap: () {
                   Get.back();
                   pickFromCamera();
@@ -207,10 +210,7 @@ class GalleryFormController extends GetxController {
       return;
     } catch (err) {
       state.isSaving.value = false;
-      AppSnackbar.error(
-        title: 'Failed',
-        message: 'generic_try_again_error'.tr,
-      );
+      AppSnackbar.error(title: 'Failed', message: 'generic_try_again_error'.tr);
       return;
     }
 

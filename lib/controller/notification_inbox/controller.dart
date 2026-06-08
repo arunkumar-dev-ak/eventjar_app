@@ -68,7 +68,6 @@ class NotificationInboxController extends GetxController {
     }
   }
 
-
   int get unreadCount =>
       state.notifications.where((n) => n.isRead != true).length;
 

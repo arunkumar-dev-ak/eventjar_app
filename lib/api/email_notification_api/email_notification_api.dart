@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/model/notification/oauth_model.dart';
 import 'package:eventjar/model/notification/oauth_status_model.dart';
@@ -17,7 +18,7 @@ class EmailNotificationApi {
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Something went wrong",
+        error: "something_went_wrong".tr,
       );
     } catch (err) {
       rethrow;
@@ -35,7 +36,7 @@ class EmailNotificationApi {
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Something went wrong",
+        error: "something_went_wrong".tr,
       );
     } catch (err) {
       rethrow;

@@ -186,7 +186,7 @@ class ConnectionController extends GetxController {
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to fetch Connection Details",
+        title: "failed_fetch_connection".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -331,8 +331,8 @@ class ConnectionController extends GetxController {
         );
 
         AppSnackbar.success(
-          title: 'Success',
-          message: 'Meeting request accepted',
+          title: 'success'.tr,
+          message: 'meeting_request_accepted'.tr,
         );
       }
     } catch (err) {
@@ -366,8 +366,8 @@ class ConnectionController extends GetxController {
         );
 
         AppSnackbar.success(
-          title: 'Success',
-          message: 'Meeting request declined',
+          title: 'success'.tr,
+          message: 'meeting_request_declined'.tr,
         );
       }
     } catch (err) {
@@ -393,8 +393,8 @@ class ConnectionController extends GetxController {
         state.sent.refresh();
 
         AppSnackbar.success(
-          title: 'Success',
-          message: 'Meeting request cancelled',
+          title: 'success'.tr,
+          message: 'meeting_request_cancelled'.tr,
         );
       }
     } catch (err) {
@@ -415,8 +415,8 @@ class ConnectionController extends GetxController {
     }
 
     AppSnackbar.error(
-      title: 'Failed',
-      message: 'Something went wrong. Please try again.',
+      title: 'failed'.tr,
+      message: 'generic_try_again_error'.tr,
     );
   }
 

@@ -74,7 +74,7 @@ class SchedulerController extends GetxController {
 
   String? validateContact(String? value) {
     if (state.selectedContact.value == null) {
-      return "Please select a qualified contact";
+      return "select_qualified_contact_error".tr;
     }
     return null;
   }
@@ -89,7 +89,7 @@ class SchedulerController extends GetxController {
   String? validateDuration(String? value) {
     final Map<String, String>? durationMap = state.selectedDurationMap.value;
     if (durationMap == null || durationMap.isEmpty) {
-      return "Please select duration";
+      return "select_duration_error".tr;
     }
     return null;
   }
@@ -205,7 +205,7 @@ class SchedulerController extends GetxController {
                   Get.offAllNamed('/sign-in');
                   return;
                 }
-                ApiErrorHandler.handleDioError(error, 'Search failed');
+                ApiErrorHandler.handleDioError(error, 'search_failed'.tr);
               } else {
                 AppSnackbar.error(
                   title: 'search_error'.tr,
@@ -253,7 +253,10 @@ class SchedulerController extends GetxController {
               }
               ApiErrorHandler.handleDioError(error, 'Load more failed');
             } else {
-              AppSnackbar.error(title: 'error'.tr, message: 'failed_load_more'.tr);
+              AppSnackbar.error(
+                title: 'error'.tr,
+                message: 'failed_load_more'.tr,
+              );
             }
           })
           .whenComplete(() {
@@ -391,7 +394,10 @@ class SchedulerController extends GetxController {
 
     final durationMap = state.selectedDurationMap.value;
     if (durationMap == null || durationMap.isEmpty) {
-      AppSnackbar.warning(title: 'Invalid', message: 'select_duration_error'.tr);
+      AppSnackbar.warning(
+        title: 'Invalid',
+        message: 'select_duration_error'.tr,
+      );
       return false;
     }
 
@@ -440,10 +446,18 @@ class SchedulerController extends GetxController {
             ? "meeting_scheduled".tr
             : "meeting_scheduled".tr;
 
-        AppSnackbar.success(title: title, message: isRescheduleMode ? "meeting_rescheduled_success".tr : "meeting_scheduled_success".tr);
+        AppSnackbar.success(
+          title: title,
+          message: isRescheduleMode
+              ? "meeting_rescheduled_success".tr
+              : "meeting_scheduled_success".tr,
+        );
         Navigator.pop(context, "refresh");
       } else {
-        AppSnackbar.error(title: "Failed", message: "generic_try_again_error".tr);
+        AppSnackbar.error(
+          title: "Failed",
+          message: "generic_try_again_error".tr,
+        );
       }
     } catch (err) {
       LoggerService.loggerInstance.e(err);

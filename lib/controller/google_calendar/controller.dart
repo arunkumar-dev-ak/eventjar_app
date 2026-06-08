@@ -47,8 +47,8 @@ class GoogleCalendarController extends GetxController {
       state.connection.value = response;
     } catch (e) {
       AppSnackbar.error(
-        title: "Error",
-        message: "Failed to fetch Google Calendar status",
+        title: "error".tr,
+        message: "failed_fetch_google_calendar_status".tr,
       );
     } finally {
       state.isLoading.value = false;
@@ -65,8 +65,8 @@ class GoogleCalendarController extends GetxController {
 
       if (authUrl.isEmpty) {
         AppSnackbar.error(
-          title: "Error",
-          message: "Failed to initiate Google Calendar connection",
+          title: "error".tr,
+          message: "failed_initiate_google_calendar".tr,
         );
 
         return;
@@ -75,8 +75,8 @@ class GoogleCalendarController extends GetxController {
       await launchUrl(Uri.parse(authUrl), mode: LaunchMode.externalApplication);
     } catch (e) {
       AppSnackbar.error(
-        title: "Error",
-        message: "Failed to connect Google Calendar",
+        title: "error".tr,
+        message: "failed_connect_google_calendar".tr,
       );
     } finally {
       state.isLoading.value = false;
@@ -90,15 +90,15 @@ class GoogleCalendarController extends GetxController {
       await GoogleCalendarApi.disconnect();
 
       AppSnackbar.success(
-        title: "Disconnected",
-        message: "Google Calendar disconnected successfully",
+        title: "disconnected".tr,
+        message: "google_calendar_disconnected".tr,
       );
 
       await fetchConnectionStatus();
     } catch (e) {
       AppSnackbar.error(
-        title: "Error",
-        message: "Failed to disconnect Google Calendar",
+        title: "error".tr,
+        message: "failed_disconnect_google_calendar".tr,
       );
     } finally {
       state.isLoading.value = false;

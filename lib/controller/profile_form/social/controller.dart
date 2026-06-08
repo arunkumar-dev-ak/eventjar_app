@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class SocialFormController extends GetxController {
-  var appBarTitle = "Update Social & Contact Links";
+  var appBarTitle = "update_social_and_contact_links".tr;
   final state = SocialFormState();
   final formKey = GlobalKey<FormState>();
 

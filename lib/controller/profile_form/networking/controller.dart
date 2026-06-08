@@ -11,7 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class NetworkingFormController extends GetxController {
-  var appBarTitle = "Update Networking & Interests";
+  var appBarTitle = "update_networking_and_interests".tr;
   final state = NetworkingFormState();
   final formKey = GlobalKey<FormState>();
 
@@ -39,40 +39,40 @@ class NetworkingFormController extends GetxController {
     '20+ years',
   ];
 
-  final List<String> connectionTypes = [
-    'Investors',
-    'Vendors',
-    'Tech Partners',
-    'B2B Clients',
-    'Franchise Opportunities',
-    'Mentors',
-    'Industry Experts',
+  List<String> get connectionTypes => [
+    'investors'.tr,
+    'vendors'.tr,
+    'tech_partners'.tr,
+    'b2b_clients'.tr,
+    'franchise_opportunities'.tr,
+    'mentors'.tr,
+    'industry_experts'.tr,
   ];
 
-  final List<String> helpOfferings = [
-    'Funding/Investment',
-    'Tech Development',
-    'Digital Marketing',
-    'Business Strategy',
-    'Sales & Lead Generation',
-    'Product Design',
-    'Legal Services',
-    'HR & Talent',
-    'Operations',
-    'Mentoring',
+  List<String> get helpOfferings => [
+    'funding_investment'.tr,
+    'tech_development'.tr,
+    'digital_marketing'.tr,
+    'business_strategy'.tr,
+    'sales_and_lead_generation'.tr,
+    'product_design'.tr,
+    'legal_services'.tr,
+    'hr_and_talent'.tr,
+    'operations'.tr,
+    'mentoring'.tr,
   ];
 
-  final List<String> discussionTopics = [
-    'Business Growth',
-    'Sales Strategy',
-    'Hiring & Talent',
-    'SaaS',
-    'E-commerce',
-    'Exports',
-    'Digital Transformation',
-    'Funding',
-    'Partnerships',
-    'Technology Trends',
+  List<String> get discussionTopics => [
+    'business_growth'.tr,
+    'sales_strategy'.tr,
+    'hiring_and_talent'.tr,
+    'saas'.tr,
+    'e_commerce'.tr,
+    'exports'.tr,
+    'digital_transformation'.tr,
+    'funding'.tr,
+    'partnerships'.tr,
+    'technology_trend'.tr,
   ];
 
   @override

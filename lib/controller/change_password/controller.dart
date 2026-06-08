@@ -59,7 +59,10 @@ class ChangePasswordController extends GetxController {
       if (err is DioException) {
         ApiErrorHandler.handleDioError(err, "Change Password Failed");
       } else {
-        AppSnackbar.error(title: "error".tr, message: "generic_try_again_error".tr);
+        AppSnackbar.error(
+          title: "error".tr,
+          message: "generic_try_again_error".tr,
+        );
       }
     } finally {
       state.isLoading.value = false;

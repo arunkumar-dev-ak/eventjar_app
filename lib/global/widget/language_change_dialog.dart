@@ -25,7 +25,7 @@ void showLanguageChangeDialog(BuildContext context) {
             ),
             SizedBox(width: 2.wp),
             Text(
-              'Change Language',
+              'change_language'.tr,
               style: TextStyle(
                 fontSize: 13.sp,
                 fontWeight: FontWeight.w600,

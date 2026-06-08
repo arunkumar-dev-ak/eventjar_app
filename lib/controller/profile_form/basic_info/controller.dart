@@ -176,10 +176,7 @@ class BasicInfoFormController extends GetxController {
   Future<void> sendPhoneOtp() async {
     final phone = state.currentPhone.value;
     if (phone.isEmpty) {
-      AppSnackbar.error(
-        title: "error".tr,
-        message: "no_phone_on_profile".tr,
-      );
+      AppSnackbar.error(title: "error".tr, message: "no_phone_on_profile".tr);
       return;
     }
 

@@ -50,7 +50,7 @@ class AddContactPage extends GetView<AddContactController> {
                 // Name
                 ContactFormElement(
                   controller: controller.nameController,
-                  label: 'Name *',
+                  label: '${'name'.tr} *',
                   validator: controller.validateName,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
@@ -59,7 +59,7 @@ class AddContactPage extends GetView<AddContactController> {
                 // Email
                 ContactFormElement(
                   controller: controller.emailController,
-                  label: 'Email *',
+                  label: '${'email'.tr} *',
                   keyboardType: TextInputType.emailAddress,
                   validator: controller.validateEmail,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -68,7 +68,10 @@ class AddContactPage extends GetView<AddContactController> {
 
                 // Phone 1
                 IntlPhoneField(
-                  decoration: _phoneDecoration('Phone Number *', context),
+                  decoration: _phoneDecoration(
+                    '${'phone_number'.tr} *',
+                    context,
+                  ),
                   pickerDialogStyle: _pickerStyle(),
                   initialCountryCode:
                       controller.state.selectedCountry.value.code,
@@ -333,7 +336,9 @@ class AddContactPage extends GetView<AddContactController> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  allChecked ? 'uncheck_all'.tr : 'check_all'.tr,
+                                  allChecked
+                                      ? 'uncheck_all'.tr
+                                      : 'check_all'.tr,
                                   style: TextStyle(
                                     fontSize: 9.sp,
                                     color: AppColors.textSecondary(context),

@@ -117,7 +117,7 @@ class NfcWriteController extends GetxController
   void showSuccessPopup() {
     AppSnackbar.success(
       title: 'Success! 🎉',
-      message: 'Contact written to NFC card successfully!',
+      message: 'contact_written_nfc_success'.tr,
     );
   }
 

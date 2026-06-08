@@ -40,7 +40,7 @@ class BusinessInfoFormController extends GetxController {
     'Marketing',
     'Real Estate',
     'Food & Beverage',
-    'Other',
+    'other_label'.tr,
   ];
 
   final List<String> operatingRegions = [
@@ -187,7 +187,10 @@ class BusinessInfoFormController extends GetxController {
     try {
       state.isLoading.value = true;
       await UserProfileApi.updateUserProfile(data); // Your API
-      AppSnackbar.success(title: "success".tr, message: "business_info_updated".tr);
+      AppSnackbar.success(
+        title: "success".tr,
+        message: "business_info_updated".tr,
+      );
       Navigator.pop(Get.context!, "refresh");
     } catch (err) {
       ApiErrorHandler.handle(

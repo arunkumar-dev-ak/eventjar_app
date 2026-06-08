@@ -24,6 +24,7 @@ class CreateTripState {
   final RxString searchQuery = "".obs;
 
   // Currency
-  final Rx<Currency> selectedCurrency =
-      CurrencyService().findByCode('INR')!.obs;
+  final Rx<Currency> selectedCurrency = CurrencyService()
+      .findByCode('INR')!
+      .obs;
 }

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/notification/email_providers.dart';
@@ -20,7 +21,7 @@ class NotificationApi {
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Something went wrong",
+        error: "something_went_wrong".tr,
       );
     } catch (err) {
       rethrow;
@@ -38,7 +39,7 @@ class NotificationApi {
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Something went wrong",
+        error: "something_went_wrong".tr,
       );
     } catch (err) {
       LoggerService.loggerInstance.e(err);
@@ -57,7 +58,7 @@ class NotificationApi {
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Something went wrong",
+        error: "something_went_wrong".tr,
       );
     } catch (err) {
       rethrow;
@@ -75,7 +76,7 @@ class NotificationApi {
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Something went wrong",
+        error: "something_went_wrong".tr,
       );
     } catch (err) {
       rethrow;
@@ -93,7 +94,7 @@ class NotificationApi {
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Something went wrong",
+        error: "something_went_wrong".tr,
       );
     } catch (err) {
       LoggerService.loggerInstance.e(err);
@@ -134,7 +135,7 @@ class NotificationApi {
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Something went wrong",
+        error: "something_went_wrong".tr,
       );
     } catch (err) {
       LoggerService.loggerInstance.e(err);

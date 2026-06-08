@@ -43,10 +43,7 @@ class AuthProcessingController extends GetxController {
       _processAuth();
     } else {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        AppSnackbar.error(
-          title: "error".tr,
-          message: "invalid_auth_token".tr,
-        );
+        AppSnackbar.error(title: "error".tr, message: "invalid_auth_token".tr);
 
         Navigator.pop(Get.context!);
       });
@@ -165,10 +162,7 @@ class AuthProcessingController extends GetxController {
       }
     } catch (e) {
       _textTimer.cancel();
-      AppSnackbar.error(
-        title: "error".tr,
-        message: "unexpected_error".tr,
-      );
+      AppSnackbar.error(title: "error".tr, message: "unexpected_error".tr);
       Navigator.pop(Get.context!);
     }
   }
@@ -217,9 +211,12 @@ class AuthProcessingController extends GetxController {
       state.is2FaLoading.value = false;
       LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleDioError(err, "2FA Error");
+        ApiErrorHandler.handleDioError(err, "two_fa_error".tr);
       } else {
-        AppSnackbar.error(title: "2FA Error", message: "generic_try_again_error".tr);
+        AppSnackbar.error(
+          title: "two_fa_error".tr,
+          message: "generic_try_again_error".tr,
+        );
       }
     }
   }

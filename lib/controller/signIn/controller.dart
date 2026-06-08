@@ -38,7 +38,7 @@ class SignInController extends GetxController {
     if (email == null || email.isEmpty) {
       return "Email is required";
     } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
-      return "Enter valid email";
+      return "enter_valid_email".tr;
     }
     return null;
   }
@@ -159,9 +159,12 @@ class SignInController extends GetxController {
       state.is2FaLoading.value = false;
       LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleDioError(err, "2FA Error");
+        ApiErrorHandler.handleDioError(err, "two_fa_error".tr);
       } else {
-        AppSnackbar.error(title: "2FA Error", message: "generic_try_again_error".tr);
+        AppSnackbar.error(
+          title: "two_fa_error".tr,
+          message: "generic_try_again_error".tr,
+        );
       }
     }
   }

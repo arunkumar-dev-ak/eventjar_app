@@ -35,6 +35,5 @@ class CreateExpenseState {
   final RxBool isMembersLoading = false.obs;
   final RxBool isMembersLoadMoreLoading = false.obs;
 
-  RxBool get hasMoreMembers =>
-      (meta.value?.paging.pages.next != null).obs;
+  RxBool get hasMoreMembers => (meta.value?.paging.pages.next != null).obs;
 }

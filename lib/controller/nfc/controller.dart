@@ -85,7 +85,7 @@ class NfcController extends GetxController
   String getNfcStatusText() {
     switch (state.nfcStatus.value) {
       case NfcStatus.available:
-        return 'NFC Ready';
+        return 'nfc_ready'.tr;
       case NfcStatus.notAvailable:
         return 'NFC Not Available';
       case NfcStatus.disabled:
@@ -138,10 +138,7 @@ class NfcController extends GetxController
   void navigateTologin() {}
 
   void showNfcErrorPrompt() {
-    AppSnackbar.warning(
-      title: 'nfc_error'.tr,
-      message: 'nfc_not_available'.tr,
-    );
+    AppSnackbar.warning(title: 'nfc_error'.tr, message: 'nfc_not_available'.tr);
   }
 
   Future<void> simulateReceiveContact(NfcContactModel contact) async {

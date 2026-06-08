@@ -56,7 +56,7 @@ class ForgotPasswordSubmitButton extends StatelessWidget {
                   child: isButtonLoading
                       ? CircularProgressIndicator(color: Colors.white)
                       : Text(
-                          "Continue",
+                          "continue_btn".tr,
                           style: TextStyle(
                             color: const Color.fromARGB(255, 255, 255, 255),
                             fontSize: 11.sp,

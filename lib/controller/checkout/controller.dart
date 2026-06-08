@@ -147,7 +147,7 @@ class CheckoutController extends GetxController {
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Badge Validation Failed",
+        title: "badge_validation_failed".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -160,7 +160,10 @@ class CheckoutController extends GetxController {
 
   Future<void> proceedToCheckout() async {
     if (state.cartLines.isEmpty) {
-      AppSnackbar.error(title: "error".tr, message: "select_ticket_tier_error".tr);
+      AppSnackbar.error(
+        title: "error".tr,
+        message: "select_ticket_tier_error".tr,
+      );
       return;
     }
 
@@ -501,7 +504,7 @@ class CheckoutController extends GetxController {
       // fallback error (network / unknown)
       state.promoCodeResponse.value = PromoCodeValidationResponse(
         valid: false,
-        message: "Failed to validate promo code",
+        message: "failed_validate_promo".tr,
         discountAmount: 0,
       );
     } finally {
@@ -533,7 +536,7 @@ class CheckoutController extends GetxController {
       state.isCheckingEligibility.value = false;
       ApiErrorHandler.handle(
         error: err,
-        title: "Ticket Eligibility Failed",
+        title: "ticket_eligibility_failed".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

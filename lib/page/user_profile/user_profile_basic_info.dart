@@ -118,7 +118,7 @@ Widget userProfileBuildBasicInfo() {
               icon: Icons.phone,
               label: 'mobile_number'.tr,
               value: controller.phone.isEmpty
-                  ? "Not provided"
+                  ? "not_provided".tr
                   : controller.phone,
               iconColor: Colors.green,
             ),
@@ -196,7 +196,7 @@ Widget userProfileBuildBasicInfo() {
         icon: Icons.work,
         label: 'professional_title'.tr,
         value: controller.professionalTitle.isEmpty
-            ? "Not specified"
+            ? "not_specified".tr
             : controller.professionalTitle,
         iconColor: Colors.orange,
       ),
@@ -274,7 +274,7 @@ void _showPhoneOtpDialog(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Verify Phone Number',
+                    'verify_phone_number'.tr,
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
@@ -388,7 +388,7 @@ void _showPhoneOtpDialog(
                               ? null
                               : () => controller.sendPhoneOtp(),
                           child: Text(
-                            cooldown > 0 ? 'Resend in ${cooldown}s' : 'Resend',
+                            cooldown > 0 ? '${'resend'.tr} ${cooldown}s' : 'resend'.tr,
                             style: TextStyle(
                               fontSize: 8.sp,
                               color: cooldown > 0
@@ -419,7 +419,7 @@ void _showPhoneOtpDialog(
                                   final otp = pinController.text.trim();
                                   if (otp.length < 6) {
                                     controller.state.otpError.value =
-                                        'Please enter the full 6-digit code';
+                                        'enter_full_six_digit_code_error'.tr;
                                     return;
                                   }
                                   final success = await controller
@@ -537,7 +537,7 @@ void _showEmailVerifyDialog(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Check your email',
+                  'check_your_email'.tr,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -569,7 +569,7 @@ void _showEmailVerifyDialog(
                     ),
                     child: Center(
                       child: Text(
-                        'Open Email',
+                        'open_email'.tr,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 11.sp,

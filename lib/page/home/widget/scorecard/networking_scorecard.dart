@@ -93,7 +93,7 @@ Widget buildNetworkScoreCard() {
                           ),
                           SizedBox(height: 2),
                           Text(
-                            '$contacts / ${tier.max > 9999 ? '500+' : tier.max} contacts',
+                            '$contacts / ${tier.max > 9999 ? '500+' : tier.max} ${'contacts'.tr}',
                             style: TextStyle(
                               color: textColor.withValues(alpha: 0.7),
                               fontSize: 7.5.sp,
@@ -175,7 +175,7 @@ Widget buildNetworkScoreCard() {
                           ),
                           SizedBox(height: 1),
                           Text(
-                            '${t.range} contacts',
+                            '${t.range} ${'contacts'.tr}',
                             style: TextStyle(
                               color: subTextColor,
                               fontSize: 7.sp,
@@ -261,7 +261,18 @@ Widget buildNetworkScoreCard() {
 //   ),
 // ];
 
-final _trophyTiers = [
+List<
+  ({
+    String name,
+    String range,
+    int min,
+    int max,
+    String assetPath,
+    Color colorLight,
+    Color colorDark,
+  })
+>
+get _trophyTiers => [
   (
     name: 'starter'.tr,
     range: '0 - 50',

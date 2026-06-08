@@ -124,7 +124,10 @@ class QualifyLeadController extends GetxController {
         }
         ApiErrorHandler.handleDioError(err, "Failed to qualify lead");
       } else {
-        AppSnackbar.error(title: "Failed", message: "generic_try_again_error".tr);
+        AppSnackbar.error(
+          title: "Failed",
+          message: "generic_try_again_error".tr,
+        );
       }
     } finally {
       state.isLoading.value = false;

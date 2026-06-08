@@ -99,7 +99,7 @@ class FriendsPage extends GetView<FriendsController> {
           controller.navigateToAddFriend();
         },
         icon: const Icon(Icons.add),
-        label: const Text("New Friend"),
+        label: Text("new_friend".tr),
       ),
     );
   }

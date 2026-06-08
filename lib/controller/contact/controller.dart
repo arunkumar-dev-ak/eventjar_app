@@ -168,7 +168,7 @@ class ContactController extends GetxController
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load contacts",
+        title: "failed_load_contacts".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -208,7 +208,7 @@ class ContactController extends GetxController
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load contacts",
+        title: "failed_load_contacts".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -239,7 +239,7 @@ class ContactController extends GetxController
       LoggerService.loggerInstance.e(err);
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to add contact",
+        title: "failed_add_contact".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
