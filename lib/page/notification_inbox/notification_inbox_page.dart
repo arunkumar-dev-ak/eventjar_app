@@ -31,7 +31,6 @@ class NotificationInboxPage extends GetView<NotificationInboxController> {
         elevation: 0,
         actions: [
           Obx(() {
-            if (controller.unreadCount == 0) return const SizedBox.shrink();
             return TextButton(
               onPressed: controller.markAllAsRead,
               child: Text(

@@ -213,26 +213,14 @@ class ContactListMeetingController extends GetxController {
     final meeting = state.currentMeeting.value;
     if (meeting == null) return;
 
-    // 1. FIXED: Convert the UTC database time to the user's local device time
+    // 1. Convert the UTC database time to the user's local device time
     final localDateTime = meeting.scheduledAt.toLocal();
-    LoggerService.loggerInstance.dynamic_d(localDateTime);
     updateMeetingDate(localDateTime);
 
     // 2. Fallback check for time parsing
-    if (meeting.meetingTime != null && meeting.meetingTime!.contains(':')) {
-      final timeParts = meeting.meetingTime!.split(":");
-      updateMeetingTime(
-        TimeOfDay(
-          hour: int.parse(timeParts[0]),
-          minute: int.parse(timeParts[1]),
-        ),
-      );
-    } else {
-      // If meetingTime is missing or corrupt, fallback cleanly to the localDateTime hours/minutes
-      updateMeetingTime(
-        TimeOfDay(hour: localDateTime.hour, minute: localDateTime.minute),
-      );
-    }
+    updateMeetingTime(
+      TimeOfDay(hour: localDateTime.hour, minute: localDateTime.minute),
+    );
 
     final result = await Get.dialog(
       RescheduleMeetingContactList(meetingId: meeting.id),
