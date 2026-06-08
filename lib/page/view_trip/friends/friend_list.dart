@@ -63,6 +63,7 @@ class FriendsList extends GetView<ViewTripController> {
     // --- 1. SECURITY CHECK ---
     final currentUserId = UserStore.to.profile['id'];
     final creatorId = controller.state.trip.value?.createdById;
+    final isAdmin = f.isAdmin;
 
     // Only true if the logged-in user made the trip
     final isCurrentUserCreator = currentUserId == creatorId;
@@ -84,11 +85,25 @@ class FriendsList extends GetView<ViewTripController> {
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            backgroundColor: isDark
-                ? AppColors.darkCardElevated
-                : const Color(0xFFE0E0E0),
-            child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?'),
+          Container(
+            decoration: isAdmin
+                ? BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.red.shade300, width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.red.withValues(alpha: 0.15),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  )
+                : null,
+            child: CircleAvatar(
+              backgroundColor: isDark
+                  ? AppColors.darkCardElevated
+                  : const Color(0xFFE0E0E0),
+              child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?'),
+            ),
           ),
 
           SizedBox(width: 3.wp),

@@ -295,7 +295,6 @@ class ViewTripController extends GetxController
       final response = await ViewTripApi.getTripFriends(
         queryParams: getFriendQueryParams(onRefresh: true),
       );
-      LoggerService.loggerInstance.dynamic_d("reee ${response.data.length}");
 
       state.friends.value = response.data;
       state.friendMeta.value = response.meta;

@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/dio_client.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/budget_track/trip_model.dart';
 
 class BudgetTrackApi {
@@ -13,10 +12,6 @@ class BudgetTrackApi {
       final response = await _dio.get(
         '/mobile/budget-track/trip',
         queryParameters: queryParams,
-      );
-
-      LoggerService.loggerInstance.dynamic_d(
-        'Status code is ${response.statusCode}',
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {

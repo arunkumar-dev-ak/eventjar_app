@@ -4,6 +4,7 @@ import 'package:eventjar/api/create_expense_api/create_expense_api.dart';
 import 'package:eventjar/controller/create_expense/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
@@ -142,13 +143,15 @@ class CreateExpenseController extends GetxController {
   }
 
   void _handleApiError(Object? error, String fallbackMsg) {
-    if (error is DioException) {
-      final statusCode = error.response?.statusCode;
-      if (statusCode == 401) {
-        return;
-      }
-      debugPrint("API Error: ${error.response?.data}");
-    }
+    LoggerService.loggerInstance.e('Error In Create Expense Page: $error');
+    ApiErrorHandler.handle(
+      error: error,
+      title: "error".tr,
+      onUnauthorized: () {
+        UserStore.to.clearStore();
+        Get.toNamed(RouteName.signInPage);
+      },
+    );
   }
 
   void submit() async {
@@ -198,10 +201,7 @@ class CreateExpenseController extends GetxController {
 
     try {
       await CreateExpenseApi.createExpense(data: data);
-      AppSnackbar.success(
-        title: "expense_created".tr,
-        message: "success".tr,
-      );
+      AppSnackbar.success(title: "expense_created".tr, message: "success".tr);
       Navigator.pop(Get.context!, "refresh");
     } catch (error) {
       _handleApiError(error, 'Failed to create expense');
