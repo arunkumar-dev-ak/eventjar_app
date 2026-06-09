@@ -100,7 +100,7 @@ class UserProfileController extends GetxController
       _showSettingsDialog(
         title: 'disable_camera'.tr,
         message:
-            'To disable camera access, you need to turn it off in your device settings.',
+            'disable_camera_instructions'.tr,
       );
       return;
     }
@@ -108,7 +108,7 @@ class UserProfileController extends GetxController
       _showSettingsDialog(
         title: 'enable_camera'.tr,
         message:
-            'Camera permission was previously denied. Please enable it in your device settings to use QR scan and card scan.',
+            'camera_denied_warning'.tr,
       );
       return;
     }
@@ -122,7 +122,7 @@ class UserProfileController extends GetxController
       _showSettingsDialog(
         title: 'disable_notifications'.tr,
         message:
-            'To disable notifications, you need to turn them off in your device settings.',
+            'disable_notifications_instructions'.tr,
       );
       return;
     }
@@ -130,7 +130,7 @@ class UserProfileController extends GetxController
       _showSettingsDialog(
         title: 'enable_notifications'.tr,
         message:
-            'Notification permission was previously denied. Please enable it in your device settings to stay updated.',
+            'notification_denied_warning'.tr,
       );
       return;
     }
@@ -344,12 +344,12 @@ class UserProfileController extends GetxController
         passwordController.clear();
         // Use API message if present, otherwise fallback
         final message = isReactivate
-            ? 'Your account deletion request has been cancelled. Your account is active again.'
-            : 'Your account has been deactivated and scheduled for permanent deletion in 30 days. You can reactivate anytime within this period.';
+            ? 'account_reactivated_desc'.tr
+            : 'account_deactivated_desc'.tr;
 
         final title = isReactivate
-            ? 'Account Reactivated'
-            : 'Account Deactivated';
+            ? 'account_reactivated'.tr
+            : 'account_deactivated'.tr;
         Get.back();
 
         AppSnackbar.success(title: title, message: message);
@@ -367,7 +367,7 @@ class UserProfileController extends GetxController
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to ${isReactivate ? "reactivte" : "deactivate"} account",
+        title: "${'failed_to'.tr} ${isReactivate ? "reactivte" : 'deactivate'.tr} ${'account'.tr}",
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -396,7 +396,7 @@ class UserProfileController extends GetxController
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Change Profile Photo',
+                'change_profile_photo'.tr,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

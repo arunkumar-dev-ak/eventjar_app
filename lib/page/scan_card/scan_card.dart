@@ -836,26 +836,6 @@ class _ScanCardState extends State<ScanCard> {
                       ],
                     ),
                   ),
-                  // IconButton(
-                  //   icon: Icon(
-                  //     Icons.copy_rounded,
-                  //     size: 20,
-                  //     color: Colors.grey[400],
-                  //   ),
-                  //   onPressed: () {
-                  //     Clipboard.setData(ClipboardData(text: value));
-                  //     Get.snackbar(
-                  //       'Copied',
-                  //       '$label copied to clipboard',
-                  //       snackPosition: SnackPosition.BOTTOM,
-                  //       duration: const Duration(seconds: 2),
-                  //       backgroundColor: controller.secondaryColor,
-                  //       colorText: Colors.white,
-                  //       margin: const EdgeInsets.all(16),
-                  //       borderRadius: 12,
-                  //     );
-                  //   },
-                  // ),
                 ],
               ),
             ),
@@ -864,87 +844,6 @@ class _ScanCardState extends State<ScanCard> {
       },
     );
   }
-
-  // Widget _buildRawTextSection(dynamic info) {
-  //   return Builder(
-  //     builder: (context) {
-  //       return Theme(
-  //         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-  //         child: ExpansionTile(
-  //           tilePadding: const EdgeInsets.symmetric(horizontal: 4),
-  //           title: Row(
-  //             children: [
-  //               Icon(
-  //                 Icons.text_snippet_outlined,
-  //                 size: 20,
-  //                 color: AppColors.textSecondaryStatic,
-  //               ),
-  //               const SizedBox(width: 10),
-  //               Text(
-  //                 'Raw Text',
-  //                 style: TextStyle(
-  //                   fontSize: 14,
-  //                   fontWeight: FontWeight.w600,
-  //                   color: Colors.grey[700],
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //           children: [
-  //             Container(
-  //               width: double.infinity,
-  //               padding: const EdgeInsets.all(14),
-  //               decoration: BoxDecoration(
-  //                 color: Colors.grey[100],
-  //                 borderRadius: BorderRadius.circular(12),
-  //               ),
-  //               child: Stack(
-  //                 children: [
-  //                   SelectableText(
-  //                     info.rawText ?? 'No text extracted',
-  //                     style: TextStyle(
-  //                       fontSize: 13,
-  //                       color: Colors.grey[800],
-  //                       height: 1.5,
-  //                     ),
-  //                   ),
-  //                   Positioned(
-  //                     top: 0,
-  //                     right: 0,
-  //                     child: IconButton(
-  //                       icon: Icon(
-  //                         Icons.copy_rounded,
-  //                         size: 18,
-  //                         color: Colors.grey[500],
-  //                       ),
-  //                       onPressed: () async {
-  //                         if (info.rawText != null) {
-  //                           await Clipboard.setData(
-  //                             ClipboardData(text: info.rawText!),
-  //                           );
-  //                           Get.snackbar(
-  //                             'Copied',
-  //                             'Raw text copied to clipboard',
-  //                             snackPosition: SnackPosition.BOTTOM,
-  //                             duration: const Duration(seconds: 2),
-  //                             backgroundColor: controller.secondaryColor,
-  //                             colorText: Colors.white,
-  //                             margin: const EdgeInsets.all(16),
-  //                             borderRadius: 12,
-  //                           );
-  //                         }
-  //                       },
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 
   Widget _buildAnimatedButton({
     required IconData icon,

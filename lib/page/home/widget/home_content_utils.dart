@@ -167,7 +167,7 @@ Widget noEventsFoundWidget({VoidCallback? onRefresh}) {
           shaderCallback: (bounds) =>
               AppColors.buttonGradient.createShader(bounds),
           child: Text(
-            "No Events Yet",
+            'no_events_yet'.tr,
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w700,
@@ -178,7 +178,7 @@ Widget noEventsFoundWidget({VoidCallback? onRefresh}) {
         ),
         const SizedBox(height: 12),
         Text(
-          "We couldn't find any events at the moment.\nCheck back later for exciting new events!",
+          'no_events_at_moment_desc'.tr,
           style: TextStyle(
             fontSize: 10.sp,
             color: AppColors.textHintStatic,

@@ -201,7 +201,7 @@ class SignUpController extends GetxController {
 
   // Email validator
   String? validateEmail(String? val) {
-    if (val == null || val.isEmpty) return "Email is required";
+    if (val == null || val.isEmpty) return 'email_required'.tr;
     if (!RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$",
     ).hasMatch(val)) {

@@ -36,7 +36,7 @@ class SignInController extends GetxController {
   //validate email
   String? validateEmail(String? email) {
     if (email == null || email.isEmpty) {
-      return "Email is required";
+      return 'email_required'.tr;
     } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
       return "enter_valid_email".tr;
     }

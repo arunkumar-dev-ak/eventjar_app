@@ -63,7 +63,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   label: "amount".tr,
                   keyboardType: TextInputType.number,
                   validator: (val) =>
-                      val == null || val.isEmpty ? "Enter amount" : null,
+                      val == null || val.isEmpty ? 'enter_amount'.tr : null,
                 ),
                 SizedBox(height: 2.hp),
 
@@ -172,7 +172,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          "Click To Add New Member",
+                          "click_to_add_new_member".tr,
                           style: TextStyle(
                             color: AppColors.textSecondary(context),
                             fontWeight: FontWeight.w600,

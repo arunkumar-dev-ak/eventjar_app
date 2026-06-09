@@ -45,7 +45,7 @@ class ApiErrorHandler {
         err.type == DioExceptionType.sendTimeout ||
         err.type == DioExceptionType.receiveTimeout ||
         err.message?.contains('No Internet') == true) {
-      errorMessage = "No Internet Connection";
+      errorMessage = 'no_internet_connection'.tr;
     } else if (err.response?.statusCode == 500 ||
         err.response?.statusCode == 502 ||
         err.response?.statusCode == 503 ||

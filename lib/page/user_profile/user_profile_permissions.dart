@@ -24,7 +24,7 @@ class UserProfilePermissions extends GetView<UserProfileController> {
             iconBgColor: Colors.blue.shade50,
             title: 'camera'.tr,
             subtitle: cameraOn
-                ? 'Camera access is enabled'
+                ? 'camera_access_enabled'.tr
                 : 'camera_permission_desc'.tr,
             isEnabled: cameraOn,
             onTap: controller.toggleCameraPermission,

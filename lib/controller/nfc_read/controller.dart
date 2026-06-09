@@ -77,10 +77,10 @@ class NfcReadController extends GetxController
         return ['nfc_not_available'.tr, Colors.red];
 
       case NfcStatus.disabled:
-        return ['NFC Disabled', Colors.orange];
+        return ['nfc_disabled'.tr, Colors.orange];
 
       case NfcStatus.unknown:
-        return ['Checking NFC...', Colors.blue];
+        return ['checking_nfc'.tr, Colors.blue];
     }
   }
 

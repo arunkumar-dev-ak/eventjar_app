@@ -41,7 +41,7 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
         final expense = controller.state.expense.value;
 
         if (expense == null) {
-          return const Center(child: Text("No Expense Data Found"));
+          return Center(child: Text('no_expense_data_found'.tr));
         }
 
         if (controller.state.isLoading.value) {
@@ -159,7 +159,7 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
             SizedBox(height: 1.5.hp),
             Text(
               myParticipant.isPaid
-                  ? "You have paid ${expense.currency} ${myParticipant.shareAmount.toStringAsFixed(0)}"
+                  ? "${'you_have_paid'.tr} ${expense.currency} ${myParticipant.shareAmount.toStringAsFixed(0)}"
                   : "Your share ${expense.currency} ${myParticipant.shareAmount.toStringAsFixed(0)}",
               style: TextStyle(
                 fontSize: 9.5.sp,

@@ -27,13 +27,13 @@ class CheckoutBottomBar extends GetView<CheckoutController> {
       String buttonText;
 
       if (isBadgeChecking) {
-        buttonText = "Verifying Badge...";
+        buttonText = 'verifying_badge'.tr;
       } else if (!hasTicket) {
-        buttonText = "Select Ticket to Continue";
+        buttonText = 'select_ticket_to_continue'.tr;
       } else if (isLoading) {
-        buttonText = total == 0 ? "Booking..." : "processing".tr;
+        buttonText = total == 0 ? 'booking'.tr : "processing".tr;
       } else {
-        buttonText = total == 0 ? "click_to_book_ticket".tr : "Proceed to Pay";
+        buttonText = total == 0 ? "click_to_book_ticket".tr : 'proceed_to_pay'.tr;
       }
 
       return Container(

@@ -350,7 +350,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 2.hp),
                       child: Text(
-                        "No gallery images yet",
+                        'no_gallery_images_yet'.tr,
                         style: TextStyle(
                           fontSize: 9.sp,
                           color: AppColors.textSecondary(ctx),
@@ -411,7 +411,7 @@ class UserProfilePage extends GetView<UserProfileController> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      "Manage Email, WhatsApp automations",
+                      'manage_automation_desc'.tr,
                       style: TextStyle(
                         fontSize: 8.sp,
                         color: AppColors.textSecondary(ctx),

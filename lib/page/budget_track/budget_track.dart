@@ -79,7 +79,7 @@ class BudgetTrackPage extends GetView<BudgetTrackController> {
           controller.navigateToCreateTrip();
         },
         icon: const Icon(Icons.add),
-        label: const Text("New Trip"),
+        label: Text('new_trip'.tr),
       ),
     );
   }

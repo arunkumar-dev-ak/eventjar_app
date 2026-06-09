@@ -111,8 +111,8 @@ class ConnectionPage extends GetView<ConnectionController> {
           padding: EdgeInsets.symmetric(horizontal: 10.wp),
           child: Text(
             isSent
-                ? "You haven't sent any connection requests yet. Start networking at events!"
-                : "No one has sent you a connection request yet. Attend events to get noticed!",
+                ? 'no_sent_requests_desc'.tr
+                : 'no_received_requests_desc'.tr,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 9.sp,
@@ -123,7 +123,7 @@ class ConnectionPage extends GetView<ConnectionController> {
         ),
         SizedBox(height: 3.hp),
         Text(
-          "Pull down to refresh",
+          'pull_down_to_refresh'.tr,
           style: TextStyle(fontSize: 8.sp, color: AppColors.textHint(context)),
         ),
       ],

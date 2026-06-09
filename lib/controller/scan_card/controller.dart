@@ -265,13 +265,13 @@ class ScanCardController extends GetxController
 
       if (recognized.text.trim().isEmpty) {
         errorMessage.value =
-            'No text detected. Please try again with a clearer image.';
+            'no_text_detected_error'.tr;
         return;
       }
 
       if (_hasMultipleCards(recognized.text)) {
         errorMessage.value =
-            'Multiple cards detected. Please scan only one Business Card at a time.';
+            'multiple_cards_error'.tr;
         return;
       }
 
@@ -280,7 +280,7 @@ class ScanCardController extends GetxController
 
       if (!info.hasData) {
         errorMessage.value =
-            'Could not recognize card details. Please ensure the card is clearly visible and try again.';
+            'card_recognition_error'.tr;
       }
 
       cardInfo.value = info;

@@ -36,7 +36,7 @@ class NetworkingGoalDropdown extends GetView<NetworkingFormController> {
                   Expanded(
                     child: Text(
                       controller.state.selectedNetworkingGoal.value.isEmpty
-                          ? "Select networking goal"
+                          ? 'select_networking_goal'.tr
                           : controller.state.selectedNetworkingGoal.value,
                       style: TextStyle(
                         fontSize: 9.5.sp,

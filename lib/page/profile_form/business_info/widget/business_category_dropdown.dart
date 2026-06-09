@@ -25,7 +25,7 @@ class BusinessCategoryDropdown extends GetView<BusinessInfoFormController> {
               Expanded(
                 child: Text(
                   controller.state.selectedBusinessCategory.value.isEmpty
-                      ? "Select Business Category"
+                      ? 'select_business_category'.tr
                       : controller.state.selectedBusinessCategory.value,
                   style: TextStyle(
                     fontSize: 9.5.sp,
@@ -64,7 +64,7 @@ void showBusinessCategoryDialog(BusinessInfoFormController controller) {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Select Business Category",
+                  'select_business_category'.tr,
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.bold,
