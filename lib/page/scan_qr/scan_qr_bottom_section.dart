@@ -134,11 +134,10 @@ class ScanQrBottomSection extends StatelessWidget {
             ),
             tooltipBorderRadius: const BorderRadius.all(Radius.circular(12)),
             targetBorderRadius: BorderRadius.circular(16),
-            child: SizedBox(
+            child: Container(
               width: double.infinity,
-              height: 56,
-              child: Container(
-                decoration: BoxDecoration(
+              constraints: const BoxConstraints(minHeight: 56),
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
                     AppColors.gradientLightStart,
@@ -157,9 +156,13 @@ class ScanQrBottomSection extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: () => controller.scanFromGallery(),
                 icon: const Icon(Icons.photo_library_rounded),
-                label: Text(
-                  'scan_from_gallery'.tr,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                label: Flexible(
+                  child: Text(
+                    'scan_from_gallery'.tr,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
@@ -171,7 +174,6 @@ class ScanQrBottomSection extends StatelessWidget {
                 ),
               ),
             ),
-          ),
           ),
         ],
       ),

@@ -30,19 +30,17 @@ class NotificationInboxPage extends GetView<NotificationInboxController> {
         ),
         elevation: 0,
         actions: [
-          Obx(() {
-            return TextButton(
-              onPressed: controller.markAllAsRead,
-              child: Text(
-                'Mark all read',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 8.sp,
-                  fontWeight: FontWeight.w500,
-                ),
+          TextButton(
+            onPressed: controller.markAllAsRead,
+            child: Text(
+              'Mark all read',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 8.sp,
+                fontWeight: FontWeight.w500,
               ),
-            );
-          }),
+            ),
+          ),
         ],
       ),
       body: Obx(() {

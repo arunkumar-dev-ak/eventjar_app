@@ -1,20 +1,15 @@
 import 'package:eventjar/controller/meeting/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/utils/date_utils.dart';
 import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 
 class MeetingCardDate extends GetView<MeetingController> {
   final ContactMeeting meeting;
   const MeetingCardDate({super.key, required this.meeting});
 
-  DateTime get _localScheduledAt => meeting.scheduledAt.toLocal();
-
-  String get formattedDate =>
-      DateFormat('MMM dd, yyyy').format(_localScheduledAt);
-  String get formattedTime => DateFormat('h:mm a').format(_localScheduledAt);
   String get durationText => '${meeting.duration} min';
 
   Color get statusColor {
@@ -39,6 +34,10 @@ class MeetingCardDate extends GetView<MeetingController> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final (dateText, timeText, timezoneText) = formatUtcToLocal(
+      meeting.scheduledAt,
+      context,
+    );
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -74,7 +73,7 @@ class MeetingCardDate extends GetView<MeetingController> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 4),
                   child: Text(
-                    formattedDate,
+                    dateText,
                     style: TextStyle(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w700,
@@ -102,7 +101,7 @@ class MeetingCardDate extends GetView<MeetingController> {
                           ),
                           SizedBox(width: 2),
                           Text(
-                            formattedTime,
+                            '$timeText $timezoneText',
                             style: TextStyle(
                               fontSize: 8.sp,
                               fontWeight: FontWeight.w600,

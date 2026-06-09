@@ -90,17 +90,32 @@ class AddMultiSelectTagsInput extends StatelessWidget {
                         tag,
                       ) {
                         return Chip(
-                          label: Text(tag, style: TextStyle(fontSize: 9.sp)),
+                          label: Text(
+                            tag,
+                            style: TextStyle(
+                              fontSize: 9.sp,
+                              color: AppColors.textPrimary(context),
+                            ),
+                          ),
                           backgroundColor: AppColors.isDark
                               ? Colors.white.withValues(alpha: 0.12)
                               : Colors.blue.shade50,
-                          deleteIcon: const Icon(Icons.close, size: 16),
+                          deleteIcon: Icon(
+                            Icons.close,
+                            size: 16,
+                            color: AppColors.textSecondary(context),
+                          ),
                           onDeleted: () {
                             final lowerKey = tag.toLowerCase();
                             controller.state.selectedTagsMap.remove(lowerKey);
                           },
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(
+                              color: AppColors.isDark
+                                  ? Colors.white.withValues(alpha: 0.2)
+                                  : Colors.blue.shade100,
+                            ),
                           ),
                         );
                       }).toList(),
@@ -210,15 +225,23 @@ class TagSearchPopup extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.green.shade50, // ✅ Green for success
+                      color: AppColors.isDark
+                          ? const Color(0xFF1A2E1A)
+                          : Colors.green.shade50,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.green.shade200),
+                      border: Border.all(
+                        color: AppColors.isDark
+                            ? const Color(0xFF2E4A2E)
+                            : Colors.green.shade200,
+                      ),
                     ),
                     child: Row(
                       children: [
                         Icon(
                           Icons.check_circle,
-                          color: Colors.green.shade600,
+                          color: AppColors.isDark
+                              ? Colors.green.shade300
+                              : Colors.green.shade600,
                           size: 20,
                         ),
                         const SizedBox(width: 8),
@@ -227,7 +250,9 @@ class TagSearchPopup extends StatelessWidget {
                             '"$searchText" ${'is_already_created'.tr}',
                             style: TextStyle(
                               fontSize: 14,
-                              color: Colors.green.shade800,
+                              color: AppColors.isDark
+                                  ? Colors.green.shade200
+                                  : Colors.green.shade800,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -241,16 +266,21 @@ class TagSearchPopup extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
+                      color: AppColors.lightBlueBgStatic,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.blue.shade200),
+                      border: Border.all(
+                        color: AppColors.lightBlueBorderStatic,
+                      ),
                     ),
                     child: Row(
                       children: [
                         Expanded(
                           child: Text(
                             '"$searchText" ${'is_not_in_the_list'.tr}',
-                            style: const TextStyle(fontSize: 14),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.textPrimaryStatic,
+                            ),
                           ),
                         ),
                         ElevatedButton(
