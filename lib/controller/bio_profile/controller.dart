@@ -21,6 +21,7 @@ class BioProfileController extends GetxController {
     if (raw.isEmpty) return raw;
     return capitalizeName(raw);
   }
+
   String get username => _p?.username ?? '';
   String get avatarUrl => _p?.avatarUrl ?? '';
   String get position => _ext?.businessName?.toString().isNotEmpty == true
@@ -32,6 +33,7 @@ class BioProfileController extends GetxController {
     final extName = _ext?.businessName?.toString() ?? '';
     return extName;
   }
+
   String get location => _p?.location ?? '';
   String get website => _p?.website ?? '';
   String get bio => _p?.bio ?? '';

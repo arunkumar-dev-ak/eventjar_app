@@ -82,13 +82,13 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                   // Full Name
                   BasicInfoFormElement(
                     controller: controller.fullNameController,
-                    label: 'Full Name',
+                    label: 'full_name'.tr,
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) {
-                        return 'Full name is required';
+                        return 'full_name_required'.tr;
                       }
                       if (val.trim().length < 2) {
-                        return 'Full name must be at least 2 characters';
+                        return 'full_name_length_error'.tr;
                       }
                       return null;
                     },
@@ -99,7 +99,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                   Obx(() {
                     return IntlPhoneField(
                       decoration: InputDecoration(
-                        labelText: 'Mobile Number *',
+                        labelText: 'mobile_number'.tr,
                         labelStyle: TextStyle(fontSize: 14),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
@@ -153,7 +153,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                       controller: controller.mobileController,
                       validator: (value) {
                         if (value == null || !value.isValidNumber()) {
-                          return 'Invalid phone number';
+                          return 'invalid_phone_number'.tr;
                         }
                         return null;
                       },
@@ -245,7 +245,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                   // Professional Title
                   BasicInfoFormElement(
                     controller: controller.professionalTitleController,
-                    label: 'Professional Title',
+                    label: 'professional_title'.tr,
                     validator: (val) => null, // Optional field
                   ),
                   SizedBox(height: 3.hp),
@@ -274,7 +274,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                             elevation: 0,
                           ),
                           child: Text(
-                            'Reset',
+                            'reset'.tr,
                             style: TextStyle(
                               fontSize: defaultFontSize,
                               fontWeight: FontWeight.w600,
@@ -319,7 +319,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                                     ),
                                   )
                                 : Text(
-                                    'Update Info',
+                                    'update_info'.tr,
                                     style: TextStyle(
                                       fontSize: defaultFontSize,
                                       fontWeight: FontWeight.w700,
@@ -404,7 +404,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Verify Phone Number',
+                      'verify_phone_number'.tr,
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.bold,
@@ -518,8 +518,8 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                                 : () => controller.sendPhoneOtp(),
                             child: Text(
                               cooldown > 0
-                                  ? 'Resend in ${cooldown}s'
-                                  : 'Resend',
+                                  ? '${'resend'.tr} ${cooldown}s'
+                                  : 'resend'.tr,
                               style: TextStyle(
                                 fontSize: 8.sp,
                                 color: cooldown > 0
@@ -550,7 +550,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                                     final otp = pinController.text.trim();
                                     if (otp.length < 6) {
                                       controller.state.otpError.value =
-                                          'Please enter the full 6-digit code';
+                                          'enter_full_six_digit_code_error'.tr;
                                       return;
                                     }
                                     final success = await controller
@@ -558,7 +558,7 @@ class BasicInfoPage extends GetView<BasicInfoFormController> {
                                     if (success && ctx.mounted) {
                                       Navigator.of(ctx).pop();
                                       AppSnackbar.success(
-                                        title: "Verified",
+                                        title: 'verified'.tr,
                                         message:
                                             "Phone number verified successfully",
                                       );

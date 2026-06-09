@@ -2,6 +2,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 Widget homeContentBuildTags({required String label}) {
@@ -83,7 +84,7 @@ Widget homeContentImageNotFound() {
           ),
           const SizedBox(height: 8),
           Text(
-            'No Image',
+            'no_image'.tr,
             style: TextStyle(
               color: AppColors.iconMutedStatic,
               fontSize: 10,
@@ -166,7 +167,7 @@ Widget noEventsFoundWidget({VoidCallback? onRefresh}) {
           shaderCallback: (bounds) =>
               AppColors.buttonGradient.createShader(bounds),
           child: Text(
-            "No Events Yet",
+            'no_events_yet'.tr,
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w700,
@@ -177,7 +178,7 @@ Widget noEventsFoundWidget({VoidCallback? onRefresh}) {
         ),
         const SizedBox(height: 12),
         Text(
-          "We couldn't find any events at the moment.\nCheck back later for exciting new events!",
+          'no_events_at_moment_desc'.tr,
           style: TextStyle(
             fontSize: 10.sp,
             color: AppColors.textHintStatic,
@@ -208,7 +209,7 @@ Widget noEventsFoundWidget({VoidCallback? onRefresh}) {
                   const Icon(Icons.refresh_rounded, color: Colors.white, size: 18),
                   const SizedBox(width: 8),
                   Text(
-                    'Refresh',
+                    'refresh'.tr,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 10.sp,

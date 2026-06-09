@@ -17,10 +17,7 @@ class BusinessCategoryDropdown extends GetView<BusinessInfoFormController> {
           decoration: BoxDecoration(
             color: AppColors.cardBg(context),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.border(context),
-              width: 1.5,
-            ),
+            border: Border.all(color: AppColors.border(context), width: 1.5),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -28,9 +25,12 @@ class BusinessCategoryDropdown extends GetView<BusinessInfoFormController> {
               Expanded(
                 child: Text(
                   controller.state.selectedBusinessCategory.value.isEmpty
-                      ? "Select Business Category"
+                      ? 'select_business_category'.tr
                       : controller.state.selectedBusinessCategory.value,
-                  style: TextStyle(fontSize: 9.5.sp, color: AppColors.textPrimary(context)),
+                  style: TextStyle(
+                    fontSize: 9.5.sp,
+                    color: AppColors.textPrimary(context),
+                  ),
                 ),
               ),
               Icon(
@@ -64,7 +64,7 @@ void showBusinessCategoryDialog(BusinessInfoFormController controller) {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Select Business Category",
+                  'select_business_category'.tr,
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.bold,
@@ -145,11 +145,13 @@ Widget _buildCategoryItem(
           // Category Text
           Expanded(
             child: Text(
-              category,
+              category.tr,
               style: TextStyle(
                 fontSize: 9.5.sp,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                color: isSelected ? Colors.green.shade900 : AppColors.textPrimaryStatic,
+                color: isSelected
+                    ? Colors.green.shade900
+                    : AppColors.textPrimaryStatic,
               ),
             ),
           ),

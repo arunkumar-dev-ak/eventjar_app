@@ -50,7 +50,7 @@ class AddContactPage extends GetView<AddContactController> {
                 // Name
                 ContactFormElement(
                   controller: controller.nameController,
-                  label: 'Name *',
+                  label: '${'name'.tr} *',
                   validator: controller.validateName,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
@@ -59,7 +59,7 @@ class AddContactPage extends GetView<AddContactController> {
                 // Email
                 ContactFormElement(
                   controller: controller.emailController,
-                  label: 'Email *',
+                  label: '${'email'.tr} *',
                   keyboardType: TextInputType.emailAddress,
                   validator: controller.validateEmail,
                   autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -68,7 +68,10 @@ class AddContactPage extends GetView<AddContactController> {
 
                 // Phone 1
                 IntlPhoneField(
-                  decoration: _phoneDecoration('Phone Number *', context),
+                  decoration: _phoneDecoration(
+                    '${'phone_number'.tr} *',
+                    context,
+                  ),
                   pickerDialogStyle: _pickerStyle(),
                   initialCountryCode:
                       controller.state.selectedCountry.value.code,
@@ -79,7 +82,7 @@ class AddContactPage extends GetView<AddContactController> {
                   controller: controller.phoneController,
                   validator: (value) {
                     if (value == null || !value.isValidNumber()) {
-                      return 'Invalid phone number';
+                      return 'invalid_phone_number'.tr;
                     }
                     return null;
                   },
@@ -98,7 +101,7 @@ class AddContactPage extends GetView<AddContactController> {
                 // Notes
                 ContactFormElement(
                   controller: controller.notesController,
-                  label: 'Notes',
+                  label: 'notes'.tr,
                   maxLines: 4,
                   minLines: 3,
                 ),
@@ -128,7 +131,7 @@ class AddContactPage extends GetView<AddContactController> {
                                   ),
                                 ),
                                 label: Text(
-                                  'Extracting...',
+                                  'extracting'.tr,
                                   style: TextStyle(fontSize: 9.sp),
                                 ),
                                 style: OutlinedButton.styleFrom(
@@ -150,7 +153,7 @@ class AddContactPage extends GetView<AddContactController> {
                                   color: Colors.blue.shade700,
                                 ),
                                 label: Text(
-                                  'Extract Additional Info from Card',
+                                  'extract_additional_info_from_card'.tr,
                                   style: TextStyle(
                                     fontSize: 9.sp,
                                     color: Colors.blue.shade700,
@@ -302,7 +305,7 @@ class AddContactPage extends GetView<AddContactController> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Additional Info',
+                        'additional_info_from_card'.tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w700,
@@ -333,7 +336,9 @@ class AddContactPage extends GetView<AddContactController> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  allChecked ? 'Uncheck All' : 'Check All',
+                                  allChecked
+                                      ? 'uncheck_all'.tr
+                                      : 'check_all'.tr,
                                   style: TextStyle(
                                     fontSize: 9.sp,
                                     color: AppColors.textSecondary(context),
@@ -404,7 +409,7 @@ class AddContactPage extends GetView<AddContactController> {
                                 '${controller.state.selectedPhone2Country.value.code}_${controller.state.phone2FieldKey.value}',
                               ),
                               decoration: _phoneDecoration(
-                                'Phone Number',
+                                'phone_number'.tr,
                                 context,
                               ),
                               pickerDialogStyle: _pickerStyle(),
@@ -425,7 +430,7 @@ class AddContactPage extends GetView<AddContactController> {
                                     .trim();
                                 if (value.isEmpty) return null;
                                 if (phone != null && !phone.isValidNumber()) {
-                                  return 'Enter valid number';
+                                  return 'enter_valid_number'.tr;
                                 }
                                 return null;
                               },
@@ -441,7 +446,7 @@ class AddContactPage extends GetView<AddContactController> {
                     fieldKey: 'company',
                     child: ContactFormElement(
                       controller: controller.companyController,
-                      label: 'Company',
+                      label: 'company'.tr,
                       keyboardType: TextInputType.text,
                       onTap: () => _autoCheck('company'),
                     ),
@@ -452,7 +457,7 @@ class AddContactPage extends GetView<AddContactController> {
                     fieldKey: 'website',
                     child: ContactFormElement(
                       controller: controller.websiteController,
-                      label: 'Website',
+                      label: 'website'.tr,
                       keyboardType: TextInputType.url,
                       onTap: () => _autoCheck('website'),
                     ),
@@ -463,7 +468,7 @@ class AddContactPage extends GetView<AddContactController> {
                     fieldKey: 'address',
                     child: ContactFormElement(
                       controller: controller.addressController,
-                      label: 'Address',
+                      label: 'address'.tr,
                       maxLines: 2,
                       minLines: 2,
                       onTap: () => _autoCheck('address'),

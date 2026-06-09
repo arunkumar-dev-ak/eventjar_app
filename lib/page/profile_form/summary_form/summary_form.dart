@@ -47,7 +47,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                   Padding(
                     padding: EdgeInsets.only(bottom: 1.hp),
                     child: Text(
-                      'Short Bio / Business Pitch',
+                      'short_bio_or_pitch'.tr,
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w600,
@@ -56,7 +56,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                     ),
                   ),
                   Text(
-                    'This will be visible in attendee lists and matchmaking cards',
+                    'bio_visibility_desc'.tr,
                     style: TextStyle(
                       fontSize: 8.5.sp,
                       color: AppColors.textSecondary(context),
@@ -83,7 +83,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Availability for 1-on-1 Meetings',
+                        'availability_for_1_on_1'.tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w600,
@@ -93,7 +93,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                       SizedBox(height: 1.hp),
                       SummaryFormElement(
                         controller: controller.availabilitySlotsController,
-                        label: 'Availability',
+                        label: 'availability'.tr,
                         hintText: 'e.g., Weekdays 9AM-5PM, Flexible',
                         validator: (val) => null,
                       ),
@@ -103,8 +103,8 @@ class SummaryFormPage extends GetView<SummaryFormController> {
 
                   // Known Languages
                   SummaryTagInput(
-                    title: 'Known Languages',
-                    subtitle: 'Add languages you can communicate in',
+                    title: 'known_languages'.tr,
+                    subtitle: 'add_languages_desc'.tr,
                     hintText: 'e.g., English, Hindi, Tamil',
                     items: controller.state.selectedKnownLanguages,
                   ),
@@ -112,8 +112,8 @@ class SummaryFormPage extends GetView<SummaryFormController> {
 
                   // Skills
                   SummaryTagInput(
-                    title: 'Skills',
-                    subtitle: 'Add your key skills and expertise',
+                    title: 'skills'.tr,
+                    subtitle: 'add_skills_desc'.tr,
                     hintText: 'e.g., Leadership, Marketing',
                     items: controller.state.selectedSkills,
                   ),
@@ -143,7 +143,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                             elevation: 0,
                           ),
                           child: Text(
-                            'Reset',
+                            'reset'.tr,
                             style: TextStyle(
                               fontSize: defaultFontSize,
                               fontWeight: FontWeight.w600,
@@ -188,7 +188,7 @@ class SummaryFormPage extends GetView<SummaryFormController> {
                                     ),
                                   )
                                 : Text(
-                                    'Update Info',
+                                    'update_info'.tr,
                                     style: TextStyle(
                                       fontSize: defaultFontSize,
                                       fontWeight: FontWeight.w700,

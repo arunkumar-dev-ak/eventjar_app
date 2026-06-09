@@ -29,7 +29,7 @@ class CheckoutPromoCodeSection extends GetView<CheckoutController> {
           children: [
             /// Title
             Text(
-              "Savings Corner",
+              "savings_corner".tr,
               style: TextStyle(
                 fontSize: 9.5.sp,
                 fontWeight: FontWeight.w600,
@@ -48,7 +48,7 @@ class CheckoutPromoCodeSection extends GetView<CheckoutController> {
                     enabled: !isApplied && !isLoading,
                     textCapitalization: TextCapitalization.characters,
                     decoration: InputDecoration(
-                      hintText: "Enter promo code",
+                      hintText: 'enter_promo_code'.tr,
                       errorText: hasError ? promo.message : null,
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: 3.wp,
@@ -105,7 +105,7 @@ class CheckoutPromoCodeSection extends GetView<CheckoutController> {
                             ),
                           )
                         : Text(
-                            isApplied ? "Remove" : "Apply",
+                            isApplied ? "remove".tr : "apply".tr,
                             style: TextStyle(
                               fontSize: 8.5.sp,
                               fontWeight: FontWeight.w600,
@@ -121,7 +121,7 @@ class CheckoutPromoCodeSection extends GetView<CheckoutController> {
             if (isApplied) ...[
               SizedBox(height: 1.hp),
               Text(
-                "Promo applied • You saved ₹${promo!.discountAmount.toStringAsFixed(2)} 🎉",
+                "${'promo_applied'.tr} • You saved ₹${promo!.discountAmount.toStringAsFixed(2)} 🎉",
                 style: TextStyle(
                   fontSize: 8.sp,
                   color: Colors.green.shade700,

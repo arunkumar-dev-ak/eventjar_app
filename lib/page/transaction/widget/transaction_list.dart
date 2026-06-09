@@ -3,6 +3,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/transaction/widget/dummy_model.dart';
 import 'package:eventjar/page/transaction/widget/transaction_card.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class TransactionHistoryList extends StatelessWidget {
   const TransactionHistoryList({super.key});
@@ -17,7 +18,7 @@ class TransactionHistoryList extends StatelessWidget {
     final transactions = [
       TransactionModel(
         name: "Gokul",
-        subtitle: "Dinner split",
+        subtitle: 'dinner_split'.tr,
         date: "14 April",
         amount: 500,
         isReceived: false,
@@ -26,7 +27,7 @@ class TransactionHistoryList extends StatelessWidget {
       ),
       TransactionModel(
         name: "Arun",
-        subtitle: "Taxi share",
+        subtitle: 'taxi_share'.tr,
         date: "12 April",
         amount: 300,
         isReceived: true,
@@ -35,7 +36,7 @@ class TransactionHistoryList extends StatelessWidget {
       ),
       TransactionModel(
         name: "Rahul",
-        subtitle: "Snacks",
+        subtitle: 'snacks'.tr,
         date: "2 March",
         amount: 200,
         isReceived: false,

@@ -27,7 +27,7 @@ class FriendsPage extends GetView<FriendsController> {
           onPressed: () => Get.back(),
         ),
         title: Text(
-          "Friends",
+          'friends'.tr,
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 15.sp,
@@ -54,8 +54,8 @@ class FriendsPage extends GetView<FriendsController> {
         if (friends.isEmpty) {
           return EmptyStateWidget(
             icon: Icons.people_outline,
-            title: "No friends yet",
-            subtitle: "Add friends and start splitting expenses",
+            title: 'no_friends_yet'.tr,
+            subtitle: "add_friends_split_desc".tr,
           );
         }
 
@@ -99,7 +99,7 @@ class FriendsPage extends GetView<FriendsController> {
           controller.navigateToAddFriend();
         },
         icon: const Icon(Icons.add),
-        label: const Text("New Friend"),
+        label: Text("new_friend".tr),
       ),
     );
   }
@@ -191,7 +191,7 @@ class FriendsPage extends GetView<FriendsController> {
                   _menuItem(
                     context,
                     Icons.check_circle,
-                    "Accept Invitation",
+                    "accept_invitation".tr,
                     FriendAction.accept,
                   ),
                 );
@@ -200,7 +200,7 @@ class FriendsPage extends GetView<FriendsController> {
                   _menuItem(
                     context,
                     Icons.cancel,
-                    "Reject Invitation",
+                    "reject_invitation".tr,
                     FriendAction.reject,
                   ),
                 );
@@ -211,7 +211,7 @@ class FriendsPage extends GetView<FriendsController> {
                   _menuItem(
                     context,
                     Icons.delete_outline,
-                    "Remove Invitation",
+                    "remove_invitation".tr,
                     FriendAction.remove,
                   ),
                 );
@@ -222,7 +222,7 @@ class FriendsPage extends GetView<FriendsController> {
                   _menuItem(
                     context,
                     Icons.delete_outline,
-                    "Remove Friend",
+                    "remove_friend".tr,
                     FriendAction.remove,
                   ),
                 );
@@ -281,7 +281,7 @@ class FriendsPage extends GetView<FriendsController> {
   /// ================= STATUS =================
   Widget _statusWidget(BuildContext context, SplitTrackFriend friend) {
     final status = getStatusTextForFriendList(friend);
-    if (status == "Friend") {
+    if (status == "friend".tr) {
       return SizedBox.shrink();
     }
     return Text(

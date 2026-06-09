@@ -16,7 +16,7 @@ Widget userProfileBuildSocialLinks() {
     children: [
       buildSocialLinkRow(
         icon: FontAwesomeIcons.linkedinIn,
-        platform: "LinkedIn",
+        platform: 'linkedin'.tr,
         url: socialLinks['linkedin']!.isEmpty
             ? "Not connected"
             : socialLinks['linkedin']!,
@@ -26,7 +26,7 @@ Widget userProfileBuildSocialLinks() {
       SizedBox(height: 2.hp),
       buildSocialLinkRow(
         icon: FontAwesomeIcons.instagram,
-        platform: "Instagram",
+        platform: 'instagram'.tr,
         url: socialLinks['instagram']!.isEmpty
             ? "Not connected"
             : socialLinks['instagram']!,
@@ -36,7 +36,7 @@ Widget userProfileBuildSocialLinks() {
       SizedBox(height: 2.hp),
       buildSocialLinkRow(
         icon: FontAwesomeIcons.facebookF,
-        platform: "Facebook",
+        platform: 'facebook'.tr,
         url: socialLinks['facebook']!.isEmpty
             ? "Not connected"
             : socialLinks['facebook']!,
@@ -46,7 +46,7 @@ Widget userProfileBuildSocialLinks() {
       SizedBox(height: 2.hp),
       buildSocialLinkRow(
         icon: FontAwesomeIcons.xTwitter,
-        platform: "X (Twitter)",
+        platform: 'x_twitter'.tr,
         url: socialLinks['twitter']!.isEmpty
             ? "Not connected"
             : socialLinks['twitter']!,
@@ -106,7 +106,7 @@ Widget buildSocialLinkRow({
                 fontSize: 10.sp,
                 color: isConnected ? color : AppColors.textHintStatic,
                 fontWeight: isConnected ? FontWeight.w600 : FontWeight.normal,
-                decoration: isConnected ? TextDecoration.underline : null,
+                decoration: TextDecoration.none,
                 fontStyle: isConnected ? null : FontStyle.italic,
               ),
             ),
@@ -121,7 +121,7 @@ Widget buildSocialLinkRow({
                   await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
                 } else {
                   AppSnackbar.warning(
-                    title: "Unable to Open Link",
+                    title: 'unable_to_open_link'.tr,
                     message: "Could not launch $url",
                   );
                 }

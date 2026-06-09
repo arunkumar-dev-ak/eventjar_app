@@ -48,7 +48,7 @@ class AuthProcessingSubmitButton extends GetView<AuthProcessingController> {
                   child: isButtonLoading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : Text(
-                          "Continue",
+                          "continue_btn".tr,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 11.sp,

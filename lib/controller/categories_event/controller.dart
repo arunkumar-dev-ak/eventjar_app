@@ -15,7 +15,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class CategoriesEventController extends GetxController {
-  var appBarTitle = "Events";
+  var appBarTitle = "events".tr;
   final state = CategoriesEventState();
 
   final ScrollController scrollController = ScrollController();
@@ -27,7 +27,7 @@ class CategoriesEventController extends GetxController {
   bool get isLoading => state.isLoading.value;
 
   List<String> get tabs => [
-    'All',
+    'all'.tr,
     ...state.eventcategory.map((e) => e.name ?? ''),
   ];
 
@@ -133,11 +133,11 @@ class CategoriesEventController extends GetxController {
       if (err is DioException) {
         ApiErrorHandler.handleDioError(err, "Failed to load Events");
       } else if (err is Exception) {
-        AppSnackbar.error(title: "Exception", message: err.toString());
+        AppSnackbar.error(title: "exception".tr, message: err.toString());
       } else {
         AppSnackbar.error(
-          title: "Error",
-          message: "Something went wrong (${err.runtimeType})",
+          title: "error".tr,
+          message: "something_went_wrong".tr,
         );
       }
     } finally {

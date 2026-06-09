@@ -36,9 +36,9 @@ class SignInController extends GetxController {
   //validate email
   String? validateEmail(String? email) {
     if (email == null || email.isEmpty) {
-      return "Email is required";
+      return 'email_required'.tr;
     } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
-      return "Enter valid email";
+      return "enter_valid_email".tr;
     }
     return null;
   }
@@ -97,7 +97,7 @@ class SignInController extends GetxController {
 
       await UserStore.to.handleSetLocalData(response);
       AppSnackbar.success(
-        title: "Login Successful",
+        title: "login_successful".tr,
         message: "User Logged in successfully",
       );
       state.isLoading.value = false;
@@ -106,11 +106,11 @@ class SignInController extends GetxController {
       state.isLoading.value = false;
       LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleDioError(err, "Login Error");
+        ApiErrorHandler.handleDioError(err, "login_error".tr);
       } else {
         AppSnackbar.error(
-          title: "Login Error",
-          message: "Something went wrong",
+          title: "login_error".tr,
+          message: "generic_try_again_error".tr,
         );
       }
     }
@@ -120,7 +120,7 @@ class SignInController extends GetxController {
     Get.focusScope?.unfocus();
     if (state.tempToken == null) {
       AppSnackbar.warning(
-        title: "Verification Error",
+        title: "verification_error".tr,
         message: "Session expired. Please login again.",
       );
       return;
@@ -130,8 +130,8 @@ class SignInController extends GetxController {
 
     if (otp.length != 6) {
       AppSnackbar.warning(
-        title: "Invalid Code",
-        message: "Please enter the 6-digit verification code.",
+        title: "invalid_code".tr,
+        message: "enter_six_digit_code_error".tr,
       );
       return;
     }
@@ -148,8 +148,8 @@ class SignInController extends GetxController {
       await UserStore.to.handleSetLocalData(normalResponse);
 
       AppSnackbar.success(
-        title: "Login Successful",
-        message: "2FA verified successfully",
+        title: "login_successful".tr,
+        message: "two_fa_verified_success".tr,
       );
 
       state.is2FaLoading.value = false;
@@ -159,9 +159,12 @@ class SignInController extends GetxController {
       state.is2FaLoading.value = false;
       LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleDioError(err, "2FA Error");
+        ApiErrorHandler.handleDioError(err, "two_fa_error".tr);
       } else {
-        AppSnackbar.error(title: "2FA Error", message: "Something went wrong");
+        AppSnackbar.error(
+          title: "two_fa_error".tr,
+          message: "generic_try_again_error".tr,
+        );
       }
     }
   }
@@ -182,11 +185,11 @@ class SignInController extends GetxController {
     } catch (err) {
       LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleDioError(err, "Authentication Failed");
+        ApiErrorHandler.handleDioError(err, "authentication_failed".tr);
       } else {
         AppSnackbar.error(
-          title: "Authentication Failed",
-          message: "Something went wrong",
+          title: "authentication_failed".tr,
+          message: "generic_try_again_error".tr,
         );
       }
     } finally {

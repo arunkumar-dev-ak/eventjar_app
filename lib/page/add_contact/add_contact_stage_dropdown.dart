@@ -25,57 +25,57 @@ class ContactStageDropdown extends StatelessWidget {
                 horizontal: 40,
                 vertical: 24,
               ),
-              child: Container(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.5,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.scaffoldBg(context),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Title
-                    Text(
-                      'Select Stage',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.blue.shade700, // theme-customized color
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Divider(color: AppColors.border(context), thickness: 1),
-                    const SizedBox(height: 8),
-                    // List of stages with scrolling
-                    Expanded(child: _buildStageSelection(context)),
-                    const SizedBox(height: 8),
-                    // Cancel / Close button
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 8,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          backgroundColor: AppColors.isDark
-                              ? Colors.white.withValues(alpha: 0.12)
-                              : Colors.blue.shade50,
-                        ),
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(fontSize: 16),
+              child: Material(
+                color: AppColors.scaffoldBg(context),
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.5,
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Title
+                      Text(
+                        'select_stage'.tr,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          color: Colors.blue.shade700, // theme-customized color
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 12),
+                      Divider(color: AppColors.border(context), thickness: 1),
+                      const SizedBox(height: 8),
+                      // List of stages with scrolling
+                      Expanded(child: _buildStageSelection(context)),
+                      const SizedBox(height: 8),
+                      // Cancel / Close button
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 8,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            backgroundColor: AppColors.isDark
+                                ? Colors.white.withValues(alpha: 0.12)
+                                : Colors.blue.shade50,
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            'cancel'.tr,
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -91,7 +91,7 @@ class ContactStageDropdown extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                selected['value'] ?? '',
+                (selected['value'] ?? '').tr,
                 style: const TextStyle(fontSize: 16),
               ),
               const Icon(Icons.arrow_drop_down),
@@ -117,7 +117,7 @@ class ContactStageDropdown extends StatelessWidget {
           final isSelected = stage['key'] == selectedKey;
 
           return ListTile(
-            title: Text(stage['value'] ?? ''),
+            title: Text((stage['value'] ?? '').tr),
             trailing: isSelected
                 ? Icon(Icons.check_circle, color: Colors.green.shade700)
                 : null,

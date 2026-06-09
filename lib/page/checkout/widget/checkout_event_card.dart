@@ -42,7 +42,7 @@ class CheckoutEventCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   eventInfo.isVirtual
-                      ? "Online Event"
+                      ? 'online_event'.tr
                       : "${eventInfo.venue}, ${eventInfo.city ?? ''}",
                   style: TextStyle(fontSize: 10.sp),
                 ),

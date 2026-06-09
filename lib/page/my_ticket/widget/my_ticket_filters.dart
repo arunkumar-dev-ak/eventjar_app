@@ -22,7 +22,7 @@ class MyTicketFilters extends GetView<MyTicketController> {
                   fontSize: 9.sp, // text inside input
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Search events',
+                  hintText: 'search_events'.tr,
                   hintStyle: TextStyle(fontSize: 9.sp),
                   isDense: true,
 

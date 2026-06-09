@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 void showLanguageChangeDialog(BuildContext context) {
   final languageStore = LanguageStore.to;
   final selected = languageStore.selectedLanguageCode.obs;
+  final isApplying = false.obs;
   final isDark = Theme.of(context).brightness == Brightness.dark;
 
   showDialog(
@@ -24,7 +25,7 @@ void showLanguageChangeDialog(BuildContext context) {
             ),
             SizedBox(width: 2.wp),
             Text(
-              'Change Language',
+              'change_language'.tr,
               style: TextStyle(
                 fontSize: 13.sp,
                 fontWeight: FontWeight.w600,
@@ -92,23 +93,30 @@ void showLanguageChangeDialog(BuildContext context) {
           ),
           Obx(() {
             final changed = selected.value != languageStore.selectedLanguageCode;
+            final loading = isApplying.value;
             return ElevatedButton(
-              onPressed: changed
-                  ? () {
-                      languageStore.setLanguage(selected.value);
-                      Navigator.pop(dialogContext);
+              onPressed: (!changed || loading)
+                  ? null
+                  : () async {
+                      final primaryColor =
+                          Theme.of(context).colorScheme.primary;
+                      isApplying.value = true;
+                      await languageStore.setLanguage(selected.value);
+                      isApplying.value = false;
+                      if (dialogContext.mounted) {
+                        Navigator.pop(dialogContext);
+                      }
                       Get.snackbar(
-                        'Language Updated',
-                        'Language changed to ${languageStore.selectedLanguageName}',
+                        'language_updated'.tr,
+                        '${'language_changed_to'.tr} ${languageStore.selectedLanguageName}',
                         snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        backgroundColor: primaryColor,
                         colorText: Colors.white,
                         margin: const EdgeInsets.all(16),
                         borderRadius: 12,
                         duration: const Duration(seconds: 2),
                       );
-                    }
-                  : null,
+                    },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 disabledBackgroundColor: AppColors.chipBg(context),
@@ -116,12 +124,23 @@ void showLanguageChangeDialog(BuildContext context) {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text(
-                'Save',
-                style: TextStyle(
-                  color: changed ? Colors.white : AppColors.textHint(context),
-                ),
-              ),
+              child: loading
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : Text(
+                      'Save',
+                      style: TextStyle(
+                        color: changed
+                            ? Colors.white
+                            : AppColors.textHint(context),
+                      ),
+                    ),
             );
           }),
         ],

@@ -73,19 +73,19 @@ class SplashScreenPage extends GetView<SplashScreenController> {
                       SizedBox(height: 12.hp),
                       // Main headings
                       _buildAnimatedText(
-                        text: 'Connect.',
+                        text: 'connect_dot'.tr,
                         opacity: controller.connectOpacity.value,
                         offset: controller.connectSlide.value,
                         fontSize: 20.sp,
                       ),
                       _buildAnimatedText(
-                        text: 'Collaborate.',
+                        text: 'collaborate_dot'.tr,
                         opacity: controller.collaborateOpacity.value,
                         offset: controller.collaborateSlide.value,
                         fontSize: 20.sp,
                       ),
                       _buildAnimatedText(
-                        text: 'Grow.',
+                        text: 'grow_dot'.tr,
                         opacity: controller.growOpacity.value,
                         offset: controller.growSlide.value,
                         fontSize: 20.sp,
@@ -99,7 +99,7 @@ class SplashScreenPage extends GetView<SplashScreenController> {
                           child: Column(
                             children: [
                               Text(
-                                'The smart networking app',
+                                'tagline_line_1'.tr,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12.sp,
@@ -108,7 +108,7 @@ class SplashScreenPage extends GetView<SplashScreenController> {
                                 textAlign: TextAlign.center,
                               ),
                               Text(
-                                'for smart professionals.',
+                                'tagline_line_2'.tr,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12.sp,
@@ -146,22 +146,22 @@ class SplashScreenPage extends GetView<SplashScreenController> {
             ),
 
             // Language selection popup (first launch only)
-            // Obx(
-            //   () => controller.state.showLanguagePopup.value
-            //       ? Container(
-            //           color: Colors.black.withValues(alpha: 0.5),
-            //           child: LanguageSelectionPopup(
-            //             onLanguageSelected: controller.onLanguageSelected,
-            //           ),
-            //         )
-            //       : const SizedBox.shrink(),
-            // ),
+            Obx(
+              () => controller.state.showLanguagePopup.value
+                  ? Container(
+                      color: Colors.black.withValues(alpha: 0.5),
+                      child: LanguageSelectionPopup(
+                        onLanguageSelected: controller.onLanguageSelected,
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
 
             // loader for deeplink
             Obx(
               () => FullScreenLoader(
                 isLoading: controller.state.isResolvingDeepLink.value,
-                message: "Preparing your experience...",
+                message: 'preparing_experience'.tr,
               ),
             ),
           ],

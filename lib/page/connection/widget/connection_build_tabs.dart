@@ -18,14 +18,14 @@ class ConnectionBuildTabs extends GetView<ConnectionController> {
           Row(
             children: [
               ConnectionTab(
-                label: 'Sent',
+                label: 'sent'.tr,
                 count: controller.state.sendCount.value,
                 selected: controller.state.selectedTab.value == 0,
                 onTap: () => controller.changeTab(0),
               ),
               SizedBox(width: 2.wp),
               ConnectionTab(
-                label: 'Received',
+                label: 'received'.tr,
                 count: controller.state.receivedCount.value,
                 selected: controller.state.selectedTab.value == 1,
                 onTap: () => controller.changeTab(1),
@@ -36,12 +36,12 @@ class ConnectionBuildTabs extends GetView<ConnectionController> {
           SizedBox(width: 2.wp),
 
           SingleSelectFilterDropdown<String>(
-            title: 'Filter Status',
+            title: 'filter_status'.tr,
             items: controller.state.statusItems,
             selectedItem: controller.state.selectedStatus,
             getDefaultItem: () => 'All',
             getDisplayValue: (String status) {
-              return capitalize(status.toString());
+              return capitalize(status.tr);
             },
             getKeyValue: (String status) {
               return status;
@@ -129,9 +129,7 @@ class ConnectionTab extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color: selected
-                    ? Colors.white
-                    : AppColors.textPrimary(context),
+                color: selected ? Colors.white : AppColors.textPrimary(context),
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                 fontSize: 8.5.sp,
                 shadows: selected

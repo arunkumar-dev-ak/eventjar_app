@@ -32,7 +32,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "YOUR SPENT",
+                      "your_spent".tr,
                       style: TextStyle(
                         fontSize: 7.sp,
                         color: AppColors.budgetTabTextColor,
@@ -87,7 +87,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                             ),
                             SizedBox(width: 1.5.wp),
                             Text(
-                              "Settle Up",
+                              'settle_up'.tr,
                               style: TextStyle(
                                 fontSize: 8.sp,
                                 color: Colors.white,
@@ -110,7 +110,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                 Expanded(
                   child: _amountCard(
                     context,
-                    "YOU OWE",
+                    "you_owe".tr,
                     "₹${youOwe.toStringAsFixed(0)}",
                     isOwe: true,
                   ),
@@ -119,7 +119,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                 Expanded(
                   child: _amountCard(
                     context,
-                    "YOU RECEIVE",
+                    "you_receive".tr,
                     "₹${youReceive.toStringAsFixed(0)}",
                     isOwe: false,
                   ),

@@ -137,7 +137,7 @@ class MyTicketPage extends GetView<MyTicketController> {
                   controller: controller.searchController,
                   autofocus: true,
                   decoration: InputDecoration(
-                    hintText: 'Search tickets...',
+                    hintText: 'search_tickets'.tr,
                     hintStyle: TextStyle(
                       color: Colors.white70,
                       fontSize: 10.sp,
@@ -148,7 +148,7 @@ class MyTicketPage extends GetView<MyTicketController> {
                   onChanged: controller.onSearch,
                 )
               : Text(
-                  'My Tickets',
+                  'my_tickets_plural'.tr,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.sp,

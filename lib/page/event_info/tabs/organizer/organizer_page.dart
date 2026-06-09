@@ -19,7 +19,7 @@ class OrganizerPage extends StatelessWidget {
       final eventInfo = controller.state.eventInfo.value;
 
       if (eventInfo == null) {
-        return const Center(child: Text("No event info available"));
+        return Center(child: Text('no_event_info_available'.tr));
       }
 
       final organizer = eventInfo.organizer;
@@ -36,7 +36,7 @@ class OrganizerPage extends StatelessWidget {
             // About Section
             if (organizer.bio != null && organizer.bio!.isNotEmpty) ...[
               _buildCardSection(
-                title: "About Organizer",
+                title: 'about_organizer'.tr,
                 icon: Icons.info_outline,
                 child: buildAboutSection(organizer.bio!),
               ),
@@ -46,7 +46,7 @@ class OrganizerPage extends StatelessWidget {
             // Company Section
             if (_hasCompanyDetails(organizer, eventInfo)) ...[
               _buildCardSection(
-                title: "Company Details",
+                title: 'company_details'.tr,
                 icon: Icons.business,
                 child: buildCompanySection(organizer, eventInfo),
               ),

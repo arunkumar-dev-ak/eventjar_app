@@ -15,7 +15,7 @@ class SchedulerDurationDropdown extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Duration *',
+          'duration'.tr,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -24,16 +24,16 @@ class SchedulerDurationDropdown extends StatelessWidget {
         ),
         SizedBox(height: 8),
         SingleSelectFilterDropdown<Map<String, String>>(
-          title: "Select Duration",
+          title: 'select_duration'.tr,
           items: controller.state.durations,
           selectedItem: controller.state.selectedDurationMap,
           getDefaultItem: () => controller.state.durations.first,
-          getDisplayValue: (item) => item['value']!,
+          getDisplayValue: (item) => item['value']!.tr,
           getKeyValue: (item) => item,
           onSelected: (duration) {
             return controller.selectDuration(duration);
           },
-          hintText: "Select duration",
+          hintText: "select_duration".tr,
         ),
       ],
     );

@@ -20,7 +20,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
       backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
-          "Manage Gallery",
+          'manage_gallery'.tr,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         centerTitle: false,
@@ -51,7 +51,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
                     _buildHeader(context, totalCount),
                     SizedBox(height: 2.hp),
                     if (existing.isNotEmpty) ...[
-                      _buildSectionLabel(context, "Current Images"),
+                      _buildSectionLabel(context, 'current_images'.tr),
                       SizedBox(height: 1.hp),
                       _buildExistingImagesGrid(context, existing),
                       SizedBox(height: 1.hp),
@@ -65,7 +65,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            'Tap image to view full screen',
+                            'tap_image_full_screen'.tr,
                             style: TextStyle(
                               fontSize: 8.sp,
                               color: AppColors.textHint(context),
@@ -115,7 +115,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "$totalCount / ${GalleryFormState.maxImages} images",
+                  "$totalCount / ${GalleryFormState.maxImages} ${'images'.tr}",
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 10.sp,
@@ -124,7 +124,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  "Max 5MB per image. Supports JPG, PNG",
+                  "image_limits_desc".tr,
                   style: TextStyle(
                     fontSize: 8.sp,
                     color: AppColors.textSecondary(context),
@@ -168,7 +168,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
               RouteName.imageViewerPage,
               arguments: {
                 "fileUrl": getFileUrl(images[index]),
-                "header": "Gallery",
+                "header": 'gallery'.tr,
               },
             ),
             child: ClipRRect(
@@ -289,7 +289,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
               SizedBox(height: 1.hp),
               Text(
                 canAdd
-                    ? "Tap to add images (${controller.remaining} remaining)"
+                    ? "${'tap_to_add_images'.tr} (${controller.remaining} ${'remaining'.tr})"
                     : "Maximum images reached",
                 style: TextStyle(
                   fontSize: 9.sp,
@@ -360,7 +360,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        'Uploading...',
+                        'uploading'.tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w700,
@@ -369,7 +369,7 @@ class GalleryFormPage extends GetView<GalleryFormController> {
                     ],
                   )
                 : Text(
-                    'Save Gallery',
+                    'save_gallery'.tr,
                     style: TextStyle(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w700,

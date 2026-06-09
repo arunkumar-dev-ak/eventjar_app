@@ -51,7 +51,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                 /// Trip Name
                 FormElement(
                   controller: controller.tripNameController,
-                  label: "Trip Name *",
+                  label: "trip_name".tr,
                   validator: (val) =>
                       val == null || val.isEmpty ? "Required" : null,
                 ),
@@ -61,7 +61,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                 /// Destination
                 FormElement(
                   controller: controller.destinationController,
-                  label: "Destination *",
+                  label: "destination".tr,
                   validator: (val) =>
                       val == null || val.isEmpty ? "Required" : null,
                 ),
@@ -76,7 +76,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                       flex: 3,
                       child: FormElement(
                         controller: controller.budgetController,
-                        label: "Budget (Optional)",
+                        label: 'budget_optional'.tr,
                         keyboardType: TextInputType.number,
                       ),
                     ),
@@ -110,7 +110,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                           },
                           child: InputDecorator(
                             decoration: InputDecoration(
-                              labelText: "Currency",
+                              labelText: 'currency'.tr,
                               labelStyle: TextStyle(fontSize: 10.sp),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -146,8 +146,8 @@ class CreateTripPage extends GetView<CreateTripController> {
 
                 /// Invite Friends (Multi Select)
                 MultiSelectPaginatedDropdown<SplitTrackFriend>(
-                  title: 'Invite Friends',
-                  hintText: 'Select Friends',
+                  title: 'invite_friends'.tr,
+                  hintText: 'select_friends'.tr,
                   items: controller.state.friends,
                   selectedItemsMap: controller.state.selectedFriendsMap,
                   getDisplayValue: (item) => item.name,
@@ -155,9 +155,9 @@ class CreateTripPage extends GetView<CreateTripController> {
                   getSubtitleValue: (item) {
                     switch (item.status) {
                       case 'pending':
-                        return 'Invitation yet to accept';
+                        return 'invitation_yet_to_accept'.tr;
                       case 'accepted':
-                        return 'Accepted';
+                        return 'accepted'.tr;
                       case 'rejected':
                         return 'Invitation declined';
                       default:
@@ -179,7 +179,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                           ),
                         ),
                         child: Text(
-                          'Accepted',
+                          'accepted'.tr,
                           style: TextStyle(
                             fontSize: 7.sp,
                             fontWeight: FontWeight.w600,
@@ -202,7 +202,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                           ),
                         ),
                         child: Text(
-                          'Pending',
+                          'pending'.tr,
                           style: TextStyle(
                             fontSize: 7.sp,
                             fontWeight: FontWeight.w600,
@@ -225,7 +225,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                           ),
                         ),
                         child: Text(
-                          'Declined',
+                          'declined'.tr,
                           style: TextStyle(
                             fontSize: 7.sp,
                             fontWeight: FontWeight.w600,
@@ -253,8 +253,8 @@ class CreateTripPage extends GetView<CreateTripController> {
                 /// Description
                 SummaryFormElement(
                   controller: controller.descriptionController,
-                  label: "Description",
-                  hintText: "Write about your trip...",
+                  label: 'description'.tr,
+                  hintText: 'write_about_trip'.tr,
                   maxLines: 4,
                   minLines: 3,
                   maxLength: 200,
@@ -271,7 +271,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                           final isLoading = controller.state.isLoading.value;
 
                           return FormButton(
-                            text: "Clear",
+                            text: 'clear'.tr,
                             isLoading: false,
                             type: FormButtonType.outline,
                             onPressed: isLoading ? null : controller.clearForm,
@@ -286,7 +286,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                           final isLoading = controller.state.isLoading.value;
 
                           return FormButton(
-                            text: isLoading ? "Creating..." : "Create Trip",
+                            text: isLoading ? "Creating..." : 'create_trip'.tr,
                             isLoading: isLoading,
                             type: FormButtonType.primary,
                             icon: Icons.flight_takeoff,

@@ -111,13 +111,13 @@ class FriendsController extends GetxController {
       await FriendsApi.acceptFriends(id: friend.id);
 
       AppSnackbar.success(
-        title: "Friend Accepted",
+        title: "friend_accepted".tr,
         message: "${friend.name} added successfully",
       );
 
       await fetchFriendsFirstLoad();
     } catch (err) {
-      ApiErrorHandler.handle(error: err, title: "Failed to accept friend");
+      ApiErrorHandler.handle(error: err, title: "failed_accept_friend".tr);
     } finally {
       state.isLoading.value = false;
     }
@@ -130,13 +130,13 @@ class FriendsController extends GetxController {
       await FriendsApi.rejectFriends(id: friend.id);
 
       AppSnackbar.success(
-        title: "Invitation Rejected",
+        title: "invitation_rejected".tr,
         message: "${friend.name} invitation rejected",
       );
 
       await fetchFriendsFirstLoad();
     } catch (err) {
-      ApiErrorHandler.handle(error: err, title: "Failed to reject friend");
+      ApiErrorHandler.handle(error: err, title: "failed_reject_friend".tr);
     } finally {
       state.isLoading.value = false;
     }
@@ -149,13 +149,13 @@ class FriendsController extends GetxController {
       await FriendsApi.deleteFriends(id: friend.id);
 
       AppSnackbar.success(
-        title: "Friend Removed",
+        title: "friend_removed".tr,
         message: "${friend.name} removed successfully",
       );
 
       state.friends.removeWhere((e) => e.id == friend.id);
     } catch (err) {
-      ApiErrorHandler.handle(error: err, title: "Failed to remove friend");
+      ApiErrorHandler.handle(error: err, title: "failed_remove_friend".tr);
     } finally {
       state.isLoading.value = false;
     }

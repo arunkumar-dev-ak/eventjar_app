@@ -44,8 +44,8 @@ class MyTicketDateRangePickerWidget {
                       result = null;
                       Navigator.of(context).pop();
                     },
-                    icon: const Icon(Icons.close, size: 15),
-                    label: const Text('Clear Filter'),
+                    icon: Icon(Icons.close, size: 15),
+                    label: Text('clear_filter'.tr),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red.shade50,
                       foregroundColor: Colors.red.shade700,

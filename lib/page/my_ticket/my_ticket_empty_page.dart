@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget buildEmptyState() {
   return Center(
@@ -14,7 +15,7 @@ Widget buildEmptyState() {
         ),
         SizedBox(height: 2.hp),
         Text(
-          "No tickets yet",
+          'no_tickets_yet'.tr,
           style: TextStyle(
             fontSize: 12.sp,
             fontWeight: FontWeight.bold,
@@ -23,7 +24,7 @@ Widget buildEmptyState() {
         ),
         SizedBox(height: 1.hp),
         Text(
-          "Register for events to see your tickets here",
+          'register_events_tickets_desc'.tr,
           style: TextStyle(fontSize: 9.sp, color: AppColors.textHintStatic),
         ),
       ],

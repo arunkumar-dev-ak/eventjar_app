@@ -38,7 +38,7 @@ class AddContactAdditionalInfoSheet extends GetView<AddContactController> {
             ),
             SizedBox(height: 2.hp),
             Text(
-              'Additional Info from Card',
+              'additional_info_from_card'.tr,
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w700,
@@ -47,34 +47,34 @@ class AddContactAdditionalInfoSheet extends GetView<AddContactController> {
             ),
             SizedBox(height: 0.5.hp),
             Text(
-              'Check the fields you want to save with this contact.',
+              'check_fields_to_save_desc'.tr,
               style: TextStyle(fontSize: 9.sp, color: AppColors.textSecondary(context)),
             ),
             SizedBox(height: 2.hp),
 
             _AdditionalField(
               fieldKey: 'phone2',
-              label: 'Phone 2',
+              label: 'phone_2'.tr,
               icon: Icons.phone_outlined,
               textController: controller.phone2Controller,
               keyboardType: TextInputType.phone,
             ),
             _AdditionalField(
               fieldKey: 'company',
-              label: 'Company',
+              label: 'company'.tr,
               icon: Icons.business_outlined,
               textController: controller.companyController,
             ),
             _AdditionalField(
               fieldKey: 'website',
-              label: 'Website',
+              label: 'website'.tr,
               icon: Icons.language_outlined,
               textController: controller.websiteController,
               keyboardType: TextInputType.url,
             ),
             _AdditionalField(
               fieldKey: 'address',
-              label: 'Address',
+              label: 'address'.tr,
               icon: Icons.location_on_outlined,
               textController: controller.addressController,
               maxLines: 2,
@@ -95,7 +95,7 @@ class AddContactAdditionalInfoSheet extends GetView<AddContactController> {
                   elevation: 4,
                 ),
                 child: Text(
-                  'Apply',
+                  'apply'.tr,
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.w600,

@@ -52,9 +52,9 @@ List<Widget> scorecardBuildVerificationPages() {
       Obx(
         () => _buildActionPage(
           icon: Icons.phone_outlined,
-          title: 'Verify number',
-          subtitle: 'Confirm your phone number',
-          buttonLabel: 'Verify',
+          title: 'verify_number'.tr,
+          subtitle: 'confirm_phone_number'.tr,
+          buttonLabel: 'verify'.tr,
           isLoading: controller.state.isSendingOtp.value,
           onTap: controller.state.isSendingOtp.value
               ? null
@@ -72,8 +72,8 @@ List<Widget> scorecardBuildVerificationPages() {
     completed.add(
       _buildActionPage(
         icon: Icons.phone_outlined,
-        title: 'Number verified',
-        subtitle: 'Phone number confirmed',
+        title: 'number_verified'.tr,
+        subtitle: 'phone_number_confirmed'.tr,
         isCompleted: true,
       ),
     );
@@ -84,9 +84,9 @@ List<Widget> scorecardBuildVerificationPages() {
     pending.add(
       _buildActionPage(
         icon: Icons.email_outlined,
-        title: 'Verify email',
-        subtitle: 'Confirm your email address',
-        buttonLabel: 'Verify',
+        title: 'verify_email'.tr,
+        subtitle: 'confirm_email_address'.tr,
+        buttonLabel: 'verify'.tr,
         onTap: () => _showEmailVerifyDialog(Get.context!),
       ),
     );
@@ -94,8 +94,8 @@ List<Widget> scorecardBuildVerificationPages() {
     completed.add(
       _buildActionPage(
         icon: Icons.email_outlined,
-        title: 'Email verified',
-        subtitle: 'Email address confirmed',
+        title: 'email_verified'.tr,
+        subtitle: 'email_address_confirmed'.tr,
         isCompleted: true,
       ),
     );
@@ -106,9 +106,9 @@ List<Widget> scorecardBuildVerificationPages() {
     pending.add(
       _buildActionPage(
         icon: Icons.person_add_outlined,
-        title: 'Add first contact',
-        subtitle: 'Start building your network',
-        buttonLabel: 'Add',
+        title: 'add_first_contact'.tr,
+        subtitle: 'start_building_network'.tr,
+        buttonLabel: 'add'.tr,
         onTap: () => controller.navigateToAddContact(),
       ),
     );
@@ -116,8 +116,8 @@ List<Widget> scorecardBuildVerificationPages() {
     completed.add(
       _buildActionPage(
         icon: Icons.person_add_outlined,
-        title: 'Contact added',
-        subtitle: 'First contact saved',
+        title: 'contact_added'.tr,
+        subtitle: 'first_contact_saved'.tr,
         isCompleted: true,
       ),
     );
@@ -195,7 +195,7 @@ Widget _buildActionPage({
                   ],
                 ),
                 child: Text(
-                  isLoading ? 'Verifying...' : buttonLabel,
+                  isLoading ? 'verifying'.tr : buttonLabel,
                   style: TextStyle(
                     color: const Color(0xFF1565C0),
                     fontSize: isLoading ? 6.sp : 7.5.sp,
@@ -271,7 +271,7 @@ void _showPhoneOtpDialog(BuildContext context) async {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Verify Phone Number',
+                    'verify_phone_number'.tr,
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
@@ -281,7 +281,7 @@ void _showPhoneOtpDialog(BuildContext context) async {
                   ),
                   SizedBox(height: 1.hp),
                   Text(
-                    'Enter the 6-digit code sent to\n$phone',
+                    '${'enter_six_digit_code_sent'.tr}\n$phone',
                     style: TextStyle(
                       fontSize: 9.sp,
                       color: AppColors.placeHolderColor,
@@ -385,7 +385,7 @@ void _showPhoneOtpDialog(BuildContext context) async {
                               ? null
                               : () => controller.sendPhoneOtp(),
                           child: Text(
-                            cooldown > 0 ? 'Resend in ${cooldown}s' : 'Resend',
+                            cooldown > 0 ? '${'resend'.tr} in ${cooldown}s' : 'resend'.tr,
                             style: TextStyle(
                               fontSize: 8.sp,
                               color: cooldown > 0
@@ -416,7 +416,7 @@ void _showPhoneOtpDialog(BuildContext context) async {
                                   final otp = pinController.text.trim();
                                   if (otp.length < 6) {
                                     controller.state.otpError.value =
-                                        'Please enter the full 6-digit code';
+                                        'enter_full_six_digit_code_error'.tr;
                                     return;
                                   }
                                   final success = await controller
@@ -452,7 +452,7 @@ void _showPhoneOtpDialog(BuildContext context) async {
                                       ),
                                     )
                                   : Text(
-                                      'Verify',
+                                      'verify'.tr,
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 11.sp,
@@ -532,7 +532,7 @@ void _showEmailVerifyDialog(BuildContext context) async {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Check your email',
+                  'check_your_email'.tr,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -564,7 +564,7 @@ void _showEmailVerifyDialog(BuildContext context) async {
                     ),
                     child: Center(
                       child: Text(
-                        'Open Email',
+                        'open_email'.tr,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 11.sp,

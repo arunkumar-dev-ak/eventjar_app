@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eventjar/controller/bio_profile/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/page/bio_profile/schedule_meeting_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:logger/web.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
 
@@ -88,8 +90,8 @@ class BioProfilePage extends GetView<BioProfileController> {
                 SizedBox(height: 2.5.hp),
                 FilledButton.icon(
                   onPressed: controller.retry,
-                  icon: const Icon(Icons.refresh_rounded, size: 18),
-                  label: const Text('Try Again'),
+                  icon: Icon(Icons.refresh_rounded, size: 18),
+                  label: Text('try_again'.tr),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.gradientDarkStart,
                     foregroundColor: Colors.white,
@@ -407,7 +409,7 @@ class BioProfilePage extends GetView<BioProfileController> {
               context,
               icon: Icons.event_available_rounded,
               count: controller.eventsCount.toString(),
-              label: 'Events Attended',
+              label: 'events_attended'.tr,
               color: AppColors.gradientDarkStart,
             ),
           ),
@@ -417,7 +419,7 @@ class BioProfilePage extends GetView<BioProfileController> {
               context,
               icon: Icons.people_outline_rounded,
               count: controller.contactsCount.toString(),
-              label: 'Total \nContacts',
+              label: 'total_contacts'.tr,
               color: AppColors.gradientLightEnd,
             ),
           ),
@@ -526,7 +528,7 @@ class BioProfilePage extends GetView<BioProfileController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Networking Goal',
+                    'networking_goal'.tr,
                     style: TextStyle(
                       fontSize: 8.sp,
                       fontWeight: FontWeight.w600,
@@ -564,7 +566,7 @@ class BioProfilePage extends GetView<BioProfileController> {
     return _buildCard(
       context,
       icon: Icons.work_outline_rounded,
-      title: 'Professional',
+      title: 'professional'.tr,
       child: Column(
         children: [
           Row(
@@ -573,7 +575,7 @@ class BioProfilePage extends GetView<BioProfileController> {
               Expanded(
                 child: _buildInfoPair(
                   context,
-                  label: 'Position',
+                  label: 'position'.tr,
                   value: controller.position.isNotEmpty
                       ? controller.position
                       : '-',
@@ -582,7 +584,7 @@ class BioProfilePage extends GetView<BioProfileController> {
               Expanded(
                 child: _buildInfoPair(
                   context,
-                  label: 'Company',
+                  label: 'company'.tr,
                   value: controller.businessName.isNotEmpty
                       ? controller.businessName
                       : '-',
@@ -597,7 +599,7 @@ class BioProfilePage extends GetView<BioProfileController> {
               Expanded(
                 child: _buildInfoPair(
                   context,
-                  label: 'Industry',
+                  label: 'industry'.tr,
                   value: controller.businessCategory.isNotEmpty
                       ? controller.businessCategory
                       : '-',
@@ -606,7 +608,7 @@ class BioProfilePage extends GetView<BioProfileController> {
               Expanded(
                 child: _buildInfoPair(
                   context,
-                  label: 'Experience',
+                  label: 'experience'.tr,
                   value: controller.yearsInBusiness.isNotEmpty
                       ? controller.yearsInBusiness
                       : '-',
@@ -624,7 +626,7 @@ class BioProfilePage extends GetView<BioProfileController> {
                   child: controller.location.isNotEmpty
                       ? _buildInfoPair(
                           context,
-                          label: 'Location',
+                          label: 'location'.tr,
                           value: controller.location,
                         )
                       : const SizedBox.shrink(),
@@ -678,7 +680,7 @@ class BioProfilePage extends GetView<BioProfileController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Website',
+          'website'.tr,
           style: TextStyle(
             fontSize: 8.sp,
             color: AppColors.textSecondary(context),
@@ -707,7 +709,7 @@ class BioProfilePage extends GetView<BioProfileController> {
     return _buildCard(
       context,
       icon: Icons.info_outline_rounded,
-      title: 'About',
+      title: 'about'.tr,
       child: Text(
         controller.bio,
         style: TextStyle(
@@ -723,7 +725,7 @@ class BioProfilePage extends GetView<BioProfileController> {
     return _buildCard(
       context,
       icon: Icons.location_on_outlined,
-      title: 'Operating Locations',
+      title: 'operating_locations'.tr,
       child: Wrap(
         spacing: 8,
         runSpacing: 8,
@@ -745,7 +747,7 @@ class BioProfilePage extends GetView<BioProfileController> {
     return _buildCard(
       context,
       icon: Icons.translate_rounded,
-      title: 'Known Languages',
+      title: 'known_languages'.tr,
       child: Wrap(
         spacing: 8,
         runSpacing: 10,
@@ -767,7 +769,7 @@ class BioProfilePage extends GetView<BioProfileController> {
     return _buildCard(
       context,
       icon: Icons.lightbulb_outline_rounded,
-      title: 'Skills',
+      title: 'skills'.tr,
       child: Wrap(
         spacing: 8,
         runSpacing: 10,
@@ -789,7 +791,7 @@ class BioProfilePage extends GetView<BioProfileController> {
     return _buildCard(
       context,
       icon: Icons.people_outline_rounded,
-      title: 'Networking',
+      title: 'networking'.tr,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -797,7 +799,7 @@ class BioProfilePage extends GetView<BioProfileController> {
             _buildChipGroup(
               context,
               icon: Icons.people_outline,
-              label: 'Looking to connect with',
+              label: 'looking_to_connect_with'.tr,
               items: controller.interestedInConnecting,
               color: AppColors.gradientDarkStart,
             ),
@@ -807,7 +809,7 @@ class BioProfilePage extends GetView<BioProfileController> {
             _buildChipGroup(
               context,
               icon: Icons.verified_outlined,
-              label: 'Can help with',
+              label: 'can_help_with'.tr,
               items: controller.helpOfferings,
               color: const Color(0xFF4CAF50),
             ),
@@ -817,7 +819,7 @@ class BioProfilePage extends GetView<BioProfileController> {
             _buildChipGroup(
               context,
               icon: Icons.chat_bubble_outline_rounded,
-              label: 'Open to discuss',
+              label: 'open_to_discuss'.tr,
               items: controller.discussionTopics,
               color: const Color(0xFF673AB7),
             ),
@@ -836,7 +838,7 @@ class BioProfilePage extends GetView<BioProfileController> {
     return _buildCard(
       context,
       icon: Icons.photo_library_outlined,
-      title: 'Gallery',
+      title: 'gallery'.tr,
       trailing: Container(
         padding: EdgeInsets.symmetric(horizontal: 2.5.wp, vertical: 3),
         decoration: BoxDecoration(
@@ -939,7 +941,7 @@ class BioProfilePage extends GetView<BioProfileController> {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    'Tap image to view full screen',
+                    'tap_image_full_screen'.tr,
                     style: TextStyle(
                       fontSize: 8.sp,
                       color: AppColors.textHint(context),
@@ -984,7 +986,7 @@ class BioProfilePage extends GetView<BioProfileController> {
     return _buildCard(
       context,
       icon: Icons.military_tech_outlined,
-      title: 'Badges',
+      title: 'badges'.tr,
       trailing: Container(
         padding: EdgeInsets.symmetric(horizontal: 2.5.wp, vertical: 3),
         decoration: BoxDecoration(
@@ -1062,7 +1064,7 @@ class BioProfilePage extends GetView<BioProfileController> {
             },
             icon: const Icon(Icons.calendar_month_outlined, size: 20),
             label: Text(
-              'Schedule 1-on-1 Meeting',
+              'schedule_1_on_1_meeting'.tr,
               style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w700),
             ),
             style: ElevatedButton.styleFrom(
@@ -1218,29 +1220,29 @@ class BioProfilePage extends GetView<BioProfileController> {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: items
-              .map(
-                (item) => Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 3.5.wp,
-                    vertical: 0.7.hp,
-                  ),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.07),
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: color.withValues(alpha: 0.2)),
-                  ),
-                  child: Text(
-                    item,
-                    style: TextStyle(
-                      fontSize: 8.5.sp,
-                      fontWeight: FontWeight.w600,
-                      color: color,
-                    ),
-                  ),
+          children: items.map((item) {
+            LoggerService.loggerInstance.dynamic_d("iii $item");
+            LoggerService.loggerInstance.dynamic_d("ihhi ${item.tr}");
+            return Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 3.5.wp,
+                vertical: 0.7.hp,
+              ),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.07),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: color.withValues(alpha: 0.2)),
+              ),
+              child: Text(
+                item.tr,
+                style: TextStyle(
+                  fontSize: 8.5.sp,
+                  fontWeight: FontWeight.w600,
+                  color: color,
                 ),
-              )
-              .toList(),
+              ),
+            );
+          }).toList(),
         ),
       ],
     );

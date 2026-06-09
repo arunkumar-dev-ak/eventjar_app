@@ -29,7 +29,7 @@ class NfcWritePage extends GetView<NfcWriteController> {
             Icon(Icons.nfc, size: 22, color: Colors.green.shade700),
             SizedBox(width: 8),
             Text(
-              'Write Card',
+              'write_card_btn'.tr,
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 11.sp,

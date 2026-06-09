@@ -16,7 +16,8 @@ class ContactAddFriendContactView extends GetView<AddFriendController> {
       children: [
         // CONTACT DROPDOWN (TOP)
         SingleSelectPaginatedFilterDropdown<MobileContact>(
-          title: 'Select contact',
+          title: 'select_contact'.tr,
+
           items: controller.state.contacts,
           selectedItem: controller.state.selectedContact,
           getDefaultItem: () => controller.state.contacts.first,
@@ -25,7 +26,9 @@ class ContactAddFriendContactView extends GetView<AddFriendController> {
           onSelected: (item) {
             controller.onContactSelected(item);
           },
-          hintText: 'Choose contact',
+
+          hintText: "choose_contact".tr,
+
           onChanged: controller.onSearchChanged,
           onRefresh: controller.onRefreshClicked,
           onClickedLoadMore: controller.onLoadMoreClicked,

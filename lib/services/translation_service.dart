@@ -32,17 +32,20 @@ class TranslationService extends Translations {
   // Cache: load / save translations
   // ---------------------------------------------------------------------------
 
-  static Future<void> loadCachedLanguage(String langCode) async {
-    if (langCode == 'en') return;
+  static Future<bool> loadCachedLanguage(String langCode) async {
+    if (langCode == 'en') return false;
 
     final prefs = await SharedPreferences.getInstance();
     final cached = prefs.getString('$_cacheKeyPrefix$langCode');
-    if (cached == null) return;
+    if (cached == null) return false;
 
     try {
       final map = Map<String, String>.from(jsonDecode(cached) as Map);
       Get.addTranslations({langCode: map});
-    } catch (_) {}
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
   static Future<void> _saveToCache(

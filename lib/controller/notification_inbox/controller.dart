@@ -2,6 +2,7 @@ import 'package:eventjar/api/notification_api/notification_api.dart';
 import 'package:eventjar/controller/home/controller.dart';
 import 'package:eventjar/controller/notification_inbox/state.dart';
 import 'package:eventjar/model/notification_inbox/notification_inbox_model.dart';
+import 'package:eventjar/notification/notification_service.dart';
 import 'package:eventjar/notification/utils/notification_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -68,7 +69,6 @@ class NotificationInboxController extends GetxController {
     }
   }
 
-
   int get unreadCount =>
       state.notifications.where((n) => n.isRead != true).length;
 
@@ -100,11 +100,14 @@ class NotificationInboxController extends GetxController {
     }
   }
 
-  void markAllAsRead() {
-    state.notifications.value = state.notifications
-        .map((n) => Datum.fromJson({...n.toJson(), 'isRead': true}))
-        .toList();
-    NotificationApi.markAllNotificationsAsRead();
+  void markAllAsRead() async {
+    if (unreadCount != 0) {
+      state.notifications.value = state.notifications
+          .map((n) => Datum.fromJson({...n.toJson(), 'isRead': true}))
+          .toList();
+      NotificationApi.markAllNotificationsAsRead();
+    }
+    await NotificationService().flutterLocalNotificationsPlugin.cancelAll();
   }
 
   @override

@@ -95,7 +95,7 @@ class NetworkPage extends GetView<NetworkScreenController> {
 
                           /// -------- ACTIONS ----------
                           Text(
-                            "Actions",
+                            'actions'.tr,
                             style: TextStyle(
                               fontSize: 11.sp,
                               fontWeight: FontWeight.bold,
@@ -106,14 +106,14 @@ class NetworkPage extends GetView<NetworkScreenController> {
 
                           NetworkNavigationCard(
                             icon: Icons.link,
-                            label: "Connections",
+                            label: 'connections'.tr,
                             onTap: controller.onConnectionTap,
                           ),
                           SizedBox(height: 0.8.hp),
 
                           NetworkNavigationCard(
                             icon: Icons.meeting_room_rounded,
-                            label: "Meetings",
+                            label: 'meetings'.tr,
                             onTap: () {
                               controller.onMeetingTap();
                             },
@@ -123,7 +123,7 @@ class NetworkPage extends GetView<NetworkScreenController> {
 
                           NetworkNavigationCard(
                             icon: Icons.campaign,
-                            label: "Campaign",
+                            label: 'campaign'.tr,
                             // onTap: () {},
                           ),
 

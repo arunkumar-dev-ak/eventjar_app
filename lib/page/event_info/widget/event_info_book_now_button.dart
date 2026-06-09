@@ -149,7 +149,7 @@ class EventInfoBookButton extends StatelessWidget {
                 ),
                 SizedBox(width: 2.wp),
                 Text(
-                  "Back to My Ticket",
+                  'back_to_my_ticket'.tr,
                   style: TextStyle(
                     color: AppColors.textPrimary(context), // 👈 FIXED (was white)
                     fontSize: 11.sp,
@@ -178,9 +178,9 @@ class EventInfoBookButton extends StatelessWidget {
     bool isRegistered,
     bool isLoggedIn,
   ) {
-    if (isEventBelongsToOrganizer) return "Your Event";
-    if (isRegistered) return "View My Ticket";
-    return isLoggedIn ? "Book Now" : "Login to Book";
+    if (isEventBelongsToOrganizer) return 'your_event'.tr;
+    if (isRegistered) return 'view_my_ticket'.tr;
+    return isLoggedIn ? 'book_now'.tr : 'login_to_book'.tr;
   }
 
   Widget _freeBadge() {

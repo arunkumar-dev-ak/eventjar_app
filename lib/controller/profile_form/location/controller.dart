@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LocationFormController extends GetxController {
-  var appBarTitle = "Add Contact";
+  var appBarTitle = "add_contact".tr;
   final state = LocationFormState();
 
   final formKey = GlobalKey<FormState>();

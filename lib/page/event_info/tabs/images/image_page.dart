@@ -16,7 +16,7 @@ class ImagesPage extends StatelessWidget {
       final eventInfo = controller.state.eventInfo.value;
 
       if (eventInfo == null) {
-        return const Center(child: Text("No event info available"));
+        return Center(child: Text('no_event_info_available'.tr));
       }
 
       final images = eventInfo.galleryImages;
@@ -110,7 +110,7 @@ class ImagesPage extends StatelessWidget {
                             ),
                             SizedBox(height: 1.hp),
                             Text(
-                              "Failed to load image",
+                              'failed_to_load_image'.tr,
                               style: TextStyle(
                                 fontSize: 9.sp,
                                 color: AppColors.textHintStatic,
@@ -187,7 +187,7 @@ class ImagesPage extends StatelessWidget {
             ),
             SizedBox(height: 4.hp),
             Text(
-              "No Images Yet",
+              'no_images_yet'.tr,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
@@ -198,7 +198,7 @@ class ImagesPage extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.wp),
               child: Text(
-                "Gallery images will be available soon. Check back later!",
+                'gallery_images_available_soon'.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 10.sp,

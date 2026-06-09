@@ -56,7 +56,7 @@ class SignInSubmitButton extends StatelessWidget {
                           ),
                         )
                       : Text(
-                          "Submit",
+                          'submit'.tr,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 11.sp,

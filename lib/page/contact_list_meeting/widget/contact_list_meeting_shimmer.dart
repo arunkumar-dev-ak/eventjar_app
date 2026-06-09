@@ -1,3 +1,4 @@
+import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -6,30 +7,32 @@ class ContactListShimmerLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final placeholder = AppColors.border(context);
+
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
         Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
+          baseColor: AppColors.divider(context),
+          highlightColor: AppColors.scaffoldBg(context),
           child: Container(
             width: double.infinity,
             height: 100,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: placeholder,
               borderRadius: BorderRadius.circular(16),
             ),
           ),
         ),
         const SizedBox(height: 20),
         Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
+          baseColor: AppColors.divider(context),
+          highlightColor: AppColors.scaffoldBg(context),
           child: Container(
             width: double.infinity,
             height: 200,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: placeholder,
               borderRadius: BorderRadius.circular(16),
             ),
           ),

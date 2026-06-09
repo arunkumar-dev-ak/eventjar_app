@@ -5,6 +5,7 @@ import 'package:eventjar/page/meeting/widget/meeting_card_utils/meeting_card_but
 import 'package:eventjar/page/meeting/widget/meeting_card_utils/meeting_card_date.dart';
 import 'package:eventjar/page/meeting/widget/meeting_card_utils/meeting_card_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class MeetingCard extends StatelessWidget {
   final ContactMeeting meeting;
@@ -51,7 +52,7 @@ class MeetingCard extends StatelessWidget {
 
   String get contactInfo {
     final contact = meeting.contact;
-    if (contact == null) return 'No contact';
+    if (contact == null) return 'no_contact'.tr;
 
     List<String> parts = [];
     if (contact.name != null) parts.add(contact.name!);

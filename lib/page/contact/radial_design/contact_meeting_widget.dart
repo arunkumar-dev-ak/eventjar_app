@@ -3,6 +3,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/date_utils.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ContactMeetingSection {
   static Widget buildDynamicMeetingSection(
@@ -72,7 +73,7 @@ class ContactMeetingSection {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Scheduled Meeting',
+                        'scheduled_meeting'.tr,
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -130,7 +131,7 @@ class ContactMeetingSection {
         borderRadius: BorderRadius.circular(3.wp),
       ),
       child: Text(
-        isConfirmed ? 'Confirmed' : 'Pending',
+        isConfirmed ? 'Confirmed' : 'pending'.tr,
         style: TextStyle(
           color: AppColors.textPrimaryStatic,
           fontSize: 8.sp,
@@ -141,19 +142,19 @@ class ContactMeetingSection {
   }
 
   static String _formatDate(DateTime date) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+    final months = [
+      'jan'.tr,
+      'feb'.tr,
+      'mar'.tr,
+      'apr'.tr,
+      'may'.tr,
+      'jun'.tr,
+      'jul'.tr,
+      'aug'.tr,
+      'sep'.tr,
+      'oct'.tr,
+      'nov'.tr,
+      'dec'.tr,
     ];
 
     return '${date.day} ${months[date.month - 1]}, ${date.year}';

@@ -51,7 +51,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                 // TITLE
                 ContactFormElement(
                   controller: controller.titleController,
-                  label: "Expense Title *",
+                  label: "expense_title".tr,
                   validator: (val) =>
                       val == null || val.isEmpty ? "Required" : null,
                 ),
@@ -60,24 +60,35 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                 // AMOUNT
                 ContactFormElement(
                   controller: controller.amountController,
-                  label: "Amount *",
+                  label: "amount".tr,
                   keyboardType: TextInputType.number,
                   validator: (val) =>
-                      val == null || val.isEmpty ? "Enter amount" : null,
+                      val == null || val.isEmpty ? 'enter_amount'.tr : null,
                 ),
                 SizedBox(height: 2.hp),
 
                 // CATEGORY DROPDOWN
                 SingleSelectFilterDropdown<String>(
-                  title: "Trip Category",
+                  title: "trip_category".tr,
                   items: controller.state.categories,
                   selectedItem: controller.state.selectedCategory,
-                  getDefaultItem: () => "Shopping",
-                  getDisplayValue: (item) => item,
+                  getDefaultItem: () => 'shopping'.tr,
+                  getDisplayValue: (item) {
+                    final keyMap = {
+                      'Accommodation': 'accommodation',
+                      'Transportation': 'transportation',
+                      'Food & Drinks': 'food_and_drinks',
+                      'Activities': 'activities',
+                      'Tickets': 'tickets_label',
+                      'Shopping': 'shopping',
+                      'Other': 'other_label',
+                    };
+                    return (keyMap[item] ?? item).tr;
+                  },
                   getKeyValue: (item) => item,
                   onSelected: (val) =>
                       controller.state.selectedCategory.value = val,
-                  hintText: "Select Category",
+                  hintText: 'select_category'.tr,
                   headerColor: AppColors.gradientDarkStart,
                   themeColor: AppColors.gradientDarkStart,
                   selectedShade1: (isDark ? Colors.white : Colors.grey)
@@ -93,14 +104,14 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
 
                 // PAID BY (Single Select)
                 SingleSelectPaginatedFilterDropdown<DropdownMemberModel>(
-                  title: 'Paid by',
+                  title: "paid_by".tr,
                   items: controller.state.members,
                   selectedItem: controller.state.paidBy,
                   getDefaultItem: () => controller.state.members.first,
                   getDisplayValue: (item) => item.displayName,
                   getKeyValue: (item) => item,
                   onSelected: (val) => controller.state.paidBy.value = val,
-                  hintText: 'Select payer',
+                  hintText: 'select_payer'.tr,
                   onChanged: controller.onSearchMembers,
                   onRefresh: controller.onRefreshMembers,
                   onClickedLoadMore: controller.onLoadMoreMembers,
@@ -123,7 +134,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                 // SPLIT WITH (Multi Select)
                 MultiSelectPaginatedDropdown<dynamic>(
                   // Assuming dynamic is TripFriendModel
-                  title: "Split With",
+                  title: 'split_with'.tr,
                   items: controller.state.members,
                   selectedItemsMap: controller.state.selectedMembers,
                   getDisplayValue: (item) => item.displayName,
@@ -133,7 +144,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   onRefresh: controller.onRefreshMembers,
                   isLoading: controller.state.isMembersLoading,
                   isLoadMoreLoading: controller.state.isMembersLoadMoreLoading,
-                  hintText: "Select Members",
+                  hintText: 'select_members'.tr,
                   selectedShade1: (isDark ? Colors.white : Colors.grey)
                       .withValues(alpha: 0.15),
                   selectedDisplayColor: AppColors.textPrimary(context),
@@ -161,7 +172,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          "Click To Add New Member",
+                          "click_to_add_new_member".tr,
                           style: TextStyle(
                             color: AppColors.textSecondary(context),
                             fontWeight: FontWeight.w600,
@@ -176,7 +187,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                 // DESCRIPTION
                 ContactFormElement(
                   controller: controller.descriptionController,
-                  label: "Description",
+                  label: 'description'.tr,
                   maxLines: 3,
                 ),
                 SizedBox(height: 3.hp),
@@ -189,7 +200,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                         child: Obx(() {
                           final isLoading = controller.state.isLoading.value;
                           return FormButton(
-                            text: "Clear",
+                            text: 'clear'.tr,
                             isLoading: false,
                             type: FormButtonType.outline,
                             onPressed: () {
@@ -205,7 +216,9 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                         child: Obx(() {
                           final isLoading = controller.state.isLoading.value;
                           return FormButton(
-                            text: isLoading ? "Creating..." : "Create Expense",
+                            text: isLoading
+                                ? "Creating..."
+                                : 'create_expense'.tr,
                             isLoading: isLoading,
                             type: FormButtonType.primary,
                             icon: Icons.receipt_long,

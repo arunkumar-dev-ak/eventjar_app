@@ -54,7 +54,7 @@ class NotificationController extends GetxController {
       LoggerService.loggerInstance.e(err);
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to fetch Email Configuration",
+        title: "failed_fetch_email_config".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -70,15 +70,15 @@ class NotificationController extends GetxController {
       state.isDeleting.value = true;
       await NotificationApi.deleteEmailConfig();
       AppSnackbar.success(
-        title: "Disconnection Success",
-        message: "Email Configuration disconnected successfully.",
+        title: "disconnection_success".tr,
+        message: "email_config_disconnected".tr,
       );
       loadEmailProviders();
     } catch (err) {
       LoggerService.loggerInstance.e(err);
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to Disconnect Email Configuration",
+        title: "failed_disconnect_email".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -117,7 +117,7 @@ class NotificationController extends GetxController {
       LoggerService.loggerInstance.e(err);
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to fetch Whatsapp Configuration",
+        title: "failed_fetch_whatsapp_config".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -132,15 +132,15 @@ class NotificationController extends GetxController {
     final token = tokenController.text.trim();
     if (token.isEmpty) {
       AppSnackbar.warning(
-        title: "Token Required",
-        message: "Kindly enter your API token.",
+        title: "token_required".tr,
+        message: "enter_api_token_prompt".tr,
       );
       return;
     }
     if (token.length <= 10) {
       AppSnackbar.warning(
-        title: "Invalid Token",
-        message: "Token must be greater than 10 characters.",
+        title: "invalid_token".tr,
+        message: "token_length_error".tr,
       );
       return;
     }
@@ -149,8 +149,8 @@ class NotificationController extends GetxController {
       state.isSavingToken.value = true;
       await WhatsAppIntegrationApi.saveWhatsAppToken(token);
       AppSnackbar.success(
-        title: "Success",
-        message: "WhatsApp token saved successfully.",
+        title: "success".tr,
+        message: "whatsapp_token_saved".tr,
       );
       tokenController.clear();
       state.isSavingToken.value = false;
@@ -160,7 +160,7 @@ class NotificationController extends GetxController {
       LoggerService.loggerInstance.e(err);
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to save WhatsApp token",
+        title: "failed_save_whatsapp_token".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -175,8 +175,8 @@ class NotificationController extends GetxController {
       await WhatsAppIntegrationApi.deleteWhatsAppConfig();
 
       AppSnackbar.success(
-        title: "Disconnected",
-        message: "WhatsApp integration disconnected successfully.",
+        title: "disconnected".tr,
+        message: "whatsapp_disconnected_success".tr,
       );
       state.isSavingToken.value = false;
       loadWhatsAppConfig();
@@ -185,7 +185,7 @@ class NotificationController extends GetxController {
       state.isDeleting.value = false;
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to disconnect WhatsApp",
+        title: "failed_disconnect_whatsapp".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

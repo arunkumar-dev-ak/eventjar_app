@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class NetworkHeader extends StatelessWidget {
   const NetworkHeader({super.key});
@@ -26,7 +27,7 @@ class NetworkHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Your Network",
+            'your_network'.tr,
             style: TextStyle(
               color: Colors.white,
               fontSize: 12.sp,
@@ -35,7 +36,7 @@ class NetworkHeader extends StatelessWidget {
           ),
           SizedBox(height: 0.8.hp),
           Text(
-            "Track connections, follow-ups & actions",
+            'track_connections_desc'.tr,
             style: TextStyle(color: Colors.white70, fontSize: 9.sp),
           ),
         ],

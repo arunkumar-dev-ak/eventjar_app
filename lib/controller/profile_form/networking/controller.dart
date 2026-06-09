@@ -11,7 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class NetworkingFormController extends GetxController {
-  var appBarTitle = "Update Networking & Interests";
+  var appBarTitle = "update_networking_and_interests".tr;
   final state = NetworkingFormState();
   final formKey = GlobalKey<FormState>();
 
@@ -39,40 +39,40 @@ class NetworkingFormController extends GetxController {
     '20+ years',
   ];
 
-  final List<String> connectionTypes = [
-    'Investors',
-    'Vendors',
-    'Tech Partners',
-    'B2B Clients',
-    'Franchise Opportunities',
-    'Mentors',
-    'Industry Experts',
+  List<String> get connectionTypes => [
+    'investors',
+    'vendors',
+    'tech_partners',
+    'b2b_clients',
+    'franchise_opportunities',
+    'mentors',
+    'industry_experts',
   ];
 
-  final List<String> helpOfferings = [
-    'Funding/Investment',
-    'Tech Development',
-    'Digital Marketing',
-    'Business Strategy',
-    'Sales & Lead Generation',
-    'Product Design',
-    'Legal Services',
-    'HR & Talent',
-    'Operations',
-    'Mentoring',
+  List<String> get helpOfferings => [
+    'funding_investment',
+    'tech_development',
+    'digital_marketing',
+    'business_strategy',
+    'sales_and_lead_generation',
+    'product_design',
+    'legal_services',
+    'hr_and_talent',
+    'operations',
+    'mentoring',
   ];
 
-  final List<String> discussionTopics = [
-    'Business Growth',
-    'Sales Strategy',
-    'Hiring & Talent',
-    'SaaS',
-    'E-commerce',
-    'Exports',
-    'Digital Transformation',
-    'Funding',
-    'Partnerships',
-    'Technology Trends',
+  List<String> get discussionTopics => [
+    'business_growth',
+    'sales_strategy',
+    'hiring_and_talent',
+    'saas',
+    'e_commerce',
+    'exports',
+    'digital_transformation',
+    'funding',
+    'partnerships',
+    'technology_trend',
   ];
 
   @override
@@ -204,8 +204,8 @@ class NetworkingFormController extends GetxController {
       await UserProfileApi.updateUserProfile(data);
 
       AppSnackbar.success(
-        title: "Success",
-        message: "Networking info updated successfully",
+        title: "success".tr,
+        message: "networking_info_updated".tr,
       );
 
       Navigator.pop(context, "refresh");
@@ -221,7 +221,7 @@ class NetworkingFormController extends GetxController {
       } else {
         AppSnackbar.error(
           title: "Failed",
-          message: "Something went wrong. Please try again.",
+          message: "generic_try_again_error".tr,
         );
       }
     } finally {

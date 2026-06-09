@@ -11,41 +11,45 @@ class MeetingBuildTabs extends GetView<MeetingController> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(width: 2.wp),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(width: 2.wp),
 
-        // Status Filter
-        SingleSelectFilterDropdown<MeetingStatus>(
-          title: 'Status',
-          items: MeetingStatus.values,
-          selectedItem: controller.state.selectedStatus,
-          getDefaultItem: () => MeetingStatus.SCHEDULED,
-          getDisplayValue: (MeetingStatus status) => status.displayName,
-          getKeyValue: (MeetingStatus status) => status,
-          onSelected: (MeetingStatus status) {
-            controller.state.selectedStatus.value = status;
-            // controller.applyFilters();
-          },
-          selectedTextSize: 8.sp,
-          textFieldPadding: EdgeInsets.symmetric(
-            horizontal: 10.0,
-            vertical: 2.0,
-          ),
-          dropDownIconSize: 20,
-        ),
-
-        SizedBox(width: 2.wp),
-
-        Obx(
-          () => DateRangeFilter(
-            selectedRange: controller.state.selectedDateRange.value,
-            onRangeChanged: (range) {
-              controller.setDate(range);
+          // Status Filter
+          SingleSelectFilterDropdown<MeetingStatus>(
+            title: 'status'.tr,
+            items: MeetingStatus.values,
+            selectedItem: controller.state.selectedStatus,
+            getDefaultItem: () => MeetingStatus.SCHEDULED,
+            getDisplayValue: (MeetingStatus status) => status.displayName,
+            getKeyValue: (MeetingStatus status) => status,
+            onSelected: (MeetingStatus status) {
+              controller.state.selectedStatus.value = status;
+              // controller.applyFilters();
             },
+            selectedTextSize: 8.sp,
+            textFieldPadding: EdgeInsets.symmetric(
+              horizontal: 10.0,
+              vertical: 2.0,
+            ),
+            dropDownIconSize: 20,
           ),
-        ),
-      ],
+
+          SizedBox(width: 2.wp),
+
+          Obx(
+            () => DateRangeFilter(
+              selectedRange: controller.state.selectedDateRange.value,
+              onRangeChanged: (range) {
+                controller.setDate(range);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -81,7 +85,11 @@ class DateRangeFilter extends GetView<MeetingController> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.date_range, size: 16, color: AppColors.textSecondary(context)),
+            Icon(
+              Icons.date_range,
+              size: 16,
+              color: AppColors.textSecondary(context),
+            ),
             SizedBox(width: 4),
             Text(
               controller.getDisplayText(),
@@ -94,7 +102,11 @@ class DateRangeFilter extends GetView<MeetingController> {
               maxLines: 1,
             ),
             SizedBox(width: 4),
-            Icon(Icons.arrow_drop_down, size: 16, color: AppColors.textHint(context)),
+            Icon(
+              Icons.arrow_drop_down,
+              size: 16,
+              color: AppColors.textHint(context),
+            ),
           ],
         ),
       ),
@@ -116,19 +128,18 @@ class DateRangeFilter extends GetView<MeetingController> {
         final isDark = Theme.of(context).brightness == Brightness.dark;
         return Theme(
           data: (isDark ? ThemeData.dark() : ThemeData.light()).copyWith(
-            colorScheme: (isDark
-                    ? const ColorScheme.dark()
-                    : const ColorScheme.light())
-                .copyWith(
-              primary: const Color(0xFF1A73E8),
-              onPrimary: Colors.white,
-              primaryContainer: const Color(0xFF1A73E8),
-              onPrimaryContainer: Colors.white,
-              secondaryContainer: const Color(0xFF1A73E8),
-              onSecondaryContainer: Colors.white,
-              surface: isDark ? AppColors.darkCard : Colors.white,
-              onSurface: isDark ? Colors.white : Colors.black87,
-            ),
+            colorScheme:
+                (isDark ? const ColorScheme.dark() : const ColorScheme.light())
+                    .copyWith(
+                      primary: const Color(0xFF1A73E8),
+                      onPrimary: Colors.white,
+                      primaryContainer: const Color(0xFF1A73E8),
+                      onPrimaryContainer: Colors.white,
+                      secondaryContainer: const Color(0xFF1A73E8),
+                      onSecondaryContainer: Colors.white,
+                      surface: isDark ? AppColors.darkCard : Colors.white,
+                      onSurface: isDark ? Colors.white : Colors.black87,
+                    ),
           ),
           child: child!,
         );

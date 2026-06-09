@@ -17,9 +17,9 @@ class NewAddFriend extends GetView<AddFriendController> {
       children: [
         FormElement(
           controller: controller.nameController,
-          label: "Name *",
+          label: 'name'.tr,
           validator: (val) =>
-              val == null || val.isEmpty ? "Name required" : null,
+              val == null || val.isEmpty ? 'name_required'.tr : null,
         ),
 
         SizedBox(height: 2.hp),
@@ -35,7 +35,7 @@ class NewAddFriend extends GetView<AddFriendController> {
           controller: controller.phoneController,
           validator: (value) {
             if (value == null || !value.isValidNumber()) {
-              return 'Invalid phone number';
+              return 'invalid_phone_number'.tr;
             }
             return null;
           },
@@ -46,7 +46,7 @@ class NewAddFriend extends GetView<AddFriendController> {
 
         FormElement(
           controller: controller.emailController,
-          label: "Email",
+          label: 'email'.tr,
           keyboardType: TextInputType.emailAddress,
         ),
 

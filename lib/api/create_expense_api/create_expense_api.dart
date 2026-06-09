@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/dio_client.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/budget_track/drop_down_response_model.dart';
 
 class CreateExpenseApi {
@@ -22,9 +23,10 @@ class CreateExpenseApi {
   static Future<void> createExpense({
     required Map<String, dynamic> data,
   }) async {
+    LoggerService.loggerInstance.dynamic_d(data);
     try {
       final response = await _dio.post(
-        'mobile/split-track/expenses/from-trip-members',
+        '/mobile/split-track/expenses/from-trip-members',
         data: data,
       );
 

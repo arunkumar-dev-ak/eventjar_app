@@ -37,8 +37,8 @@ class FriendsList extends GetView<ViewTripController> {
             height: 60.hp,
             child: EmptyStateWidget(
               icon: Icons.group_off,
-              title: "No friends added yet",
-              subtitle: "Add friends to start splitting expenses",
+              title: 'no_friends_added_yet'.tr,
+              subtitle: 'add_friends_split_desc'.tr,
             ),
           ),
         );
@@ -63,6 +63,7 @@ class FriendsList extends GetView<ViewTripController> {
     // --- 1. SECURITY CHECK ---
     final currentUserId = UserStore.to.profile['id'];
     final creatorId = controller.state.trip.value?.createdById;
+    final isAdmin = f.isAdmin;
 
     // Only true if the logged-in user made the trip
     final isCurrentUserCreator = currentUserId == creatorId;
@@ -84,11 +85,25 @@ class FriendsList extends GetView<ViewTripController> {
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            backgroundColor: isDark
-                ? AppColors.darkCardElevated
-                : const Color(0xFFE0E0E0),
-            child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?'),
+          Container(
+            decoration: isAdmin
+                ? BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.red.shade300, width: 1.5),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.red.withValues(alpha: 0.15),
+                        blurRadius: 4,
+                      ),
+                    ],
+                  )
+                : null,
+            child: CircleAvatar(
+              backgroundColor: isDark
+                  ? AppColors.darkCardElevated
+                  : const Color(0xFFE0E0E0),
+              child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?'),
+            ),
           ),
 
           SizedBox(width: 3.wp),
@@ -157,7 +172,7 @@ class FriendsList extends GetView<ViewTripController> {
   Widget _statusText(BuildContext context, TripFriendModel f) {
     if (f.balance == 0) {
       return Text(
-        "No dues",
+        "no_dues".tr,
         style: TextStyle(
           color: AppColors.textSecondary(context),
           fontSize: 8.5.sp,
@@ -167,7 +182,7 @@ class FriendsList extends GetView<ViewTripController> {
 
     if (f.balanceType == 'owe') {
       return Text(
-        "You owe ₹${f.myOwe.toStringAsFixed(0)}",
+        "${'you_owe'.tr} ₹${f.myOwe.toStringAsFixed(0)}",
         style: TextStyle(
           color: Colors.red,
           fontSize: 8.5.sp,
@@ -177,7 +192,7 @@ class FriendsList extends GetView<ViewTripController> {
     }
 
     return Text(
-      "You receive ₹${f.myReceive.toStringAsFixed(0)}",
+      "${'you_receive'.tr} ₹${f.myReceive.toStringAsFixed(0)}",
       style: TextStyle(
         color: Colors.green,
         fontSize: 8.5.sp,
@@ -193,8 +208,6 @@ class FriendsList extends GetView<ViewTripController> {
     bool isReceive,
     bool isSettled,
   ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     if (isSettled) {
       return Icon(Icons.check_circle_outline, color: Colors.green, size: 22);
     }
@@ -210,7 +223,7 @@ class FriendsList extends GetView<ViewTripController> {
             gradient: AppColors.buttonGradientFor(context),
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Text("SettleUp", style: TextStyle(color: Colors.white)),
+          child: Text("settle_up".tr, style: TextStyle(color: Colors.white)),
         ),
       );
     }
@@ -225,7 +238,7 @@ class FriendsList extends GetView<ViewTripController> {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
-          "Record",
+          "record".tr,
           style: TextStyle(color: Colors.blue, fontSize: 8.5.sp),
         ),
       ),

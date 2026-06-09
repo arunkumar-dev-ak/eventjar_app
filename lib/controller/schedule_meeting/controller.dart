@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ScheduleMeetingController extends GetxController {
-  var appBarTitle = "Schedule Meeting";
+  var appBarTitle = "schedule_meeting".tr;
   final state = ScheduleMeetingState();
 
   final formKey = GlobalKey<FormState>();
@@ -137,8 +137,8 @@ class ScheduleMeetingController extends GetxController {
       final response = await ScheduleMeetingApi.createMeeting(dto: dto);
       if (response == true) {
         AppSnackbar.success(
-          title: "Meeting scheduled",
-          message: "Your meeting has been scheduled successfully.",
+          title: "meeting_scheduled".tr,
+          message: "meeting_scheduled_success".tr,
         );
       }
 
@@ -146,7 +146,7 @@ class ScheduleMeetingController extends GetxController {
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to Schedule Meeting",
+        title: "failed_schedule_meeting".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -166,7 +166,7 @@ class ScheduleMeetingController extends GetxController {
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to Get Config details",
+        title: "failed_get_config".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

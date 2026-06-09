@@ -17,7 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ContactController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  var appBarTitle = "Contact Page";
+  var appBarTitle = "contact_page".tr;
   final state = ContactState();
   late ConfettiController confettiController;
   Timer? _debounceTimer;
@@ -43,7 +43,7 @@ class ContactController extends GetxController
       } else {
         state.selectedTab.value = NetworkStatusCardData(
           key: 'totalContacts',
-          label: 'Total Contacts',
+          label: 'total_contacts'.tr,
           enumKey: 'all',
           icon: Icons.people,
           color: Colors.blue,
@@ -52,7 +52,7 @@ class ContactController extends GetxController
     } else {
       state.selectedTab.value = NetworkStatusCardData(
         key: 'totalContacts',
-        label: 'Total Contacts',
+        label: 'total_contacts'.tr,
         enumKey: 'all',
         icon: Icons.people,
         color: Colors.blue,
@@ -168,7 +168,7 @@ class ContactController extends GetxController
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load contacts",
+        title: "failed_load_contacts".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -208,7 +208,7 @@ class ContactController extends GetxController
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load contacts",
+        title: "failed_load_contacts".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -239,7 +239,7 @@ class ContactController extends GetxController
       LoggerService.loggerInstance.e(err);
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to add contact",
+        title: "failed_add_contact".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -258,13 +258,13 @@ class ContactController extends GetxController
         await launchUrl(launchUri);
       } else {
         AppSnackbar.warning(
-          title: "Failed",
+          title: "failed".tr,
           message: 'Could not launch $phoneNumber',
         );
       }
     } catch (e) {
       AppSnackbar.warning(
-        title: "Failed",
+        title: "failed".tr,
         message: 'Could not launch $phoneNumber',
       );
     }
@@ -278,13 +278,13 @@ class ContactController extends GetxController
         await launchUrl(launchUri);
       } else {
         AppSnackbar.warning(
-          title: "Failed",
+          title: "failed".tr,
           message: 'Could not launch email for $email',
         );
       }
     } catch (e) {
       AppSnackbar.warning(
-        title: "Failed",
+        title: "failed".tr,
         message: 'Could not launch email for $email',
       );
     }

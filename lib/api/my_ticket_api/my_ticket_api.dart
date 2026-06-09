@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/model/my_ticket/my_ticket_model.dart';
 
@@ -16,7 +17,7 @@ class MyTicketsApi {
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Something went wrong",
+        error: "something_went_wrong".tr,
       );
     } catch (e) {
       rethrow;

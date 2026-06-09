@@ -17,7 +17,7 @@ class GoogleCalendarPage extends GetView<GoogleCalendarController> {
 
       appBar: AppBar(
         title: Text(
-          "Google Calendar",
+          'google_calendar'.tr,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         centerTitle: false,

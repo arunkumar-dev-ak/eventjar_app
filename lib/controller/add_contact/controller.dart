@@ -32,7 +32,7 @@ enum AddContactContactStage {
 }
 
 class AddContactController extends GetxController {
-  var appBarTitle = "Add Contact";
+  var appBarTitle = "add_contact".tr;
   final state = AddContactState();
 
   final formKey = GlobalKey<FormState>();
@@ -64,7 +64,7 @@ class AddContactController extends GetxController {
       final File? imageFile = args["imageFile"];
 
       if (cardInfo != null) {
-        appBarTitle = "Add Card Contact";
+        appBarTitle = "add_card_contact".tr;
         handleVisitingCardContact(cardInfo);
       }
 
@@ -73,16 +73,16 @@ class AddContactController extends GetxController {
         setSelectedImage(imageFile);
       }
     } else if (args is NfcContactModel) {
-      appBarTitle = "Add NFC Contact";
+      appBarTitle = "add_nfc_contact".tr;
       handleNfcContact(args);
     } else if (args is VisitingCardInfo) {
-      appBarTitle = "Add Card Contact";
+      appBarTitle = "add_card_contact".tr;
       handleVisitingCardContact(args);
     } else if (args is MobileContact) {
-      appBarTitle = "Update Contact";
+      appBarTitle = "update_contact".tr;
       handleUpdate(args);
     } else if (args is QrContactModel) {
-      appBarTitle = "Add QR Scanned Contact";
+      appBarTitle = "add_qr_scanned_contact".tr;
       handleQrScanContact(args);
     }
 
@@ -574,7 +574,7 @@ class AddContactController extends GetxController {
   String? validateEmail(String? val) {
     if (val == null || val.trim().isEmpty) return 'Email is required';
     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
-    if (!emailRegex.hasMatch(val.trim())) return 'Enter valid email';
+    if (!emailRegex.hasMatch(val.trim())) return 'enter_valid_email'.tr;
     return null;
   }
 
@@ -607,8 +607,8 @@ class AddContactController extends GetxController {
       final text = recognizedText.text.trim();
       if (text.isEmpty) {
         AppSnackbar.error(
-          title: 'No text found',
-          message: 'Could not read text from the card image.',
+          title: 'no_text_found'.tr,
+          message: 'card_text_read_failed'.tr,
         );
         return;
       }
@@ -622,7 +622,7 @@ class AddContactController extends GetxController {
         foundItems.add(
           _ExtractedItem(
             'company',
-            'Company',
+            'company'.tr,
             info.company!,
             Icons.business_outlined,
           ),
@@ -632,7 +632,7 @@ class AddContactController extends GetxController {
         foundItems.add(
           _ExtractedItem(
             'website',
-            'Website',
+            'website'.tr,
             info.website!,
             Icons.language_outlined,
           ),
@@ -642,7 +642,7 @@ class AddContactController extends GetxController {
         foundItems.add(
           _ExtractedItem(
             'address',
-            'Address',
+            'address'.tr,
             info.address!,
             Icons.location_on_outlined,
           ),
@@ -652,7 +652,7 @@ class AddContactController extends GetxController {
         foundItems.add(
           _ExtractedItem(
             'phone2',
-            'Phone 2',
+            'phone_2'.tr,
             info.phone2Parsed!.fullNumber,
             Icons.phone_outlined,
           ),
@@ -661,7 +661,7 @@ class AddContactController extends GetxController {
         foundItems.add(
           _ExtractedItem(
             'phone2',
-            'Phone 2',
+            'phone_2'.tr,
             info.phone2!,
             Icons.phone_outlined,
           ),
@@ -670,8 +670,8 @@ class AddContactController extends GetxController {
 
       if (foundItems.isEmpty) {
         AppSnackbar.error(
-          title: 'Nothing found',
-          message: 'No additional info could be extracted from the card image.',
+          title: 'nothing_found'.tr,
+          message: 'no_card_info_extracted'.tr,
         );
         return;
       }
@@ -720,14 +720,14 @@ class AddContactController extends GetxController {
       state.isAdditionalInfoExpanded.value = true;
 
       AppSnackbar.success(
-        title: 'Applied',
-        message: 'Additional info from card has been filled.',
+        title: 'applied'.tr,
+        message: 'additional_info_filled'.tr,
       );
     } catch (e) {
       LoggerService.loggerInstance.e('Card extract error: $e');
       AppSnackbar.error(
-        title: 'Failed',
-        message: 'Could not extract info from card image.',
+        title: 'failed'.tr,
+        message: 'card_extraction_failed'.tr,
       );
     } finally {
       state.isExtractingFromCard.value = false;
@@ -805,7 +805,7 @@ class AddContactController extends GetxController {
       actions: [
         TextButton(
           onPressed: () => Get.back(result: false),
-          child: const Text('Cancel'),
+          child: Text('cancel'.tr),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -816,7 +816,7 @@ class AddContactController extends GetxController {
             ),
           ),
           onPressed: () => Get.back(result: true),
-          child: const Text('Apply'),
+          child: Text('apply'.tr),
         ),
       ],
     );

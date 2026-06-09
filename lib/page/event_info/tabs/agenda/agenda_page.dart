@@ -79,10 +79,10 @@ class AgendaPage extends StatelessWidget {
               return Column(
                 children: [
                   AgendaItem(
-                    title: agendaItem['title'] ?? 'Untitled',
+                    title: agendaItem['title'] ?? 'untitled'.tr,
                     timeRange: "$agendaStartTime - $agendaEndTime",
                     description:
-                        agendaItem['description'] ?? 'No description available',
+                        agendaItem['description'] ?? 'no_description_available'.tr,
                     speaker: agendaItem['speaker'],
                     location: agendaItem['location'],
                     isLastItem: isLastItem,

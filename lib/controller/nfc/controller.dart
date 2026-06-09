@@ -85,13 +85,13 @@ class NfcController extends GetxController
   String getNfcStatusText() {
     switch (state.nfcStatus.value) {
       case NfcStatus.available:
-        return 'NFC Ready';
+        return 'nfc_ready'.tr;
       case NfcStatus.notAvailable:
-        return 'NFC Not Available';
+        return 'nfc_not_available'.tr;
       case NfcStatus.disabled:
-        return 'NFC Disabled';
+        return 'nfc_disabled'.tr;
       case NfcStatus.unknown:
-        return 'Checking NFC...';
+        return 'checking_nfc'.tr;
     }
   }
 
@@ -104,7 +104,7 @@ class NfcController extends GetxController
       if (result == "refresh") {
         final statusCard = NetworkStatusCardData(
           key: 'totalContacts',
-          label: 'Total Contacts',
+          label: 'total_contacts'.tr,
           enumKey: 'all',
           icon: Icons.people,
           color: Colors.blue,
@@ -138,10 +138,7 @@ class NfcController extends GetxController
   void navigateTologin() {}
 
   void showNfcErrorPrompt() {
-    AppSnackbar.warning(
-      title: 'NFC Error',
-      message: 'NFC is not available on this device',
-    );
+    AppSnackbar.warning(title: 'nfc_error'.tr, message: 'nfc_not_available'.tr);
   }
 
   Future<void> simulateReceiveContact(NfcContactModel contact) async {

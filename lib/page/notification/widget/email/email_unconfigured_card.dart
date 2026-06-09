@@ -1,5 +1,6 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class EmailUnconfiguredCard extends StatelessWidget {
   const EmailUnconfiguredCard({super.key});
@@ -28,7 +29,7 @@ class EmailUnconfiguredCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Email Not Configured',
+                    'email_not_configured'.tr,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -37,7 +38,7 @@ class EmailUnconfiguredCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Configure SMTP to send tickets, reminders, and notifications.',
+                    'configure_smtp_desc'.tr,
                     style: TextStyle(fontSize: 13, color: AppColors.textSecondary(context)),
                   ),
                 ],

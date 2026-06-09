@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/whatsapp_integration/whatsapp_integration_model.dart';
@@ -17,7 +18,7 @@ class WhatsAppIntegrationApi {
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Something went wrong",
+        error: "something_went_wrong".tr,
       );
     } catch (err) {
       LoggerService.loggerInstance.e(err);

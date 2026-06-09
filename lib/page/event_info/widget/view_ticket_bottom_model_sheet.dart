@@ -52,7 +52,7 @@ class EventInfoTicketSheet extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "My Ticket",
+                  'my_ticket_singular'.tr,
                   style: TextStyle(
                     fontSize: 11.sp,
                     fontWeight: FontWeight.bold,
@@ -143,17 +143,17 @@ class EventInfoTicketSheet extends StatelessWidget {
                       children: [
                         _infoRow(
                           Icons.calendar_today,
-                          "Date",
+                          'date'.tr,
                           formatDate(event.startDate),
                         ),
                         const SizedBox(height: 12),
-                        _infoRow(Icons.access_time, "Time", timeStr),
+                        _infoRow(Icons.access_time, 'time'.tr, timeStr),
                         const SizedBox(height: 12),
                         _infoRow(
                           Icons.location_on,
-                          "Venue",
+                          'venue'.tr,
                           event.isVirtual
-                              ? "Virtual Event"
+                              ? 'virtual_event'.tr
                               : event.venue ?? "N/A",
                         ),
 
@@ -184,7 +184,7 @@ class EventInfoTicketSheet extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 15),
                                 Text(
-                                  "Registration ID",
+                                  'registration_id'.tr,
                                   style: TextStyle(
                                     color: AppColors.textSecondary(context),
                                   ),
@@ -199,7 +199,7 @@ class EventInfoTicketSheet extends StatelessWidget {
                                 const SizedBox(height: 15),
                                 if (ticket.registeredAt != null) ...[
                                   Text(
-                                    "Registered On ${formatDate(ticket.registeredAt!)}",
+                                    "${'registered_on'.tr} ${formatDate(ticket.registeredAt!)}",
                                     style: TextStyle(
                                       color: AppColors.textSecondary(context),
                                     ),

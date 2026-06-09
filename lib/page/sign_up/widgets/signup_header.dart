@@ -3,6 +3,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/widget/gradient_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 class SignUpHeader extends StatelessWidget {
   const SignUpHeader({super.key});
@@ -20,7 +21,7 @@ class SignUpHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Join Us!",
+                "${'join_us'.tr} !",
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
@@ -30,7 +31,7 @@ class SignUpHeader extends StatelessWidget {
               ),
               SizedBox(height: 0.5.hp),
               GradientText(
-                content: "Create your account",
+                content: 'create_your_account'.tr,
                 textSize: 14.sp,
                 gradientStart: AppColors.gradientDarkStart,
                 gradientEnd: AppColors.gradientDarkEnd,

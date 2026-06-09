@@ -243,10 +243,10 @@ class QrScanScreenController extends GetxController
         if (rawValue != null && rawValue.isNotEmpty) {
           processScannedData(rawValue);
         } else {
-          _showError('No QR code found in the image');
+          _showError('no_qr_found_error'.tr);
         }
       } else {
-        _showError('No QR code found in the image');
+        _showError('no_qr_found_error'.tr);
       }
     } catch (e) {
       _showError('Failed to scan image: $e');

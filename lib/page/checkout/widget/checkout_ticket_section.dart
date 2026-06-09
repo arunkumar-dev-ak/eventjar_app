@@ -3,6 +3,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/checkout/widget/checkout_ticket_dropdown.dart';
 import 'package:eventjar/page/checkout/widget/checkout_ticket_selected_list.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CheckoutTicketSection extends StatelessWidget {
   final dynamic eventInfo;
@@ -28,7 +29,7 @@ class CheckoutTicketSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Tickets",
+            'tickets'.tr,
             style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 2.hp),

@@ -49,7 +49,7 @@ class QrDashboardBottomNavigation extends StatelessWidget {
                   child: Showcase(
                     scope: MyQrScreenController.myQrScope,
                     key: myQr.tourMyQrTabKey,
-                    title: 'My QR',
+                    title: 'my_qr'.tr,
                     description:
                         'Your shareable QR lives here — show it to save your contact in others\' phones.',
                     tooltipBackgroundColor: const Color(0xFF00C853),
@@ -65,7 +65,7 @@ class QrDashboardBottomNavigation extends StatelessWidget {
                     ),
                     child: _buildNavButton(
                       icon: Icons.qr_code,
-                      label: "My QR",
+                      label: 'my_qr'.tr,
                       isSelected: selectedIndex == 0,
                       gradient: LinearGradient(
                         colors: [Color(0xFF00C853), Color(0xFF1DE9B6)],
@@ -81,7 +81,7 @@ class QrDashboardBottomNavigation extends StatelessWidget {
                   child: Showcase(
                     scope: MyQrScreenController.myQrScope,
                     key: myQr.tourScanQrTabKey,
-                    title: 'Scan QR',
+                    title: 'scan_qr_tab'.tr,
                     description:
                         'Switch here to point your camera at someone else\'s QR and instantly add them.',
                     tooltipBackgroundColor: const Color(0xFF2196F3),
@@ -97,7 +97,7 @@ class QrDashboardBottomNavigation extends StatelessWidget {
                     ),
                     child: _buildNavButton(
                       icon: Icons.qr_code_scanner,
-                      label: "Scan QR",
+                      label: 'scan_qr_tab'.tr,
                       isSelected: selectedIndex == 1,
                       gradient: LinearGradient(
                         colors: [Color(0xFF2196F3), Color(0xFF00BCD4)],

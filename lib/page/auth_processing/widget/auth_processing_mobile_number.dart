@@ -100,7 +100,7 @@ class AuthProcessignMobileNumber extends GetView<AuthProcessingController> {
                                   validator: (value) {
                                     if (value == null ||
                                         !value.isValidNumber()) {
-                                      return 'Invalid phone number';
+                                      return 'invalid_phone_number'.tr;
                                     }
                                     return null;
                                   },

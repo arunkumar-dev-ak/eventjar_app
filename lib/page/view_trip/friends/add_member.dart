@@ -52,7 +52,7 @@ void showAddMemberPopup(BuildContext context) {
                 children: [
                   Expanded(
                     child: Text(
-                      "Add a Member",
+                      "add_a_friend".tr,
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.bold,
@@ -82,7 +82,7 @@ void showAddMemberPopup(BuildContext context) {
               padding: EdgeInsets.fromLTRB(24, 1.5.hp, 24, 1.hp),
               child: TextField(
                 decoration: InputDecoration(
-                  hintText: 'Search Member..',
+                  hintText: 'search_friends'.tr,
                   hintStyle: TextStyle(
                     fontSize: 9.5.sp,
                     color: AppColors.textHint(context),
@@ -141,8 +141,8 @@ void showAddMemberPopup(BuildContext context) {
                         const SizedBox(height: 8),
                         Text(
                           isListLoading
-                              ? 'Loading friends...'
-                              : 'No eligible friends found.',
+                              ? 'loading_friends'.tr
+                              : 'no_eligible_friends'.tr,
                           style: TextStyle(
                             color: AppColors.textSecondary(context),
                             fontSize: 9.5.sp,
@@ -198,7 +198,7 @@ void showAddMemberPopup(BuildContext context) {
                                 ),
                               ),
                               child: Text(
-                                'Load More',
+                                'load_more'.tr,
                                 style: TextStyle(
                                   fontSize: 9.sp,
                                   fontWeight: FontWeight.w600,
@@ -312,7 +312,7 @@ void showAddMemberPopup(BuildContext context) {
                     ),
                   ),
                   child: Text(
-                    'Close',
+                    'close'.tr,
                     style: TextStyle(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w600,

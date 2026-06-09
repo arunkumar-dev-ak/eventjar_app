@@ -56,9 +56,9 @@ class MoreController extends GetxController {
       () => Get.toNamed(
         RouteName.contactPage,
         arguments: {
-          'statusCard': const NetworkStatusCardData(
+          'statusCard': NetworkStatusCardData(
             key: 'totalContacts',
-            label: 'Total Contacts',
+            label: 'total_contacts'.tr,
             enumKey: 'all',
             icon: Icons.people,
             color: Colors.blue,
@@ -73,9 +73,9 @@ class MoreController extends GetxController {
       () => Get.toNamed(
         RouteName.contactPage,
         arguments: {
-          'statusCard': const NetworkStatusCardData(
+          'statusCard': NetworkStatusCardData(
             key: 'new',
-            label: 'New',
+            label: 'new'.tr,
             enumKey: 'new',
             icon: Icons.fiber_new,
             color: Colors.green,
@@ -90,9 +90,9 @@ class MoreController extends GetxController {
       () => Get.toNamed(
         RouteName.contactPage,
         arguments: {
-          'statusCard': const NetworkStatusCardData(
+          'statusCard': NetworkStatusCardData(
             key: 'followup24h',
-            label: '24H Followup',
+            label: 'twenty_four_h_followup'.tr,
             enumKey: 'followup_24h',
             icon: Icons.access_time,
             color: Colors.orange,
@@ -107,9 +107,9 @@ class MoreController extends GetxController {
       () => Get.toNamed(
         RouteName.contactPage,
         arguments: {
-          'statusCard': const NetworkStatusCardData(
+          'statusCard': NetworkStatusCardData(
             key: 'followup7d',
-            label: '7D Followup',
+            label: 'seven_d_followup'.tr,
             enumKey: 'followup_7d',
             icon: Icons.calendar_view_week,
             color: Colors.purple,
@@ -124,9 +124,9 @@ class MoreController extends GetxController {
       () => Get.toNamed(
         RouteName.contactPage,
         arguments: {
-          'statusCard': const NetworkStatusCardData(
+          'statusCard': NetworkStatusCardData(
             key: 'followup30d',
-            label: '30D Followup',
+            label: 'thirty_d_followup'.tr,
             enumKey: 'followup_30d',
             icon: Icons.calendar_month,
             color: Colors.teal,
@@ -141,9 +141,9 @@ class MoreController extends GetxController {
       () => Get.toNamed(
         RouteName.contactPage,
         arguments: {
-          'statusCard': const NetworkStatusCardData(
+          'statusCard': NetworkStatusCardData(
             key: 'qualified',
-            label: 'Qualified',
+            label: 'qualified'.tr,
             enumKey: 'qualified',
             icon: Icons.verified,
             color: Colors.indigo,

@@ -2,6 +2,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 class TripCard extends StatelessWidget {
   final int index;
@@ -128,7 +129,7 @@ class TripCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            "Budget",
+                            "budget".tr,
                             style: TextStyle(
                               fontSize: 7.sp,
                               color: AppColors.textSecondary(context),
@@ -152,7 +153,7 @@ class TripCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            "Spent",
+                            "spent".tr,
                             style: TextStyle(
                               fontSize: 7.sp,
                               color: AppColors.textSecondary(context),

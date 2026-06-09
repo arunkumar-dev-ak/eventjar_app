@@ -17,6 +17,8 @@ class LanguageStore extends GetxController {
 
   final isLoadingLanguages = false.obs;
 
+  late final Future<void> initCompleted;
+
   //  Replace with API-driven language list later
   final languages = <LanguageModel>[
     const LanguageModel(code: 'en', name: 'English', nativeName: 'English'),
@@ -31,9 +33,12 @@ class LanguageStore extends GetxController {
   ].obs;
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
+    initCompleted = _init();
+  }
 
+  Future<void> _init() async {
     // 1. Restore saved language code
     final saved = await StorageService.to.getString(storageLanguageCode);
     if (saved != null) {
@@ -61,10 +66,14 @@ class LanguageStore extends GetxController {
     }
 
     // Load from cache first (instant UI switch)
-    await TranslationService.loadCachedLanguage(code);
-    Get.updateLocale(locale);
+    final hadCache = await TranslationService.loadCachedLanguage(code);
+    if (hadCache) {
+      Get.updateLocale(locale);
+    }
 
-    TranslationService.fetchAndApply(code);
+    // On first install there's no cache, so we must fetch before navigating
+    await TranslationService.fetchAndApply(code);
+    Get.updateLocale(locale);
   }
 
   Future<void> _fetchLanguageList() async {

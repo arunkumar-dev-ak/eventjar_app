@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:eventjar/api/user_profile_api/user_profile_api.dart';
 import 'package:eventjar/controller/profile_form/business_info/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
@@ -11,7 +10,7 @@ import 'package:flutter_intl_phone_field/countries.dart';
 import 'package:get/get.dart';
 
 class BusinessInfoFormController extends GetxController {
-  var appBarTitle = "Update Business Info";
+  var appBarTitle = "update_business_info".tr;
   final state = BusinessInfoFormState();
   final formKey = GlobalKey<FormState>();
 
@@ -40,7 +39,7 @@ class BusinessInfoFormController extends GetxController {
     'Marketing',
     'Real Estate',
     'Food & Beverage',
-    'Other',
+    'other_label',
   ];
 
   final List<String> operatingRegions = [
@@ -187,12 +186,15 @@ class BusinessInfoFormController extends GetxController {
     try {
       state.isLoading.value = true;
       await UserProfileApi.updateUserProfile(data); // Your API
-      AppSnackbar.success(title: "Success", message: "Business info updated");
+      AppSnackbar.success(
+        title: "success".tr,
+        message: "business_info_updated".tr,
+      );
       Navigator.pop(Get.context!, "refresh");
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to update business info",
+        title: "failed_update_business_info".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class FullScreenLoader extends StatelessWidget {
   final bool isLoading;
   final String message;
 
-  const FullScreenLoader({
+  FullScreenLoader({
     super.key,
     required this.isLoading,
-    this.message = "Getting details...",
-  });
+    String? message,
+  }) : message = message ?? 'getting_details'.tr;
 
   @override
   Widget build(BuildContext context) {

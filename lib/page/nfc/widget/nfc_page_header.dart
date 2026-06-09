@@ -97,15 +97,12 @@ class _StatusBadge extends GetView<NfcController> {
   }
 
   Color _getStatusColor(String status) {
-    switch (status) {
-      case 'NFC Ready':
-        return Colors.green;
-      case 'NFC Not Available':
-      case 'NFC Disabled':
-        return Colors.orange;
-      default:
-        return Colors.blueAccent;
+    if (status == 'nfc_ready'.tr) {
+      return Colors.green;
+    } else if (status == 'nfc_not_available'.tr || status == 'nfc_disabled'.tr) {
+      return Colors.orange;
     }
+    return Colors.blueAccent;
   }
 }
 

@@ -41,22 +41,27 @@ class RemoveMemberDialog extends GetView<ViewTripController> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: Colors.red.shade50,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.person_remove_rounded,
-                size: 32,
-                color: Colors.red.shade600,
-              ),
-            ),
+            Builder(builder: (context) {
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              return Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.red.shade900.withValues(alpha: 0.3)
+                      : Colors.red.shade50,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.person_remove_rounded,
+                  size: 32,
+                  color: isDark ? Colors.red.shade300 : Colors.red.shade600,
+                ),
+              );
+            }),
             SizedBox(height: 1.hp),
             Text(
-              'Remove Member',
+              'remove_member'.tr,
               style: TextStyle(
                 fontSize: 11.sp,
                 fontWeight: FontWeight.bold,
@@ -92,7 +97,7 @@ class RemoveMemberDialog extends GetView<ViewTripController> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'This will remove their access to the trip and recalculate balances.',
+                      'remove_member_warning'.tr,
                       style: TextStyle(
                         fontSize: 9.sp,
                         color: AppColors.textSecondary(context),
@@ -128,7 +133,7 @@ class RemoveMemberDialog extends GetView<ViewTripController> {
                           ? null
                           : () => Navigator.of(context).pop(false),
                       child: Text(
-                        'Cancel',
+                        'cancel'.tr,
                         style: TextStyle(
                           fontSize: 9.sp,
                           fontWeight: FontWeight.w600,
@@ -164,7 +169,7 @@ class RemoveMemberDialog extends GetView<ViewTripController> {
                               ),
                             )
                           : Text(
-                              'Remove',
+                              'remove'.tr,
                               style: TextStyle(
                                 fontSize: 9.sp,
                                 fontWeight: FontWeight.bold,

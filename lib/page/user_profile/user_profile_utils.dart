@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget userProfilebuildInfoRow({
   required IconData icon,
@@ -13,10 +14,10 @@ Widget userProfilebuildInfoRow({
   // Check if value indicates empty state
   final isEmpty =
       value == "N/A" ||
-      value == "Not provided" ||
-      value == "Not specified" ||
-      value == "No bio added yet" ||
-      value == "Availability not set";
+      value == 'not_provided'.tr ||
+      value == 'not_specified'.tr ||
+      value == 'no_bio_added'.tr ||
+      value == 'availability_not_set'.tr;
 
   return Row(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +56,9 @@ Widget userProfilebuildInfoRow({
                 fontSize: 10.sp,
                 color: isEmpty
                     ? AppColors.textHintStatic
-                    : (isLink ? Colors.blue.shade700 : AppColors.textPrimaryStatic),
+                    : (isLink
+                          ? Colors.blue.shade700
+                          : AppColors.textPrimaryStatic),
                 fontWeight: isEmpty ? FontWeight.normal : FontWeight.w600,
                 decoration: (isLink && !isEmpty)
                     ? TextDecoration.underline
@@ -100,7 +103,7 @@ Widget userProfileBuildChipSection({
               border: Border.all(color: AppColors.lightBlueBorderStatic),
             ),
             child: Text(
-              chip,
+              chip.tr,
               style: TextStyle(
                 fontSize: 8.sp,
                 color: Colors.blue.shade700,

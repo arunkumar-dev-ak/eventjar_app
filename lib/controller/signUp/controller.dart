@@ -78,19 +78,19 @@ class SignUpController extends GetxController {
       // AppSnackbar.success(title: "Sign Up Successful", message: message);
       await UserStore.to.handleSetLocalData(response);
       AppSnackbar.success(
-        title: "Account Created",
-        message: "Your account has been created successfully.",
+        title: "account_created".tr,
+        message: "account_created_success".tr,
       );
       state.isLoading.value = false;
       Navigator.pop(context, "logged_in");
     } catch (err) {
       state.isLoading.value = false;
       if (err is DioException) {
-        ApiErrorHandler.handleDioError(err, "Sign Up Error");
+        ApiErrorHandler.handleDioError(err, "sign_up_error".tr);
       } else {
         AppSnackbar.error(
-          title: "Sign Up Error",
-          message: "Something went wrong",
+          title: "sign_up_error".tr,
+          message: "generic_try_again_error".tr,
         );
       }
     } finally {
@@ -132,13 +132,13 @@ class SignUpController extends GetxController {
 
         if (statusCode == 404) {
           AppSnackbar.error(
-            title: "Invalid Invite",
-            message: "Invitation not found",
+            title: "invalid_invite".tr,
+            message: "invitation_not_found".tr,
           );
         } else if (statusCode == 410) {
           AppSnackbar.error(
-            title: "Expired Invite",
-            message: "This invitation has expired",
+            title: "expired_invite".tr,
+            message: "invitation_expired".tr,
           );
         } else {
           ApiErrorHandler.handleDioError(err, "Invite Error");
@@ -162,11 +162,11 @@ class SignUpController extends GetxController {
     } catch (err) {
       LoggerService.loggerInstance.e(err);
       if (err is DioException) {
-        ApiErrorHandler.handleDioError(err, "Authentication Failed");
+        ApiErrorHandler.handleDioError(err, "authentication_failed".tr);
       } else {
         AppSnackbar.error(
-          title: "Authentication Failed",
-          message: "Something went wrong",
+          title: "authentication_failed".tr,
+          message: "generic_try_again_error".tr,
         );
       }
     } finally {
@@ -201,7 +201,7 @@ class SignUpController extends GetxController {
 
   // Email validator
   String? validateEmail(String? val) {
-    if (val == null || val.isEmpty) return "Email is required";
+    if (val == null || val.isEmpty) return 'email_required'.tr;
     if (!RegExp(
       r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$",
     ).hasMatch(val)) {

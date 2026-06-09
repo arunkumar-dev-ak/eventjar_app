@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class DeleteConfirmDialog extends StatelessWidget {
   final String title;
@@ -8,14 +9,13 @@ class DeleteConfirmDialog extends StatelessWidget {
   final String warningText;
   final VoidCallback onDelete;
 
-  const DeleteConfirmDialog({
+  DeleteConfirmDialog({
     super.key,
     required this.title,
     required this.itemName,
     required this.onDelete,
-    this.warningText =
-        'This action cannot be undone and will permanently delete this data.',
-  });
+    String? warningText,
+  }) : warningText = warningText ?? 'permanent_action_warning'.tr;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +65,7 @@ class DeleteConfirmDialog extends StatelessWidget {
             SizedBox(height: 1.hp),
 
             Text(
-              'Are you sure you want to delete "$itemName"?',
+              '${'delete_confirm_prompt'.tr} "$itemName"?',
               style: TextStyle(
                 fontSize: 10.sp,
                 color: AppColors.textSecondary(context),
@@ -121,7 +121,7 @@ class DeleteConfirmDialog extends StatelessWidget {
                     ),
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
-                      'Cancel',
+                      'cancel'.tr,
                       style: TextStyle(
                         fontSize: 9.sp,
                         fontWeight: FontWeight.w600,
@@ -146,7 +146,7 @@ class DeleteConfirmDialog extends StatelessWidget {
                       onDelete();
                     },
                     child: Text(
-                      'Delete',
+                      'delete'.tr,
                       style: TextStyle(
                         fontSize: 9.sp,
                         fontWeight: FontWeight.bold,

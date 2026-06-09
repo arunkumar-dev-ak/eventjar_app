@@ -89,8 +89,8 @@ class _QrCodePageState extends State<QrCodePage> {
                         ),
                       ],
                     ),
-                    child: const Text(
-                      'Skip Tour',
+                    child: Text(
+                      'skip_tour'.tr,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 13,
@@ -131,7 +131,7 @@ class _QrCodePageState extends State<QrCodePage> {
         ),
         elevation: 0,
         title: Text(
-          "Share or Scan QR",
+          'share_or_scan_qr'.tr,
           style: TextStyle(color: AppColors.textPrimary(context)),
         ),
         actions: [
@@ -141,7 +141,7 @@ class _QrCodePageState extends State<QrCodePage> {
               return Showcase(
                 scope: MyQrScreenController.myQrScope,
                 key: myQrController.tourHelpKey,
-                title: 'Replay',
+                title: 'replay'.tr,
                 description: 'Tap anytime to see the tour again.',
                 targetShapeBorder: const CircleBorder(),
                 tooltipBackgroundColor: AppColors.gradientLightStart,
@@ -160,7 +160,7 @@ class _QrCodePageState extends State<QrCodePage> {
                     Icons.help_outline_rounded,
                     color: Colors.blueGrey,
                   ),
-                  tooltip: 'Replay tour',
+                  tooltip: 'replay_tour'.tr,
                   onPressed: myQrController.replayTour,
                 ),
               );
@@ -170,7 +170,7 @@ class _QrCodePageState extends State<QrCodePage> {
                 Icons.help_outline_rounded,
                 color: Colors.blueGrey,
               ),
-              tooltip: 'Replay tour',
+              tooltip: 'replay_tour'.tr,
               onPressed: () {
                 Get.find<QrScanScreenController>().replayTour();
               },

@@ -2,6 +2,7 @@ import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 void addContactBottomModel(BuildContext context, ContactController controller) {
   showModalBottomSheet(
@@ -29,8 +30,8 @@ void addContactBottomModel(BuildContext context, ContactController controller) {
             SizedBox(height: 2.hp),
             _buildMenuItem(
               icon: Icons.person_add_alt_1_rounded,
-              title: 'Add Contact',
-              subtitle: 'Add a new contact manually',
+              title: 'add_contact'.tr,
+              subtitle: 'add_contact_manually'.tr,
               gradientColors: [Colors.blue.shade400, Colors.blue.shade600],
               onTap: () {
                 Navigator.pop(context);
@@ -40,8 +41,8 @@ void addContactBottomModel(BuildContext context, ContactController controller) {
             _divider(),
             _buildMenuItem(
               icon: Icons.nfc_rounded,
-              title: 'NFC',
-              subtitle: 'Scan NFC tag to add contact',
+              title: 'nfc'.tr,
+              subtitle: 'scan_nfc_tag'.tr,
               gradientColors: [Colors.green.shade400, Colors.green.shade600],
               onTap: () {
                 Navigator.pop(context);
@@ -52,8 +53,8 @@ void addContactBottomModel(BuildContext context, ContactController controller) {
             _divider(),
             _buildMenuItem(
               icon: Icons.qr_code_scanner_rounded,
-              title: 'QR Scanner',
-              subtitle: 'Scan QR code to add contact',
+              title: 'qr_scanner'.tr,
+              subtitle: 'scan_qr_code'.tr,
               gradientColors: [Colors.purple.shade400, Colors.purple.shade600],
               onTap: () {
                 Navigator.pop(context);
@@ -63,8 +64,8 @@ void addContactBottomModel(BuildContext context, ContactController controller) {
             _divider(),
             _buildMenuItem(
               icon: Icons.document_scanner,
-              title: 'Scan Business Card',
-              subtitle: 'Scan Business Card to add contact',
+              title: 'scan_business_card'.tr,
+              subtitle: 'scan_card_to_add_contact'.tr,
               gradientColors: [
                 Colors.orangeAccent.shade400,
                 Colors.orangeAccent.shade700,

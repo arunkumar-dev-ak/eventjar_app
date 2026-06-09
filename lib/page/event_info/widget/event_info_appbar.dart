@@ -49,7 +49,7 @@ class EventInfoAppBar extends GetView<EventInfoController> {
           // Title
           Expanded(
             child: Text(
-              'Event Info',
+              'event_info'.tr,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 13.sp,
@@ -65,8 +65,8 @@ class EventInfoAppBar extends GetView<EventInfoController> {
               final eventInfo = controller.state.eventInfo.value;
               if (eventInfo == null) {
                 AppSnackbar.warning(
-                  message: "Kindly try again later",
-                  title: "Event Not Found",
+                  message: 'try_again_later'.tr,
+                  title: 'event_not_found'.tr,
                 );
                 return;
               }
@@ -165,18 +165,18 @@ $dateTimeLocation
 
   String _formatEventDateTimeForShare(EventInfo eventInfo) {
     final months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      'jan'.tr,
+      'feb'.tr,
+      'mar'.tr,
+      'apr'.tr,
+      'may'.tr,
+      'jun'.tr,
+      'jul'.tr,
+      'aug'.tr,
+      'sep'.tr,
+      'oct'.tr,
+      'nov'.tr,
+      'dec'.tr,
     ];
 
     // Start date
@@ -185,7 +185,7 @@ $dateTimeLocation
         '${start.day} ${months[start.month - 1]}, ${start.year}';
 
     // Start time
-    String startTimeStr = 'Time TBA';
+    String startTimeStr = 'time_tba'.tr;
 
     startTimeStr = controller.generateDateTimeAndFormatTime(
       eventInfo.startTime,
@@ -196,7 +196,7 @@ $dateTimeLocation
 
     final location = eventInfo.isVirtual
         ? '📍 Virtual Event'
-        : '📍 ${eventInfo.city ?? 'Location'}';
+        : '📍 ${eventInfo.city ?? 'location'.tr}';
 
     return '📅 $startDateStr at $timeDisplay | $location';
   }

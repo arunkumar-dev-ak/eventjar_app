@@ -44,7 +44,7 @@ class WhatsAppInstructionCard extends GetView<NotificationController> {
               ),
               SizedBox(width: 2.5.wp),
               Text(
-                "WhatsApp Integration",
+                'whatsapp_integration'.tr,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 11.sp,
@@ -57,7 +57,7 @@ class WhatsAppInstructionCard extends GetView<NotificationController> {
           SizedBox(height: 1.5.hp),
 
           Text(
-            "Store your WhatsApp Business API token to enable event notifications.",
+            'store_whatsapp_token_desc'.tr,
             style: TextStyle(fontSize: 9.sp, color: AppColors.textPrimary(context)),
           ),
 

@@ -13,7 +13,7 @@ Widget buildCompanySection(Organizer organizer, EventInfo eventInfo) {
   // Company Name
   if (organizer.company != null && organizer.company!.isNotEmpty) {
     items.add(
-      _infoRow(Icons.business_center, "Company Name", organizer.company!),
+      _infoRow(Icons.business_center, 'company_name'.tr, organizer.company!),
     );
   }
 
@@ -27,7 +27,7 @@ Widget buildCompanySection(Organizer organizer, EventInfo eventInfo) {
     items.add(
       _infoRow(
         Icons.phone,
-        "Contact Number",
+        'contact_number'.tr,
         eventInfo.organizerContactPhone!,
         onTap: () => _launchURL('tel:${eventInfo.organizerContactPhone}'),
       ),
@@ -42,7 +42,7 @@ Widget buildCompanySection(Organizer organizer, EventInfo eventInfo) {
     items.add(
       _infoRow(
         Icons.language,
-        "Website",
+        'website'.tr,
         organizer.website!,
         onTap: () => _launchURL(
           organizer.website!.startsWith('http')
@@ -61,7 +61,7 @@ Widget buildCompanySection(Organizer organizer, EventInfo eventInfo) {
     items.add(
       _infoRow(
         Icons.link,
-        "LinkedIn",
+        'linkedin'.tr,
         organizer.linkedin!,
         onTap: () => _launchURL(
           organizer.linkedin!.startsWith('http')

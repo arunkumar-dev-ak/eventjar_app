@@ -17,23 +17,23 @@ Widget userProfileBuildBusinessInfo() {
     children: [
       userProfilebuildInfoRow(
         icon: Icons.business,
-        label: "Business Name",
-        value: user?.company ?? "Not provided",
+        label: 'business_name'.tr,
+        value: user?.company ?? 'not_provided'.tr,
         iconColor: Colors.purple,
       ),
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
         icon: Icons.category,
-        label: "Business Category",
-        value: extended?.businessCategory ?? "Not specified",
+        label: 'business_category'.tr,
+        value: extended?.businessCategory ?? 'not_specified'.tr,
         iconColor: Colors.teal,
       ),
       SizedBox(height: 2.hp),
       buildSocialLinkRow(
         icon: Icons.language,
-        platform: "Website",
+        platform: 'website'.tr,
         url: socialLinks['website']!.isEmpty
-            ? "Not provided"
+            ? 'not_provided'.tr
             : socialLinks['website']!,
         color: Colors.green.shade600,
         isConnected: socialLinks['website']!.isNotEmpty,
@@ -41,22 +41,22 @@ Widget userProfileBuildBusinessInfo() {
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
         icon: Icons.email_outlined,
-        label: "Business Email",
-        value: extended?.businessEmail ?? "Not provided",
+        label: 'business_email'.tr,
+        value: extended?.businessEmail ?? 'not_provided'.tr,
         iconColor: Colors.red,
       ),
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
         icon: Icons.phone_in_talk,
-        label: "Business Phone",
-        value: extended?.businessPhoneParsed?.fullNumber ?? "Not provided",
+        label: 'business_phone'.tr,
+        value: extended?.businessPhoneParsed?.fullNumber ?? 'not_provided'.tr,
         iconColor: Colors.green,
       ),
       SizedBox(height: 2.hp),
       userProfilebuildInfoRow(
         icon: Icons.location_city,
-        label: "Business Address",
-        value: user?.location ?? "Not provided",
+        label: 'business_address'.tr,
+        value: user?.location ?? 'not_provided'.tr,
         iconColor: Colors.orange,
       ),
       SizedBox(height: 2.hp),
@@ -64,14 +64,14 @@ Widget userProfileBuildBusinessInfo() {
         opearingRegionBuildChipSection(
           icon: Icons.public,
           iconColor: Colors.blue,
-          label: "Operating Regions",
+          label: 'operating_regions'.tr,
           chips: extended.preferredLocations,
         )
       else
         userProfilebuildInfoRow(
           icon: Icons.public,
-          label: "Operating Regions",
-          value: "Not specified",
+          label: 'operating_regions'.tr,
+          value: 'not_specified'.tr,
           iconColor: Colors.blue,
         ),
     ],

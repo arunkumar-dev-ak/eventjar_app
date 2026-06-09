@@ -2,8 +2,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get.dart';
 
 class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
   final String title;
@@ -103,11 +102,12 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
                     return Text(
                       hasValue
                           ? "${selectedItemsMap.length} selected"
-                          : (hintText ?? "Select items"),
+                          : (hintText ?? 'select_items'.tr),
                       style: TextStyle(
                         fontSize: selectedTextSize ?? 10.sp,
-                        fontWeight:
-                            hasValue ? FontWeight.w600 : FontWeight.w500,
+                        fontWeight: hasValue
+                            ? FontWeight.w600
+                            : FontWeight.w500,
                         color: hasValue
                             ? selectedDisplayColor ?? primary
                             : AppColors.textSecondary(context),
@@ -236,7 +236,7 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
                 child: TextField(
                   onChanged: onChanged,
                   decoration: InputDecoration(
-                    hintText: "Search $title...",
+                    hintText: 'search_ellipsis'.tr,
                     hintStyle: TextStyle(
                       fontSize: 9.5.sp,
                       color: AppColors.textHint(context),
@@ -291,7 +291,7 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            "No matches found",
+                            'no_friends_found'.tr,
                             style: TextStyle(
                               color: AppColors.textSecondary(context),
                               fontSize: 9.5.sp,
@@ -336,7 +336,7 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
                                       color: isDark
                                           ? headerColor.withValues(alpha: 0.2)
                                           : (selectedShade1 ??
-                                              Colors.blue.shade50),
+                                                Colors.blue.shade50),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),
@@ -400,21 +400,24 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
                                               color: selected
                                                   ? primary
                                                   : AppColors.textPrimary(
-                                                      context),
+                                                      context,
+                                                    ),
                                             ),
                                           ),
                                           if (getSubtitleValue != null &&
                                               getTrailingWidget == null)
                                             Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 2),
+                                              padding: const EdgeInsets.only(
+                                                top: 2,
+                                              ),
                                               child: Text(
                                                 getSubtitleValue!(item),
                                                 style: TextStyle(
                                                   fontSize: 8.5.sp,
                                                   color:
                                                       AppColors.textSecondary(
-                                                          context),
+                                                        context,
+                                                      ),
                                                 ),
                                               ),
                                             ),
@@ -453,7 +456,7 @@ class MultiSelectPaginatedDropdown<T> extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Close',
+                      'done'.tr,
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w600,

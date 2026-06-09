@@ -44,17 +44,17 @@ class ForgotPasswordController extends GetxController {
         getForgotPasswordData(),
       );
 
-      AppSnackbar.success(title: "Email Sent", message: message);
+      AppSnackbar.success(title: "email_sent".tr, message: message);
 
       return true;
     } catch (err) {
       state.isLoading.value = false;
       if (err is DioException) {
-        ApiErrorHandler.handleDioError(err, "Email Send Failed");
+        ApiErrorHandler.handleDioError(err, "email_send_failed".tr);
       } else {
         AppSnackbar.error(
-          title: "Email Send Failed",
-          message: "Something went wrong. Please try again.",
+          title: "email_send_failed".tr,
+          message: "generic_try_again_error".tr,
         );
       }
       return false;
@@ -66,9 +66,9 @@ class ForgotPasswordController extends GetxController {
   //validate email
   String? validateEmail(String? email) {
     if (email == null || email.isEmpty) {
-      return "Email is required";
+      return 'email_required'.tr;
     } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(email)) {
-      return "Enter valid email";
+      return "enter_valid_email".tr;
     }
     return null;
   }
@@ -110,10 +110,10 @@ class ForgotPasswordController extends GetxController {
           } catch (_) {}
         }
       }
-      Get.snackbar('Error', 'No email app found.');
+      Get.snackbar('error'.tr, 'no_email_app_found'.tr);
     } catch (e) {
       LoggerService.loggerInstance.e(e);
-      Get.snackbar('Error', 'Could not open email app.');
+      Get.snackbar('error'.tr, 'could_not_open_email_app'.tr);
     }
   }
 }

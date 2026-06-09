@@ -14,48 +14,48 @@ Widget userProfileBuildNetworkInfo() {
     children: [
       userProfilebuildInfoRow(
         icon: Icons.search,
-        label: "What are you looking for?",
-        value: extended?.networkingGoal ?? "Not specified",
+        label: 'what_are_you_looking_for'.tr,
+        value: extended?.networkingGoal ?? 'not_specified'.tr,
         iconColor: Colors.purple,
         maxLines: 3,
       ),
       SizedBox(height: 2.hp),
       if (extended != null && extended.interestedInConnecting.isNotEmpty)
         userProfileBuildChipSection(
-          label: "Interested in Connecting With",
+          label: 'interested_in_connecting_with'.tr,
           chips: extended.interestedInConnecting,
         )
       else
         userProfilebuildInfoRow(
           icon: Icons.group_add,
-          label: "Interested in Connecting With",
-          value: "Not specified",
+          label: 'interested_in_connecting_with'.tr,
+          value: 'not_specified'.tr,
           iconColor: Colors.blue,
         ),
       SizedBox(height: 2.hp),
       if (extended != null && extended.helpOfferings.isNotEmpty)
         userProfileBuildChipSection(
-          label: "How can you help others?",
+          label: 'how_help_others'.tr,
           chips: extended.helpOfferings,
         )
       else
         userProfilebuildInfoRow(
           icon: Icons.help_outline,
-          label: "How can you help others?",
-          value: "Not specified",
+          label: 'how_help_others'.tr,
+          value: 'not_specified'.tr,
           iconColor: Colors.green,
         ),
       SizedBox(height: 2.hp),
       if (extended != null && extended.discussionTopics.isNotEmpty)
         userProfileBuildChipSection(
-          label: "Topics you're open to discussing",
+          label: 'topics_open_to_discussing'.tr,
           chips: extended.discussionTopics,
         )
       else
         userProfilebuildInfoRow(
           icon: Icons.chat_bubble_outline,
-          label: "Topics you're open to discussing",
-          value: "Not specified",
+          label: 'topics_open_to_discussing'.tr,
+          value: 'not_specified'.tr,
           iconColor: Colors.orange,
         ),
     ],

@@ -5,6 +5,7 @@ import 'package:eventjar/helper/date_handler.dart';
 import 'package:eventjar/model/my_ticket/my_ticket_model.dart';
 import 'package:eventjar/page/my_ticket/my_ticket_card_page_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget myTicketBuildTicketCard(
   MyTicket ticket,
@@ -18,7 +19,7 @@ Widget myTicketBuildTicketCard(
   final isFree = tier?.price.toString() == '0';
 
   final eventTitle = event?.title ?? "Event";
-  final tierName = tier?.name ?? "Ticket";
+  final tierName = tier?.name ?? 'ticket'.tr;
   final price = tier?.price ?? "0";
 
   final rawVenue = event?.venue ?? '';
@@ -26,14 +27,14 @@ Widget myTicketBuildTicketCard(
   final hasVenue = rawVenue.isNotEmpty;
   final venueDisplay = hasVenue
       ? '$rawVenue${address.isNotEmpty ? ', $address' : ''}'
-      : 'Online Event';
+      : 'online_event'.tr;
 
   final startDate = event?.startDate;
   final imageUrl = event?.featuredImageUrl;
 
   final dateStr = startDate != null
       ? formatDate(startDate)
-      : 'Date unavailable';
+      : 'date_unavailable'.tr;
   final timeStr = startDate != null
       ? formatTimeFromDateTime(startDate, context)
       : '';
@@ -45,7 +46,7 @@ Widget myTicketBuildTicketCard(
       Padding(
         padding: EdgeInsets.only(left: 1.wp, bottom: 0.8.hp),
         child: Text(
-          'Registered on:  ${formatDate(ticket.registeredAt)}',
+          '${'registered_on'.tr}:  ${formatDate(ticket.registeredAt)}',
           style: TextStyle(
             fontSize: 8.sp,
             color: AppColors.textHintStatic,
@@ -203,7 +204,7 @@ Widget myTicketBuildTicketCard(
                 child: Row(
                   children: [
                     Text(
-                      '${ticket.quantity} Ticket${ticket.quantity > 1 ? 's' : ''}',
+                      '${ticket.quantity} ${'ticket'.tr}${ticket.quantity > 1 ? 's' : ''}',
                       style: TextStyle(
                         fontSize: 8.sp,
                         color: AppColors.textSecondaryStatic,
@@ -218,7 +219,7 @@ Widget myTicketBuildTicketCard(
                       ),
                     ),
                     Text(
-                      isFree ? 'FREE' : '₹$price',
+                      isFree ? 'free'.tr : '₹$price',
                       style: TextStyle(
                         fontSize: 8.sp,
                         fontWeight: FontWeight.w600,
@@ -250,7 +251,7 @@ Widget myTicketBuildTicketCard(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'View QR',
+                                'view_qr'.tr,
                                 style: TextStyle(
                                   fontSize: 9.sp,
                                   color: Colors.green.shade700,
@@ -339,7 +340,7 @@ Widget myTicketBuildTicketCard(
                       SizedBox(width: 3.wp),
                       Expanded(
                         child: Text(
-                          'Hope you enjoyed the Show!',
+                          'hope_enjoyed_show'.tr,
                           style: TextStyle(
                             fontSize: 8.sp,
                             color: AppColors.textHintStatic,
@@ -363,7 +364,11 @@ Widget _myTicketImagePlaceholder() {
   return Container(
     color: AppColors.chipBgStatic,
     child: Center(
-      child: Icon(Icons.event_outlined, color: AppColors.borderStatic, size: 32),
+      child: Icon(
+        Icons.event_outlined,
+        color: AppColors.borderStatic,
+        size: 32,
+      ),
     ),
   );
 }

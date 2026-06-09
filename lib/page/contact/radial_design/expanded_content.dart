@@ -54,7 +54,7 @@ Widget buildExpandedContent(
                         contact.stage.index < 4 && !hasActiveMeeting;
                     if (!canMoveNext) {
                       AppToast.warning(
-                        'Complete meeting to move to next stage',
+                        'complete_meeting_next_stage'.tr,
                       );
                       return;
                     }
@@ -90,7 +90,7 @@ Widget buildExpandedContent(
                         ),
                         SizedBox(height: 2),
                         Text(
-                          "Tap for",
+                          "tap_for".tr,
                           style: TextStyle(
                             fontSize: isSmallScreen ? 6 : 7,
                             fontWeight: FontWeight.w600,
@@ -141,7 +141,7 @@ Widget buildExpandedContent(
                       ),
                       SizedBox(height: 4),
                       Text(
-                        "Qualified", // ✅ Success message
+                        'qualified'.tr, // ✅ Success message
                         style: TextStyle(
                           fontSize: isSmallScreen ? 9 : 11,
                           fontWeight: FontWeight.w800,
@@ -304,7 +304,7 @@ Widget _buildCompletedChip() {
         SizedBox(width: 4),
         Flexible(
           child: Text(
-            "Completed",
+            'completed'.tr,
             style: TextStyle(
               fontSize: 11,
               color: Colors.green,

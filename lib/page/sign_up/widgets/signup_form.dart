@@ -27,6 +27,7 @@ class SignUpTextFormField extends StatelessWidget {
   final bool hasOuterBorder;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
+  final IconData icon;
 
   const SignUpTextFormField({
     required this.controller,
@@ -41,6 +42,7 @@ class SignUpTextFormField extends StatelessWidget {
     this.hasOuterBorder = true,
     this.keyboardType,
     this.inputFormatters,
+    required this.icon,
     super.key,
   });
 
@@ -118,10 +120,7 @@ class SignUpTextFormField extends StatelessWidget {
                   )
                 : null,
             prefixIcon: hasOuterBorder
-                ? Icon(
-                    _getFieldIcon(label),
-                    color: AppColors.iconMuted(context),
-                  )
+                ? Icon(icon, color: AppColors.iconMuted(context))
                 : null,
             errorMaxLines: 3,
           ),
@@ -204,7 +203,8 @@ class SignUpForm extends StatelessWidget {
             // Full Name
             SignUpTextFormField(
               controller: controller.fullNameController,
-              label: "Full Name",
+              icon: Icons.person,
+              label: 'full_name'.tr,
               validator: (val) => controller.validateFullName(val),
               isFieldValid: controller.state.isFullNamelValid,
               isFieldFocused: controller.state.focusFullName,
@@ -216,7 +216,8 @@ class SignUpForm extends StatelessWidget {
             // Email
             SignUpTextFormField(
               controller: controller.emailController,
-              label: "Email",
+              icon: Icons.email,
+              label: 'email'.tr,
               validator: (val) => controller.validateEmail(val),
               isFieldValid: controller.state.isEmailValid,
               isFieldFocused: controller.state.focusEmail,
@@ -229,8 +230,9 @@ class SignUpForm extends StatelessWidget {
             Obx(
               () => IntlPhoneField(
                 controller: controller.mobileNumberController,
+
                 decoration: _getFieldDecoration(
-                  'Mobile Number',
+                  'mobile_number'.tr,
                   controller.state.isMobileNumberValid,
                   controller.state.focusMobileNumber,
                 ),
@@ -252,7 +254,7 @@ class SignUpForm extends StatelessWidget {
                 },
                 validator: (value) {
                   if (value == null || !value.isValidNumber()) {
-                    return 'Invalid phone number';
+                    return 'invalid_phone_number'.tr;
                   }
                   return null;
                 },
@@ -266,7 +268,8 @@ class SignUpForm extends StatelessWidget {
             Obx(
               () => SignUpTextFormField(
                 controller: controller.passwordController,
-                label: "Password",
+                icon: Icons.lock,
+                label: 'password'.tr,
                 isPassword: true,
                 isPasswordHidden: controller.state.isPasswordHidden.value,
                 togglePasswordVisibility: () =>
@@ -296,7 +299,7 @@ class SignUpForm extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.wp),
                   child: Text(
-                    "OR",
+                    "or".tr,
                     style: TextStyle(
                       color: AppColors.textHint(context),
                       fontSize: 11.sp,
@@ -333,7 +336,7 @@ class SignUpForm extends StatelessWidget {
                   Obx(() {
                     return Expanded(
                       child: SocialButton(
-                        text: "LinkedIn",
+                        text: 'linkedin'.tr,
                         assetPath: "assets/app_icon/linkedin.png",
                         color: Colors.blue,
                         isLoading: controller.state.isLinkedinLoading.value,

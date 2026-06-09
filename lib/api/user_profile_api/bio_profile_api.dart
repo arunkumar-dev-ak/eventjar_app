@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:eventjar/api/dio_client.dart';
 import '../../model/user_profile/bio_profile.dart';
 
@@ -16,7 +17,7 @@ class BioProfileApi {
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Something went wrong",
+        error: "something_went_wrong".tr,
       );
     } catch (e) {
       rethrow;

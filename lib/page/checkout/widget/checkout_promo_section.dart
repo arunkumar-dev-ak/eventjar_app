@@ -70,7 +70,7 @@ class CheckoutPromoSection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        isApplied ? "Promo Applied" : "Have a promo code?",
+                        isApplied ? "promo_applied".tr : "have_promo_code".tr,
                         style: TextStyle(
                           fontSize: 11.sp,
                           fontWeight: FontWeight.w600,
@@ -80,7 +80,7 @@ class CheckoutPromoSection extends StatelessWidget {
                       Text(
                         isApplied
                             ? "You saved ₹${promo!.discountAmount.toStringAsFixed(0)}"
-                            : "Apply coupon & save instantly",
+                            : "apply_coupon_save".tr,
                         style: TextStyle(
                           fontSize: 8.5.sp,
                           color: isApplied

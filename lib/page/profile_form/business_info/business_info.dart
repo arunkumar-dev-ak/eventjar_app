@@ -50,9 +50,9 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                   // Business Name
                   BusinessInfoFormElement(
                     controller: controller.businessNameController,
-                    label: 'Business Name',
+                    label: 'business_name'.tr,
                     validator: (val) => val == null || val.trim().isEmpty
-                        ? 'Business name is required'
+                        ? 'business_name_required'.tr
                         : null,
                   ),
                   SizedBox(height: 2.hp),
@@ -64,7 +64,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                   // Business Website
                   BusinessInfoFormElement(
                     controller: controller.businessWebsiteController,
-                    label: 'Business Website',
+                    label: 'business_website'.tr,
                     keyboardType: TextInputType.url,
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) {
@@ -75,7 +75,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                       );
                       return urlRegex.hasMatch(val.trim())
                           ? null
-                          : 'Enter valid URL';
+                          : 'enter_valid_url'.tr;
                     },
                   ),
                   SizedBox(height: 2.hp),
@@ -83,7 +83,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                   // Business Email
                   BusinessInfoFormElement(
                     controller: controller.businessEmailController,
-                    label: 'Business Email',
+                    label: 'business_email'.tr,
                     keyboardType: TextInputType.emailAddress,
                     validator: (val) {
                       if (val == null || val.trim().isEmpty) {
@@ -92,7 +92,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                       final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
                       return emailRegex.hasMatch(val.trim())
                           ? null
-                          : 'Enter valid email';
+                          : 'enter_valid_email'.tr;
                     },
                   ),
                   SizedBox(height: 2.hp),
@@ -102,7 +102,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                   Obx(() {
                     return IntlPhoneField(
                       decoration: InputDecoration(
-                        labelText: 'Mobile Number *',
+                        labelText: 'mobile_number'.tr,
                         labelStyle: TextStyle(fontSize: 14),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
@@ -156,7 +156,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                       controller: controller.businessPhoneController,
                       validator: (value) {
                         if (value == null || !value.isValidNumber()) {
-                          return 'Invalid phone number';
+                          return 'invalid_phone_number'.tr;
                         }
                         return null;
                       },
@@ -168,7 +168,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                   // Business Address
                   BusinessInfoFormElement(
                     controller: controller.businessAddressController,
-                    label: 'Business Address',
+                    label: 'business_address'.tr,
                     maxLines: 2,
                   ),
                   SizedBox(height: 2.hp),
@@ -197,7 +197,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                             elevation: 0,
                           ),
                           child: Text(
-                            'Reset',
+                            'reset'.tr,
                             style: TextStyle(
                               fontSize: defaultFontSize,
                               fontWeight: FontWeight.w600,
@@ -242,7 +242,7 @@ class BusinessInfoPage extends GetView<BusinessInfoFormController> {
                                     ),
                                   )
                                 : Text(
-                                    'Update Info',
+                                    'update_info'.tr,
                                     style: TextStyle(
                                       fontSize: defaultFontSize,
                                       fontWeight: FontWeight.w700,

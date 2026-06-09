@@ -85,7 +85,7 @@ class EventInfoPage extends GetView<EventInfoController> {
         }
 
         final tabCount = tabController.length;
-        final tabNames = ["Overview", if (tabCount > 1) "Attendees"];
+        final tabNames = ['overview'.tr, if (tabCount > 1) 'attendees'.tr];
         final tabIcons = [
           Icons.info_outline_rounded,
           if (tabCount > 1) Icons.people_outline_rounded,
@@ -167,12 +167,12 @@ class EventInfoPage extends GetView<EventInfoController> {
           ),
           SizedBox(height: 2.hp),
           Text(
-            "Register to Connect",
+            'register_to_connect'.tr,
             style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 1.hp),
           Text(
-            "Book a ticket to access attendees and start networking.",
+            'book_ticket_networking_desc'.tr,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 9.sp,
@@ -189,7 +189,7 @@ class EventInfoPage extends GetView<EventInfoController> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                "Book Now",
+                'book_now'.tr,
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,

@@ -64,7 +64,7 @@ class ChangePasswordForm extends StatelessWidget {
             children: [
               ChangePasswordField(
                 controller: controller.currentPwdController,
-                label: "Current Password",
+                label: 'current_password'.tr,
                 validator: controller.validateCurrentPwd,
                 isVisible: controller.state.isCurrentPwdVisible,
               ),
@@ -73,7 +73,7 @@ class ChangePasswordForm extends StatelessWidget {
 
               ChangePasswordField(
                 controller: controller.newPwdController,
-                label: "New Password",
+                label: 'new_password'.tr,
                 validator: controller.validateNewPwd,
                 isVisible: controller.state.isNewPwdVisible,
               ),
@@ -82,7 +82,7 @@ class ChangePasswordForm extends StatelessWidget {
 
               ChangePasswordField(
                 controller: controller.confirmPwdController,
-                label: "Confirm Password",
+                label: 'confirm_password'.tr,
                 validator: controller.validateConfirmPwd,
                 isVisible: controller.state.isConfirmPwdVisible,
               ),
@@ -105,7 +105,7 @@ class ChangePasswordForm extends StatelessWidget {
                       child: isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
                           : Text(
-                              "Change Password",
+                              'change_password'.tr,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12.sp,

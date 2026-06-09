@@ -147,15 +147,15 @@ class BasicInfoFormController extends GetxController {
       await UserProfileApi.updateUserProfile(data);
 
       AppSnackbar.success(
-        title: "Success",
-        message: "Basic info updated successfully",
+        title: "success".tr,
+        message: "basic_info_updated_success".tr,
       );
 
       Navigator.pop(context, "refresh");
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to update basic info",
+        title: "failed_update_basic_info".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -176,10 +176,7 @@ class BasicInfoFormController extends GetxController {
   Future<void> sendPhoneOtp() async {
     final phone = state.currentPhone.value;
     if (phone.isEmpty) {
-      AppSnackbar.error(
-        title: "Error",
-        message: "No phone number found on your profile",
-      );
+      AppSnackbar.error(title: "error".tr, message: "no_phone_on_profile".tr);
       return;
     }
 
@@ -192,7 +189,7 @@ class BasicInfoFormController extends GetxController {
       if (err is DioException) {
         ApiErrorHandler.handleDioError(err, "Failed to send OTP");
       } else {
-        AppSnackbar.error(title: "Error", message: err.toString());
+        AppSnackbar.error(title: "error".tr, message: err.toString());
       }
     } finally {
       state.isSendingOtp.value = false;

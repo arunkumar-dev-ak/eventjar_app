@@ -1,9 +1,11 @@
 import 'package:eventjar/controller/meeting/controller.dart';
 import 'package:eventjar/global/app_toast.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/web.dart';
 
 class MeetingCardButton extends GetView<MeetingController> {
   final ContactMeeting meeting;
@@ -56,7 +58,10 @@ class MeetingCardButton extends GetView<MeetingController> {
                     size: 16,
                     color: Colors.orange.shade600,
                   ),
-                  label: Text('Reschedule', style: TextStyle(fontSize: 8.sp)),
+                  label: Text(
+                    'reschedule'.tr,
+                    style: TextStyle(fontSize: 8.sp),
+                  ),
                   style: OutlinedButton.styleFrom(
                     padding: EdgeInsets.symmetric(vertical: 8),
                     side: BorderSide(color: Colors.orange.shade600),
@@ -84,7 +89,7 @@ class MeetingCardButton extends GetView<MeetingController> {
                         )
                       : Icon(Icons.check_circle, size: 16, color: Colors.white),
                   label: Text(
-                    isCompleteLoading ? 'Completing...' : 'Complete',
+                    isCompleteLoading ? 'completing'.tr : 'complete'.tr,
                     style: TextStyle(fontSize: 8.sp, color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
@@ -116,7 +121,7 @@ class MeetingCardButton extends GetView<MeetingController> {
                   Icon(Icons.circle, size: 8, color: statusColor),
                   SizedBox(width: 4),
                   Text(
-                    meeting.status.toUpperCase(),
+                    meeting.status.toLowerCase().tr.toUpperCase(),
                     style: TextStyle(
                       color: statusColor,
                       fontWeight: FontWeight.bold,

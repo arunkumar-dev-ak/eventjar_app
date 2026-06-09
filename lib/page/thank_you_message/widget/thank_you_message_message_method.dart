@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget thankYouMessageBuildMethodCard({
   required String title,
@@ -98,7 +99,7 @@ Widget thankYouMessageBuildMethodCard({
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            badgeText ?? 'Automation Enabled',
+                            badgeText ?? 'automation_enabled'.tr,
                             style: TextStyle(
                               fontSize: 7.sp,
                               color: badgeText == null
@@ -120,7 +121,7 @@ Widget thankYouMessageBuildMethodCard({
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            'Loading...',
+                            'loading'.tr,
                             style: TextStyle(
                               fontSize: 7.sp,
                               color: Colors.blue[600],

@@ -16,7 +16,7 @@ class SchedulerContactDropdown extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Select Qualified Contact *',
+          'select_qualified_contact'.tr,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -25,18 +25,18 @@ class SchedulerContactDropdown extends StatelessWidget {
         ),
         SizedBox(height: 8),
         SingleSelectPaginatedFilterDropdown<MobileContact>(
-          title: "Select Qualified Contact",
+          title: 'select_qualified_contact'.tr,
           items: controller.state.contacts,
           selectedItem: controller.state.selectedContact,
           getDefaultItem: () => controller.state.contacts.first,
           getDisplayValue: (item) {
             return item.id.isNotEmpty
                 ? "${item.name} - ${item.email}"
-                : "Choose a qualified contact";
+                : 'choose_a_qualified_contact'.tr;
           },
           getKeyValue: (item) => item,
           onSelected: controller.selectContact,
-          hintText: "Choose a qualified contact",
+          hintText: 'choose_a_qualified_contact'.tr,
           onChanged: controller.onSearchChanged,
           onRefresh: controller.onRefreshClicked,
           onClickedLoadMore: controller.onLoadMoreClicked,

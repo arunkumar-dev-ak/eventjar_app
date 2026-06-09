@@ -24,7 +24,7 @@ class NetworkStatusGrid extends GetView<NetworkScreenController> {
         crossAxisCount: crossAxisCount,
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
-        childAspectRatio: 1.15,
+        childAspectRatio: 1.05,
       ),
       itemCount: crossAxisCount,
       itemBuilder: (_, index) {
@@ -88,15 +88,19 @@ class NetworkStatusCard extends StatelessWidget {
           children: [
             Icon(data.icon, color: Colors.white, size: 22),
             const Spacer(),
-            Text(
-              data.label,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.75),
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
+            Flexible(
+              child: Text(
+                data.label,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.75),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 2),
             Text(
               count.toString(),
               style: const TextStyle(

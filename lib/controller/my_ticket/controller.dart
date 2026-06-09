@@ -63,18 +63,18 @@ class MyTicketController extends GetxController {
 
   String _formatDate(DateTime date) {
     final months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      'jan'.tr,
+      'feb'.tr,
+      'mar'.tr,
+      'apr'.tr,
+      'may'.tr,
+      'jun'.tr,
+      'jul'.tr,
+      'aug'.tr,
+      'sep'.tr,
+      'oct'.tr,
+      'nov'.tr,
+      'dec'.tr,
     ];
     final monthName = months[date.month - 1];
     return '$monthName ${date.day}, ${date.year}';
@@ -188,7 +188,7 @@ class MyTicketController extends GetxController {
 
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load Tickets",
+        title: "failed_load_tickets".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -220,7 +220,7 @@ class MyTicketController extends GetxController {
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load more tickets",
+        title: "failed_load_more_tickets".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

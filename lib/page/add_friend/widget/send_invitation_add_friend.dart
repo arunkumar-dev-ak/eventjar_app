@@ -33,7 +33,7 @@ class SendInvitationAddFriend extends GetView<AddFriendController> {
               Expanded(
                 child: _sendViaCard(
                   context: context,
-                  title: "Phone",
+                  title: 'phone'.tr,
                   icon: Icons.phone,
                   value: controller.state.sendViaPhone.value,
                   onChanged: (val) => controller.state.sendViaPhone.value = val,
@@ -46,7 +46,7 @@ class SendInvitationAddFriend extends GetView<AddFriendController> {
               Expanded(
                 child: _sendViaCard(
                   context: context,
-                  title: "Email",
+                  title: 'email'.tr,
                   icon: Icons.email_outlined,
                   value: controller.state.sendViaEmail.value,
                   // Pass the disabled state here:

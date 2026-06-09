@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Set2faController extends GetxController {
-  var appBarTitle = "Two-Factor Authentication";
+  var appBarTitle = "two_factor_authentication".tr;
   final state = Set2faState();
 
   final TextEditingController otpController = TextEditingController();
@@ -51,7 +51,7 @@ class Set2faController extends GetxController {
     state.error.value = '';
 
     if (code.length != 6) {
-      state.error.value = 'Enter 6 digit code';
+      state.error.value = 'enter_six_digit_code'.tr;
       return;
     }
 
@@ -81,18 +81,18 @@ class Set2faController extends GetxController {
 
         // UI error
         if (message.contains('2FA already enabled')) {
-          state.error.value = '2FA is already enabled';
+          state.error.value = 'two_fa_already_enabled'.tr;
         } else if (message.contains('2FA secret not generated')) {
-          state.error.value = 'Please generate QR code first';
+          state.error.value = 'generate_qr_first_error'.tr;
         } else if (message.contains('Invalid 2FA code')) {
-          state.error.value = 'Invalid code. Please try again';
+          state.error.value = 'invalid_code_retry'.tr;
         } else {
           state.error.value = message.isNotEmpty
               ? message
-              : 'Something went wrong. Please try again';
+              : 'something_went_wrong_retry'.tr;
         }
       } else {
-        state.error.value = 'Something went wrong. Please try again';
+        state.error.value = 'something_went_wrong_retry'.tr;
       }
     } finally {
       state.isLoading.value = false;
@@ -101,7 +101,7 @@ class Set2faController extends GetxController {
 
   void updateOtpValidity() {
     final otp = otpController.text;
-    state.error.value = otp.length == 6 ? "" : "Enter 6 digit code";
+    state.error.value = otp.length == 6 ? "" : "enter_six_digit_code".tr;
   }
 
   void navigateToSignInPage() {

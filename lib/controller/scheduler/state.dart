@@ -26,11 +26,11 @@ class SchedulerState {
   final Rxn<Map<String, String>> selectedDurationMap =
       Rxn<Map<String, String>>();
   final List<Map<String, String>> durations = [
-    {'key': '15', 'value': '15 minutes'},
-    {'key': '30', 'value': '30 minutes'},
-    {'key': '60', 'value': '1 hour'},
-    {'key': '90', 'value': '1.5 hours'},
-    {'key': '120', 'value': '2 hours'},
+    {'key': '15', 'value': 'fifteen_minutes'},
+    {'key': '30', 'value': 'thirty_minutes'},
+    {'key': '60', 'value': 'one_hour'},
+    {'key': '90', 'value': 'one_half_hour'},
+    {'key': '120', 'value': 'two_hour'},
   ];
 
   Rxn<Meta> meta = Rxn<Meta>();

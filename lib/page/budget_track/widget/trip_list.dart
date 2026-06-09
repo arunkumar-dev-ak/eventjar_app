@@ -30,8 +30,8 @@ class TripsList extends GetView<BudgetTrackController> {
             height: 60.hp,
             child: EmptyStateWidget(
               icon: Icons.luggage_rounded,
-              title: "No trips yet",
-              subtitle: "Create a trip and start tracking expenses",
+              title: 'no_trips_yet'.tr,
+              subtitle: 'create_trip_track_expenses'.tr,
             ),
           ),
         );

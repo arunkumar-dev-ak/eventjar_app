@@ -29,9 +29,7 @@ class HomeContent extends StatelessWidget {
       if (controller.state.events.isEmpty) {
         return SliverFillRemaining(
           hasScrollBody: false,
-          child: noEventsFoundWidget(
-            onRefresh: () => controller.onTabOpen(),
-          ),
+          child: noEventsFoundWidget(onRefresh: () => controller.onTabOpen()),
         );
       }
       return SliverList(
@@ -51,7 +49,7 @@ class HomeContent extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Event Categories',
+                          'event_categories'.tr,
                           style: TextStyle(
                             fontSize: 10.sp,
                             fontWeight: FontWeight.w600,
@@ -81,7 +79,7 @@ class HomeContent extends StatelessWidget {
                             ),
                           ),
                           if (showViewAll)
-                            _buildCategoryChip('View All', Colors.grey),
+                            _buildCategoryChip('view_all'.tr, Colors.grey),
                         ],
                       ),
                     );
@@ -102,7 +100,7 @@ class HomeContent extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Events',
+                      'events'.tr,
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w600,
@@ -116,7 +114,7 @@ class HomeContent extends StatelessWidget {
                         controller.navigateToEventCategoryPage();
                       },
                       child: Text(
-                        'View All',
+                        'view_all'.tr,
                         style: TextStyle(
                           fontSize: 8.sp,
                           fontWeight: FontWeight.w600,
@@ -142,7 +140,7 @@ class HomeContent extends StatelessWidget {
               ) = event.isHybrid
                   ? ('Hybrid', Icons.swap_horiz, const Color(0xFFFF8F00))
                   : event.isVirtual
-                  ? ('Online', Icons.videocam, const Color(0xFF1A73E8))
+                  ? ('online'.tr, Icons.videocam, const Color(0xFF1A73E8))
                   : ('Physical', Icons.location_on, const Color(0xFF4CAF50));
 
               return GestureDetector(
@@ -344,7 +342,7 @@ class HomeContent extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
-                                event.isPaid ? 'Paid' : 'Free',
+                                event.isPaid ? 'paid'.tr : 'free'.tr,
                                 style: TextStyle(
                                   color: event.isPaid
                                       ? const Color(0xFFE65100)
@@ -418,7 +416,7 @@ class HomeContent extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Organized by',
+                                    'organized_by'.tr,
                                     style: TextStyle(
                                       fontSize: 7.sp,
                                       color: AppColors.textHint(context),
@@ -477,7 +475,7 @@ class HomeContent extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'View All Events',
+                          'view_all_events'.tr,
                           style: TextStyle(
                             fontSize: 10.sp,
                             fontWeight: FontWeight.w600,
@@ -513,7 +511,7 @@ class HomeContent extends StatelessWidget {
       onTap: () {
         HapticHelper.light();
         controller.navigateToEventCategoryPage(
-          category: label == 'View All' ? null : label,
+          category: label == 'view_all'.tr ? null : label,
         );
       },
       child: Container(

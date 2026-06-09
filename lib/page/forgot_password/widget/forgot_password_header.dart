@@ -3,6 +3,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/widget/gradient_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 class ForgotPasswordHeader extends StatelessWidget {
   const ForgotPasswordHeader({super.key});
@@ -21,7 +22,7 @@ class ForgotPasswordHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Forgot Password?",
+                  '${"forgot_password".tr} ?',
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     color: Colors.white,
@@ -31,7 +32,7 @@ class ForgotPasswordHeader extends StatelessWidget {
                 ),
                 SizedBox(height: 0.5.hp),
                 GradientAutoSizeText(
-                  content: "Enter your email to reset your password.",
+                  content: 'enter_email_reset_desc'.tr,
                   textSize: 12.sp,
                   gradientStart: AppColors.gradientDarkStart,
                   gradientEnd: AppColors.gradientDarkEnd,

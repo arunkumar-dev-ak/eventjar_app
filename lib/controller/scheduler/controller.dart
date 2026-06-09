@@ -17,7 +17,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class SchedulerController extends GetxController {
-  var appBarTitle = "Schedule Meeting";
+  var appBarTitle = "schedule_meeting".tr;
   final state = SchedulerState();
   final formKey = GlobalKey<FormState>();
 
@@ -40,7 +40,7 @@ class SchedulerController extends GetxController {
 
   void _initializeForReschedule(ContactMeeting meeting) {
     state.selectedMeeting.value = meeting;
-    appBarTitle = "Reschedule Meeting";
+    appBarTitle = "reschedule_meeting".tr;
 
     state.scheduledAt.value = meeting.scheduledAt.toLocal();
     state.dateTimeController.text = getFormattedDate(state.scheduledAt.value);
@@ -66,7 +66,7 @@ class SchedulerController extends GetxController {
   }
 
   void _initializeForNewMeeting() {
-    appBarTitle = "Schedule Meeting";
+    appBarTitle = "schedule_meeting".tr;
     state.scheduledAt.value = DateTime.now().add(const Duration(minutes: 30));
     state.dateTimeController.text = getFormattedDate(state.scheduledAt.value);
     state.selectedDurationMap.value = state.durations.first;
@@ -74,7 +74,7 @@ class SchedulerController extends GetxController {
 
   String? validateContact(String? value) {
     if (state.selectedContact.value == null) {
-      return "Please select a qualified contact";
+      return "select_qualified_contact_error".tr;
     }
     return null;
   }
@@ -89,7 +89,7 @@ class SchedulerController extends GetxController {
   String? validateDuration(String? value) {
     final Map<String, String>? durationMap = state.selectedDurationMap.value;
     if (durationMap == null || durationMap.isEmpty) {
-      return "Please select duration";
+      return "select_duration_error".tr;
     }
     return null;
   }
@@ -158,8 +158,8 @@ class SchedulerController extends GetxController {
               );
             } else {
               AppSnackbar.error(
-                title: 'Error',
-                message: 'Failed to load contacts',
+                title: 'error'.tr,
+                message: 'failed_load_contacts'.tr,
               );
             }
           })
@@ -169,7 +169,7 @@ class SchedulerController extends GetxController {
     } catch (e) {
       LoggerService.loggerInstance.e(e);
       state.isContactDropdownLoading.value = false;
-      AppSnackbar.error(title: 'Error', message: 'Failed to load contacts');
+      AppSnackbar.error(title: 'error'.tr, message: 'failed_load_contacts'.tr);
     }
   }
 
@@ -205,11 +205,11 @@ class SchedulerController extends GetxController {
                   Get.offAllNamed('/sign-in');
                   return;
                 }
-                ApiErrorHandler.handleDioError(error, 'Search failed');
+                ApiErrorHandler.handleDioError(error, 'search_failed'.tr);
               } else {
                 AppSnackbar.error(
-                  title: 'Search Error',
-                  message: 'Failed to search',
+                  title: 'search_error'.tr,
+                  message: 'search_failed'.tr,
                 );
               }
             })
@@ -219,7 +219,7 @@ class SchedulerController extends GetxController {
       } catch (e) {
         LoggerService.loggerInstance.e(e);
         state.isContactDropdownLoading.value = false;
-        AppSnackbar.error(title: 'Error', message: 'Search failed');
+        AppSnackbar.error(title: 'error'.tr, message: 'search_failed'.tr);
       }
     });
   }
@@ -253,7 +253,10 @@ class SchedulerController extends GetxController {
               }
               ApiErrorHandler.handleDioError(error, 'Load more failed');
             } else {
-              AppSnackbar.error(title: 'Error', message: 'Failed to load more');
+              AppSnackbar.error(
+                title: 'error'.tr,
+                message: 'failed_load_more'.tr,
+              );
             }
           })
           .whenComplete(() {
@@ -262,7 +265,7 @@ class SchedulerController extends GetxController {
     } catch (e) {
       LoggerService.loggerInstance.e(e);
       state.isContactDropdownLoadMoreLoading.value = false;
-      AppSnackbar.error(title: 'Error', message: 'Failed to load more');
+      AppSnackbar.error(title: 'error'.tr, message: 'failed_load_more'.tr);
     }
   }
 
@@ -290,8 +293,8 @@ class SchedulerController extends GetxController {
               ApiErrorHandler.handleDioError(error, 'Refresh failed');
             } else {
               AppSnackbar.error(
-                title: 'Refresh Error',
-                message: 'Failed to refresh',
+                title: 'refresh_error'.tr,
+                message: 'failed_refresh'.tr,
               );
             }
           })
@@ -301,7 +304,7 @@ class SchedulerController extends GetxController {
     } catch (e) {
       LoggerService.loggerInstance.e(e);
       state.isContactDropdownLoading.value = false;
-      AppSnackbar.error(title: 'Error', message: 'Failed to refresh');
+      AppSnackbar.error(title: 'error'.tr, message: 'failed_refresh'.tr);
     }
   }
 
@@ -376,7 +379,7 @@ class SchedulerController extends GetxController {
     if (!isRescheduleMode && state.selectedContact.value == null) {
       AppSnackbar.warning(
         title: 'Invalid',
-        message: 'Please select a qualified contact',
+        message: 'select_qualified_contact_error'.tr,
       );
       return false;
     }
@@ -384,20 +387,23 @@ class SchedulerController extends GetxController {
     if (state.scheduledAt.value == null) {
       AppSnackbar.warning(
         title: 'Invalid',
-        message: 'Please select valid date & time',
+        message: 'select_valid_date_time_error'.tr,
       );
       return false;
     }
 
     final durationMap = state.selectedDurationMap.value;
     if (durationMap == null || durationMap.isEmpty) {
-      AppSnackbar.warning(title: 'Invalid', message: 'Please select duration');
+      AppSnackbar.warning(
+        title: 'Invalid',
+        message: 'select_duration_error'.tr,
+      );
       return false;
     }
 
     // Status validation only for reschedule
     if (isRescheduleMode && state.selectedStatus.value == null) {
-      AppSnackbar.warning(title: 'Invalid', message: 'Please select status');
+      AppSnackbar.warning(title: 'Invalid', message: 'select_status_error'.tr);
       return false;
     }
 
@@ -437,15 +443,21 @@ class SchedulerController extends GetxController {
       // ✅ Step 3: Handle success
       if (success) {
         final title = isRescheduleMode
-            ? "Meeting Rescheduled"
-            : "Meeting Scheduled";
-        final message =
-            "Your meeting has been ${isRescheduleMode ? 'rescheduled' : 'scheduled'} successfully.";
+            ? "meeting_scheduled".tr
+            : "meeting_scheduled".tr;
 
-        AppSnackbar.success(title: title, message: message);
+        AppSnackbar.success(
+          title: title,
+          message: isRescheduleMode
+              ? "meeting_rescheduled_success".tr
+              : "meeting_scheduled_success".tr,
+        );
         Navigator.pop(context, "refresh");
       } else {
-        AppSnackbar.error(title: "Failed", message: "Something went wrong");
+        AppSnackbar.error(
+          title: "Failed",
+          message: "generic_try_again_error".tr,
+        );
       }
     } catch (err) {
       LoggerService.loggerInstance.e(err);
@@ -465,7 +477,7 @@ class SchedulerController extends GetxController {
       } else {
         AppSnackbar.error(
           title: "Failed",
-          message: "Something went wrong. Please try again.",
+          message: "generic_try_again_error".tr,
         );
       }
     } finally {

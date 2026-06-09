@@ -13,7 +13,7 @@ class ExperienceDropdown extends GetView<SummaryFormController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Experience",
+          'experience'.tr,
           style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w600),
         ),
         SizedBox(height: 1.hp),

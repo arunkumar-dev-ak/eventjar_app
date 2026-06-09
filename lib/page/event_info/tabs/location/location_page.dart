@@ -18,7 +18,7 @@ class LocationPage extends StatelessWidget {
       final eventInfo = controller.state.eventInfo.value;
 
       if (eventInfo == null) {
-        return const Center(child: Text("No event info available"));
+        return Center(child: Text('no_event_info_available'.tr));
       }
 
       final isVirtual = eventInfo.isVirtual;
@@ -34,10 +34,10 @@ class LocationPage extends StatelessWidget {
             // virtual
             if (isVirtual || isHybrid) ...[
               _buildCardSection(
-                title: "Virtual Event",
+                title: 'virtual_event'.tr,
                 icon: Icons.monitor,
                 child: buildVirtualEventCard(
-                  platform: eventInfo.virtualPlatform ?? "Online Platform",
+                  platform: eventInfo.virtualPlatform ?? 'online_platform'.tr,
                   meetingLink: eventInfo.virtualLink,
                 ),
               ),
@@ -47,7 +47,7 @@ class LocationPage extends StatelessWidget {
             // physical
             if (hasPhysicalLocation || isHybrid) ...[
               _buildCardSection(
-                title: "Physical Event",
+                title: 'physical_event'.tr,
                 icon: Icons.location_city,
                 child: buildPhysicalEventCard(eventInfo),
               ),
@@ -58,7 +58,7 @@ class LocationPage extends StatelessWidget {
             if (eventInfo.organizerContactPhone != null &&
                 eventInfo.organizerContactPhone!.isNotEmpty) ...[
               _buildCardSection(
-                title: "Contact Information",
+                title: 'contact_information'.tr,
                 icon: Icons.contact_phone,
                 child: buildContactCard(
                   phone: eventInfo.organizerContactPhone!,

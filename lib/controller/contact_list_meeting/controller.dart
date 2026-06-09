@@ -101,8 +101,8 @@ class ContactListMeetingController extends GetxController {
     try {
       await ContactListMeetingApi.confirmMeeting(id: meetingId);
       AppSnackbar.success(
-        title: 'Meeting Completed!',
-        message: 'This meeting has been marked as accepted successfully.',
+        title: 'meeting_completed'.tr,
+        message: 'meeting_marked_accepted'.tr,
       );
       Navigator.pop(Get.context!, "refresh");
     } catch (err) {
@@ -190,14 +190,14 @@ class ContactListMeetingController extends GetxController {
       await ContactListMeetingApi.rescheduleMeeting(id: meetingId, dto: dto);
       AppSnackbar.success(
         title: "Success",
-        message: "Meeting rescheduled successfully",
+        message: "meeting_rescheduled_success".tr,
       );
 
       return true;
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to change status",
+        title: "failed_change_status".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -213,26 +213,14 @@ class ContactListMeetingController extends GetxController {
     final meeting = state.currentMeeting.value;
     if (meeting == null) return;
 
-    // 1. FIXED: Convert the UTC database time to the user's local device time
+    // 1. Convert the UTC database time to the user's local device time
     final localDateTime = meeting.scheduledAt.toLocal();
-    LoggerService.loggerInstance.dynamic_d(localDateTime);
     updateMeetingDate(localDateTime);
 
     // 2. Fallback check for time parsing
-    if (meeting.meetingTime != null && meeting.meetingTime!.contains(':')) {
-      final timeParts = meeting.meetingTime!.split(":");
-      updateMeetingTime(
-        TimeOfDay(
-          hour: int.parse(timeParts[0]),
-          minute: int.parse(timeParts[1]),
-        ),
-      );
-    } else {
-      // If meetingTime is missing or corrupt, fallback cleanly to the localDateTime hours/minutes
-      updateMeetingTime(
-        TimeOfDay(hour: localDateTime.hour, minute: localDateTime.minute),
-      );
-    }
+    updateMeetingTime(
+      TimeOfDay(hour: localDateTime.hour, minute: localDateTime.minute),
+    );
 
     final result = await Get.dialog(
       RescheduleMeetingContactList(meetingId: meeting.id),
@@ -249,14 +237,14 @@ class ContactListMeetingController extends GetxController {
     try {
       await ContactListMeetingApi.completeMeeting(id: meetingId);
       AppSnackbar.success(
-        title: 'Meeting Completed!',
+        title: 'meeting_completed'.tr,
         message: 'This meeting has been marked as completed successfully.',
       );
       Navigator.pop(Get.context!, "refresh");
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to change status",
+        title: "failed_change_status".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();

@@ -72,8 +72,8 @@ class CheckoutTicketDropDown extends GetView<CheckoutController> {
                         ),
                         child: Text(
                           totalItems > 0
-                              ? "$totalItems tickets"
-                              : "Add Tickets",
+                              ? "$totalItems ${'tickets'.tr}"
+                              : "add_tickets".tr,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 8.sp,
@@ -85,10 +85,10 @@ class CheckoutTicketDropDown extends GetView<CheckoutController> {
                     Expanded(
                       child: Text(
                         isCheckingEligibility
-                            ? "Checking eligibility..."
+                            ? "checking_eligibility".tr
                             : totalItems > 0
-                            ? "$totalItems ticket${totalItems != 1 ? 's' : ''} selected"
-                            : "Tap to select tickets",
+                            ? "$totalItems ${'ticket'.tr}${totalItems != 1 ? 's' : ''} selected"
+                            : "tap_to_select_tickets".tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w600,
@@ -202,7 +202,9 @@ Widget _buildSelectionOnlyTicket(TicketTier ticket) {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: isInCart ? Colors.green.shade600 : AppColors.dividerStatic,
+                color: isInCart
+                    ? Colors.green.shade600
+                    : AppColors.dividerStatic,
                 width: 2,
               ),
               color: isInCart ? Colors.green.shade600 : Colors.transparent,

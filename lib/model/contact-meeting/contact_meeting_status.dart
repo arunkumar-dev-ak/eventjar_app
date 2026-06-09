@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 enum MeetingStatus {
   ALL,
@@ -12,19 +13,19 @@ enum MeetingStatus {
   String get displayName {
     switch (this) {
       case MeetingStatus.ALL:
-        return 'All';
+        return 'all'.tr;
       case MeetingStatus.SCHEDULED:
-        return 'Scheduled';
+        return 'scheduled'.tr;
       case MeetingStatus.CONFIRMED:
-        return 'Confirmed';
+        return 'confirmed'.tr;
       case MeetingStatus.DECLINED:
-        return 'Declined';
+        return 'declined'.tr;
       case MeetingStatus.CANCELLED:
-        return 'Cancelled';
+        return 'cancelled'.tr;
       case MeetingStatus.COMPLETED:
-        return 'Completed';
+        return 'completed'.tr;
       case MeetingStatus.NO_SHOW:
-        return 'No Show';
+        return 'no_show'.tr;
     }
   }
 
@@ -56,11 +57,11 @@ enum MeetingStatusForReschedule {
   String get displayName {
     switch (this) {
       case MeetingStatusForReschedule.SCHEDULED:
-        return 'Scheduled';
+        return 'scheduled'.tr;
       case MeetingStatusForReschedule.DECLINED:
-        return 'Declined';
+        return 'declined'.tr;
       case MeetingStatusForReschedule.COMPLETED:
-        return 'Completed';
+        return 'completed'.tr;
     }
   }
 

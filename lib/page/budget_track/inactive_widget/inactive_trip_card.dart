@@ -36,7 +36,7 @@ class InactiveTripCard extends GetView<BudgetTrackController> {
     final diff = DateTime.now().difference(date);
 
     if (diff.inMinutes < 1) {
-      return 'Just now';
+      return 'just_now'.tr;
     }
 
     if (diff.inHours < 1) {
@@ -48,7 +48,7 @@ class InactiveTripCard extends GetView<BudgetTrackController> {
     }
 
     if (diff.inDays == 1) {
-      return 'Yesterday';
+      return 'yesterday'.tr;
     }
 
     if (diff.inDays < 7) {
@@ -77,13 +77,13 @@ class InactiveTripCard extends GetView<BudgetTrackController> {
     Color statusColor;
 
     if (youReceive > 0) {
-      statusText = "RECEIVE";
+      statusText = "you_receive".tr.toUpperCase();
       statusColor = Colors.green;
     } else if (youOwe > 0) {
-      statusText = "YOU OWE";
+      statusText = "you_owe".tr.toUpperCase();
       statusColor = Colors.red;
     } else {
-      statusText = "MY SHARE";
+      statusText = "my_share".tr.toUpperCase();
       statusColor = AppColors.gradientDarkStart;
     }
 
@@ -147,7 +147,7 @@ class InactiveTripCard extends GetView<BudgetTrackController> {
                     SizedBox(height: .4.hp),
 
                     Text(
-                      "${trip.expensesCount} expenses • ${trip.membersCount} members",
+                      "${trip.expensesCount} ${'expenses'.tr} • ${trip.membersCount} ${'members'.tr}",
                       style: TextStyle(
                         fontSize: 7.5.sp,
                         color: AppColors.textSecondary(context),
@@ -224,7 +224,7 @@ class InactiveTripCard extends GetView<BudgetTrackController> {
                   borderRadius: BorderRadius.circular(20.sp),
                 ),
                 child: Text(
-                  "My Owe Members : ${trip.myOweMembersCount}",
+                  "${'my_owe_members'.tr} : ${trip.myOweMembersCount}",
                   style: TextStyle(
                     fontSize: 7.sp,
                     fontWeight: FontWeight.w600,
@@ -248,7 +248,7 @@ class InactiveTripCard extends GetView<BudgetTrackController> {
                     borderRadius: BorderRadius.circular(20.sp),
                   ),
                   child: Text(
-                    "Created ${formatTimeAgo(trip.createdAt)}",
+                    "${'created_by'.tr} ${formatTimeAgo(trip.createdAt)}",
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -269,10 +269,9 @@ class InactiveTripCard extends GetView<BudgetTrackController> {
     showDialog(
       context: context,
       builder: (_) => DeleteConfirmDialog(
-        title: "Delete Trip",
+        title: 'delete_trip'.tr,
         itemName: trip.name,
-        warningText:
-            "This action cannot be undone and will permanently delete this trip and all its data.",
+        warningText: "permanent_action_warning".tr,
         onDelete: () => controller.deleteTrip(trip),
       ),
     );

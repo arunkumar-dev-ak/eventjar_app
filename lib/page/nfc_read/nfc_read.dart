@@ -34,7 +34,7 @@ class NfcReadPage extends GetView<NfcReadController> {
             Icon(Icons.nfc, size: 22, color: Colors.blue.shade700),
             SizedBox(width: 8),
             Text(
-              'Read Card',
+              'read_card'.tr,
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 11.sp,
@@ -90,12 +90,12 @@ class NfcActionContainer extends GetView<NfcReadController> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 2.hp),
       child: NfcActionCard(
-        title: isIos ? 'Write Not Available on iOS' : 'Write Contact',
+        title: isIos ? 'Write Not Available on iOS' : 'write_contact'.tr,
         subtitle: isIos
             ? 'NFC card writing is not supported on iOS. Use an Android device.'
             : hasProfile
-            ? 'Write your contact to NFC card'
-            : 'Set up your profile to write contact',
+            ? 'write_your_contact_to_nfc'.tr
+            : 'set_up_profile_to_write_contact'.tr,
         icon: isIos ? Icons.phone_android : Icons.nfc,
         gradientColors: isIos
             ? const [Color(0xFF9E9E9E), Color(0xFF616161)]
@@ -115,7 +115,9 @@ class _StatusBadge extends GetView<NfcReadController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      final nfcStatusText = controller.getNfcStatusText();
+      final nfcStatus = controller.getNfcStatusText();
+      final nfcStatusText = nfcStatus[0];
+      final nfcStatusColor = nfcStatus[1];
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
@@ -129,18 +131,14 @@ class _StatusBadge extends GetView<NfcReadController> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.circle,
-              size: 7.sp,
-              color: _getStatusColor(nfcStatusText),
-            ),
+            Icon(Icons.circle, size: 7.sp, color: nfcStatusColor),
             SizedBox(width: 1.wp),
             Text(
               nfcStatusText,
               style: TextStyle(
                 fontSize: 8.sp,
                 fontWeight: FontWeight.w600,
-                color: _getStatusColor(nfcStatusText),
+                color: nfcStatusColor,
                 letterSpacing: 0.5,
               ),
             ),
@@ -148,17 +146,5 @@ class _StatusBadge extends GetView<NfcReadController> {
         ),
       );
     });
-  }
-
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'NFC Ready':
-        return Colors.green;
-      case 'NFC Not Available':
-      case 'NFC Disabled':
-        return Colors.orange;
-      default:
-        return Colors.blueAccent;
-    }
   }
 }

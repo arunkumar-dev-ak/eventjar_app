@@ -2,8 +2,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get/get.dart';
 
 class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
   final String title;
@@ -77,7 +76,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
       final bool isSelected = selected != null;
       final String displayText = selected != null
           ? getDisplayValue(selected)
-          : (hintText ?? 'Select option');
+          : (hintText ?? 'select_option'.tr);
 
       return GestureDetector(
         onTap: () {
@@ -154,7 +153,10 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
 
         return Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 40,
+          ),
           child: Container(
             constraints: BoxConstraints(maxHeight: 70.hp, maxWidth: 90.wp),
             decoration: BoxDecoration(
@@ -205,6 +207,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                           ),
                           onPressed: onRefresh,
                           padding: EdgeInsets.zero,
+                          tooltip: 'refresh'.tr,
                         ),
                       ),
                     ],
@@ -231,11 +234,15 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide(color: AppColors.border(context)),
+                        borderSide: BorderSide(
+                          color: AppColors.border(context),
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide(color: AppColors.border(context)),
+                        borderSide: BorderSide(
+                          color: AppColors.border(context),
+                        ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(14),
@@ -260,76 +267,79 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                     final bool isLoadMoreLoading = onLoadMoreLoading.value;
                     final bool showLoadMore = hasMore?.value ?? true;
 
+                    // Empty state
                     if (filteredItems.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              isListLoading
-                                  ? Icons.hourglass_empty
-                                  : Icons.search_off,
-                              size: 40,
-                              color: AppColors.iconMuted(context),
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            isListLoading
+                                ? Icons.hourglass_empty
+                                : Icons.search_off,
+                            size: 40,
+                            color: AppColors.iconMuted(context),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            isListLoading
+                                ? 'loading'.tr
+                                : items.isEmpty
+                                ? 'no_data_loaded'.tr
+                                : 'no_matches_found'.tr,
+                            style: TextStyle(
+                              color: AppColors.textSecondary(context),
+                              fontSize: 14,
                             ),
-                            const SizedBox(height: 8),
-                            Text(
-                              isListLoading
-                                  ? 'Loading...'
-                                  : 'No matches found',
-                              style: TextStyle(
-                                color: AppColors.textSecondary(context),
-                                fontSize: 9.5.sp,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       );
                     }
 
                     return Stack(
                       children: [
+                        // List
                         ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                          itemCount: filteredItems.length +
-                              (showLoadMore ? 1 : 0),
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                          itemCount: filteredItems.length + 1,
                           itemBuilder: (context, index) {
                             if (index >= filteredItems.length) {
                               if (isLoadMoreLoading) {
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
-                                  child: Center(
-                                    child: SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: primary,
-                                      ),
+                                return Center(
+                                  child: SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: primary,
                                     ),
                                   ),
                                 );
                               }
                               return GestureDetector(
                                 onTap: onClickedLoadMore,
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 4),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 12),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: primary.withValues(alpha: 0.3),
-                                    ),
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    8,
+                                    16,
+                                    16,
                                   ),
-                                  child: Text(
-                                    'Load More',
-                                    style: TextStyle(
-                                      fontSize: 9.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: primary,
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        'load_more'.tr,
+                                        style: TextStyle(
+                                          fontSize: 8.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: primary,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -337,7 +347,8 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                             }
 
                             final T item = filteredItems[index];
-                            final bool isSelectedItem = selected != null &&
+                            final bool isSelectedItem =
+                                selected != null &&
                                 getKeyValue(item) == getKeyValue(selected);
 
                             return AnimatedContainer(
@@ -363,7 +374,8 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                         BoxShadow(
                                           color: isDark
                                               ? headerColor.withValues(
-                                                  alpha: 0.2)
+                                                  alpha: 0.2,
+                                                )
                                               : selectedShade1,
                                           blurRadius: 8,
                                           offset: const Offset(0, 2),
@@ -421,7 +433,8 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                                               color: isSelectedItem
                                                   ? primary
                                                   : AppColors.textPrimary(
-                                                      context),
+                                                      context,
+                                                    ),
                                             ),
                                           ),
                                         ),
@@ -436,8 +449,9 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                         if (isListLoading)
                           Positioned.fill(
                             child: Container(
-                              color:
-                                  AppColors.cardBg(context).withValues(alpha: 0.8),
+                              color: AppColors.cardBg(
+                                context,
+                              ).withValues(alpha: 0.8),
                               alignment: Alignment.center,
                               child: CircularProgressIndicator(color: primary),
                             ),
@@ -462,7 +476,7 @@ class SingleSelectPaginatedFilterDropdown<T> extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Close',
+                        'close'.tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w600,

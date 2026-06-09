@@ -23,6 +23,7 @@ class LoginTextFormField extends StatelessWidget {
   final RxBool isFieldFocused;
   final Function(String) onChanged;
   final double fontSize;
+  final IconData icon;
 
   const LoginTextFormField({
     required this.controller,
@@ -34,6 +35,7 @@ class LoginTextFormField extends StatelessWidget {
     required this.isFieldValid,
     required this.isFieldFocused,
     required this.onChanged,
+    required this.icon,
     this.fontSize = 12, // default font size
     super.key,
   });
@@ -80,10 +82,7 @@ class LoginTextFormField extends StatelessWidget {
               borderSide: BorderSide(color: Colors.red),
               borderRadius: BorderRadius.circular(10),
             ),
-            prefixIcon: Icon(
-              _getFieldIcon(label),
-              color: AppColors.iconMuted(context),
-            ),
+            prefixIcon: Icon(icon, color: AppColors.iconMuted(context)),
             suffixIcon: isPassword
                 ? IconButton(
                     onPressed: togglePasswordVisibility,
@@ -99,17 +98,6 @@ class LoginTextFormField extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-IconData _getFieldIcon(String label) {
-  switch (label) {
-    case "Email":
-      return Icons.email;
-    case "Password":
-      return Icons.lock;
-    default:
-      return Icons.text_fields;
   }
 }
 
@@ -141,7 +129,8 @@ class SignInForm extends StatelessWidget {
           children: [
             LoginTextFormField(
               controller: controller.emailController,
-              label: "Email",
+              label: 'email'.tr,
+              icon: Icons.email,
               validator: controller.validateEmail,
               isPassword: false,
               isPasswordHidden: false,
@@ -156,7 +145,8 @@ class SignInForm extends StatelessWidget {
             Obx(
               () => LoginTextFormField(
                 controller: controller.passwordController,
-                label: "Password",
+                label: 'password'.tr,
+                icon: Icons.lock,
                 validator: controller.validatePassword,
                 isPassword: true,
                 isPasswordHidden: controller.state.isPasswordHidden.value,
@@ -184,8 +174,8 @@ class SignInForm extends StatelessWidget {
                     HapticHelper.light();
                     controller.navigateToForgotPassword();
                   },
-                  child: const Text(
-                    "Forgot Password?",
+                  child: Text(
+                    '${"forgot_password".tr} ?',
                     style: TextStyle(color: AppColors.placeHolderColor),
                   ),
                 ),
@@ -208,7 +198,7 @@ class SignInForm extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 3.wp),
                   child: Text(
-                    "OR",
+                    "or".tr,
                     style: TextStyle(
                       color: AppColors.textHint(context),
                       fontSize: 11.sp,
@@ -245,7 +235,7 @@ class SignInForm extends StatelessWidget {
                   Obx(() {
                     return Expanded(
                       child: SocialButton(
-                        text: "LinkedIn",
+                        text: 'linkedin'.tr,
                         assetPath: "assets/app_icon/linkedin.png",
                         color: Colors.blue,
                         isLoading: controller.state.isLinkedinLoading.value,

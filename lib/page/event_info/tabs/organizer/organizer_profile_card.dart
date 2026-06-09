@@ -3,6 +3,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget buildOrganizerProfile(Organizer organizer) {
   return Container(
@@ -134,7 +135,7 @@ class _OrganizerDetails extends StatelessWidget {
         const Icon(Icons.verified, color: Colors.white, size: 12),
         SizedBox(width: 1.wp),
         Text(
-          organizer.role ?? "Organizer",
+          organizer.role ?? 'organizer'.tr,
           style: TextStyle(
             color: Colors.white,
             fontSize: 7.sp,

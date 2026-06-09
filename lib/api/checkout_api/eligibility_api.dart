@@ -26,7 +26,7 @@ class CheckoutApi {
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Something went wrong",
+        error: "something_went_wrong".tr,
       );
     } on DioException catch (err) {
       if (err.response?.statusCode == 401) {

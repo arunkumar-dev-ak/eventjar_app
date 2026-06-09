@@ -46,8 +46,8 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
                 SizedBox(height: 4.hp),
                 // 2. Multi-select 1
                 CommonMultiSelectDropdown(
-                  title: "Interested in connecting with",
-                  subtitle: "Select all that apply",
+                  title: 'interested_in_connecting_with'.tr,
+                  subtitle: 'select_all_that_apply'.tr,
                   selectedItems: controller.state.selectedConnectionTypes,
                   allItems: controller.connectionTypes,
                   fieldKey: 'interestedInConnecting',
@@ -56,8 +56,8 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
 
                 // 3. Multi-select 2
                 CommonMultiSelectDropdown(
-                  title: "How can you help others?",
-                  subtitle: "Select services or expertise you can offer",
+                  title: 'how_help_others'.tr,
+                  subtitle: 'select_services_or_expertise'.tr,
                   selectedItems: controller.state.selectedHelpOfferings,
                   allItems: controller.helpOfferings,
                   fieldKey: 'helpOfferings',
@@ -66,8 +66,8 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
 
                 // 4. Multi-select 3
                 CommonMultiSelectDropdown(
-                  title: "Topics you're open to discussing",
-                  subtitle: "Select relevant business topics",
+                  title: 'topics_open_to_discussing'.tr,
+                  subtitle: 'select_relevant_business_topics'.tr,
                   selectedItems: controller.state.selectedDiscussionTopics,
                   allItems: controller.discussionTopics,
                   fieldKey: 'discussionTopics',
@@ -99,7 +99,7 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
                           elevation: 0,
                         ),
                         child: Text(
-                          'Reset',
+                          'reset'.tr,
                           style: TextStyle(
                             fontSize: defaultFontSize,
                             fontWeight: FontWeight.w600,
@@ -146,7 +146,7 @@ class NetworkingFormPage extends GetView<NetworkingFormController> {
                                   ),
                                 )
                               : Text(
-                                  'Update Info',
+                                  'update_info'.tr,
                                   style: TextStyle(
                                     fontSize: defaultFontSize,
                                     fontWeight: FontWeight.w700,

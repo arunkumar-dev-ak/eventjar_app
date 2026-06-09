@@ -2,6 +2,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:get/get.dart';
 
 void myTicketShowQRSheet({
   required BuildContext context,
@@ -61,7 +62,7 @@ class _QRBottomSheet extends StatelessWidget {
 
           // Header
           Text(
-            'Your Ticket',
+            'your_ticket'.tr,
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.bold,
@@ -118,7 +119,7 @@ class _QRBottomSheet extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  'Confirmation Code',
+                  'confirmation_code'.tr,
                   style: TextStyle(
                     fontSize: 8.sp,
                     color: AppColors.textSecondary(context),
@@ -137,7 +138,7 @@ class _QRBottomSheet extends StatelessWidget {
                 ),
                 SizedBox(height: 1.5.hp),
                 Text(
-                  'Registered On',
+                  'registered_on'.tr,
                   style: TextStyle(
                     fontSize: 8.sp,
                     color: AppColors.textSecondary(context),
@@ -173,11 +174,8 @@ class _QRBottomSheet extends StatelessWidget {
                 elevation: 0,
               ),
               child: Text(
-                'Close',
-                style: TextStyle(
-                  fontSize: 10.sp,
-                  fontWeight: FontWeight.w600,
-                ),
+                'close'.tr,
+                style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.w600),
               ),
             ),
           ),

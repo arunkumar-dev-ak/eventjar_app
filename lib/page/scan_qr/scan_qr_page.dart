@@ -70,8 +70,8 @@ class _ScanQrPageState extends State<ScanQrPage> {
                         ),
                       ],
                     ),
-                    child: const Text(
-                      'Skip Tour',
+                    child: Text(
+                      'skip_tour'.tr,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 13,

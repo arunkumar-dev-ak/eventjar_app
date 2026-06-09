@@ -197,7 +197,7 @@ class _SetupProfilePrompt extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Set up your profile',
+                    'set_up_your_profile'.tr,
                     style: TextStyle(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w800,
@@ -207,7 +207,7 @@ class _SetupProfilePrompt extends StatelessWidget {
                   ),
                   SizedBox(height: 0.5.hp),
                   Text(
-                    'Create your contact details to write to NFC cards',
+                    'create_contact_details_nfc_desc'.tr,
                     style: TextStyle(
                       fontSize: 7.sp,
                       fontWeight: FontWeight.w500,
@@ -235,7 +235,7 @@ class _SetupProfilePrompt extends StatelessWidget {
                 ],
               ),
               child: Text(
-                'Get Started',
+                'get_started'.tr,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 8.sp,

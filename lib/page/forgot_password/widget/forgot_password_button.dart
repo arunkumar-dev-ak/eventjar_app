@@ -56,7 +56,7 @@ class ForgotPasswordSubmitButton extends StatelessWidget {
                   child: isButtonLoading
                       ? CircularProgressIndicator(color: Colors.white)
                       : Text(
-                          "Continue",
+                          "continue_btn".tr,
                           style: TextStyle(
                             color: const Color.fromARGB(255, 255, 255, 255),
                             fontSize: 11.sp,
@@ -97,7 +97,7 @@ void openModel(BuildContext context, {required VoidCallback onTap}) {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Check your email',
+                  'check_email'.tr,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
@@ -128,7 +128,7 @@ void openModel(BuildContext context, {required VoidCallback onTap}) {
                     ),
                     child: Center(
                       child: Text(
-                        'Check Email',
+                        'check_email'.tr,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 11.sp,

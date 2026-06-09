@@ -2,6 +2,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AuthSignUp extends StatelessWidget {
   final Function onPressed;
@@ -23,7 +24,7 @@ class AuthSignUp extends StatelessWidget {
         },
         child: RichText(
           text: TextSpan(
-            text: "Don't have an account? ",
+            text: '${'dont_have_account'.tr} ? ',
             style: TextStyle(
               color: AppColors.textSecondary(context),
               fontSize: 11.sp,
@@ -31,7 +32,7 @@ class AuthSignUp extends StatelessWidget {
             ),
             children: [
               TextSpan(
-                text: "Create Account",
+                text: 'create_account_btn'.tr,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 11.sp,

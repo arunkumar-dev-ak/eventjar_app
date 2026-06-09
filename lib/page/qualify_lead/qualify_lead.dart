@@ -38,14 +38,14 @@ class QualifyLeadPage extends GetView<QualifyLeadController> {
                   // Contact Info Cards
                   buildLeadCard(
                     icon: Icons.person,
-                    title: 'Name',
+                    title: 'name'.tr,
                     value: controller.state.contact.value?.name ?? '',
                     color: Colors.blue,
                   ),
                   SizedBox(height: 1.hp),
                   buildLeadCard(
                     icon: Icons.email,
-                    title: 'Email',
+                    title: 'email'.tr,
                     value: controller.state.contact.value?.email ?? '',
                     color: Colors.green,
                   ),
@@ -53,21 +53,21 @@ class QualifyLeadPage extends GetView<QualifyLeadController> {
                   SizedBox(height: 3.hp),
 
                   // Common TextFormFields
-                  _buildSectionTitle('Lead Score'),
+                  _buildSectionTitle('lead_score'.tr),
                   SizedBox(height: 0.5.hp),
                   qualifyLeadTextField(
                     controller: controller.leadScoreController,
-                    label: 'Lead Score (1-10)',
+                    label: 'lead_score'.tr,
                     prefixIcon: Icons.star,
                     keyboardType: TextInputType.number,
                     maxLength: 2,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Enter lead score';
+                        return 'enter_lead_score'.tr;
                       }
                       final score = int.tryParse(value);
                       if (score == null || score < 1 || score > 10) {
-                        return 'Score must be 1-10';
+                        return 'score_range_error'.tr;
                       }
 
                       return null;
@@ -75,12 +75,12 @@ class QualifyLeadPage extends GetView<QualifyLeadController> {
                   ),
 
                   SizedBox(height: 2.hp),
-                  _buildSectionTitle('Qualification Details'),
+                  _buildSectionTitle('qualification_details'.tr),
                   SizedBox(height: 0.5.hp),
 
                   qualifyLeadTextField(
                     controller: controller.interestsController,
-                    label: 'Interests/Needs',
+                    label: 'interests_needs'.tr,
                     prefixIcon: Icons.lightbulb_outline,
                     maxLines: 3,
                     minLines: 1,
@@ -89,21 +89,21 @@ class QualifyLeadPage extends GetView<QualifyLeadController> {
                   SizedBox(height: 2.hp),
                   qualifyLeadTextField(
                     controller: controller.budgetController,
-                    label: 'Budget Range',
+                    label: 'budget_range'.tr,
                     prefixIcon: Icons.attach_money,
                   ),
 
                   SizedBox(height: 2.hp),
                   qualifyLeadTextField(
                     controller: controller.timelineController,
-                    label: 'Decision Timeline',
+                    label: 'decision_timeline'.tr,
                     prefixIcon: Icons.schedule,
                   ),
 
                   SizedBox(height: 2.hp),
                   qualifyLeadTextField(
                     controller: controller.notesController,
-                    label: 'Qualification Notes',
+                    label: 'qualification_notes'.tr,
                     maxLines: 4,
                     minLines: 2,
                   ),

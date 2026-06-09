@@ -70,7 +70,7 @@ class Disable2faDialog extends GetView<UserProfileController> {
                         controller: controller.disablePasswordController,
                         obscureText: !controller.state.isDisable2FAToggle.value,
                         decoration: InputDecoration(
-                          labelText: "Password",
+                          labelText: 'password'.tr,
                           filled: true,
                           fillColor: Colors.grey.shade100,
                           prefixIcon: Icon(Icons.lock_outline),

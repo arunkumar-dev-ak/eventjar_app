@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class WhatsAppHelper {
@@ -46,7 +47,7 @@ class WhatsAppHelper {
     } catch (e) {
       _showErrorDialog(
         context,
-        "Could not open WhatsApp. Please check if WhatsApp is installed.",
+        'could_not_open_whatsapp_install'.tr,
       );
     }
   }
@@ -130,12 +131,12 @@ class WhatsAppHelper {
       if (await canLaunchUrl(businessUri)) {
         await launchUrl(businessUri, mode: LaunchMode.externalApplication);
       } else {
-        _showErrorDialog(context, "WhatsApp is not installed on this device.");
+        _showErrorDialog(context, 'whatsapp_not_installed_error'.tr);
       }
     } catch (e) {
       _showErrorDialog(
         context,
-        "Could not open WhatsApp. Please install WhatsApp first.",
+        'could_not_open_whatsapp_first'.tr,
       );
     }
   }
@@ -151,14 +152,14 @@ class WhatsAppHelper {
               children: [
                 Icon(Icons.error_outline, color: Colors.red),
                 SizedBox(width: 8),
-                Text("WhatsApp Error"),
+                Text('whatsapp_error'.tr),
               ],
             ),
             content: Text(message),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: Text("OK"),
+                child: Text('ok'.tr),
               ),
             ],
           );

@@ -93,7 +93,7 @@ Widget buildNetworkScoreCard() {
                           ),
                           SizedBox(height: 2),
                           Text(
-                            '$contacts / ${tier.max > 9999 ? '500+' : tier.max} contacts',
+                            '$contacts / ${tier.max > 9999 ? '500+' : tier.max} ${'contacts'.tr}',
                             style: TextStyle(
                               color: textColor.withValues(alpha: 0.7),
                               fontSize: 7.5.sp,
@@ -175,7 +175,7 @@ Widget buildNetworkScoreCard() {
                           ),
                           SizedBox(height: 1),
                           Text(
-                            '${t.range} contacts',
+                            '${t.range} ${'contacts'.tr}',
                             style: TextStyle(
                               color: subTextColor,
                               fontSize: 7.sp,
@@ -201,7 +201,7 @@ Widget buildNetworkScoreCard() {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          'Current',
+                          'current'.tr,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 6.5.sp,
@@ -261,42 +261,53 @@ Widget buildNetworkScoreCard() {
 //   ),
 // ];
 
-const _trophyTiers = [
+List<
+  ({
+    String name,
+    String range,
+    int min,
+    int max,
+    String assetPath,
+    Color colorLight,
+    Color colorDark,
+  })
+>
+get _trophyTiers => [
   (
-    name: 'Starter',
+    name: 'starter'.tr,
     range: '0 - 50',
     min: 0,
     max: 50,
     assetPath: 'assets/stage_icon/stage1.png',
-    colorLight: Color(0xFFD4915E),
-    colorDark: Color(0xFF8B5A2B),
+    colorLight: const Color(0xFFD4915E),
+    colorDark: const Color(0xFF8B5A2B),
   ),
   (
-    name: 'Connector',
+    name: 'connector'.tr,
     range: '51 - 250',
     min: 51,
     max: 250,
     assetPath: 'assets/stage_icon/stage2.png',
-    colorLight: Color(0xFFE5E4E2),
-    colorDark: Color(0xFF656565),
+    colorLight: const Color(0xFFE5E4E2),
+    colorDark: const Color(0xFF656565),
   ),
   (
-    name: 'Networker',
+    name: 'networker'.tr,
     range: '251 - 500',
     min: 251,
     max: 500,
     assetPath: 'assets/stage_icon/stage3.png',
-    colorLight: Color(0xFFFFE066),
-    colorDark: Color(0xFFB8860B),
+    colorLight: const Color(0xFFFFE066),
+    colorDark: const Color(0xFFB8860B),
   ),
   (
-    name: 'Champion',
+    name: 'champion'.tr,
     range: '501+',
     min: 501,
     max: 999999,
     assetPath: 'assets/stage_icon/stage4.png',
-    colorLight: Color(0xFFE8AAF2),
-    colorDark: Color(0xFF7B1FA2),
+    colorLight: const Color(0xFFE8AAF2),
+    colorDark: const Color(0xFF7B1FA2),
   ),
 ];
 

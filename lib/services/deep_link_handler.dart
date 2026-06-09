@@ -7,7 +7,7 @@ import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:eventjar/services/referrer_service.dart';
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DeepLinkHandler {
@@ -114,7 +114,7 @@ class DeepLinkHandler {
 
         if (token == null || token.isEmpty) {
           AppSnackbar.warning(
-            title: "Invalid Invite",
+            title: "invalid_invite".tr,
             message: "Please try another link.",
           );
           return false;
@@ -157,7 +157,7 @@ class DeepLinkHandler {
 
         if (token == null || token.isEmpty) {
           AppSnackbar.warning(
-            title: "Invalid Invite",
+            title: "invalid_invite".tr,
             message: "Please try another link.",
           );
           return false;
@@ -220,9 +220,7 @@ class DeepLinkHandler {
           );
           return false;
         }
-        Get.offAllNamed(
-          '${RouteName.bioProfilePage}?username=$memberUsername',
-        );
+        Get.offAllNamed('${RouteName.bioProfilePage}?username=$memberUsername');
         return true;
 
       case 'find-events':

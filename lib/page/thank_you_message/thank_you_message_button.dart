@@ -34,7 +34,7 @@ class ThankYouMessageActionButtons extends StatelessWidget {
                       HapticHelper.light();
                       controller.resetForm();
                     },
-              child: Text('Reset', style: TextStyle(fontSize: 10.sp)),
+              child: Text('reset'.tr, style: TextStyle(fontSize: 10.sp)),
             ),
           ),
           SizedBox(width: 2.wp),

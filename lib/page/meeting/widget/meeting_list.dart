@@ -103,7 +103,7 @@ class MeetingList extends GetView<MeetingController> {
                 Icon(Icons.event_busy, size: 64, color: AppColors.textHintStatic),
                 SizedBox(height: 16),
                 Text(
-                  'No meetings match your filters',
+                  'no_meetings_match_filters'.tr,
                   style: TextStyle(
                     fontSize: 16,
                     color: AppColors.textSecondaryStatic,
@@ -112,7 +112,7 @@ class MeetingList extends GetView<MeetingController> {
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Try adjusting your status or date range',
+                  'try_adjusting_filters_desc'.tr,
                   style: TextStyle(fontSize: 14, color: AppColors.textHintStatic),
                 ),
                 SizedBox(height: 32),

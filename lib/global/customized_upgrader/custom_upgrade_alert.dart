@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:eventjar/global/customized_upgrader/custom_upgrader_gradient_button.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:eventjar/global/app_colors.dart';
 
@@ -56,7 +57,7 @@ class _CustomUpgradeAlertState extends UpgradeAlertState {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Update Available 🚀",
+                    'update_available'.tr,
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
@@ -78,7 +79,7 @@ class _CustomUpgradeAlertState extends UpgradeAlertState {
 
                   // UPDATE BUTTON
                   CustomUpgraderGradientButton(
-                    text: "Update Now",
+                    text: 'update_now'.tr,
                     onTap: () {
                       onUserUpdated(context, !widget.upgrader.blocked());
                     },
@@ -93,7 +94,7 @@ class _CustomUpgradeAlertState extends UpgradeAlertState {
                         onUserLater(context, true);
                       },
                       child: Text(
-                        "Remind Me Later",
+                        'remind_me_later'.tr,
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 9.sp,

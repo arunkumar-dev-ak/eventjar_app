@@ -20,13 +20,13 @@ class ViewTripTabs extends GetView<ViewTripController> {
           children: [
             _tabItem(
               context,
-              "Expenses",
+              'expenses'.tr,
               controller.state.selectedTab.value == 0,
               0,
             ),
             _tabItem(
               context,
-              "Members",
+              'members'.tr,
               controller.state.selectedTab.value == 1,
               1,
             ),
@@ -39,8 +39,9 @@ class ViewTripTabs extends GetView<ViewTripController> {
 
 Widget _tabItem(BuildContext context, String title, bool selected, int index) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
-  final selectedBg = isDark ? AppColors.darkCardElevated : Colors.white;
+  final selectedBg = isDark ? Colors.white.withValues(alpha: 0.15) : Colors.white;
   final selectedText = isDark ? Colors.white : AppColors.gradientDarkStart;
+  final unselectedText = isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.budgetTabTextColor;
 
   return Expanded(
     child: GestureDetector(
@@ -60,7 +61,7 @@ Widget _tabItem(BuildContext context, String title, bool selected, int index) {
             style: TextStyle(
               fontSize: 9.sp,
               fontWeight: FontWeight.w600,
-              color: selected ? selectedText : AppColors.budgetTabTextColor,
+              color: selected ? selectedText : unselectedText,
             ),
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget buildNotesSection(String notes, Color stageColor) {
   return Container(
@@ -15,7 +16,7 @@ Widget buildNotesSection(String notes, Color stageColor) {
         child: Icon(Icons.note_alt_outlined, size: 18, color: stageColor),
       ),
       title: Text(
-        "Notes",
+        'notes'.tr,
         style: TextStyle(
           fontSize: 10.sp,
           fontWeight: FontWeight.w700,

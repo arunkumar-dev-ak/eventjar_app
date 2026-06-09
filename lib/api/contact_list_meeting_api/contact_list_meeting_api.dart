@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:eventjar/api/dio_client.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact-list-meeting/network_meeting.dart';
@@ -19,7 +20,7 @@ class ContactListMeetingApi {
       throw DioException(
         requestOptions: response.requestOptions,
         response: response,
-        error: "Something went wrong",
+        error: "something_went_wrong".tr,
       );
     } catch (e) {
       rethrow;

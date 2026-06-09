@@ -2,35 +2,36 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/event_info/event_info_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget buildPhysicalEventCard(EventInfo eventInfo) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       if (eventInfo.venue != null && eventInfo.venue!.isNotEmpty) ...[
-        _infoRow(Icons.apartment, "Venue", eventInfo.venue!),
+        _infoRow(Icons.apartment, 'venue'.tr, eventInfo.venue!),
         Divider(height: 3.hp, color: AppColors.borderStatic),
       ],
       if (eventInfo.address.isNotEmpty) ...[
-        _infoRow(Icons.home, "Address", eventInfo.address),
+        _infoRow(Icons.home, 'address'.tr, eventInfo.address),
         Divider(height: 3.hp, color: AppColors.borderStatic),
       ],
       _infoRow(
         Icons.location_on,
-        "Location",
+        'location'.tr,
         "${eventInfo.city ?? ''}${eventInfo.city != null && eventInfo.state != null ? ', ' : ''}${eventInfo.state ?? ''}${eventInfo.state != null && eventInfo.country != null ? ', ' : ''}${eventInfo.country ?? ''}",
       ),
       if (eventInfo.parkingInfo != null &&
           eventInfo.parkingInfo!.isNotEmpty) ...[
         Divider(height: 3.hp, color: AppColors.borderStatic),
-        _infoRow(Icons.local_parking, "Parking", eventInfo.parkingInfo!),
+        _infoRow(Icons.local_parking, 'parking'.tr, eventInfo.parkingInfo!),
       ],
       if (eventInfo.accessibilityInfo != null &&
           eventInfo.accessibilityInfo!.isNotEmpty) ...[
         Divider(height: 3.hp, color: AppColors.borderStatic),
         _infoRow(
           Icons.accessible,
-          "Accessibility",
+          'accessibility'.tr,
           eventInfo.accessibilityInfo!,
         ),
       ],

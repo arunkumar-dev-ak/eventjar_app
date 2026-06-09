@@ -28,15 +28,15 @@ class CheckoutOrderSummary extends GetView<CheckoutController> {
         ),
         child: Column(
           children: [
-            _row("Subtotal", subtotal),
+            _row("subtotal".tr, subtotal),
             SizedBox(height: 1.5.hp),
-            _row("Platform Fee", platformFee),
+            _row("platform_fee".tr, platformFee),
             Divider(height: 3.hp),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Total",
+                  "total".tr,
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.bold,

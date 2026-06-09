@@ -1,9 +1,10 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 Widget connectionReqEmptyPlaceholder({
-  String message = "No requests found",
+  String message = "",
   IconData icon = Icons.mail_outline,
 }) {
   return Center(
@@ -14,7 +15,7 @@ Widget connectionReqEmptyPlaceholder({
         Icon(icon, size: 48, color: AppColors.iconMutedStatic),
         SizedBox(height: 1.hp),
         Text(
-          message,
+          message.isEmpty ? 'no_requests_found'.tr : message,
           style: TextStyle(
             fontSize: 10.sp,
             color: AppColors.textSecondaryStatic,

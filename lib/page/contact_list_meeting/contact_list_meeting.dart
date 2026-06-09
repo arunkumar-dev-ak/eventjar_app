@@ -30,11 +30,11 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
         ),
         body: Obx(() {
           // if (controller.state.isShimmerLoading.value) {
-          //   return const ContactListShimmerLoading();
+          //   return ContactListShimmerLoading();
           // }
 
           if (controller.state.currentMeeting.value == null) {
-            return const Center(child: Text('No meetings found'));
+            return Center(child: Text('no_meetings_found'.tr));
           }
 
           return _buildMeetingContent();
@@ -154,12 +154,17 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
             style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w600),
           ),
           SizedBox(height: 2.hp),
-          _buildDetailRow(Icons.calendar_today, 'Date', dateText),
+          _buildDetailRow(Icons.calendar_today, 'date'.tr, dateText),
 
           _buildDetailRow(
             Icons.access_time,
-            'Time',
+            'date'.tr,
             '$timeText ($timezoneText)',
+          ),
+          _buildDetailRow(
+            Icons.access_time,
+            'time'.tr,
+            controller.formattedTime,
           ),
           _buildDetailRow(
             Icons.email,
@@ -318,7 +323,7 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
                       ),
                     ),
                     child: Text(
-                      'Reschedule',
+                      'reschedule'.tr,
                       style: TextStyle(
                         color: AppColors.textSecondaryStatic,
                         fontWeight: FontWeight.w600,
@@ -355,7 +360,7 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
       case MeetingButtonType.complete:
         return 'Mark Complete';
       case MeetingButtonType.reschedule:
-        return 'Reschedule';
+        return 'reschedule'.tr;
     }
   }
 }

@@ -54,7 +54,7 @@ class SchedulerPage extends GetView<SchedulerController> {
 
                 ScheduleFormElement(
                   controller: controller.state.dateTimeController,
-                  label: 'Date & Time *',
+                  label: 'date_and_time'.tr,
                   readOnly: true,
                   onTap: () => controller.pickDateTime(context),
                   validator: controller.validateDate,
@@ -78,7 +78,7 @@ class SchedulerPage extends GetView<SchedulerController> {
 
                       ScheduleFormElement(
                         controller: controller.state.notesController,
-                        label: 'Meeting Notes',
+                        label: 'meeting_notes'.tr,
                         maxLines: 4,
                         minLines: 3,
                       ),
@@ -95,14 +95,14 @@ class SchedulerPage extends GetView<SchedulerController> {
                   return Column(
                     children: [
                       _buildReadOnlyFieldTab(
-                        label: 'Duration',
+                        label: 'duration'.tr,
                         value: controller.state.selectedMeeting.value!.duration
                             .toString(),
                         icon: Icons.timer_outlined,
                       ),
                       SizedBox(height: 2.hp),
                       _buildReadOnlyFieldTab(
-                        label: 'Status',
+                        label: 'status'.tr,
                         value: controller.state.selectedMeeting.value!.status,
                         icon: Icons.schedule_outlined,
                         color: _getStatusColor(
@@ -111,10 +111,10 @@ class SchedulerPage extends GetView<SchedulerController> {
                       ),
                       SizedBox(height: 2.hp),
                       _buildReadOnlyFieldTab(
-                        label: 'Notes',
+                        label: 'notes'.tr,
                         value:
                             controller.state.selectedMeeting.value!.notes ??
-                            'No notes added',
+                            'no_notes_added'.tr,
                         icon: Icons.notes_outlined,
                         maxLines: 3,
                       ),
@@ -150,8 +150,8 @@ class SchedulerPage extends GetView<SchedulerController> {
                           child: Obx(
                             () => Text(
                               controller.state.selectedMeeting.value != null
-                                  ? 'Reset'
-                                  : 'Clear',
+                                  ? 'reset'.tr
+                                  : 'clear'.tr,
                               style: TextStyle(
                                 fontSize: 8.sp,
                                 fontWeight: FontWeight.w600,
@@ -200,8 +200,8 @@ class SchedulerPage extends GetView<SchedulerController> {
                                   () => Text(
                                     controller.state.selectedMeeting.value !=
                                             null
-                                        ? 'Reschedule Meeting'
-                                        : 'Schedule Meeting',
+                                        ? 'reschedule_meeting'.tr
+                                        : 'schedule_meeting'.tr,
                                     style: TextStyle(
                                       fontSize: 8.sp,
                                       fontWeight: FontWeight.w700,

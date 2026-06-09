@@ -22,7 +22,7 @@ class DeleteAccountForm extends StatelessWidget {
             enableSuggestions: false,
             autocorrect: false,
             decoration: InputDecoration(
-              labelText: "Password",
+              labelText: 'password'.tr,
               prefixIcon: Icon(Icons.lock_outline),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -105,7 +105,7 @@ class DeleteDialogButtons extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 14),
               ),
               child: Text(
-                "Cancel",
+                'cancel'.tr,
                 style: TextStyle(color: Colors.grey.shade800, fontSize: 10.sp),
               ),
             ),
@@ -152,7 +152,7 @@ class DeleteDialogButtons extends StatelessWidget {
                         ),
                         SizedBox(width: 8),
                         Text(
-                          "Processing...",
+                          'processing'.tr,
                           style: TextStyle(
                             fontSize: 10.sp,
                             fontWeight: FontWeight.w500,
@@ -161,7 +161,7 @@ class DeleteDialogButtons extends StatelessWidget {
                       ],
                     )
                   : Text(
-                      hasPendingDeletion ? "Reactivate" : "Delete",
+                      hasPendingDeletion ? 'reactivate'.tr : 'delete'.tr,
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.bold,

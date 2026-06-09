@@ -26,8 +26,8 @@ class ConnectionRequestAttendee extends StatelessWidget {
       if (requestState == null) {
         return connectionReqEmptyPlaceholder(
           message: tabIndex == 0
-              ? "No sent requests."
-              : "No received requests.",
+              ? 'no_sent_requests'.tr
+              : 'no_received_requests'.tr,
           icon: tabIndex == 0
               ? Icons.outbox_outlined
               : Icons.move_to_inbox_outlined,
@@ -40,8 +40,8 @@ class ConnectionRequestAttendee extends StatelessWidget {
       if (list.isEmpty) {
         return connectionReqEmptyPlaceholder(
           message: tabIndex == 0
-              ? "No sent requests."
-              : "No received requests.",
+              ? 'no_sent_requests'.tr
+              : 'no_received_requests'.tr,
           icon: tabIndex == 0
               ? Icons.outbox_outlined
               : Icons.move_to_inbox_outlined,
@@ -185,7 +185,7 @@ Widget buildRequestAttendeeListFromModel(
                   children: [
                     Expanded(
                       child: ActionButton(
-                        label: "Accept",
+                        label: 'accept'.tr,
                         icon: Icons.check_circle_outline,
                         gradientColors: [Color(0xFF90CAF9), Color(0xFF64B5F6)],
                         buttonId: "accept_${req.id}",
@@ -200,7 +200,7 @@ Widget buildRequestAttendeeListFromModel(
                     ),
                     Expanded(
                       child: ActionButton(
-                        label: "Decline",
+                        label: 'decline'.tr,
                         icon: Icons.close_outlined,
                         gradientColors: [Color(0xFFE57373), Color(0xFFEF5350)],
                         buttonId: "decline_${req.id}", // NEW: Unique ID

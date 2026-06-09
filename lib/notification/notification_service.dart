@@ -32,57 +32,6 @@ class NotificationService {
   static bool _isFlutterLocalNotificationsInitialized = false;
   static const String storageFcmToken = "myEventJar_fcmToken";
 
-  // Future<void> init() async {
-  //   /*-----
-  //   Type: Background
-  //   When: App is in background or terminated
-  //   ----*/
-  //   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  //   // 🔥 2. OLD .then() pattern - iOS SAFE (waits for Firebase)
-  //   _firebaseMessaging
-  //       .getToken()
-  //       .then((token) {
-  //         if (token != null) {
-  //           StorageService.to.setString(storageFcmToken, token);
-  //           LoggerService.loggerInstance.dynamic_d("🔥 FCM Token: $token");
-  //         } else {
-  //           LoggerService.loggerInstance.dynamic_d("❌ Failed to get FCM Token");
-  //         }
-  //       })
-  //       .catchError((error) {
-  //         LoggerService.loggerInstance.dynamic_d("❌ FCM Token Error: $error");
-  //       });
-
-  //   // 🔥 3. Request permissions
-  //   await _requestPermission();
-
-  //   // 🔥 4. iOS + Android settings (iOS CRITICAL)
-  //   const AndroidInitializationSettings androidSettings =
-  //       AndroidInitializationSettings('@mipmap/ic_launcher'); // or 'logo'
-
-  //   const DarwinInitializationSettings iosSettings =
-  //       DarwinInitializationSettings(
-  //         requestAlertPermission: true,
-  //         requestBadgePermission: true,
-  //         requestSoundPermission: true,
-  //       );
-
-  //   const InitializationSettings initSettings = InitializationSettings(
-  //     android: androidSettings,
-  //     iOS: iosSettings,
-  //   );
-
-  //   // 🔥 5. Initialize local notifications
-  //   await flutterLocalNotificationsPlugin.initialize(
-  //     initSettings,
-  //     onDidReceiveNotificationResponse: onSelectNotification,
-  //   );
-
-  //   // 🔥 6. Setup handlers
-  //   _setupMessageHandlers();
-  // }
-
   Future<void> init() async {
     /*-----
     Type: Background
@@ -244,63 +193,6 @@ class NotificationService {
     });
   }
 
-  /*----- message showing -----*/
-  //handling message when the app is in opened state
-  // Future<void> showNotification(RemoteMessage message) async {
-  //   LoggerService.loggerInstance.dynamic_d(
-  //     '${message.data}, ${message.notification?.body},  ${message.notification?.title}',
-  //   );
-  //   try {
-  //     final contactId = message.data['contactId'];
-  //     final meetingId = message.data['meetingId'];
-  //     final ticketId = message.data['ticketId'];
-  //     final connectionId = message.data['connectionId'];
-  //     final eventId = message.data['eventId'];
-
-  //     final String primaryId =
-  //         contactId ??
-  //         meetingId ??
-  //         ticketId ??
-  //         connectionId ??
-  //         eventId ??
-  //         "unknown";
-  //     final int notificationId = primaryId.hashCode;
-
-  //     const AndroidNotificationDetails androidDetails =
-  //         AndroidNotificationDetails(
-  //           'contact_channel',
-  //           'Contact Notifications',
-  //           channelDescription: 'Notifications for contact management',
-  //           importance: Importance.max,
-  //           priority: Priority.high,
-  //           styleInformation: BigTextStyleInformation(''),
-  //         );
-
-  //     const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
-  //       presentAlert: true,
-  //       presentBadge: true,
-  //       presentSound: true,
-  //     );
-
-  //     const NotificationDetails platformDetails = NotificationDetails(
-  //       android: androidDetails,
-  //       iOS: iosDetails, // ✅ iOS details
-  //     );
-
-  //     final content = buildContactNotification(message);
-
-  //     await flutterLocalNotificationsPlugin.show(
-  //       notificationId,
-  //       content.title,
-  //       content.body,
-  //       platformDetails,
-  //       payload: message.data['type'],
-  //     );
-  //   } catch (e) {
-  //     LoggerService.loggerInstance.e("Notification show error: $e");
-  //   }
-  // }
-
   Future<void> showNotification(RemoteMessage message) async {
     try {
       LoggerService.loggerInstance.dynamic_d(
@@ -368,22 +260,6 @@ class NotificationService {
       LoggerService.loggerInstance.e("Notification show error: $e");
     }
   }
-
-  // //handling message when the app is in bg or terminated state
-  // @pragma('vm:entry-point')
-  // static Future<void> _firebaseMessagingBackgroundHandler(
-  //   RemoteMessage message,
-  // ) async {
-  //   try {
-  //     // 🔥 iOS: Firebase might not be initialized in background
-  //     await Firebase.initializeApp();
-  //     await NotificationService._instance.setupFlutterNotifications();
-  //     await NotificationService._instance.showNotification(message);
-  //   } catch (e) {
-  //     LoggerService.loggerInstance.e("error while handling bg notification $e");
-  //     // Silent fail in background
-  //   }
-  // }
 
   void _handleBackgroundMessageNotificationTap(RemoteMessage message) {
     LoggerService.loggerInstance.d("App opened from notification");

@@ -189,7 +189,7 @@ class ViewTripController extends GetxController
       LoggerService.loggerInstance.e('Trip Loads onScroll error: $err');
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to Get Trip Analytics",
+        title: "failed_get_trip_analytics".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -215,7 +215,7 @@ class ViewTripController extends GetxController
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load Expenses",
+        title: "failed_load_expenses".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -248,7 +248,7 @@ class ViewTripController extends GetxController
 
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load more expense",
+        title: "failed_load_more_expense".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -277,7 +277,7 @@ class ViewTripController extends GetxController
 
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load Friends",
+        title: "failed_load_friends".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -295,7 +295,6 @@ class ViewTripController extends GetxController
       final response = await ViewTripApi.getTripFriends(
         queryParams: getFriendQueryParams(onRefresh: true),
       );
-      LoggerService.loggerInstance.dynamic_d("reee ${response.data.length}");
 
       state.friends.value = response.data;
       state.friendMeta.value = response.meta;
@@ -304,7 +303,7 @@ class ViewTripController extends GetxController
 
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to refresh Friends",
+        title: "failed_refresh_friends".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -333,7 +332,7 @@ class ViewTripController extends GetxController
 
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load more Friends",
+        title: "failed_load_more_friends".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -351,8 +350,8 @@ class ViewTripController extends GetxController
       await ViewTripApi.deleteExpense(expenseId);
 
       AppSnackbar.success(
-        title: "Success",
-        message: "Expense request closed successfully.",
+        title: "success".tr,
+        message: "expense_request_closed".tr,
       );
 
       fetchViewTripData();
@@ -360,7 +359,7 @@ class ViewTripController extends GetxController
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to close the expense request. Please try again.",
+        title: "failed_close_expense".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -405,8 +404,8 @@ class ViewTripController extends GetxController
       await ViewTripApi.settleBalance(data: payload);
 
       AppSnackbar.success(
-        title: "Success",
-        message: "Settlement marked successfully",
+        title: "success".tr,
+        message: "settlement_marked_success".tr,
       );
 
       Navigator.pop(Get.context!);
@@ -416,7 +415,7 @@ class ViewTripController extends GetxController
       LoggerService.loggerInstance.e('Settlement error: $err');
       ApiErrorHandler.handle(
         error: err,
-        title: "Unable to Complete Settlement",
+        title: "unable_complete_settlement".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           navigateToSignInPage();
@@ -450,7 +449,7 @@ class ViewTripController extends GetxController
     } catch (e) {
       LoggerService.loggerInstance.e(e);
       state.isFriendDropdownLoading.value = false;
-      AppSnackbar.error(title: 'Error', message: 'Failed to load friends');
+      AppSnackbar.error(title: 'error'.tr, message: 'failed_load_contacts'.tr);
     }
   }
 
@@ -484,7 +483,7 @@ class ViewTripController extends GetxController
               state.friendDropdownMeta.value = response.meta;
             })
             .onError((error, stackTrace) {
-              _handleApiError(error, 'Search failed');
+              _handleApiError(error, 'search_failed'.tr);
             })
             .whenComplete(() {
               state.isFriendDropdownLoading.value = false;
@@ -492,7 +491,7 @@ class ViewTripController extends GetxController
       } catch (e) {
         LoggerService.loggerInstance.e(e);
         state.isFriendDropdownLoading.value = false;
-        AppSnackbar.error(title: 'Error', message: 'Search failed');
+        AppSnackbar.error(title: 'error'.tr, message: 'search_failed'.tr);
       }
     });
   }
@@ -534,7 +533,7 @@ class ViewTripController extends GetxController
     } catch (e) {
       LoggerService.loggerInstance.e(e);
       state.isFriendDropdownLoadMoreLoading.value = false;
-      AppSnackbar.error(title: 'Error', message: 'Failed to load more');
+      AppSnackbar.error(title: 'error'.tr, message: 'failed_load_more'.tr);
     }
   }
 
@@ -567,7 +566,7 @@ class ViewTripController extends GetxController
     } catch (e) {
       LoggerService.loggerInstance.e(e);
       state.isFriendDropdownLoading.value = false;
-      AppSnackbar.error(title: 'Error', message: 'Failed to refresh');
+      AppSnackbar.error(title: 'error'.tr, message: 'failed_refresh'.tr);
     }
   }
 
@@ -584,7 +583,7 @@ class ViewTripController extends GetxController
       }
       ApiErrorHandler.handleDioError(error, fallbackMessage);
     } else {
-      AppSnackbar.error(title: 'Error', message: fallbackMessage);
+      AppSnackbar.error(title: 'error'.tr, message: fallbackMessage);
     }
   }
 
@@ -621,8 +620,8 @@ class ViewTripController extends GetxController
       final friendName = selectedFriend.getFriendDisplayName(currentUserId);
 
       AppSnackbar.success(
-        title: 'Success',
-        message: 'Friend Successfully to the trip!',
+        title: 'success'.tr,
+        message: 'friend_added_to_trip_success'.tr,
       );
 
       onFriendRefreshClicked();
@@ -724,8 +723,8 @@ class ViewTripController extends GetxController
 
       // 2. Show Success Snackbar
       AppSnackbar.success(
-        title: 'Success',
-        message: 'Member has been removed from the trip.',
+        title: 'success'.tr,
+        message: 'member_removed_from_trip'.tr,
       );
 
       // 3. Refresh the Friends list and Analytics to reflect the removal

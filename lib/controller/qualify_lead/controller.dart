@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class QualifyLeadController extends GetxController {
-  var appBarTitle = "Qualify Lead";
+  var appBarTitle = "qualify_lead".tr;
   final state = QualifyLeadState();
 
   final formKey = GlobalKey<FormState>();
@@ -111,8 +111,8 @@ class QualifyLeadController extends GetxController {
       }
 
       AppSnackbar.success(
-        title: "Lead Qualified",
-        message: "Contact qualified successfully!",
+        title: "lead_qualified".tr,
+        message: "contact_qualified_success".tr,
       );
       Navigator.pop(context, true);
     } catch (err) {
@@ -124,7 +124,10 @@ class QualifyLeadController extends GetxController {
         }
         ApiErrorHandler.handleDioError(err, "Failed to qualify lead");
       } else {
-        AppSnackbar.error(title: "Failed", message: "Something went wrong.");
+        AppSnackbar.error(
+          title: "Failed",
+          message: "generic_try_again_error".tr,
+        );
       }
     } finally {
       state.isLoading.value = false;

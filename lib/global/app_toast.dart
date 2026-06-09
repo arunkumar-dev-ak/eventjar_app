@@ -34,7 +34,7 @@ class AppToast {
   // Exit app toast
   static void exitApp() {
     Fluttertoast.showToast(
-      msg: "Press back again to exit",
+      msg: 'press_back_again_exit'.tr,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,

@@ -28,7 +28,9 @@ Widget userProfileBuildSecurity() {
                 padding: EdgeInsets.all(3.wp),
                 decoration: BoxDecoration(
                   color: is2FaEnabled
-                      ? (AppColors.isDark ? const Color(0xFF2A1010) : Colors.red.shade50)
+                      ? (AppColors.isDark
+                            ? const Color(0xFF2A1010)
+                            : Colors.red.shade50)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -56,17 +58,19 @@ Widget userProfileBuildSecurity() {
                             Text(
                               is2FaEnabled
                                   ? "Disable 2FA Authentication"
-                                  : "Enable 2FA Authentication",
+                                  : 'enable_2fa_auth'.tr,
                               style: TextStyle(
                                 fontSize: 10.sp,
                                 fontWeight: FontWeight.w600,
-                                color: is2FaEnabled ? Colors.red : AppColors.textPrimaryStatic,
+                                color: is2FaEnabled
+                                    ? Colors.red
+                                    : AppColors.textPrimaryStatic,
                               ),
                             ),
                             Text(
                               is2FaEnabled
                                   ? "This will make your account less secure"
-                                  : "Add extra security to your account",
+                                  : 'add_extra_security_desc'.tr,
                               style: TextStyle(
                                 fontSize: 8.sp,
                                 color: AppColors.textSecondaryStatic,
@@ -103,7 +107,7 @@ Widget userProfileBuildSecurity() {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Change Password",
+                            'change_password'.tr,
                             style: TextStyle(
                               fontSize: 10.sp,
                               fontWeight: FontWeight.w600,
@@ -111,7 +115,7 @@ Widget userProfileBuildSecurity() {
                             ),
                           ),
                           Text(
-                            "Update your password regularly",
+                            'update_password_regularly'.tr,
                             style: TextStyle(
                               fontSize: 8.sp,
                               color: AppColors.textSecondaryStatic,
@@ -120,7 +124,11 @@ Widget userProfileBuildSecurity() {
                         ],
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios, size: 14, color: AppColors.iconMutedStatic),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: AppColors.iconMutedStatic,
+                    ),
                   ],
                 ),
               ),
@@ -135,10 +143,14 @@ Widget userProfileBuildSecurity() {
       Container(
         padding: EdgeInsets.all(3.wp),
         decoration: BoxDecoration(
-          color: AppColors.isDark ? const Color(0xFF2A2010) : Colors.orange.shade50,
+          color: AppColors.isDark
+              ? const Color(0xFF2A2010)
+              : Colors.orange.shade50,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: AppColors.isDark ? Colors.orange.shade800 : Colors.orange.shade200,
+            color: AppColors.isDark
+                ? Colors.orange.shade800
+                : Colors.orange.shade200,
           ),
         ),
         child: Column(
@@ -160,8 +172,11 @@ Widget userProfileBuildSecurity() {
             // ),
             // SizedBox(height: 1.hp),
             Text(
-              "Manage your active session",
-              style: TextStyle(fontSize: 9.sp, color: AppColors.textSecondaryStatic),
+              "manage_active_session".tr,
+              style: TextStyle(
+                fontSize: 9.sp,
+                color: AppColors.textSecondaryStatic,
+              ),
             ),
             SizedBox(height: 2.hp),
             Obx(() {
@@ -191,7 +206,7 @@ Widget userProfileBuildSecurity() {
 
                       SizedBox(width: 8),
 
-                      Text(isLoading ? "Signing Out..." : "Sign Out"),
+                      Text(isLoading ? 'signing_out'.tr : 'sign_out'.tr),
 
                       if (isLoading) ...[
                         SizedBox(width: 10),
@@ -239,7 +254,7 @@ Widget userProfileBuildSecurity() {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Account Deleted",
+                        'account_deleted'.tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w600,
@@ -262,7 +277,9 @@ Widget userProfileBuildSecurity() {
         }
 
         final bgColor = isPending
-            ? (AppColors.isDark ? const Color(0xFF0A2A1A) : Colors.green.shade50)
+            ? (AppColors.isDark
+                  ? const Color(0xFF0A2A1A)
+                  : Colors.green.shade50)
             : (AppColors.isDark ? const Color(0xFF2A1010) : Colors.red.shade50);
         final borderColor = isPending
             ? (AppColors.isDark ? Colors.green.shade800 : Colors.green.shade200)
@@ -297,7 +314,9 @@ Widget userProfileBuildSecurity() {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "${isPending ? "Reactivate" : "Deactivate"} Your Account",
+                        isPending
+                            ? 'reactivate_your_account'.tr
+                            : 'deactivate_your_account'.tr,
                         style: TextStyle(
                           fontSize: 10.sp,
                           fontWeight: FontWeight.w600,
@@ -306,7 +325,7 @@ Widget userProfileBuildSecurity() {
                       ),
                       if (isPending)
                         Text(
-                          "Account scheduled for deletion",
+                          'account_scheduled_deletion'.tr,
                           style: TextStyle(
                             fontSize: 8.sp,
                             color: subtitleColor,
@@ -349,7 +368,7 @@ void showDeletedAccountDialog(UserProfileController controller) {
 
             // Title
             Text(
-              "Account Deleted",
+              'account_deleted'.tr,
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
@@ -362,7 +381,10 @@ void showDeletedAccountDialog(UserProfileController controller) {
             // Info
             Text(
               "Your account was permanently deleted on ${DateFormat('MMM dd, yyyy').format(deletedAt!)}",
-              style: TextStyle(fontSize: 10.sp, color: AppColors.textSecondaryStatic),
+              style: TextStyle(
+                fontSize: 10.sp,
+                color: AppColors.textSecondaryStatic,
+              ),
               textAlign: TextAlign.center,
             ),
 
@@ -381,7 +403,7 @@ void showDeletedAccountDialog(UserProfileController controller) {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text("Close"),
+                child: Text('close'.tr),
               ),
             ),
           ],
@@ -424,7 +446,9 @@ void userProfileShowDeleteAccountDialog(
 
               // Title
               Text(
-                hasPendingDeletion ? "Reactivate Account" : "Delete Account",
+                hasPendingDeletion
+                    ? 'reactivate_account'.tr
+                    : 'delete_account'.tr,
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.bold,
@@ -440,9 +464,12 @@ void userProfileShowDeleteAccountDialog(
               // Warning message
               Text(
                 hasPendingDeletion
-                    ? "Enter your password to reactivate your account"
-                    : "Account will be scheduled for deletion in 30 days. You can reactivate anytime before permanent deletion.",
-                style: TextStyle(fontSize: 8.5.sp, color: AppColors.textSecondaryStatic),
+                    ? 'enter_password_reactivate'.tr
+                    : 'deletion_warning_desc'.tr,
+                style: TextStyle(
+                  fontSize: 8.5.sp,
+                  color: AppColors.textSecondaryStatic,
+                ),
                 textAlign: TextAlign.center,
               ),
 

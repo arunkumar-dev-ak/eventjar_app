@@ -16,7 +16,7 @@ class NotificationInboxPage extends GetView<NotificationInboxController> {
       backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
-          'Notifications',
+          'notifications'.tr,
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 14.sp,
@@ -31,7 +31,6 @@ class NotificationInboxPage extends GetView<NotificationInboxController> {
         elevation: 0,
         actions: [
           Obx(() {
-            if (controller.unreadCount == 0) return const SizedBox.shrink();
             return TextButton(
               onPressed: controller.markAllAsRead,
               child: Text(
@@ -212,7 +211,7 @@ class _NotificationTile extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            'Info only',
+                            'info_only'.tr,
                             style: TextStyle(
                               fontSize: 10,
                               color: AppColors.textHint(context),

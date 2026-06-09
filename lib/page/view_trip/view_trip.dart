@@ -80,7 +80,7 @@ class ViewTripPage extends GetView<ViewTripController> {
           backgroundColor: AppColors.gradientDarkStart,
           icon: const Icon(Icons.add, color: Colors.white),
           label: Text(
-            isExpenseTab ? "Expense" : "Member",
+            isExpenseTab ? "expenses".tr : "members".tr,
             style: TextStyle(
               color: Colors.white,
               fontSize: 8.5.sp,

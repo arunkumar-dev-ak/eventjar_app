@@ -2,6 +2,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:get/get.dart';
 
 Widget noAgendaFoundWidget() {
   return SingleChildScrollView(
@@ -21,7 +22,7 @@ Widget noAgendaFoundWidget() {
 
             // Main title
             Text(
-              "No agenda items available for this event.",
+              'no_agenda_items'.tr,
               style: TextStyle(
                 fontSize: 10.sp,
                 fontWeight: FontWeight.w700,

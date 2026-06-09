@@ -16,7 +16,7 @@ class CreateTripController extends GetxController {
 
   final formKey = GlobalKey<FormState>();
 
-  final appBarTitle = "Create Trip";
+  var appBarTitle = "create_trip".tr;
 
   static const _limit = 20;
 
@@ -70,7 +70,7 @@ class CreateTripController extends GetxController {
       LoggerService.loggerInstance.e('Fetch friends error: $err');
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to load Friends",
+        title: "failed_load_friends".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           Get.toNamed(RouteName.signInPage);
@@ -113,7 +113,7 @@ class CreateTripController extends GetxController {
     if (state.isLoading.value) return;
 
     if (state.selectedFriendsMap.isEmpty) {
-      AppSnackbar.warning(message: "Please select at least one friend");
+      AppSnackbar.warning(message: "select_friend_error".tr);
       return;
     }
 
@@ -137,14 +137,17 @@ class CreateTripController extends GetxController {
 
       state.isLoading.value = false;
 
-      Get.back(result: "created");
+      Navigator.pop(Get.context!, "refresh");
 
-      AppSnackbar.success(title: "Success", message: "Trip created successfully");
+      AppSnackbar.success(
+        title: "success".tr,
+        message: "trip_created_success".tr,
+      );
     } catch (err) {
       LoggerService.loggerInstance.e('Create trip error: $err');
       ApiErrorHandler.handle(
         error: err,
-        title: "Failed to create Trip",
+        title: "failed_create_trip".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           Get.toNamed(RouteName.signInPage);

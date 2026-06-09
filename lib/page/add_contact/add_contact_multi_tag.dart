@@ -60,7 +60,7 @@ class AddMultiSelectTagsInput extends StatelessWidget {
                     SizedBox(width: 2.wp),
                     Expanded(
                       child: Text(
-                        'Add tags',
+                        'add_tags'.tr,
                         style: TextStyle(fontSize: 10.sp),
                       ),
                     ),
@@ -126,11 +126,10 @@ class TagSearchPopup extends StatelessWidget {
       maxChildSize: 0.9,
       expand: false,
       builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: AppColors.cardBg(context),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          ),
+        return Material(
+          color: AppColors.cardBg(context),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          clipBehavior: Clip.antiAlias,
           child: Column(
             children: [
               // Drag handle
@@ -151,9 +150,9 @@ class TagSearchPopup extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Add Tags',
+                        'add_tags'.tr,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -179,7 +178,7 @@ class TagSearchPopup extends StatelessWidget {
                   autofocus: true,
                   onChanged: controller.filterTags,
                   decoration: InputDecoration(
-                    hintText: 'Search or create tag',
+                    hintText: 'search_or_create_tag'.tr,
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
                     fillColor: AppColors.inputBg(context),
@@ -225,7 +224,7 @@ class TagSearchPopup extends StatelessWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            '"$searchText" is already created', // ✅ Clear feedback
+                            '"$searchText" ${'is_already_created'.tr}',
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.green.shade800,
@@ -250,7 +249,7 @@ class TagSearchPopup extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            '"$searchText" is not in the list',
+                            '"$searchText" ${'is_not_in_the_list'.tr}',
                             style: const TextStyle(fontSize: 14),
                           ),
                         ),
@@ -273,8 +272,8 @@ class TagSearchPopup extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          child: const Text(
-                            'Create',
+                          child: Text(
+                            'create'.tr,
                             style: TextStyle(fontSize: 12),
                           ),
                         ),
@@ -305,8 +304,8 @@ class TagSearchPopup extends StatelessWidget {
                             size: 48,
                             color: AppColors.textHint(context),
                           ),
-                          const SizedBox(height: 12),
-                          const Text('No tags found'),
+                          SizedBox(height: 12),
+                          Text('no_tags_found'.tr),
                         ],
                       ),
                     );

@@ -16,7 +16,7 @@ class SchedulerStatusDropdown extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Status *',
+          'status'.tr,
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
@@ -25,7 +25,7 @@ class SchedulerStatusDropdown extends StatelessWidget {
         ),
         SizedBox(height: 8),
         SingleSelectFilterDropdown<MeetingStatusForReschedule>(
-          title: "Select Status",
+          title: 'select_status'.tr,
           items: MeetingStatusForReschedule.values,
           selectedItem: controller.state.selectedStatus,
           getDefaultItem: () => MeetingStatusForReschedule.SCHEDULED,
@@ -35,7 +35,7 @@ class SchedulerStatusDropdown extends StatelessWidget {
           onSelected: (MeetingStatusForReschedule status) {
             controller.state.selectedStatus.value = status;
           },
-          hintText: "Select status",
+          hintText: "select_status".tr,
         ),
       ],
     );

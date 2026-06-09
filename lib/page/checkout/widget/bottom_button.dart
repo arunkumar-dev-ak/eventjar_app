@@ -27,13 +27,13 @@ class CheckoutBottomBar extends GetView<CheckoutController> {
       String buttonText;
 
       if (isBadgeChecking) {
-        buttonText = "Verifying Badge...";
+        buttonText = 'verifying_badge'.tr;
       } else if (!hasTicket) {
-        buttonText = "Select Ticket to Continue";
+        buttonText = 'select_ticket_to_continue'.tr;
       } else if (isLoading) {
-        buttonText = total == 0 ? "Booking..." : "Processing...";
+        buttonText = total == 0 ? 'booking'.tr : "processing".tr;
       } else {
-        buttonText = total == 0 ? "Click to Book Ticket" : "Proceed to Pay";
+        buttonText = total == 0 ? "click_to_book_ticket".tr : 'proceed_to_pay'.tr;
       }
 
       return Container(
@@ -41,10 +41,7 @@ class CheckoutBottomBar extends GetView<CheckoutController> {
         decoration: BoxDecoration(
           color: AppColors.cardBg(context),
           boxShadow: [
-            BoxShadow(
-              blurRadius: 10,
-              color: AppColors.shadow(context),
-            ),
+            BoxShadow(blurRadius: 10, color: AppColors.shadow(context)),
           ],
         ),
         child: SafeArea(
@@ -58,7 +55,7 @@ class CheckoutBottomBar extends GetView<CheckoutController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Total",
+                    "total".tr,
                     style: TextStyle(
                       fontSize: 9.sp,
                       color: AppColors.textSecondary(context),

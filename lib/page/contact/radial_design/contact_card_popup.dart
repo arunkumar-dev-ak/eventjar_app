@@ -1,6 +1,7 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 // class ContactCardDeletePopup extends StatelessWidget {
 //   final String contactName;
@@ -109,7 +110,7 @@ class ContactCardDeletePopup extends StatelessWidget {
 
             // Title
             Text(
-              'Delete Contact',
+              'delete_contact'.tr,
               style: TextStyle(
                 fontSize: 11.sp,
                 fontWeight: FontWeight.bold,
@@ -121,7 +122,7 @@ class ContactCardDeletePopup extends StatelessWidget {
 
             // Subtitle
             Text(
-              'Are you sure you want to delete "$contactName"?',
+              '${"delete_confirm_prompt".tr} "$contactName"?',
               style: TextStyle(
                 fontSize: 10.sp,
                 color: AppColors.textSecondary(context),
@@ -150,7 +151,7 @@ class ContactCardDeletePopup extends StatelessWidget {
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'This action cannot be undone and will permanently delete all contact data.',
+                      'permanent_action_warning'.tr,
                       style: TextStyle(
                         fontSize: 9.sp,
                         color: Colors.orange.shade800,
@@ -179,7 +180,7 @@ class ContactCardDeletePopup extends StatelessWidget {
                     ),
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
-                      'Cancel',
+                      'cancel'.tr,
                       style: TextStyle(
                         fontSize: 9.sp,
                         fontWeight: FontWeight.w600,
@@ -204,7 +205,7 @@ class ContactCardDeletePopup extends StatelessWidget {
                       onDelete(); // Execute delete
                     },
                     child: Text(
-                      'Delete',
+                      'delete'.tr,
                       style: TextStyle(
                         fontSize: 9.sp,
                         fontWeight: FontWeight.bold,

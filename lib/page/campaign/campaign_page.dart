@@ -8,7 +8,7 @@ class CampaignPage extends GetView<CampaignController> {
 
   @override
   Widget build(BuildContext context) {
-    return Text("IN CAMPAIGN PAGE");
+    return Text('in_campaign_page'.tr);
   }
 }
 

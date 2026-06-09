@@ -42,7 +42,7 @@ class RescheduleMeetingContactList
                   children: [
                     // Title
                     Text(
-                      "Reschedule Meeting",
+                      "reschedule_meeting".tr,
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
@@ -57,7 +57,7 @@ class RescheduleMeetingContactList
                       readOnly: true,
                       onTap: isLoading ? null : controller.pickMeetingDate,
                       decoration: InputDecoration(
-                        labelText: "Select Date",
+                        labelText: 'select_date'.tr,
                         filled: true,
                         fillColor: AppColors.inputBg(context),
                         suffixIcon: Icon(Icons.calendar_today, size: 15.sp),
@@ -76,7 +76,7 @@ class RescheduleMeetingContactList
                       readOnly: true,
                       onTap: isLoading ? null : controller.pickMeetingTime,
                       decoration: InputDecoration(
-                        labelText: "Select Time",
+                        labelText: 'select_time'.tr,
                         filled: true,
                         fillColor: AppColors.inputBg(context),
                         suffixIcon: Icon(Icons.access_time, size: 15.sp),
@@ -126,7 +126,7 @@ class RescheduleMeetingContactList
                                   ),
                                   SizedBox(width: 3.wp),
                                   Text(
-                                    "Confirming...",
+                                    "confirming".tr,
                                     style: TextStyle(
                                       fontSize: 11.sp,
                                       color: Colors.white,
@@ -135,7 +135,7 @@ class RescheduleMeetingContactList
                                 ],
                               )
                             : Text(
-                                "Confirm",
+                                "confirm".tr,
                                 style: TextStyle(
                                   fontSize: 11.sp,
                                   fontWeight: FontWeight.w600,

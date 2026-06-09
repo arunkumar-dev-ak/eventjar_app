@@ -20,7 +20,7 @@ class ConnectionAttendeesTab extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "Request",
+            'request'.tr,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 9.sp),
           ),
           Container(
@@ -32,7 +32,7 @@ class ConnectionAttendeesTab extends StatelessWidget {
               return Row(
                 children: [
                   _buildJoinedTabButton(
-                    label: "Sent",
+                    label: 'sent'.tr,
                     selected: controller.state.selectedAttendeeTab.value == 0,
                     onTap: () => controller.selectRequestTab(0),
                     leftSide: true,
@@ -48,7 +48,7 @@ class ConnectionAttendeesTab extends StatelessWidget {
                     ),
                   ),
                   _buildJoinedTabButton(
-                    label: "Received",
+                    label: 'received'.tr,
                     selected: controller.state.selectedAttendeeTab.value == 1,
                     onTap: () => controller.selectRequestTab(1),
                     leftSide: false,

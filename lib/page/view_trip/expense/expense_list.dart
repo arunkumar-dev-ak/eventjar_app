@@ -4,7 +4,6 @@ import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/widget/empty_widget.dart';
 import 'package:eventjar/model/view_trip/trip_expense_model.dart';
-import 'package:eventjar/page/view_trip/expense/expense_detail_page.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/page/view_trip/expense/expense_shimmer_card.dart';
 import 'package:flutter/material.dart';
@@ -40,8 +39,8 @@ class ExpenseList extends GetView<ViewTripController> {
             height: 60.hp,
             child: EmptyStateWidget(
               icon: Icons.receipt_long,
-              title: "No expenses yet",
-              subtitle: "Start adding expenses for this trip",
+              title: 'no_expenses_yet'.tr,
+              subtitle: 'start_adding_expenses'.tr,
             ),
           ),
         );
@@ -217,7 +216,7 @@ class ExpenseList extends GetView<ViewTripController> {
               children: [
                 if (!isYou)
                   Text(
-                    "Paid by",
+                    'paid_by'.tr,
                     style: TextStyle(
                       fontSize: 7.sp,
                       color: AppColors.textSecondary(context),
@@ -231,9 +230,10 @@ class ExpenseList extends GetView<ViewTripController> {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 9.sp,
-                      // Mute the color if closed
                       color: isClosed
                           ? AppColors.textSecondary(context)
+                          : Theme.of(context).brightness == Brightness.dark
+                          ? Colors.orange.shade300
                           : Colors.orange.shade700,
                     ),
                   ),
@@ -272,16 +272,18 @@ class ExpenseList extends GetView<ViewTripController> {
                 const Icon(Icons.check_circle, size: 14, color: Colors.green),
                 SizedBox(width: 1.wp),
                 Text(
-                  "Paid ₹${e.amount.toStringAsFixed(0)}",
+                  "${'paid'.tr} ₹${e.amount.toStringAsFixed(0)}",
                   style: TextStyle(
                     fontSize: 8.5.sp,
-                    color: Colors.green.shade700,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.green.shade300
+                        : Colors.green.shade700,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 SizedBox(width: 1.5.wp),
                 Text(
-                  "- $splitCount members",
+                  "- $splitCount ${'members'.tr}",
                   style: TextStyle(
                     fontSize: 7.5.sp,
                     color: AppColors.textSecondary(context),
@@ -292,16 +294,18 @@ class ExpenseList extends GetView<ViewTripController> {
                   const Icon(Icons.check_circle, size: 14, color: Colors.green),
                   SizedBox(width: 1.wp),
                   Text(
-                    "Paid ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
+                    "${'paid'.tr} ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
                     style: TextStyle(
                       fontSize: 8.5.sp,
-                      color: Colors.green.shade700,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.green.shade300
+                          : Colors.green.shade700,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ] else ...[
                   Text(
-                    "Your share ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
+                    "${'my_share'.tr} ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
                     style: TextStyle(
                       fontSize: 9.sp,
                       fontWeight: FontWeight.w600,
@@ -438,6 +442,7 @@ class _CloseExpenseDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
@@ -461,18 +466,20 @@ class _CloseExpenseDialog extends StatelessWidget {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: Colors.orange.shade50,
+                color: isDark
+                    ? Colors.orange.shade900.withValues(alpha: 0.3)
+                    : Colors.orange.shade50,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.cancel_presentation_rounded,
                 size: 32,
-                color: Colors.orange.shade600,
+                color: isDark ? Colors.orange.shade300 : Colors.orange.shade600,
               ),
             ),
             SizedBox(height: 1.hp),
             Text(
-              'Close Request',
+              'close_request'.tr,
               style: TextStyle(
                 fontSize: 11.sp,
                 fontWeight: FontWeight.bold,
@@ -508,7 +515,7 @@ class _CloseExpenseDialog extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Closing this will cancel the expense and remove it from everyone\'s balances.',
+                      'close_request_warning'.tr,
                       style: TextStyle(
                         fontSize: 9.sp,
                         color: AppColors.textSecondary(context),
@@ -544,7 +551,7 @@ class _CloseExpenseDialog extends StatelessWidget {
                           ? null
                           : () => Navigator.of(context).pop(false),
                       child: Text(
-                        'Cancel',
+                        'cancel'.tr,
                         style: TextStyle(
                           fontSize: 9.sp,
                           fontWeight: FontWeight.w600,
@@ -580,7 +587,7 @@ class _CloseExpenseDialog extends StatelessWidget {
                               ),
                             )
                           : Text(
-                              'Close',
+                              'close'.tr,
                               style: TextStyle(
                                 fontSize: 9.sp,
                                 fontWeight: FontWeight.bold,

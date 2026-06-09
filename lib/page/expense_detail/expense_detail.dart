@@ -41,7 +41,7 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
         final expense = controller.state.expense.value;
 
         if (expense == null) {
-          return const Center(child: Text("No Expense Data Found"));
+          return Center(child: Text('no_expense_data_found'.tr));
         }
 
         if (controller.state.isLoading.value) {
@@ -53,7 +53,10 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('Something went wrong', style: TextStyle(fontSize: 10.sp)),
+                Text(
+                  'something_went_wrong'.tr,
+                  style: TextStyle(fontSize: 10.sp),
+                ),
                 SizedBox(height: 1.hp),
                 FilledButton.icon(
                   onPressed: controller.retry,
@@ -130,7 +133,7 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
           ),
           SizedBox(height: 0.5.hp),
           Text(
-            "Paid by $paidByName",
+            "${'paid_by'.tr} $paidByName",
             style: TextStyle(
               fontSize: 10.sp,
               color: Colors.orange.shade700,
@@ -156,7 +159,7 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
             SizedBox(height: 1.5.hp),
             Text(
               myParticipant.isPaid
-                  ? "You have paid ${expense.currency} ${myParticipant.shareAmount.toStringAsFixed(0)}"
+                  ? "${'you_have_paid'.tr} ${expense.currency} ${myParticipant.shareAmount.toStringAsFixed(0)}"
                   : "Your share ${expense.currency} ${myParticipant.shareAmount.toStringAsFixed(0)}",
               style: TextStyle(
                 fontSize: 9.5.sp,
@@ -223,7 +226,7 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
                 ),
                 if (isPayer)
                   Text(
-                    'Paid by',
+                    'paid_by'.tr,
                     style: TextStyle(
                       fontSize: 7.5.sp,
                       color: Colors.orange.shade700,

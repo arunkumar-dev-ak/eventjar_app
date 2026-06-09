@@ -64,7 +64,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                     ),
                     SizedBox(width: 1.5.wp),
                     Text(
-                      'Date filter: ',
+                      '${"date_filter".tr} ',
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w500,
@@ -177,7 +177,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                               ),
                               SizedBox(height: 2.hp),
                               Text(
-                                'No events found',
+                                'no_events_found'.tr,
                                 style: TextStyle(
                                   fontSize: 10.sp,
                                   color: AppColors.textHint(context),
@@ -231,7 +231,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                   controller: controller.searchController,
                   autofocus: true,
                   decoration: InputDecoration(
-                    hintText: 'Search events...',
+                    hintText: 'search_events'.tr,
                     hintStyle: TextStyle(
                       color: Colors.white70,
                       fontSize: 10.sp,
@@ -242,7 +242,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                   onChanged: controller.onSearchChanged,
                 )
               : Text(
-                  'Events',
+                  'events'.tr,
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -393,7 +393,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
     ) = event.isHybrid
         ? ('Hybrid', Icons.swap_horiz, const Color(0xFFFF8F00))
         : event.isVirtual
-        ? ('Online', Icons.videocam, const Color(0xFF1A73E8))
+        ? ('online'.tr, Icons.videocam, const Color(0xFF1A73E8))
         : ('Physical', Icons.location_on, const Color(0xFF4CAF50));
 
     return GestureDetector(
@@ -567,7 +567,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      event.isPaid ? 'Paid' : 'Free',
+                      event.isPaid ? 'paid'.tr : 'free'.tr,
                       style: TextStyle(
                         color: event.isPaid
                             ? const Color(0xFFE65100)
@@ -636,7 +636,7 @@ class CategoriesScreen extends GetView<CategoriesEventController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Organized by',
+                          'organized_by'.tr,
                           style: TextStyle(
                             fontSize: 7.sp,
                             color: AppColors.textHint(context),
