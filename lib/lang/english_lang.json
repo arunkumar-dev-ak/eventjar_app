@@ -950,8 +950,8 @@
         "clear_code": "Clear Code",
         "need_to_verify_other": "Need to verify other",
         "min": "min",
-        "user_logged_successfully": "User Logged Successfully",
-        "manage_automation_desc": "Manage Email , WhatsApp Automation",
+        "user_logged_successfully": "User Logged in Successfully",
+        "manage_automation_desc": "Manage Email, WhatsApp Automation",
         "camera_access_enabled": "Camera access is enabled",
         "stay_updated_desc": "Stay updated with contact activity",
         "disable_camera_instructions": "To disable camera access, you need to turn it off in your device settings.",
@@ -1004,7 +1004,7 @@
         "check_ins": "Check-ins",
         "badge_verification_successful": "Badge Verification Successful",
         "ticket_selected": "Ticket Selected",
-        "promo_not_available_error": "Sorry this promo code not available",
+        "promo_not_available_error": "Sorry this promo code is not available",
         "you_save": "You Save",
         "verifying_badge": "Verifying Badge...",
         "select_ticket_to_continue": "Select Ticket to Continue",
@@ -1037,6 +1037,5 @@
         "no_events_yet": "No Events Yet",
         "no_events_at_moment_desc": "We couldn't find any events at the moment.\\nCheck back later for exciting new events!",
         "no_expense_data_found": "No Expense Data Found"
-
     }
 }
