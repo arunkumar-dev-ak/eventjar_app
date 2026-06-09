@@ -264,23 +264,44 @@ class ScanCardController extends GetxController
       }
 
       if (recognized.text.trim().isEmpty) {
-        errorMessage.value =
-            'no_text_detected_error'.tr;
+        errorMessage.value = 'no_text_detected_error'.tr;
         return;
       }
 
       if (_hasMultipleCards(recognized.text)) {
-        errorMessage.value =
-            'multiple_cards_error'.tr;
+        errorMessage.value = 'multiple_cards_error'.tr;
         return;
       }
 
       final annotatedLines = _buildAnnotatedLines(recognized);
-      final info = await _extractCardInfo(recognized.text, annotatedLines);
+      var info = await _extractCardInfo(recognized.text, annotatedLines);
+
+      // On iOS landscape, the document scanner may not set EXIF orientation,
+      // so ML Kit reads text but in the wrong orientation — extraction fails.
+      // Try 90°, 180°, 270° rotations to find a readable orientation.
+      if (!info.hasData && Platform.isIOS) {
+        for (final angle in [90, 180, 270]) {
+          final rotatedPath = await _rotateImage(imagePath, angle);
+          if (rotatedPath == null) continue;
+
+          final rotatedRecognized = await _recognizeTextFull(rotatedPath);
+          if (rotatedRecognized.text.trim().isEmpty) continue;
+
+          final rotatedLines = _buildAnnotatedLines(rotatedRecognized);
+          final rotatedInfo = await _extractCardInfo(
+            rotatedRecognized.text,
+            rotatedLines,
+          );
+
+          if (rotatedInfo.hasData) {
+            info = rotatedInfo;
+            break;
+          }
+        }
+      }
 
       if (!info.hasData) {
-        errorMessage.value =
-            'card_recognition_error'.tr;
+        errorMessage.value = 'card_recognition_error'.tr;
       }
 
       cardInfo.value = info;
@@ -311,16 +332,20 @@ class ScanCardController extends GetxController
   }
 
   Future<String?> _rotateImage90(String imagePath) async {
+    return _rotateImage(imagePath, 90);
+  }
+
+  Future<String?> _rotateImage(String imagePath, num angle) async {
     try {
       final file = File(imagePath);
       final bytes = await file.readAsBytes();
       final decoded = img.decodeImage(bytes);
       if (decoded == null) return null;
 
-      final rotated = img.copyRotate(decoded, angle: 90);
+      final rotated = img.copyRotate(decoded, angle: angle);
       final encoded = img.encodeJpg(rotated, quality: 85);
       final rotatedFile = File(
-        '${file.parent.path}/rotated_${file.uri.pathSegments.last}',
+        '${file.parent.path}/rotated_${angle}_${file.uri.pathSegments.last}',
       );
       await rotatedFile.writeAsBytes(encoded);
       return rotatedFile.path;
