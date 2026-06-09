@@ -122,11 +122,11 @@ class DashboardController extends GetxController {
 
     if (initialTab != null) {
       state.selectedIndex.value = initialTab;
-
-      await Future.delayed(const Duration(milliseconds: 300));
-
-      await _openSubPage(args);
     }
+
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    await _openSubPage(args);
   }
 
   Future<void> _openSubPage(Map<String, dynamic> args) async {
@@ -216,6 +216,15 @@ class DashboardController extends GetxController {
             ),
           },
         )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
+      case "widgetAction":
+        final widgetRoute = args["widgetRoute"] as String?;
+        if (widgetRoute != null) {
+          await Get.toNamed(
+            widgetRoute,
+          )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        }
         break;
 
       default:

@@ -247,19 +247,6 @@ class DeepLinkHandler {
     return false;
   }
 
-  Future<void> _openOnDashboard({
-    required bool isCold,
-    required String route,
-    Map<String, dynamic>? arguments,
-    Map<String, String>? parameters,
-  }) async {
-    if (isCold || Get.currentRoute == RouteName.splashScreen) {
-      Get.offAllNamed(route, arguments: arguments, parameters: parameters);
-      return;
-    }
-    Get.toNamed(route, arguments: arguments);
-  }
-
   Future<void> _handleWidgetAction(
     String? action, {
     required bool isCold,
@@ -283,6 +270,13 @@ class DeepLinkHandler {
     }
     if (target == null) return;
 
-    await _openOnDashboard(isCold: isCold, route: target);
+    Get.offAllNamed(
+      RouteName.dashboardpage,
+      arguments: {
+        "openSubPage": "widgetAction",
+        "widgetRoute": target,
+        "isLoginRequired": true,
+      },
+    );
   }
 }
