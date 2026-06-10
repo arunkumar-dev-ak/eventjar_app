@@ -10,6 +10,10 @@ void showLanguageChangeDialog(BuildContext context) {
   final isApplying = false.obs;
   final isDark = Theme.of(context).brightness == Brightness.dark;
 
+  if (languageStore.languages.length <= 1) {
+    languageStore.refreshLanguages();
+  }
+
   showDialog(
     context: context,
     builder: (dialogContext) {
@@ -35,6 +39,20 @@ void showLanguageChangeDialog(BuildContext context) {
           ],
         ),
         content: Obx(() {
+          if (languageStore.isLoadingLanguages.value &&
+              languageStore.languages.length <= 1) {
+            return const SizedBox(
+              height: 48,
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          final langs = languageStore.languages;
+          final hasSelected = langs.any((l) => l.code == selected.value);
+          if (!hasSelected) {
+            selected.value = 'en';
+          }
+
           return Container(
             width: double.maxFinite,
             padding: EdgeInsets.symmetric(horizontal: 4.wp),
@@ -61,7 +79,7 @@ void showLanguageChangeDialog(BuildContext context) {
                   fontWeight: FontWeight.w500,
                   color: AppColors.textPrimary(context),
                 ),
-                items: languageStore.languages.map((lang) {
+                items: langs.map((lang) {
                   return DropdownMenuItem<String>(
                     value: lang.code,
                     child: Text(

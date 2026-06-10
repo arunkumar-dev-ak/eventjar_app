@@ -19,18 +19,11 @@ class LanguageStore extends GetxController {
 
   late final Future<void> initCompleted;
 
-  //  Replace with API-driven language list later
-  final languages = <LanguageModel>[
-    const LanguageModel(code: 'en', name: 'English', nativeName: 'English'),
-    const LanguageModel(code: 'hi', name: 'Hindi', nativeName: 'हिन्दी'),
-    const LanguageModel(code: 'fr', name: 'French', nativeName: 'Français'),
-    const LanguageModel(code: 'pl', name: 'Polish', nativeName: 'Polski'),
-    const LanguageModel(
-      code: 'ms',
-      name: 'Malay',
-      nativeName: 'Bahasa Malaysia',
-    ),
-  ].obs;
+  static const _defaultLanguages = [
+    LanguageModel(code: 'en', name: 'English', nativeName: 'English'),
+  ];
+
+  final languages = <LanguageModel>[..._defaultLanguages].obs;
 
   @override
   void onInit() {
@@ -41,17 +34,28 @@ class LanguageStore extends GetxController {
   Future<void> _init() async {
     // 1. Restore saved language code
     final saved = await StorageService.to.getString(storageLanguageCode);
+    var hadCache = false;
     if (saved != null) {
       _selectedLanguageCode.value = saved;
-      await TranslationService.loadCachedLanguage(saved);
+      hadCache = await TranslationService.loadCachedLanguage(saved);
       Get.updateLocale(locale);
     }
     final selected = await StorageService.to.getString(storageLanguageSelected);
     _isLanguageSelected.value = selected == 'true';
 
     if (saved != null && saved != 'en') {
-      TranslationService.fetchAndApply(saved);
+      final success = await TranslationService.fetchAndApply(saved);
+      if (!success && !hadCache) {
+        await _fallbackToEnglish();
+      }
     }
+
+    // 2. Load cached language list, then refresh from API
+    final cached = await TranslationService.loadCachedLanguages();
+    if (cached != null && cached.isNotEmpty) {
+      _applyLanguageList(cached);
+    }
+    await _fetchLanguageList();
   }
 
   Future<void> setLanguage(String code) async {
@@ -71,9 +75,19 @@ class LanguageStore extends GetxController {
       Get.updateLocale(locale);
     }
 
-    // On first install there's no cache, so we must fetch before navigating
-    await TranslationService.fetchAndApply(code);
-    Get.updateLocale(locale);
+    // Fetch latest translations; fallback to English if fetch fails
+    final success = await TranslationService.fetchAndApply(code);
+    if (success) {
+      Get.updateLocale(locale);
+    } else if (!hadCache) {
+      await _fallbackToEnglish();
+    }
+  }
+
+  Future<void> _fallbackToEnglish() async {
+    _selectedLanguageCode.value = 'en';
+    await StorageService.to.setString(storageLanguageCode, 'en');
+    Get.updateLocale(const Locale('en'));
   }
 
   Future<void> _fetchLanguageList() async {

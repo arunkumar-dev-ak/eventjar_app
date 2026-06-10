@@ -28,10 +28,13 @@ class TranslationApi {
   // Implement when API is ready
   static Future<List<LanguageModel>> getLanguages() async {
     try {
-      final response = await _dio.get('/mobile/translations/languages');
+      final response = await _dio.get(
+        '/i18n/languages',
+        options: Options(headers: {'X-Platform': 'mobile'}),
+      );
 
       if (response.statusCode == 200) {
-        return (response.data['languages'] as List)
+        return (response.data['data'] as List)
             .map((e) => LanguageModel.fromJson(e as Map<String, dynamic>))
             .toList();
       }

@@ -11,16 +11,16 @@ class LanguageModel {
 
   factory LanguageModel.fromJson(Map<String, dynamic> json) {
     return LanguageModel(
-      code: json['code']?.toString() ?? '',
-      name: json['name']?.toString() ?? '',
+      code: json['localeCode']?.toString() ?? json['code']?.toString() ?? '',
+      name: json['englishName']?.toString() ?? json['name']?.toString() ?? '',
       nativeName: json['nativeName']?.toString() ?? '',
     );
   }
 
   Map<String, String> toJson() {
     return {
-      'code': code,
-      'name': name,
+      'localeCode': code,
+      'englishName': name,
       'nativeName': nativeName,
     };
   }

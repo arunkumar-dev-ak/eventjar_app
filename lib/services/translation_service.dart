@@ -70,22 +70,24 @@ class TranslationService extends Translations {
   // Fetch translations with version check
   // ---------------------------------------------------------------------------
 
-  static Future<void> fetchAndApply(String langCode) async {
-    if (langCode == 'en') return;
+  static Future<bool> fetchAndApply(String langCode) async {
+    if (langCode == 'en') return true;
 
     try {
       final cachedVersion = await _getCachedVersion(langCode);
 
       final response = await TranslationApi.getTranslations(langCode);
 
-      if (response.version == cachedVersion) return;
+      if (response.version == cachedVersion) return true;
 
       Get.addTranslations({langCode: response.translations});
       await _saveToCache(langCode, response.translations, response.version);
 
       Get.updateLocale(_parseLocale(langCode));
+      return true;
     } catch (e) {
       LoggerService.loggerInstance.e("Translation fetch error ($langCode): $e");
+      return false;
     }
   }
 
