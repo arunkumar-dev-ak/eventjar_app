@@ -53,7 +53,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                   controller: controller.tripNameController,
                   label: "trip_name".tr,
                   validator: (val) =>
-                      val == null || val.isEmpty ? "Required" : null,
+                      val == null || val.isEmpty ? "required".tr : null,
                 ),
 
                 SizedBox(height: 2.hp),
@@ -63,7 +63,7 @@ class CreateTripPage extends GetView<CreateTripController> {
                   controller: controller.destinationController,
                   label: "destination".tr,
                   validator: (val) =>
-                      val == null || val.isEmpty ? "Required" : null,
+                      val == null || val.isEmpty ? "required".tr : null,
                 ),
 
                 SizedBox(height: 2.hp),

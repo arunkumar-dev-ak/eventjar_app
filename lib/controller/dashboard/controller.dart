@@ -90,7 +90,9 @@ class DashboardController extends GetxController {
 
   /*----- Notification and Deeplink Handling  -----*/
   void _triggerTabController(int index) {
-    if (index == 1) {
+    if (index == 0) {
+      Get.find<HomeController>().onTabOpen();
+    } else if (index == 1) {
       Get.find<NetworkScreenController>().onTabOpen();
     } else if (index == 2) {
       Get.find<UserProfileController>().onTabOpen();
@@ -210,7 +212,7 @@ class DashboardController extends GetxController {
             "statusCard": NetworkStatusCardData(
               key: 'overdue',
               enumKey: 'overdue',
-              label: 'overdue'.tr,
+              label: 'overdue',
               icon: Icons.warning_amber_rounded,
               color: Colors.red,
             ),

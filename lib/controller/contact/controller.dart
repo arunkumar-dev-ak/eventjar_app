@@ -43,7 +43,7 @@ class ContactController extends GetxController
       } else {
         state.selectedTab.value = NetworkStatusCardData(
           key: 'totalContacts',
-          label: 'total_contacts'.tr,
+          label: 'total_contacts',
           enumKey: 'all',
           icon: Icons.people,
           color: Colors.blue,
@@ -52,7 +52,7 @@ class ContactController extends GetxController
     } else {
       state.selectedTab.value = NetworkStatusCardData(
         key: 'totalContacts',
-        label: 'total_contacts'.tr,
+        label: 'total_contacts',
         enumKey: 'all',
         icon: Icons.people,
         color: Colors.blue,

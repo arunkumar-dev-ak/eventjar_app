@@ -43,11 +43,11 @@ class AddContactState {
   }.obs;
 
   RxList<Map<String, String>> stages = <Map<String, String>>[
-    {'key': 'new', 'value': 'New Contact'},
+    {'key': 'new', 'value': 'new_contact'},
     {'key': 'followup_24h', 'value': 'twenty_four_h_followup'},
     {'key': 'followup_7d', 'value': 'seven_d_followup'},
     {'key': 'followup_30d', 'value': 'thirty_d_followup'},
-    {'key': 'qualified', 'value': 'Qualified Lead'},
+    {'key': 'qualified', 'value': 'qualified_lead'},
   ].obs;
 
   RxList<String> availableTags = <String>[].obs;

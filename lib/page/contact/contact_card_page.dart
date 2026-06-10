@@ -172,7 +172,7 @@ List<PieChartModel> _buildStagesForContact(
     final disabledColor =
         isDarkMode ? Colors.grey.shade700 : Colors.grey.shade400;
     return PieChartModel(
-      name: stage.name,
+      name: stage.name.tr,
       color: isEnabled ? stage.color : disabledColor,
       isEnabled: isEnabled,
     );

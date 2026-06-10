@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:eventjar/global/global_values.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -176,5 +177,9 @@ class WhatsAppHelper {
     } catch (e) {
       return false;
     }
+  }
+
+  static Future<void> openSupport({BuildContext? context}) async {
+    await openWhatsAppChat(supportWhatsAppNumber, context: context);
   }
 }

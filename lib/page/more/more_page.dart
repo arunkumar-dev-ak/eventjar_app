@@ -5,6 +5,7 @@ import 'package:eventjar/global/store/theme_store.dart';
 import 'package:eventjar/global/widget/language_change_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:eventjar/global/whatsapp_chat.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
@@ -73,6 +74,8 @@ class MorePage extends GetView<MoreController> {
                       ),
                       Row(
                         children: [
+                          _buildWhatsAppButton(context, isDark),
+                          SizedBox(width: 1.wp),
                           _buildLanguageButton(context, isDark),
                           SizedBox(width: 1.wp),
                           _buildThemeToggle(context, isDark),
@@ -380,6 +383,17 @@ class MorePage extends GetView<MoreController> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildWhatsAppButton(BuildContext context, bool isDark) {
+    return IconButton(
+      icon: FaIcon(
+        FontAwesomeIcons.whatsapp,
+        color: const Color(0xFF25D366),
+      ),
+      tooltip: 'Support',
+      onPressed: () => WhatsAppHelper.openSupport(context: context),
     );
   }
 

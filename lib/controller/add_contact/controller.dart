@@ -565,14 +565,14 @@ class AddContactController extends GetxController {
   }
 
   String? validateName(String? val) {
-    if (val == null || val.trim().isEmpty) return 'Name is required';
+    if (val == null || val.trim().isEmpty) return 'full_name_required'.tr;
     if (val.trim().length < 2) return 'Name must be at least 2 characters';
     return null;
   }
 
   // ✅ Email validator
   String? validateEmail(String? val) {
-    if (val == null || val.trim().isEmpty) return 'Email is required';
+    if (val == null || val.trim().isEmpty) return 'email_required'.tr;
     final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
     if (!emailRegex.hasMatch(val.trim())) return 'enter_valid_email'.tr;
     return null;

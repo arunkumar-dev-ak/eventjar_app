@@ -33,7 +33,7 @@ class NetworkScreenController extends GetxController
   final List<NetworkStatusCardData> statusCards = [
     NetworkStatusCardData(
       key: 'totalContacts',
-      label: 'total_contacts'.tr,
+      label: 'total_contacts',
       enumKey: 'all',
       icon: Icons.people,
       color: Colors.blue,
@@ -41,34 +41,34 @@ class NetworkScreenController extends GetxController
     NetworkStatusCardData(
       key: 'new',
       enumKey: 'new',
-      label: 'new'.tr,
+      label: 'new',
       icon: Icons.fiber_new,
       color: Colors.green,
     ),
     NetworkStatusCardData(
       key: 'followup24h',
-      label: 'twenty_four_h_followup'.tr,
+      label: 'twenty_four_h_followup',
       enumKey: 'followup_24h',
       icon: Icons.access_time,
       color: Colors.orange,
     ),
     NetworkStatusCardData(
       key: 'followup7d',
-      label: 'seven_d_followup'.tr,
+      label: 'seven_d_followup',
       enumKey: 'followup_7d',
       icon: Icons.calendar_view_week,
       color: Colors.purple,
     ),
     NetworkStatusCardData(
       key: 'followup30d',
-      label: 'thirty_d_followup'.tr,
+      label: 'thirty_d_followup',
       enumKey: 'followup_30d',
       icon: Icons.calendar_month,
       color: Colors.teal,
     ),
     NetworkStatusCardData(
       key: 'qualified',
-      label: 'qualified'.tr,
+      label: 'qualified',
       enumKey: 'qualified',
       icon: Icons.verified,
       color: Colors.indigo,
@@ -76,7 +76,7 @@ class NetworkScreenController extends GetxController
     NetworkStatusCardData(
       key: 'overdue',
       enumKey: 'overdue',
-      label: 'overdue'.tr,
+      label: 'overdue',
       icon: Icons.warning_amber_rounded,
       color: Colors.red,
     ),

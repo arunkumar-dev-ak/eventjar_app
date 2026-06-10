@@ -62,6 +62,7 @@ class CircularPieChartPainter extends CustomPainter {
             sweepAngle,
             stage.name,
             stage.isEnabled,
+            segmentIndex: i,
           );
         }
       }
@@ -114,6 +115,7 @@ class CircularPieChartPainter extends CustomPainter {
             sweepAngle,
             stage.name,
             stage.isEnabled,
+            segmentIndex: i,
           );
         }
       }
@@ -211,8 +213,9 @@ class CircularPieChartPainter extends CustomPainter {
     double startAngle,
     double sweepAngle,
     String text,
-    bool isEnabled,
-  ) {
+    bool isEnabled, {
+    required int segmentIndex,
+  }) {
     final textStyle = TextStyle(
       color: isDarkMode
           ? (isEnabled ? Colors.white : Colors.white60)
@@ -230,18 +233,15 @@ class CircularPieChartPainter extends CustomPainter {
     double normalizedMidAngle = midAngle % (2 * pi);
     if (normalizedMidAngle < 0) normalizedMidAngle += 2 * pi;
 
-    // Text orientation based on position
-    // NEW CONTACT, 7D FOLLOWUP, and QUALIFIED LEAD need to be flipped
+    // Segments 0 (New Contact), 2 (7D Followup), 4 (Qualified Lead)
+    // are positioned where text needs flipping
+    const flippedSegments = {0, 2, 4};
     bool isOutwardFacing;
 
-    if (text == "NEW CONTACT" ||
-        text == "7D FOLLOWUP" ||
-        text == "QUALIFIED LEAD") {
-      // Flip these texts
+    if (flippedSegments.contains(segmentIndex)) {
       isOutwardFacing =
           !(normalizedMidAngle > pi / 2 && normalizedMidAngle < 3 * pi / 2);
     } else {
-      // All others keep normal orientation
       isOutwardFacing =
           normalizedMidAngle > pi / 2 && normalizedMidAngle < 3 * pi / 2;
     }

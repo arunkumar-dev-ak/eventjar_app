@@ -58,7 +58,7 @@ class MoreController extends GetxController {
         arguments: {
           'statusCard': NetworkStatusCardData(
             key: 'totalContacts',
-            label: 'total_contacts'.tr,
+            label: 'total_contacts',
             enumKey: 'all',
             icon: Icons.people,
             color: Colors.blue,
@@ -75,7 +75,7 @@ class MoreController extends GetxController {
         arguments: {
           'statusCard': NetworkStatusCardData(
             key: 'new',
-            label: 'new'.tr,
+            label: 'new',
             enumKey: 'new',
             icon: Icons.fiber_new,
             color: Colors.green,
@@ -92,7 +92,7 @@ class MoreController extends GetxController {
         arguments: {
           'statusCard': NetworkStatusCardData(
             key: 'followup24h',
-            label: 'twenty_four_h_followup'.tr,
+            label: 'twenty_four_h_followup',
             enumKey: 'followup_24h',
             icon: Icons.access_time,
             color: Colors.orange,
@@ -109,7 +109,7 @@ class MoreController extends GetxController {
         arguments: {
           'statusCard': NetworkStatusCardData(
             key: 'followup7d',
-            label: 'seven_d_followup'.tr,
+            label: 'seven_d_followup',
             enumKey: 'followup_7d',
             icon: Icons.calendar_view_week,
             color: Colors.purple,
@@ -126,7 +126,7 @@ class MoreController extends GetxController {
         arguments: {
           'statusCard': NetworkStatusCardData(
             key: 'followup30d',
-            label: 'thirty_d_followup'.tr,
+            label: 'thirty_d_followup',
             enumKey: 'followup_30d',
             icon: Icons.calendar_month,
             color: Colors.teal,
@@ -143,7 +143,7 @@ class MoreController extends GetxController {
         arguments: {
           'statusCard': NetworkStatusCardData(
             key: 'qualified',
-            label: 'qualified'.tr,
+            label: 'qualified',
             enumKey: 'qualified',
             icon: Icons.verified,
             color: Colors.indigo,

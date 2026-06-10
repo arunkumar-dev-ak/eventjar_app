@@ -23,7 +23,7 @@ class ContactPage extends GetView<ContactController> {
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: Obx(() {
           final selected = controller.state.selectedTab.value;
-          final label = selected?.label ?? 'contacts'.tr;
+          final label = selected?.label.tr ?? 'contacts'.tr;
 
           // Dim the color by blending with black at 20%
           final baseColor = selected?.color ?? Colors.blue;

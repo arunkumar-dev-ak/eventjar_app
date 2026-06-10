@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/global/app_toast.dart';
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/global/whatsapp_chat.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/contact_model.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
@@ -15,6 +16,7 @@ enum ContactCardAction {
   edit,
   delete,
   call,
+  whatsapp,
   mail,
   addToPhone,
   inviteToEventJar,
@@ -37,29 +39,29 @@ int getStageIndexFromContact(ContactStage stage) {
 
 final List<PieChartStageDefinition> stageDefinitions = [
   PieChartStageDefinition(
-    name: "NEW CONTACT",
+    name: "new_contact",
     color: Color(0xFF4DD0E1),
-    fullName: "NEW CONTACT",
+    fullName: "new_contact",
   ),
   PieChartStageDefinition(
-    name: "24H FOLLOWUP",
+    name: "twenty_four_h_followup",
     color: Color(0xFFFF9800),
-    fullName: "24 HOUR FOLLOWUP",
+    fullName: "twenty_four_hour_followup",
   ),
   PieChartStageDefinition(
-    name: "7D FOLLOWUP",
+    name: "seven_d_followup",
     color: Color(0xFF7C4DFF),
-    fullName: "7 DAY FOLLOWUP",
+    fullName: "seven_day_followup",
   ),
   PieChartStageDefinition(
-    name: "30D FOLLOWUP",
+    name: "thirty_d_followup",
     color: Color(0xFF2196F3),
-    fullName: "30 DAY FOLLOWUP",
+    fullName: "thirty_day_followup",
   ),
   PieChartStageDefinition(
-    name: "QUALIFIED LEAD",
+    name: "qualified_lead",
     color: Color(0xFF66BB6A),
-    fullName: "QUALIFIED LEAD",
+    fullName: "qualified_lead",
   ),
 ];
 
@@ -98,6 +100,12 @@ void handleContactCardAction(
     case ContactCardAction.call:
       if (contact.phone != null) {
         controller.launchPhoneCall(contact.phone!);
+      }
+      break;
+
+    case ContactCardAction.whatsapp:
+      if (contact.phone != null) {
+        WhatsAppHelper.openWhatsAppChat(contact.phone!, context: context);
       }
       break;
 

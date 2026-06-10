@@ -191,7 +191,7 @@ class SignUpController extends GetxController {
 
   // Full Name validator
   String? validateFullName(String? val) {
-    if (val == null || val.trim().isEmpty) return "Full Name is required";
+    if (val == null || val.trim().isEmpty) return "full_name_required".tr;
     if (val.trim().length < 2) return "Full Name must be at least 2 characters";
     if (!RegExp(r"^[a-zA-Z\s\-']+$").hasMatch(val.trim())) {
       return "Full Name can only contain letters, spaces, hyphens, or apostrophes";

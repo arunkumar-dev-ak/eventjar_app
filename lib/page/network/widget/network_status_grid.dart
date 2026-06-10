@@ -90,7 +90,7 @@ class NetworkStatusCard extends StatelessWidget {
             const Spacer(),
             Flexible(
               child: Text(
-                data.label,
+                data.label.tr,
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.75),
                   fontSize: 11,

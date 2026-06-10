@@ -9,6 +9,7 @@ import 'package:eventjar/page/contact/radial_design/circular_pie_chart_painter.d
 import 'package:eventjar/page/contact/radial_design/invite_to_eventjar.dart';
 import 'package:eventjar/page/contact/radial_design/radial_design_func.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 class ContactCardHeader extends StatelessWidget {
@@ -224,6 +225,27 @@ class ContactCardHeader extends StatelessWidget {
                                         SizedBox(width: 8),
                                         Text(
                                           'call'.tr,
+                                          style: TextStyle(
+                                            color: AppColors.textPrimary(
+                                              context,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: ContactCardAction.whatsapp,
+                                    child: Row(
+                                      children: [
+                                        FaIcon(
+                                          FontAwesomeIcons.whatsapp,
+                                          color: const Color(0xFF25D366),
+                                          size: 18,
+                                        ),
+                                        SizedBox(width: 8),
+                                        Text(
+                                          'WhatsApp',
                                           style: TextStyle(
                                             color: AppColors.textPrimary(
                                               context,
@@ -555,7 +577,7 @@ Widget _buildStageBadge(Color stageColor, int activeStageIndex) {
         Icon(Icons.circle, size: 10, color: stageColor),
         SizedBox(width: 1.wp),
         Text(
-          stageDefinitions[activeStageIndex].name,
+          stageDefinitions[activeStageIndex].name.tr,
           style: TextStyle(
             fontSize: 6.5.sp,
             fontWeight: FontWeight.w700,

@@ -17,6 +17,8 @@ import 'package:eventjar/page/user_profile/user_profile_social_links.dart';
 import 'package:eventjar/page/user_profile/user_profile_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:eventjar/global/whatsapp_chat.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
 class UserProfilePage extends GetView<UserProfileController> {
@@ -177,6 +179,12 @@ class UserProfilePage extends GetView<UserProfileController> {
                 ),
         );
       }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => WhatsAppHelper.openSupport(context: context),
+        backgroundColor: const Color(0xFF25D366),
+        shape: const CircleBorder(),
+        child: const FaIcon(FontAwesomeIcons.whatsapp, color: Colors.white),
+      ),
     );
   }
 

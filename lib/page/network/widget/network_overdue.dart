@@ -1,6 +1,7 @@
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/model/contact/contact_analytics_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class NetworkOverdueWrapper extends StatelessWidget {
   final Widget child;
@@ -51,7 +52,7 @@ class NetworkOverdueCard extends StatelessWidget {
             SizedBox(width: 2.wp),
             Expanded(
               child: Text(
-                data.label,
+                data.label.tr,
                 style: TextStyle(
                   color: Colors.white70,
                   fontWeight: FontWeight.w700,

@@ -187,7 +187,7 @@ Widget _buildNextActionRow(
         Expanded(
           child: _buildStageChip(
             stageColor: stageColor,
-            label: stageDefinitions[activeStageIndex].fullName,
+            label: stageDefinitions[activeStageIndex].fullName.tr,
             icon: Icons.check_circle,
             isActive: true,
           ),
@@ -217,7 +217,7 @@ Widget _buildNextActionRow(
           Expanded(
             child: _buildStageChip(
               stageColor: Colors.grey,
-              label: stageDefinitions[activeStageIndex + 1].fullName,
+              label: stageDefinitions[activeStageIndex + 1].fullName.tr,
               icon: null,
               isActive: false,
             ),

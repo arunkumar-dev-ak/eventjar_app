@@ -53,7 +53,7 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   controller: controller.titleController,
                   label: "expense_title".tr,
                   validator: (val) =>
-                      val == null || val.isEmpty ? "Required" : null,
+                      val == null || val.isEmpty ? "required".tr : null,
                 ),
                 SizedBox(height: 2.hp),
 
