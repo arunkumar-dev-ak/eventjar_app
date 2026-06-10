@@ -77,4 +77,27 @@ post_install do |installer|
     end
   end
 
+  installer.aggregate_targets.each do |aggregate_target|
+    aggregate_target.user_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.0'
+      end
+    end
+    aggregate_target.user_project.save
+  end
+
+  # 🔥 Fix FlutterGeneratedPluginSwiftPackage — flutter pub get regenerates this with 16.0
+  package_swift = File.expand_path(
+    '../Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Package.swift',
+    __FILE__
+  )
+  if File.exist?(package_swift)
+    content = File.read(package_swift)
+    updated = content.gsub(/\.iOS\("[0-9]+\.[0-9]+"\)/, '.iOS("16.0")')
+    if content != updated
+      File.write(package_swift, updated)
+      puts "✅ Patched FlutterGeneratedPluginSwiftPackage → iOS 16.0"
+    end
+  end
+
 end

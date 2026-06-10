@@ -34,34 +34,8 @@ class SignInFooter extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
         children: [
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     textButtonWidget(label: "Privacy Policy", onPressed: () {}),
-          //     Container(
-          //       width: 4,
-          //       height: 4,
-          //       margin: EdgeInsets.symmetric(horizontal: 2.wp),
-          //       decoration: BoxDecoration(
-          //         color: Colors.grey.shade400,
-          //         shape: BoxShape.circle,
-          //       ),
-          //     ),
-          //     textButtonWidget(label: "Contact Us", onPressed: () {}),
-          //     Container(
-          //       width: 4,
-          //       height: 4,
-          //       margin: EdgeInsets.symmetric(horizontal: 2.wp),
-          //       decoration: BoxDecoration(
-          //         color: Colors.grey.shade400,
-          //         shape: BoxShape.circle,
-          //       ),
-          //     ),
-          //     textButtonWidget(label: "Terms", onPressed: () {}),
-          //   ],
-          // ),
           Text(
-            "© 2025 MyEventJar. ${'all_rights_reserved'.tr}.",
+            "© ${DateTime.now().year} MyEventJar. ${'all_rights_reserved'.tr}.",
             style: TextStyle(
               color: AppColors.textHint(context),
               fontSize: 9.sp,

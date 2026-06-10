@@ -260,12 +260,12 @@ class MorePage extends GetView<MoreController> {
                             isFontAwesome: true,
                             onTap: controller.navigateToWhatsAppAutomation,
                           ),
-                          // _GridItem(
-                          //   icon: Icons.calendar_month_outlined,
-                          //   label: 'google_calendar'.tr,
-                          //   onTap:
-                          //       controller.navigateToGoogleCalendarAutomation,
-                          // ),
+                          _GridItem(
+                            icon: Icons.calendar_month_outlined,
+                            label: 'google_calendar'.tr,
+                            onTap:
+                                controller.navigateToGoogleCalendarAutomation,
+                          ),
                         ]),
 
                         SizedBox(height: 3.hp),

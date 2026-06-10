@@ -16,19 +16,12 @@ class DeepLinkHandler {
   DeepLinkHandler._internal();
 
   final _appLinks = AppLinks();
-
   StreamSubscription<Uri>? _sub;
   bool _streamRegistered = false;
 
   static const _lastConsumedLinkKey = 'last_consumed_deep_link';
 
-  /// Cold-start URI resolution. Checks the OS-delivered launch URI first
-  /// (Universal Links / App Links), then falls back to the Play Install
-  /// Referrer on Android. Returns null if there is no cold-start link.
-  ///
-  /// Guards against stale intents: if the same URI was already consumed in a
-  /// previous session it is ignored so the app doesn't re-navigate to an old
-  /// deep-link destination on every cold start.
+  // Cold-start URI resolution.
   Future<Uri?> resolveInitialUri() async {
     try {
       final initialUri = await _appLinks.getInitialLink();
@@ -36,7 +29,7 @@ class DeepLinkHandler {
         final prefs = await SharedPreferences.getInstance();
         final lastConsumed = prefs.getString(_lastConsumedLinkKey);
         if (lastConsumed == initialUri.toString()) {
-          return null;
+          return null; // Guard against stale intents
         }
         await prefs.setString(_lastConsumedLinkKey, initialUri.toString());
         return initialUri;
@@ -59,17 +52,13 @@ class DeepLinkHandler {
     return null;
   }
 
-  /// Register the warm-state stream listener. Call this once after splash
-  /// has finished navigating, so links that arrive while the app is in the
-  /// foreground or background are routed correctly.
+  // Register the warm-state stream listener.
   void listenForLinks() {
     if (_streamRegistered) return;
     _streamRegistered = true;
 
     _sub = _appLinks.uriLinkStream.listen(
-      (uri) {
-        handleUri(uri);
-      },
+      (uri) => handleUri(uri),
       onError: (Object e) {
         LoggerService.loggerInstance.e("uriLinkStream error: $e");
       },
@@ -82,9 +71,7 @@ class DeepLinkHandler {
     _streamRegistered = false;
   }
 
-  /// Cold-start dispatch. Splash calls this with the URI returned by
-  /// [resolveInitialUri]. If the URI doesn't match any known route we
-  /// still need to leave splash, so we fall back to the dashboard.
+  // Cold-start dispatch.
   Future<void> handleColdStartUri(Uri uri) async {
     final consumed = await _dispatch(uri, isCold: true);
     if (!consumed) {
@@ -92,7 +79,7 @@ class DeepLinkHandler {
     }
   }
 
-  /// Warm-state dispatch (foreground / background → resume).
+  // Warm-state dispatch (foreground / background → resume).
   Future<void> handleUri(Uri uri) async {
     await _dispatch(uri, isCold: false);
   }
@@ -106,10 +93,10 @@ class DeepLinkHandler {
 
     final segments = uri.pathSegments;
     if (segments.isEmpty || segments.first.isEmpty) return false;
-    // LoggerService.loggerInstance.dynamic_d(segments.first);
 
     switch (segments.first) {
       case 'invite':
+      case 'staff-invite':
         final token = segments.length > 1 ? segments[1].trim() : null;
 
         if (token == null || token.isEmpty) {
@@ -148,27 +135,6 @@ class DeepLinkHandler {
             "openSubPage": "eventInfo",
             "isLoginRequired": true,
             "parameters": {"eventId": slug},
-          },
-        );
-        return true;
-
-      case 'staff-invite':
-        final token = segments.length > 1 ? segments[1].trim() : null;
-
-        if (token == null || token.isEmpty) {
-          AppSnackbar.warning(
-            title: "invalid_invite".tr,
-            message: "Please try another link.",
-          );
-          return false;
-        }
-
-        Get.offAllNamed(
-          RouteName.dashboardpage,
-          arguments: {
-            "initialTab": 0,
-            "openSubPage": "signUpPage",
-            "token": token,
           },
         );
         return true;
@@ -231,8 +197,6 @@ class DeepLinkHandler {
         final authSessionId = uri.queryParameters['auth_session_id'];
         if (authSessionId == null) return false;
 
-        // OAuth callback: the user initiated LinkedIn sign-in from the
-        // sign-in page, so we always push on top of whatever is current.
         Get.toNamed(
           RouteName.authProcessingPage,
           arguments: {'provider': 'linkedin', 'authSessionId': authSessionId},
