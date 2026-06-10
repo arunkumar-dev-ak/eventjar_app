@@ -62,6 +62,18 @@ class BioProfileController extends GetxController {
   List<CustomBadgeAssignment> get badgeAssignments =>
       _p?.customBadgeAssignments ?? [];
 
+  bool get hasAboutOrNetworkingContent =>
+      bio.isNotEmpty ||
+      preferredLocations.isNotEmpty ||
+      interestedInConnecting.isNotEmpty ||
+      helpOfferings.isNotEmpty ||
+      discussionTopics.isNotEmpty ||
+      knownLanguages.isNotEmpty ||
+      skills.isNotEmpty;
+
+  bool get hasGalleryOrBadgesContent =>
+      galleryImages.isNotEmpty || badgeAssignments.isNotEmpty;
+
   bool get isLoggedIn => UserStore.to.isLogin;
 
   bool get isOwnProfile {

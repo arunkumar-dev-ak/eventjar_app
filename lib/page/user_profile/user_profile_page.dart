@@ -181,7 +181,7 @@ class UserProfilePage extends GetView<UserProfileController> {
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () => WhatsAppHelper.openSupport(context: context),
-        backgroundColor: const Color(0xFF25D366),
+        backgroundColor: const Color(0xFF008000),
         shape: const CircleBorder(),
         child: const FaIcon(FontAwesomeIcons.whatsapp, color: Colors.white),
       ),
