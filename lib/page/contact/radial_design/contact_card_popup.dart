@@ -1,66 +1,13 @@
+import 'package:eventjar/controller/contact/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/model/contact/mobile_contact_model.dart';
+import 'package:eventjar/page/contact/radial_design/radial_design_func.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 
-// class ContactCardDeletePopup extends StatelessWidget {
-//   final String contactName;
-//   final VoidCallback onDelete;
-
-//   const ContactCardDeletePopup({
-//     super.key,
-//     required this.contactName,
-//     required this.onDelete,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return AlertDialog(
-//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-//       title: const Text('Confirm Delete'),
-//       content: RichText(
-//         text: TextSpan(
-//           style: const TextStyle(fontSize: 15, color: Colors.black),
-//           children: [
-//             const TextSpan(
-//               text: 'You are going to delete the contact card of ',
-//             ),
-//             TextSpan(
-//               text: contactName,
-//               style: const TextStyle(fontWeight: FontWeight.bold),
-//             ),
-//             const TextSpan(text: '. This cannot be undone.'),
-//           ],
-//         ),
-//       ),
-//       actions: [
-//         TextButton(
-//           onPressed: () {
-//             Navigator.of(context).pop();
-//           },
-//           child: const Text(
-//             'Cancel',
-//             style: TextStyle(fontWeight: FontWeight.w600),
-//           ),
-//         ),
-//         ElevatedButton(
-//           style: ElevatedButton.styleFrom(
-//             backgroundColor: Colors.red.shade700,
-//             shape: RoundedRectangleBorder(
-//               borderRadius: BorderRadius.circular(7),
-//             ),
-//           ),
-//           onPressed: () {
-//             onDelete();
-//             Navigator.of(context).pop(); // Close the dialog after deleting
-//           },
-//           child: const Text('Delete', style: TextStyle(color: Colors.white)),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
+//Delete Popup
 class ContactCardDeletePopup extends StatelessWidget {
   final String contactName;
   final VoidCallback onDelete;
@@ -219,6 +166,165 @@ class ContactCardDeletePopup extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+//List Popuop
+class ContactCardPopupMenu extends StatelessWidget {
+  final MobileContact contact;
+  final ContactController controller = Get.find();
+
+  ContactCardPopupMenu({super.key, required this.contact});
+
+  @override
+  Widget build(BuildContext context) {
+    final userName = contact.username;
+    return PopupMenuButton<ContactCardAction>(
+      icon: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: AppColors.divider(context),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          Icons.more_vert,
+          size: 18,
+          color: AppColors.textPrimary(context),
+        ),
+      ),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: ContactCardAction.call,
+          child: Row(
+            children: [
+              const Icon(Icons.phone, color: Colors.green, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                'call'.tr,
+                style: TextStyle(color: AppColors.textPrimary(context)),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: ContactCardAction.mail,
+          child: Row(
+            children: [
+              const Icon(Icons.email, color: Colors.blue, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                'send_mail'.tr,
+                style: TextStyle(color: AppColors.textPrimary(context)),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: ContactCardAction.whatsapp,
+          child: Row(
+            children: [
+              const FaIcon(
+                FontAwesomeIcons.whatsapp,
+                color: Color(0xFF25D366),
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'WhatsApp',
+                style: TextStyle(color: AppColors.textPrimary(context)),
+              ),
+            ],
+          ),
+        ),
+        if (userName != null && userName.isNotEmpty)
+          PopupMenuItem(
+            value: ContactCardAction.viewProfile,
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.account_circle_outlined,
+                  color: Colors.teal,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'view_profile'.tr,
+                  style: TextStyle(color: AppColors.textPrimary(context)),
+                ),
+              ],
+            ),
+          ),
+        PopupMenuItem(
+          value: ContactCardAction.shareProfile,
+          child: Row(
+            children: [
+              const Icon(Icons.share_outlined, color: Colors.purple, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                'share_profile'.tr,
+                style: TextStyle(color: AppColors.textPrimary(context)),
+              ),
+            ],
+          ),
+        ),
+        if (!contact.isEventJarUser)
+          PopupMenuItem(
+            value: ContactCardAction.inviteToEventJar,
+            child: Row(
+              children: [
+                const Icon(Icons.person_add, color: Colors.blue, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  'invite_to_myeventjar'.tr,
+                  style: TextStyle(color: AppColors.textPrimary(context)),
+                ),
+              ],
+            ),
+          ),
+        PopupMenuItem(
+          value: ContactCardAction.addToPhone,
+          child: Row(
+            children: [
+              const Icon(Icons.contacts, color: Colors.purple, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                'add_to_phone'.tr,
+                style: TextStyle(color: AppColors.textPrimary(context)),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: ContactCardAction.edit,
+          child: Row(
+            children: [
+              const Icon(Icons.edit, color: Colors.blue, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                'edit_contact'.tr,
+                style: TextStyle(color: AppColors.textPrimary(context)),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: ContactCardAction.delete,
+          child: Row(
+            children: [
+              const Icon(Icons.delete_outline, color: Colors.red, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                'delete_contact'.tr,
+                style: TextStyle(color: AppColors.textPrimary(context)),
+              ),
+            ],
+          ),
+        ),
+      ],
+      onSelected: (action) {
+        handleContactCardAction(context, action, contact, controller);
+      },
     );
   }
 }

@@ -403,6 +403,10 @@ class ContactController extends GetxController
     });
   }
 
+  void navigateToBioPage(String userName) {
+    Get.toNamed(RouteName.bioProfilePage, parameters: {'username': userName});
+  }
+
   @override
   void dispose() {
     ScaffoldMessenger.of(Get.context!).hideCurrentSnackBar();

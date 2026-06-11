@@ -20,6 +20,8 @@ enum ContactCardAction {
   mail,
   addToPhone,
   inviteToEventJar,
+  shareProfile,
+  viewProfile,
 }
 
 int getStageIndexFromContact(ContactStage stage) {
@@ -100,6 +102,23 @@ void handleContactCardAction(
     case ContactCardAction.call:
       if (contact.phone != null) {
         controller.launchPhoneCall(contact.phone!);
+      }
+      break;
+
+    case ContactCardAction.viewProfile:
+      if (contact.username != null) {
+        controller.navigateToBioPage(contact.username!);
+      }
+      break;
+
+    case ContactCardAction.shareProfile:
+      final currentUserName = UserStore.to.profile['username'];
+      if (contact.phone != null) {
+        WhatsAppHelper.sendWhatsAppMessage(
+          phoneNumber: contact.phone!,
+          context: context,
+          message: 'https://myeventjar.com/members/$currentUserName',
+        );
       }
       break;
 
