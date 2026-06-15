@@ -81,6 +81,9 @@ class RouteName {
   //bio profile page
   static const bioProfilePage = '/bioProfilePage';
 
+  //meeting preferences
+  static const meetingPreferencesPage = '/meetingPreferencesPage';
+
   //more page
   static const morePage = '/morePage';
 }

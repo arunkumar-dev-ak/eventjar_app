@@ -18,6 +18,7 @@ import 'package:eventjar/controller/friends/binding.dart';
 import 'package:eventjar/controller/google_calendar/binding.dart';
 import 'package:eventjar/controller/image_viewer/binding.dart';
 import 'package:eventjar/controller/meeting/binding.dart';
+import 'package:eventjar/controller/meeting_preferences/binding.dart';
 import 'package:eventjar/controller/nfc/binding.dart';
 import 'package:eventjar/controller/nfc_read/binding.dart';
 import 'package:eventjar/controller/nfc_write/binding.dart';
@@ -61,6 +62,7 @@ import 'package:eventjar/page/friends/friends_page.dart';
 import 'package:eventjar/page/google_calendar/google_calendar_page.dart';
 import 'package:eventjar/page/image_viewer/image_viewer.dart';
 import 'package:eventjar/page/meeting/meeting_page.dart';
+import 'package:eventjar/page/meeting_preferences/meeting_preferences_page.dart';
 import 'package:eventjar/page/nfc/nfc_page.dart';
 import 'package:eventjar/page/nfc_read/nfc_read.dart';
 import 'package:eventjar/page/nfc_write/nfc_write.dart';
@@ -248,12 +250,12 @@ class RoutePage {
     ),
 
     /*----- Nfc page -----*/
-    GetPage(
-      name: RouteName.nfcPage,
-      page: () => NfcPage(),
-      binding: NfcBinding(),
-      middlewares: [LoginMiddleware()],
-    ),
+    // GetPage(
+    //   name: RouteName.nfcPage,
+    //   page: () => NfcPage(),
+    //   binding: NfcBinding(),
+    //   middlewares: [LoginMiddleware()],
+    // ),
     GetPage(
       name: RouteName.nfcReadPage,
       page: () => NfcReadPage(),
@@ -422,6 +424,14 @@ class RoutePage {
       name: RouteName.bioProfilePage,
       page: () => const BioProfilePage(),
       binding: BioProfileBinding(),
+    ),
+
+    //meeting preferences
+    GetPage(
+      name: RouteName.meetingPreferencesPage,
+      page: () => const MeetingPreferencesPage(),
+      binding: MeetingPreferencesBinding(),
+      middlewares: [LoginMiddleware()],
     ),
 
     //more page

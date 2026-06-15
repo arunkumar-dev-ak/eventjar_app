@@ -57,7 +57,12 @@ class ContactCardHeader extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSmallChart(stages, collapsedChartSize),
+                    _buildSmallChart(
+                      stages,
+                      collapsedChartSize,
+                      contact.linkedUser?['avatarUrl'],
+                      contact.name,
+                    ),
                     SizedBox(width: 3.wp),
                     Expanded(
                       child: Column(
@@ -375,18 +380,55 @@ Widget _buildStageBadge(Color stageColor, int activeStageIndex) {
   );
 }
 
-Widget _buildSmallChart(List<PieChartModel> stages, double size) {
+Widget _buildSmallChart(
+  List<PieChartModel> stages,
+  double size,
+  String? avatarUrl,
+  String name,
+) {
+  final initials = name
+      .split(' ')
+      .map((n) => n.isNotEmpty ? n[0] : '')
+      .take(2)
+      .join()
+      .toUpperCase();
+  final avatarSize = size * 0.6;
+
   return SizedBox(
     width: size,
     height: size,
-    child: CustomPaint(
-      size: Size(size, size),
-      painter: CircularPieChartPainter(
-        stages: stages,
-        animationValue: 1.0,
-        showText: false,
-        isDarkMode: Get.isDarkMode,
-      ),
+    child: Stack(
+      alignment: Alignment.center,
+      children: [
+        CustomPaint(
+          size: Size(size, size),
+          painter: CircularPieChartPainter(
+            stages: stages,
+            animationValue: 1.0,
+            showText: false,
+            isDarkMode: Get.isDarkMode,
+          ),
+        ),
+        CircleAvatar(
+          radius: avatarSize / 2,
+          backgroundImage: avatarUrl != null && avatarUrl.isNotEmpty
+              ? NetworkImage(getFileUrl(avatarUrl))
+              : null,
+          backgroundColor: avatarUrl != null && avatarUrl.isNotEmpty
+              ? Colors.transparent
+              : AppColors.gradientDarkStart,
+          child: avatarUrl == null || avatarUrl.isEmpty
+              ? Text(
+                  initials,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: avatarSize * 0.35,
+                  ),
+                )
+              : null,
+        ),
+      ],
     ),
   );
 }

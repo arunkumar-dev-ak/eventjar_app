@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../nfc/widget/nfc_page_action.dart';
+import 'nfc_page_action.dart';
 
 class NfcReadPage extends GetView<NfcReadController> {
   const NfcReadPage({super.key});

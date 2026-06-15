@@ -32,7 +32,7 @@ const String storageLanguageSelected = "myEventJar_languageSelected";
 const String supportWhatsAppNumber = "+919360659283";
 
 String backendBaseUrl() {
-  return "https://myeventjar.com/api";
+  //return "https://myeventjar.com/api";
   // return "http://10.0.2.2:4000/";
-  // return "https://darkroom-gizzard-tingle.ngrok-free.dev";
+  return "https://darkroom-gizzard-tingle.ngrok-free.dev";
 } //Base url for Api request
