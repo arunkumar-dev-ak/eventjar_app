@@ -443,44 +443,6 @@ class AddContactController extends GetxController {
     update();
   }
 
-  // Future<void> submitForm(BuildContext context) async {
-  //   if (!formKey.currentState!.validate()) return;
-  //   try {
-  //     state.isLoading.value = true;
-  //     final data = _gatherFormData();
-
-  //     if (checkIsForUpdate()) {
-  //       if (contactId == null) {
-  //         throw Exception("Contact ID is required for update");
-  //       }
-  //       await AddContactApi.updateContact(data: data, id: contactId!);
-  //     } else {
-  //       await AddContactApi.registerTicket(data: data);
-  //     }
-
-  //     clearForm();
-  //     contactId = null;
-  //     Navigator.pop(context, "refresh");
-  //   } catch (err) {
-  //     if (err is DioException) {
-  //       final statusCode = err.response?.statusCode;
-  //       if (statusCode == 401) {
-  //         UserStore.to.clearStore();
-  //         navigateToSignInPage();
-  //         return;
-  //       }
-  //       ApiErrorHandler.handleError(err, "Failed to add/update contact");
-  //     } else {
-  //       AppSnackbar.error(
-  //         title: "Failed",
-  //         message: "Something went wrong. Please try again.",
-  //       );
-  //     }
-  //   } finally {
-  //     state.isLoading.value = false;
-  //   }
-  // }
-
   Future<void> submitForm(BuildContext context) async {
     if (!formKey.currentState!.validate()) return;
 
@@ -493,14 +455,14 @@ class AddContactController extends GetxController {
       if (checkIsForUpdate()) {
         await AddContactApi.updateContact(data: data, id: contactId!);
       } else {
-        // 🔥 If toggle ON + image exists → multipart
+        // If toggle ON + image exists → multipart
         if (state.addWithImage.value && imageFile != null) {
           await AddContactApi.createContactWithCard(
             data: data,
             imageFile: imageFile,
           );
         } else {
-          // 🔥 Normal x-www-form-urlencoded
+          // Normal x-www-form-urlencoded
           await AddContactApi.addContact(data: data);
         }
       }

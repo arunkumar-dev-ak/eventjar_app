@@ -10,12 +10,13 @@ class CreateExpenseState {
   final RxString description = ''.obs;
 
   final List<String> categories = [
-    "Accommodation",
-    "Transportation",
-    "Food & Drinks",
-    "Activities",
-    "Tickets",
+    "Meeting",
+    "Event",
+    "Travel",
+    "Food",
+    "Entertainment",
     "Shopping",
+    "Utilities",
     "Other",
   ];
 

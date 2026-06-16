@@ -34,7 +34,9 @@ class GoogleCalendarPage extends GetView<GoogleCalendarController> {
       ),
 
       body: Obx(() {
-        if (controller.state.isLoading.value) {
+        final isConnected =
+            controller.state.connection.value?.connected ?? false;
+        if (controller.state.isLoading.value || !isConnected) {
           return GoogleCalendarLoadingView();
         }
 
