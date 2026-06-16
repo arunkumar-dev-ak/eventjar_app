@@ -58,10 +58,7 @@ class MeetingList extends GetView<MeetingController> {
             );
           }
           final meeting = meetings[index];
-          return GestureDetector(
-            onTap: () => controller.handleOneOnOneMeetingTap(meeting),
-            child: NetworkMeetingCard(meeting: meeting),
-          );
+          return NetworkMeetingCard(meeting: meeting);
         },
       ),
     );
@@ -192,10 +189,7 @@ class MeetingList extends GetView<MeetingController> {
               SizedBox(height: 8),
               Text(
                 subtitle,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textHintStatic,
-                ),
+                style: TextStyle(fontSize: 14, color: AppColors.textHintStatic),
               ),
               SizedBox(height: 32),
             ],

@@ -47,8 +47,7 @@ class MeetingBuildTabs extends GetView<MeetingController> {
                       ? controller.state.oneOnOneSelectedStatus
                       : controller.state.selectedStatus,
                   getDefaultItem: () => MeetingStatus.SCHEDULED,
-                  getDisplayValue: (MeetingStatus status) =>
-                      status.displayName,
+                  getDisplayValue: (MeetingStatus status) => status.displayName,
                   getKeyValue: (MeetingStatus status) => status,
                   onSelected: (MeetingStatus status) {
                     if (isOneOnOneTab) {
@@ -136,8 +135,7 @@ class MeetingTab extends StatelessWidget {
           boxShadow: selected
               ? [
                   BoxShadow(
-                    color:
-                        AppColors.gradientDarkStart.withValues(alpha: 0.25),
+                    color: AppColors.gradientDarkStart.withValues(alpha: 0.25),
                     blurRadius: 10,
                     spreadRadius: 0,
                     offset: const Offset(0, 3),
@@ -160,9 +158,7 @@ class MeetingTab extends StatelessWidget {
             shadows: selected
                 ? [
                     Shadow(
-                      color: AppColors.gradientDarkStart.withValues(
-                        alpha: 0.3,
-                      ),
+                      color: AppColors.gradientDarkStart.withValues(alpha: 0.3),
                       blurRadius: 2,
                       offset: const Offset(0, 1),
                     ),

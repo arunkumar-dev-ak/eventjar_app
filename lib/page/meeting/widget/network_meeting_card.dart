@@ -208,10 +208,7 @@ class NetworkMeetingCard extends GetView<MeetingController> {
         color: isDark ? const Color(0xFF1A2A3A) : Colors.blue.shade50,
         borderRadius: BorderRadius.circular(12),
         border: Border(
-          left: BorderSide(
-            color: statusColor.withValues(alpha: 0.3),
-            width: 4,
-          ),
+          left: BorderSide(color: statusColor.withValues(alpha: 0.3), width: 4),
         ),
       ),
       child: Row(
@@ -247,13 +244,11 @@ class NetworkMeetingCard extends GetView<MeetingController> {
                 Row(
                   children: [
                     Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: AppColors.scaffoldBg(context),
                         borderRadius: BorderRadius.circular(8),
-                        border:
-                            Border.all(color: AppColors.divider(context)),
+                        border: Border.all(color: AppColors.divider(context)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -277,8 +272,7 @@ class NetworkMeetingCard extends GetView<MeetingController> {
                     ),
                     SizedBox(width: 6),
                     Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: statusColor.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),
@@ -358,8 +352,8 @@ class NetworkMeetingCard extends GetView<MeetingController> {
                 child: OutlinedButton.icon(
                   onPressed: isButtonLoading
                       ? null
-                      : () => controller
-                          .handleNetworkMeetingReschedule(meeting),
+                      : () =>
+                            controller.handleNetworkMeetingReschedule(meeting),
                   icon: Icon(
                     Icons.edit_calendar,
                     size: 16,
@@ -391,7 +385,7 @@ class NetworkMeetingCard extends GetView<MeetingController> {
               onPressed: isButtonLoading
                   ? null
                   : () async =>
-                      await controller.completeNetworkMeeting(meeting.id),
+                        await controller.completeNetworkMeeting(meeting.id),
               icon: isButtonLoading
                   ? SizedBox(
                       width: 16,

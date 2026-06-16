@@ -1,42 +1,70 @@
-import 'package:eventjar/api/meeting_api/meeting_api.dart';
-import 'package:eventjar/api/network_meeting_api/network_meeting_api.dart';
+import 'package:eventjar/controller/meeting/helper/meeting_date_helper.dart';
+import 'package:eventjar/controller/meeting/service/meeting_action_service.dart';
+import 'package:eventjar/controller/meeting/service/meeting_service.dart';
+import 'package:eventjar/controller/meeting/service/network_meeting_service.dart';
 import 'package:eventjar/controller/meeting/state.dart';
-import 'package:eventjar/global/app_snackbar.dart';
-import 'package:eventjar/global/app_toast.dart';
-import 'package:eventjar/global/store/user_store.dart';
-import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
 import 'package:eventjar/model/contact-meeting/contact_meeting_status.dart';
 import 'package:eventjar/model/network-meeting/network_meeting.dart';
 import 'package:eventjar/page/meeting/widget/reschedule_meeting_dialog.dart';
 import 'package:eventjar/routes/route_name.dart';
+import 'package:eventjar/global/store/user_store.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MeetingController extends GetxController {
   var appBarTitle = "my_meetings".tr;
   final state = MeetingState();
-  late Worker debounceWorker;
+
+  late Worker qualifiedDebounceWorker;
   late Worker oneOnOneDebounceWorker;
 
   final oneOnOneScrollController = ScrollController();
   final qualifiedContactScrollController = ScrollController();
 
+  final rescheduleDateController = TextEditingController();
+  final rescheduleTimeController = TextEditingController();
+
+  // Core Service Modules
+  late final NetworkMeetingService _networkMeetingService;
+  late final MeetingService _meetingService;
+  late final MeetingActionService _actionService;
+
   @override
   void onInit() {
     UserStore.cancelAllRequests();
     super.onInit();
-    debounceWorker = everAll([state.selectedStatus, state.selectedDateRange], (
-      _,
-    ) {
-      _debouncedFetchMeetings();
-    });
+
+    //one on one
+    _networkMeetingService = NetworkMeetingService(
+      state: state,
+      navigateToSignInPage: navigateToSignInPage,
+    );
+    //qualified contact
+    _meetingService = MeetingService(
+      state: state,
+      navigateToSignInPage: navigateToSignInPage,
+    );
+    //form actions
+    _actionService = MeetingActionService(
+      state: state,
+      navigateToSignInPage: navigateToSignInPage,
+    );
+
+    qualifiedDebounceWorker = everAll(
+      [state.selectedStatus, state.selectedDateRange],
+      (_) {
+        _debouncedFetchQualifiedMeetings();
+      },
+    );
+
     oneOnOneDebounceWorker = everAll(
       [state.oneOnOneSelectedStatus, state.oneOnOneSelectedDateRange],
       (_) {
         _debouncedFetchOneOnOneMeetings();
       },
     );
+
     final args = Get.arguments;
     if (args != null &&
         args is Map<String, dynamic> &&
@@ -61,7 +89,7 @@ class MeetingController extends GetxController {
         oneOnOneScrollController.position.maxScrollExtent - 200) {
       if (state.oneOnOneHasNextPage.value &&
           !state.isOneOnOneLoadingMore.value) {
-        fetchOneOnOneMeetingsOnScroll();
+        _networkMeetingService.fetchOneOnOneMeetingsOnScroll();
       }
     }
   }
@@ -86,39 +114,17 @@ class MeetingController extends GetxController {
     await fetchOneOnOneMeetings(forceRefresh: true);
   }
 
-  Map<String, dynamic> gatherOneOnOneQueryData({String? cursor}) {
-    final queryParams = <String, dynamic>{
-      'limit': 10,
-    };
-
-    final status = state.oneOnOneSelectedStatus.value;
-    if (status != null && status != MeetingStatus.ALL) {
-      queryParams['status'] = status.name.toUpperCase();
-    }
-
-    final dateRange = state.oneOnOneSelectedDateRange.value;
-    final fromDateUtc = dateRange.start.toUtc();
-    DateTime toDateUtc = dateRange.end.toUtc();
-
-    if (fromDateUtc.isAtSameMomentAs(toDateUtc)) {
-      toDateUtc = toDateUtc.add(const Duration(hours: 23, minutes: 59));
-    }
-
-    queryParams['fromDate'] = fromDateUtc.toIso8601String();
-    queryParams['toDate'] = toDateUtc.toIso8601String();
-
-    if (cursor != null) {
-      queryParams['cursor'] = cursor;
-    }
-
-    return queryParams;
+  Future<void> _debouncedFetchQualifiedMeetings() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    await fetchMeetings();
   }
 
-  String getOneOnOneDisplayText() {
-    final start = _formatDate(state.oneOnOneSelectedDateRange.value.start);
-    final end = _formatDate(state.oneOnOneSelectedDateRange.value.end);
-    return '$start - $end';
-  }
+  // Delegate down to Services/Helpers
+  String getOneOnOneDisplayText() => MeetingDateHelper.getDateRangeDisplayText(
+    state.oneOnOneSelectedDateRange.value,
+  );
+  String getDisplayText() =>
+      MeetingDateHelper.getDateRangeDisplayText(state.selectedDateRange.value);
 
   void setOneOnOneDate(DateTimeRange<DateTime>? range) {
     state.oneOnOneSelectedDateRange.value =
@@ -129,135 +135,32 @@ class MeetingController extends GetxController {
         );
   }
 
-  Future<void> fetchOneOnOneMeetings({bool forceRefresh = false}) async {
-    if (state.isOneOnOneLoading.value && !forceRefresh) return;
-
-    state.isOneOnOneLoading.value = true;
-    try {
-      final queryParams = gatherOneOnOneQueryData();
-
-      final response = await NetworkMeetingApi.getNetworkMeetings(
-        queryParams: queryParams,
-      );
-
-      state.oneOnOneMeetings.value = response.data;
-      state.oneOnOneNextCursor.value = response.paging.cursors.next;
-      state.oneOnOneHasNextPage.value = response.paging.hasNextPage;
-    } catch (err) {
-      ApiErrorHandler.handle(
-        error: err,
-        title: "failed_load_meetings".tr,
-        onUnauthorized: () {
-          UserStore.to.clearStore();
-          navigateToSignInPage();
-        },
-      );
-    } finally {
-      state.isOneOnOneLoading.value = false;
-    }
-  }
-
-  Future<void> fetchOneOnOneMeetingsOnScroll() async {
-    if (state.isOneOnOneLoadingMore.value) return;
-
-    state.isOneOnOneLoadingMore.value = true;
-    try {
-      final queryParams = gatherOneOnOneQueryData(
-        cursor: state.oneOnOneNextCursor.value,
-      );
-
-      final response = await NetworkMeetingApi.getNetworkMeetings(
-        queryParams: queryParams,
-      );
-
-      state.oneOnOneMeetings.addAll(response.data);
-      state.oneOnOneNextCursor.value = response.paging.cursors.next;
-      state.oneOnOneHasNextPage.value = response.paging.hasNextPage;
-    } catch (err) {
-      ApiErrorHandler.handle(
-        error: err,
-        title: "failed_load_meetings".tr,
-        onUnauthorized: () {
-          UserStore.to.clearStore();
-          navigateToSignInPage();
-        },
-      );
-    } finally {
-      state.isOneOnOneLoadingMore.value = false;
-    }
-  }
-
-  void handleOneOnOneMeetingTap(NetworkMeeting meeting) {
-    final status = meeting.status.toLowerCase();
-    if (status == 'scheduled' || status == 'confirmed') {
-      Get.toNamed(RouteName.contactListMeetingPage, arguments: meeting.toContactMeeting())?.then((
-        result,
-      ) async {
-        if (result == "refresh") {
-          await fetchOneOnOneMeetings(forceRefresh: true);
-        }
-      });
-    }
-  }
-
-  Future<void> confirmNetworkMeeting(String meetingId) async {
-    try {
-      if (!_canProceed(meetingId)) {
-        AppToast.warning(
-          'Meeting action is in progress. Please wait for it to complete.',
+  void setDate(DateTimeRange<DateTime>? range) {
+    state.selectedDateRange.value =
+        range ??
+        DateTimeRange(
+          start: DateTime.now(),
+          end: DateTime.now().add(const Duration(days: 7)),
         );
-        return;
-      }
-      await NetworkMeetingApi.confirmMeeting(id: meetingId);
-      AppSnackbar.success(
-        title: 'meeting_confirmed'.tr,
-        message: 'meeting_confirmed_desc'.tr,
-      );
-      fetchOneOnOneMeetings(forceRefresh: true);
-    } catch (err) {
-      ApiErrorHandler.handle(
-        error: err,
-        title: "failed_load_meetings".tr,
-        onUnauthorized: () {
-          UserStore.to.clearStore();
-          navigateToSignInPage();
-        },
-      );
-    } finally {
-      _stopLoading(meetingId);
-    }
   }
 
-  Future<void> completeNetworkMeeting(String meetingId) async {
-    try {
-      if (!_canProceed(meetingId)) {
-        AppToast.warning(
-          'Meeting action is in progress. Please wait for it to complete.',
-        );
-        return;
-      }
-      await NetworkMeetingApi.completeMeeting(id: meetingId);
-      AppSnackbar.success(
-        title: 'meeting_completed'.tr,
-        message: 'meeting_marked_completed'.tr,
-      );
-      fetchOneOnOneMeetings(forceRefresh: true);
-    } catch (err) {
-      ApiErrorHandler.handle(
-        error: err,
-        title: "failed_load_meetings".tr,
-        onUnauthorized: () {
-          UserStore.to.clearStore();
-          navigateToSignInPage();
-        },
-      );
-    } finally {
-      _stopLoading(meetingId);
-    }
-  }
+  Future<void> fetchOneOnOneMeetings({bool forceRefresh = false}) =>
+      _networkMeetingService.fetchOneOnOneMeetings(forceRefresh: forceRefresh);
+  Future<void> fetchMeetings({bool forceRefresh = false}) =>
+      _meetingService.fetchMeetings(forceRefresh: forceRefresh);
 
-  final rescheduleDateController = TextEditingController();
-  final rescheduleTimeController = TextEditingController();
+  Future<void> confirmNetworkMeeting(String meetingId) =>
+      _actionService.confirmNetworkMeeting(
+        meetingId,
+        () => fetchOneOnOneMeetings(forceRefresh: true),
+      );
+  Future<void> completeNetworkMeeting(String meetingId) =>
+      _actionService.completeNetworkMeeting(
+        meetingId,
+        () => fetchOneOnOneMeetings(forceRefresh: true),
+      );
+  Future<void> completeMeeting(String meetingId) => _actionService
+      .completeMeeting(meetingId, () => fetchMeetings(forceRefresh: true));
 
   void handleNetworkMeetingReschedule(NetworkMeeting meeting) {
     final localDateTime = meeting.scheduledAt.toLocal();
@@ -267,14 +170,12 @@ class MeetingController extends GetxController {
       minute: localDateTime.minute,
     );
     rescheduleDateController.text =
-        '${localDateTime.day.toString().padLeft(2, '0')}-'
-        '${localDateTime.month.toString().padLeft(2, '0')}-${localDateTime.year}';
-    rescheduleTimeController.text =
-        state.rescheduleMeetingTime.value.format(Get.context!);
-
-    Get.dialog(
-      RescheduleMeetingDialog(meetingId: meeting.id),
+        '${localDateTime.day.toString().padLeft(2, '0')}-${localDateTime.month.toString().padLeft(2, '0')}-${localDateTime.year}';
+    rescheduleTimeController.text = state.rescheduleMeetingTime.value.format(
+      Get.context!,
     );
+
+    Get.dialog(RescheduleMeetingDialog(meetingId: meeting.id));
   }
 
   Future<void> pickRescheduleDate() async {
@@ -287,8 +188,7 @@ class MeetingController extends GetxController {
     if (picked != null) {
       state.rescheduleMeetingDate.value = picked;
       rescheduleDateController.text =
-          '${picked.day.toString().padLeft(2, '0')}-'
-          '${picked.month.toString().padLeft(2, '0')}-${picked.year}';
+          '${picked.day.toString().padLeft(2, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.year}';
     }
   }
 
@@ -303,139 +203,12 @@ class MeetingController extends GetxController {
     }
   }
 
-  Future<bool> rescheduleNetworkMeeting({required String meetingId}) async {
-    try {
-      state.isRescheduling.value = true;
-
-      final date = state.rescheduleMeetingDate.value;
-      final time = state.rescheduleMeetingTime.value;
-      final localScheduledAt = DateTime(
-        date.year, date.month, date.day, time.hour, time.minute,
+  Future<bool> rescheduleNetworkMeeting({required String meetingId}) =>
+      _actionService.rescheduleNetworkMeeting(
+        meetingId: meetingId,
+        date: state.rescheduleMeetingDate.value,
+        time: state.rescheduleMeetingTime.value,
       );
-      final utcScheduledAt = localScheduledAt.toUtc();
-      final meetingTimeFormatted =
-          '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
-
-      final dto = {
-        'scheduledAt': utcScheduledAt.toIso8601String(),
-        'meetingTime': meetingTimeFormatted,
-      };
-
-      await NetworkMeetingApi.rescheduleMeeting(id: meetingId, dto: dto);
-      AppSnackbar.success(
-        title: 'success'.tr,
-        message: 'meeting_rescheduled_success'.tr,
-      );
-      return true;
-    } catch (err) {
-      ApiErrorHandler.handle(
-        error: err,
-        title: "failed_load_meetings".tr,
-        onUnauthorized: () {
-          UserStore.to.clearStore();
-          navigateToSignInPage();
-        },
-      );
-      return false;
-    } finally {
-      state.isRescheduling.value = false;
-    }
-  }
-
-  String getDisplayText() {
-    final start = _formatDate(state.selectedDateRange.value.start);
-    final end = _formatDate(state.selectedDateRange.value.end);
-    return '$start - $end';
-  }
-
-  String _formatDate(DateTime date) {
-    final months = [
-      'jan'.tr,
-      'feb'.tr,
-      'mar'.tr,
-      'apr'.tr,
-      'may'.tr,
-      'jun'.tr,
-      'jul'.tr,
-      'aug'.tr,
-      'sep'.tr,
-      'oct'.tr,
-      'nov'.tr,
-      'dec'.tr,
-    ];
-    final monthName = months[date.month - 1];
-    return '$monthName ${date.day}, ${date.year}';
-  }
-
-  void setDate(DateTimeRange<DateTime>? range) {
-    state.selectedDateRange.value =
-        range ??
-        DateTimeRange(
-          start: DateTime.now(),
-          end: DateTime.now().add(const Duration(days: 7)),
-        );
-  }
-
-  Future<void> _debouncedFetchMeetings() async {
-    await Future.delayed(const Duration(milliseconds: 500));
-    await fetchMeetings();
-  }
-
-  Map<String, dynamic> gatherQueryData() {
-    final queryParams = <String, dynamic>{};
-
-    final status = state.selectedStatus.value;
-    if (status != null && status != MeetingStatus.ALL) {
-      queryParams['status'] = status.name.toUpperCase();
-    }
-
-    final dateRange = state.selectedDateRange.value;
-    final fromDateUtc = dateRange.start.toUtc();
-    DateTime toDateUtc = dateRange.end.toUtc();
-
-    if (fromDateUtc.isAtSameMomentAs(toDateUtc)) {
-      toDateUtc = toDateUtc.add(const Duration(hours: 23, minutes: 59));
-    }
-
-    queryParams['fromDate'] = fromDateUtc.toIso8601String();
-    queryParams['toDate'] = toDateUtc.toIso8601String();
-
-    return queryParams;
-  }
-
-  Future<void> fetchMeetings({bool forceRefresh = false}) async {
-    if (state.isLoading.value && !forceRefresh) return;
-
-    try {
-      if (forceRefresh) {
-        state.isLoading.value = true;
-      } else {
-        state.isSearching.value = true;
-      }
-
-      // query params
-      final queryParams = gatherQueryData();
-
-      final response = await MeetingApi.getConnectionResponse(
-        queryParams: queryParams,
-      );
-
-      state.meetings.value = response.meetings;
-    } catch (err) {
-      ApiErrorHandler.handle(
-        error: err,
-        title: "failed_load_meetings".tr,
-        onUnauthorized: () {
-          UserStore.to.clearStore();
-          navigateToSignInPage();
-        },
-      );
-    } finally {
-      if (state.isLoading.value) state.isLoading.value = false;
-      if (state.isSearching.value) state.isSearching.value = false;
-      state.buttonLoading.value = {};
-    }
-  }
 
   void navigateToSignInPage() {
     Get.toNamed(RouteName.signInPage)?.then((result) async {
@@ -451,63 +224,18 @@ class MeetingController extends GetxController {
     Get.toNamed(RouteName.schedulerPage, arguments: meeting)?.then((
       result,
     ) async {
-      if (result == "refresh") {
-        await fetchMeetings(forceRefresh: true);
-      }
+      if (result == "refresh") await fetchMeetings(forceRefresh: true);
     });
   }
 
   void navigateToSchedulePage() {
     Get.toNamed(RouteName.schedulerPage)?.then((result) async {
-      if (result == "refresh") {
-        await fetchMeetings(forceRefresh: true);
-      } else {
-        // Get.back();
-      }
+      if (result == "refresh") await fetchMeetings(forceRefresh: true);
     });
   }
 
-  bool _canProceed(String meetingId) {
-    if (state.buttonLoading.values.any((v) => v == true)) return false;
-    state.buttonLoading[meetingId] = true;
-    return true;
-  }
-
-  void _stopLoading(String meetingId) {
-    state.buttonLoading.remove(meetingId);
-  }
-
-  Future<void> completeMeeting(String meetingId) async {
-    try {
-      if (!_canProceed(meetingId)) {
-        AppToast.warning(
-          'Meeting action is in progress. Please wait for it to complete.',
-        );
-        return;
-      }
-      await MeetingApi.completeMeeting(id: meetingId);
-      AppSnackbar.success(
-        title: 'meeting_completed'.tr,
-        message: 'meeting_marked_completed'.tr,
-      );
-      fetchMeetings(forceRefresh: true);
-    } catch (err) {
-      ApiErrorHandler.handle(
-        error: err,
-        title: "failed_load_meetings".tr,
-        onUnauthorized: () {
-          UserStore.to.clearStore();
-          navigateToSignInPage();
-        },
-      );
-    } finally {
-      _stopLoading(meetingId);
-    }
-  }
-
-  Future<void> fetchMeetingsOnReload() async {
-    await fetchMeetings(forceRefresh: false);
-  }
+  Future<void> fetchMeetingsOnReload() async =>
+      fetchMeetings(forceRefresh: false);
 
   Future<void> refreshData() async {
     state.isLoading.value = true;
@@ -520,7 +248,7 @@ class MeetingController extends GetxController {
     qualifiedContactScrollController.removeListener(_onQualifiedContactScroll);
     oneOnOneScrollController.dispose();
     qualifiedContactScrollController.dispose();
-    debounceWorker.dispose();
+    qualifiedDebounceWorker.dispose();
     oneOnOneDebounceWorker.dispose();
     super.onClose();
   }
