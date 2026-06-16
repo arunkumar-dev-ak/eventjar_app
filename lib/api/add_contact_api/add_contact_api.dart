@@ -31,6 +31,7 @@ class AddContactApi {
     required Map<String, dynamic> data,
     required File imageFile,
   }) async {
+    LoggerService.loggerInstance.dynamic_d(data);
     try {
       final formData = FormData();
 

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:app_links/app_links.dart';
+import 'package:eventjar/controller/google_calendar/controller.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
@@ -191,6 +192,15 @@ class DeepLinkHandler {
 
       case 'find-events':
         Get.offAllNamed(RouteName.dashboardpage);
+        return true;
+
+      case 'google-calendar':
+        if (Get.isRegistered<GoogleCalendarController>()) {
+          final calendarController = Get.find<GoogleCalendarController>();
+          calendarController.handleDeepLinkCallback(uri);
+        } else {
+          Get.offAllNamed(RouteName.dashboardpage);
+        }
         return true;
 
       case 'linkedin':

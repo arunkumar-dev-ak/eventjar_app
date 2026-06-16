@@ -83,6 +83,7 @@ class MobileContact {
   final bool isOverdue;
   final DateTime? lastMeetingDate;
   final String? username;
+  final String? avatarUrl;
 
   MobileContact({
     required this.id,
@@ -118,6 +119,7 @@ class MobileContact {
     required this.isEventJarUser,
     this.lastMeetingDate,
     this.username,
+    this.avatarUrl,
   });
 
   factory MobileContact.fromJson(Map<String, dynamic> json) {
@@ -131,6 +133,9 @@ class MobileContact {
         visitingCardUrl: json['visitingCardUrl'],
         username: json['linkedUser'] != null
             ? json['linkedUser']['username']
+            : null,
+        avatarUrl: json['linkedUser'] != null
+            ? json['linkedUser']['avatarUrl']
             : null,
         customAttributes: json['customAttributes'] != null
             ? Map<String, dynamic>.from(json['customAttributes'])
@@ -194,6 +199,7 @@ class MobileContact {
     'position': position,
     'industry': industry,
     'username': username,
+    'avatarUrl': avatarUrl,
     'stage': stage,
     'tags': tags,
     'notes': notes,

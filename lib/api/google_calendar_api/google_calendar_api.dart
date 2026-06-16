@@ -24,14 +24,6 @@ class GoogleCalendarApi {
         response: response,
         error: "something_went_wrong".tr,
       );
-    } on DioException catch (err) {
-      if (err.response?.statusCode == 401) {
-        await UserStore.to.clearStore();
-
-        Get.toNamed(RouteName.signInPage);
-      }
-
-      rethrow;
     } catch (err) {
       rethrow;
     }
@@ -39,7 +31,10 @@ class GoogleCalendarApi {
 
   static Future<GoogleCalendarConnectModel> getConnectUrl() async {
     try {
-      final response = await _dio.get('/google-calendar/mobile/connect');
+      final response = await _dio.get(
+        '/google-calendar/connect',
+        options: Options(headers: {'x-platform': 'mobile'}),
+      );
 
       if (response.statusCode == 200) {
         return GoogleCalendarConnectModel.fromJson(response.data);

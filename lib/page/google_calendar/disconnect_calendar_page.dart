@@ -3,6 +3,7 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 
 class DisconnectCalendarPage extends GetView<GoogleCalendarController> {
@@ -147,38 +148,65 @@ class DisconnectCalendarPage extends GetView<GoogleCalendarController> {
                   width: double.infinity,
                   height: 6.hp,
 
-                  child: OutlinedButton.icon(
-                    onPressed: controller.disconnectGoogleCalendar,
+                  child: Obx(() {
+                    final isDisconnecting =
+                        controller.state.isDisconnecting.value;
 
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: Colors.red.withValues(alpha: 0.04),
+                    return OutlinedButton.icon(
+                      // Disable button to prevent double-taps while deleting
+                      onPressed: isDisconnecting
+                          ? null
+                          : controller.disconnectGoogleCalendar,
 
-                      side: BorderSide(
-                        color: Colors.red.withValues(alpha: 0.25),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.red.withValues(alpha: 0.04),
+
+                        side: BorderSide(
+                          color: isDisconnecting
+                              ? Colors.grey.withValues(alpha: 0.25)
+                              : Colors.red.withValues(alpha: 0.25),
+                        ),
+
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
 
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                      // Show spinner if disconnecting, otherwise show the link_off icon
+                      icon: isDisconnecting
+                          ? SizedBox(
+                              width: 16.sp,
+                              height: 16.sp,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Colors.red,
+                                ),
+                              ),
+                            )
+                          : Icon(
+                              Icons.link_off_rounded,
+                              color: Colors.red,
+                              size: 18.sp,
+                            ),
+
+                      // Update text based on state
+                      label: Text(
+                        isDisconnecting
+                            ? "Disconnecting..."
+                            : "Disconnect Calendar",
+
+                        style: TextStyle(
+                          color: isDisconnecting
+                              ? Colors.red.withValues(alpha: 0.5)
+                              : Colors.red,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.4,
+                        ),
                       ),
-                    ),
-
-                    icon: Icon(
-                      Icons.link_off_rounded,
-                      color: Colors.red,
-                      size: 18.sp,
-                    ),
-
-                    label: Text(
-                      "Disconnect Calendar",
-
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.4,
-                      ),
-                    ),
-                  ),
+                    );
+                  }),
                 ),
               ],
             ),

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 class GoogleCalendarState {
   final RxBool isLoading = false.obs;
+  final RxBool isDisconnecting = false.obs;
 
   final RxString loadingText = "Checking Google Calendar connection...".obs;
 
