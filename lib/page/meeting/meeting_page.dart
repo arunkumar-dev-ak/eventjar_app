@@ -30,25 +30,24 @@ class MeetingPage extends GetView<MeetingController> {
         centerTitle: false,
         actions: [
           Obx(() {
-            if (controller.state.selectedTab.value == 1) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  AppbarButton(
-                    icon: Icons.settings_outlined,
-                    onPressed: () =>
-                        Get.toNamed(RouteName.meetingPreferencesPage),
-                  ),
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AppbarButton(
+                  icon: Icons.settings_outlined,
+                  onPressed: () =>
+                      Get.toNamed(RouteName.meetingPreferencesPage),
+                ),
+                if (controller.state.selectedTab.value == 1)
                   SizedBox(width: 2.wp),
+                if (controller.state.selectedTab.value == 1)
                   AppbarButton(
                     icon: Icons.add,
                     onPressed: controller.navigateToSchedulePage,
                   ),
-                  SizedBox(width: 3.wp),
-                ],
-              );
-            }
-            return const SizedBox.shrink();
+                SizedBox(width: 3.wp),
+              ],
+            );
           }),
         ],
       ),

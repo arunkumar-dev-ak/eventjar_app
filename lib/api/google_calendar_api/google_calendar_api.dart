@@ -82,6 +82,26 @@ class GoogleCalendarApi {
     }
   }
 
+  static Future<bool> updateMeetingPreferences(
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await _dio.put(
+        '/google-calendar/meeting-preferences',
+        data: data,
+      );
+      return (response.statusCode == 200 || response.statusCode == 201);
+    } on DioException catch (err) {
+      if (err.response?.statusCode == 401) {
+        await UserStore.to.clearStore();
+        Get.toNamed(RouteName.signInPage);
+      }
+      rethrow;
+    } catch (err) {
+      rethrow;
+    }
+  }
+
   static Future<void> disconnect() async {
     try {
       final response = await _dio.delete('/google-calendar/disconnect');

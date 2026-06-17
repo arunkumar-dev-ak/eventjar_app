@@ -1,8 +1,8 @@
 import 'package:eventjar/controller/meeting_preferences/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
+import 'package:eventjar/global/dropdown/single_selected_dropdown.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/meeting_preferences/widget/preferences_dropdown.dart';
-import 'package:eventjar/page/meeting_preferences/widget/timezone_search_dropdown.dart';
 import 'package:eventjar/page/meeting_preferences/widget/weekly_availability_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +17,7 @@ class MeetingPreferencesPage extends GetView<MeetingPreferencesController> {
       backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
         title: Text(
-          'Meeting Preferences',
+          'meeting_preferences'.tr,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14.sp),
         ),
         centerTitle: false,
@@ -41,23 +41,38 @@ class MeetingPreferencesPage extends GetView<MeetingPreferencesController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Timezone
               _buildCard(
                 context,
-                child: TimezoneSearchDropdown(
-                  label: 'Timezone',
-                  selectedValue: controller.state.selectedTimezone,
-                  items: controller.state.timezones,
-                  onChanged: controller.updateTimezone,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildLabel(context, 'timezone'.tr),
+                    SizedBox(height: 1.hp),
+                    SingleSelectFilterDropdown<String>(
+                      title: 'timezone'.tr,
+                      items: controller.state.timezones,
+                      selectedItem: controller.state.selectedTimezoneRxn,
+                      getDefaultItem: () => 'UTC',
+                      getDisplayValue: (tz) => tz.replaceAll('_', ' '),
+                      getKeyValue: (tz) => tz,
+                      onSelected: controller.updateTimezone,
+                      searchable: true,
+                      searchHint: 'search_timezone'.tr,
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 2.hp),
+
+              // Slot Interval + Minimum Notice
               _buildCard(
                 context,
                 child: Row(
                   children: [
                     Expanded(
                       child: PreferencesDropdown(
-                        label: 'Slot Interval',
+                        label: 'slot_interval'.tr,
                         selectedValue: controller.state.selectedSlotInterval,
                         items: controller.state.slotIntervals,
                         onChanged: controller.updateSlotInterval,
@@ -66,7 +81,7 @@ class MeetingPreferencesPage extends GetView<MeetingPreferencesController> {
                     SizedBox(width: 3.wp),
                     Expanded(
                       child: PreferencesDropdown(
-                        label: 'Minimum Notice',
+                        label: 'minimum_notice'.tr,
                         selectedValue: controller.state.selectedMinNotice,
                         items: controller.state.minNoticeOptions,
                         onChanged: controller.updateMinNotice,
@@ -76,13 +91,15 @@ class MeetingPreferencesPage extends GetView<MeetingPreferencesController> {
                 ),
               ),
               SizedBox(height: 2.hp),
+
+              // Buffers
               _buildCard(
                 context,
                 child: Row(
                   children: [
                     Expanded(
                       child: PreferencesDropdown(
-                        label: 'Buffer Before',
+                        label: 'buffer_before'.tr,
                         selectedValue: controller.state.selectedBufferBefore,
                         items: controller.state.bufferOptions,
                         onChanged: controller.updateBufferBefore,
@@ -91,7 +108,7 @@ class MeetingPreferencesPage extends GetView<MeetingPreferencesController> {
                     SizedBox(width: 3.wp),
                     Expanded(
                       child: PreferencesDropdown(
-                        label: 'Buffer After',
+                        label: 'buffer_after'.tr,
                         selectedValue: controller.state.selectedBufferAfter,
                         items: controller.state.bufferOptions,
                         onChanged: controller.updateBufferAfter,
@@ -101,19 +118,50 @@ class MeetingPreferencesPage extends GetView<MeetingPreferencesController> {
                 ),
               ),
               SizedBox(height: 2.hp),
+
+              // Max Advance Booking
               _buildCard(
                 context,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _buildLabel(context, 'max_advance_booking'.tr),
+                    SizedBox(height: 1.hp),
+                    Obx(() => _buildMaxAdvanceDaysSelector(context)),
+                  ],
+                ),
+              ),
+              SizedBox(height: 2.hp),
+
+              // Allowed Durations
+              _buildCard(
+                context,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildLabel(context, 'allowed_durations'.tr),
+                    SizedBox(height: 1.hp),
+                    Obx(() => _buildAllowedDurationsSelector(context)),
+                    SizedBox(height: 0.5.hp),
                     Text(
-                      'Weekly Availability',
+                      'allowed_durations_hint'.tr,
                       style: TextStyle(
-                        fontSize: 9.sp,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary(context),
+                        fontSize: 6.5.sp,
+                        color: AppColors.textHint(context),
                       ),
                     ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 2.hp),
+
+              // Weekly Availability
+              _buildCard(
+                context,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildLabel(context, 'weekly_availability'.tr),
                     SizedBox(height: 1.hp),
                     Obx(
                       () => Column(
@@ -136,6 +184,99 @@ class MeetingPreferencesPage extends GetView<MeetingPreferencesController> {
           ),
         );
       }),
+    );
+  }
+
+  Widget _buildLabel(BuildContext context, String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 9.sp,
+        fontWeight: FontWeight.w700,
+        color: AppColors.textPrimary(context),
+      ),
+    );
+  }
+
+  Widget _buildMaxAdvanceDaysSelector(BuildContext context) {
+    final selected = controller.state.selectedMaxAdvanceDays.value;
+    final options = controller.state.maxAdvanceDaysOptions;
+    return Wrap(
+      spacing: 2.wp,
+      runSpacing: 1.hp,
+      children: options.map((opt) {
+        final value = opt['value'] as int;
+        final label = opt['label'] as String;
+        final isActive = selected == value;
+        return GestureDetector(
+          onTap: () => controller.updateMaxAdvanceDays(value),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 1.hp),
+            decoration: BoxDecoration(
+              color: isActive
+                  ? const Color(0xFF4A6CF7).withValues(alpha: 0.1)
+                  : AppColors.inputBg(context),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isActive
+                    ? const Color(0xFF4A6CF7)
+                    : AppColors.border(context),
+              ),
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 8.sp,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                color: isActive
+                    ? const Color(0xFF4A6CF7)
+                    : AppColors.textSecondary(context),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildAllowedDurationsSelector(BuildContext context) {
+    final selected = controller.state.selectedAllowedDurations;
+    final options = controller.state.durationOptions;
+    return Wrap(
+      spacing: 2.wp,
+      runSpacing: 1.hp,
+      children: options.map((opt) {
+        final mins = opt['value'] as int;
+        final label = opt['label'] as String;
+        final isActive = selected.contains(mins);
+        return GestureDetector(
+          onTap: () => controller.toggleDuration(mins),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 1.hp),
+            decoration: BoxDecoration(
+              color: isActive
+                  ? const Color(0xFF4A6CF7).withValues(alpha: 0.1)
+                  : AppColors.inputBg(context),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isActive
+                    ? const Color(0xFF4A6CF7)
+                    : AppColors.border(context),
+              ),
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 8.sp,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                color: isActive
+                    ? const Color(0xFF4A6CF7)
+                    : AppColors.textSecondary(context),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 
@@ -178,7 +319,9 @@ class MeetingPreferencesPage extends GetView<MeetingPreferencesController> {
                 )
               : const Icon(Icons.save_rounded, size: 20),
           label: Text(
-            controller.state.isSaving.value ? 'Saving...' : 'Save Preferences',
+            controller.state.isSaving.value
+                ? 'saving'.tr
+                : 'save_preferences'.tr,
             style: TextStyle(fontSize: 9.sp, fontWeight: FontWeight.w700),
           ),
           style: ElevatedButton.styleFrom(

@@ -13,8 +13,9 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
   final T Function(T) getKeyValue;
   final Function(T) onSelected;
   final String? hintText;
+  final bool searchable;
+  final String? searchHint;
 
-  // ✅ Optional customization
   final Color? themeColor;
   final Color? selectedShade1;
   final Color? selectedShade2;
@@ -38,6 +39,8 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
     required this.getKeyValue,
     required this.onSelected,
     this.hintText,
+    this.searchable = false,
+    this.searchHint,
     this.themeColor,
     this.selectedShade1,
     this.selectedShade2,
@@ -138,208 +141,303 @@ class SingleSelectFilterDropdown<T> extends StatelessWidget {
       context: context,
       barrierDismissible: true,
       barrierColor: Colors.black.withValues(alpha: 0.4),
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-        child: Container(
-          constraints: BoxConstraints(maxHeight: 60.hp, maxWidth: 90.wp),
-          decoration: BoxDecoration(
-            color: AppColors.cardBg(context),
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
-                blurRadius: 40,
-                offset: const Offset(0, 20),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Modern Header
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+      builder: (dialogContext) {
+        List<T> filteredItems = List<T>.from(items);
+
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+              child: Container(
+                constraints:
+                    BoxConstraints(maxHeight: 60.hp, maxWidth: 90.wp),
                 decoration: BoxDecoration(
-                  color: headerColor,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
+                  color: AppColors.cardBg(context),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 40,
+                      offset: const Offset(0, 20),
                     ),
-                    SizedBox(height: 0.7.hp),
-                    Obx(() {
-                      final selected = selectedItem.value;
-                      return selected != null &&
-                              getKeyValue(selected) !=
-                                  getKeyValue(getDefaultItem())
-                          ? Text(
-                              getDisplayValue(selected),
-                              style: TextStyle(
-                                fontSize: 9.sp,
-                                color: Colors.white.withValues(alpha: 0.9),
-                                fontWeight: FontWeight.w500,
-                              ),
-                              textAlign: TextAlign.center,
-                            )
-                          : const SizedBox();
-                    }),
                   ],
                 ),
-              ),
-              SizedBox(height: 1.hp),
-
-              // Items List
-              Expanded(
-                child: Obx(() {
-                  final selected = selectedItem.value;
-
-                  return ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      final bool isSelectedItem =
-                          selected != null &&
-                          getKeyValue(item) == getKeyValue(selected);
-
-                      final isDark =
-                          Theme.of(context).brightness == Brightness.dark;
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        margin: const EdgeInsets.only(bottom: 12),
-                        decoration: BoxDecoration(
-                          color: isSelectedItem
-                              ? (isDark
-                                    ? headerColor.withValues(alpha: 0.15)
-                                    : selectedShade1)
-                              : AppColors.cardBg(context),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: isSelectedItem
-                                ? (isDark
-                                      ? headerColor.withValues(alpha: 0.5)
-                                      : selectedShade3)
-                                : AppColors.divider(context),
-                            width: 1.5,
-                          ),
-                          boxShadow: isSelectedItem
-                              ? [
-                                  BoxShadow(
-                                    color: isDark
-                                        ? headerColor.withValues(alpha: 0.2)
-                                        : selectedShade1,
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ]
-                              : null,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Header
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                      decoration: BoxDecoration(
+                        color: headerColor,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(24),
+                          topRight: Radius.circular(24),
                         ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(16),
-                            onTap: () {
-                              HapticHelper.selection();
-                              onSelected(item);
-                              Navigator.pop(context);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 24,
-                                    height: 24,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: isSelectedItem
-                                          ? headerColor
-                                          : AppColors.divider(context),
-                                      border: Border.all(
-                                        color: isSelectedItem
-                                            ? Colors.white
-                                            : Colors.transparent,
-                                        width: 2,
-                                      ),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            title,
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 0.7.hp),
+                          Obx(() {
+                            final selected = selectedItem.value;
+                            return selected != null &&
+                                    getKeyValue(selected) !=
+                                        getKeyValue(getDefaultItem())
+                                ? Text(
+                                    getDisplayValue(selected),
+                                    style: TextStyle(
+                                      fontSize: 9.sp,
+                                      color:
+                                          Colors.white.withValues(alpha: 0.9),
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                    child: Icon(
-                                      isSelectedItem
-                                          ? Icons.check
-                                          : Icons.radio_button_unchecked,
-                                      color: isSelectedItem
-                                          ? Colors.white
-                                          : AppColors.textHint(context),
-                                      size: 16,
-                                    ),
-                                  ),
-                                  SizedBox(width: 3.wp),
-                                  Expanded(
-                                    child: Text(
-                                      getDisplayValue(item),
-                                      style: TextStyle(
-                                        fontSize: 10.sp,
-                                        fontWeight: isSelectedItem
-                                            ? FontWeight.w600
-                                            : FontWeight.w500,
-                                        color: isSelectedItem
-                                            ? primary
-                                            : AppColors.textPrimary(context),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                    textAlign: TextAlign.center,
+                                  )
+                                : const SizedBox();
+                          }),
+                        ],
+                      ),
+                    ),
+
+                    // Search field
+                    if (searchable)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 12, 24, 4),
+                        child: TextField(
+                          autofocus: true,
+                          onChanged: (query) {
+                            setDialogState(() {
+                              if (query.isEmpty) {
+                                filteredItems = List<T>.from(items);
+                              } else {
+                                final q = query.toLowerCase();
+                                filteredItems = items
+                                    .where((item) => getDisplayValue(item)
+                                        .toLowerCase()
+                                        .contains(q))
+                                    .toList();
+                              }
+                            });
+                          },
+                          decoration: InputDecoration(
+                            hintText: searchHint ?? 'search'.tr,
+                            hintStyle: TextStyle(
+                              fontSize: 9.sp,
+                              color: AppColors.textHint(context),
+                            ),
+                            prefixIcon: Icon(
+                              Icons.search_rounded,
+                              color: AppColors.textHint(context),
+                            ),
+                            filled: true,
+                            fillColor: AppColors.inputBg(context),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                          style: TextStyle(
+                            fontSize: 9.sp,
+                            color: AppColors.textPrimary(context),
+                          ),
+                        ),
+                      ),
+
+                    SizedBox(height: 1.hp),
+
+                    // Items List
+                    Expanded(
+                      child: Obx(() {
+                        final selected = selectedItem.value;
+                        final isDark =
+                            Theme.of(context).brightness == Brightness.dark;
+
+                        if (searchable && filteredItems.isEmpty) {
+                          return Center(
+                            child: Text(
+                              'no_results_found'.tr,
+                              style: TextStyle(
+                                fontSize: 9.sp,
+                                color: AppColors.textHint(context),
                               ),
+                            ),
+                          );
+                        }
+
+                        final displayItems =
+                            searchable ? filteredItems : items;
+
+                        return ListView.builder(
+                          padding:
+                              const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                          itemCount: displayItems.length,
+                          itemBuilder: (context, index) {
+                            final item = displayItems[index];
+                            final bool isSelectedItem = selected != null &&
+                                getKeyValue(item) ==
+                                    getKeyValue(selected);
+
+                            return AnimatedContainer(
+                              duration:
+                                  const Duration(milliseconds: 200),
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: isSelectedItem
+                                    ? (isDark
+                                        ? headerColor
+                                            .withValues(alpha: 0.15)
+                                        : selectedShade1)
+                                    : AppColors.cardBg(context),
+                                borderRadius:
+                                    BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: isSelectedItem
+                                      ? (isDark
+                                          ? headerColor
+                                              .withValues(alpha: 0.5)
+                                          : selectedShade3)
+                                      : AppColors.divider(context),
+                                  width: 1.5,
+                                ),
+                                boxShadow: isSelectedItem
+                                    ? [
+                                        BoxShadow(
+                                          color: isDark
+                                              ? headerColor.withValues(
+                                                  alpha: 0.2)
+                                              : selectedShade1,
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius:
+                                      BorderRadius.circular(16),
+                                  onTap: () {
+                                    HapticHelper.selection();
+                                    onSelected(item);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.all(16),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 24,
+                                          height: 24,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: isSelectedItem
+                                                ? headerColor
+                                                : AppColors.divider(
+                                                    context),
+                                            border: Border.all(
+                                              color: isSelectedItem
+                                                  ? Colors.white
+                                                  : Colors
+                                                      .transparent,
+                                              width: 2,
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            isSelectedItem
+                                                ? Icons.check
+                                                : Icons
+                                                    .radio_button_unchecked,
+                                            color: isSelectedItem
+                                                ? Colors.white
+                                                : AppColors.textHint(
+                                                    context),
+                                            size: 16,
+                                          ),
+                                        ),
+                                        SizedBox(width: 3.wp),
+                                        Expanded(
+                                          child: Text(
+                                            getDisplayValue(item),
+                                            style: TextStyle(
+                                              fontSize: 10.sp,
+                                              fontWeight:
+                                                  isSelectedItem
+                                                      ? FontWeight
+                                                          .w600
+                                                      : FontWeight
+                                                          .w500,
+                                              color: isSelectedItem
+                                                  ? primary
+                                                  : AppColors
+                                                      .textPrimary(
+                                                      context,
+                                                    ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }),
+                    ),
+
+                    // Close button
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(24, 0, 24, 2.hp),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: TextButton.styleFrom(
+                            padding:
+                                const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              side: BorderSide(
+                                  color: AppColors.border(context)),
+                            ),
+                          ),
+                          child: Text(
+                            'close'.tr,
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textSecondary(context),
                             ),
                           ),
                         ),
-                      );
-                    },
-                  );
-                }),
-              ),
-
-              // Close button
-              Padding(
-                padding: EdgeInsets.fromLTRB(24, 0, 24, 2.hp),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        side: BorderSide(color: AppColors.border(context)),
                       ),
                     ),
-                    child: Text(
-                      'close'.tr,
-                      style: TextStyle(
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textSecondary(context),
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            );
+          },
+        );
+      },
     );
   }
 }

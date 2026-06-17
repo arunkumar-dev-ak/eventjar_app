@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:eventjar/global/utils/date_utils.dart';
 import 'package:eventjar/model/contact-meeting/contact_meeting_status.dart';
 
 class MeetingQueryHelper {
@@ -13,15 +14,9 @@ class MeetingQueryHelper {
       queryParams['status'] = status.name.toUpperCase();
     }
 
-    final fromDateUtc = dateRange.start.toUtc();
-    DateTime toDateUtc = dateRange.end.toUtc();
-
-    if (fromDateUtc.isAtSameMomentAs(toDateUtc)) {
-      toDateUtc = toDateUtc.add(const Duration(hours: 23, minutes: 59));
-    }
-
-    queryParams['fromDate'] = fromDateUtc.toIso8601String();
-    queryParams['toDate'] = toDateUtc.toIso8601String();
+    final utcRange = dateRangeToUtcStrings(dateRange);
+    queryParams['fromDate'] = utcRange.startDate;
+    queryParams['toDate'] = utcRange.endDate;
 
     if (cursor != null) {
       queryParams['cursor'] = cursor;
@@ -40,15 +35,9 @@ class MeetingQueryHelper {
       queryParams['status'] = status.name.toUpperCase();
     }
 
-    final fromDateUtc = dateRange.start.toUtc();
-    DateTime toDateUtc = dateRange.end.toUtc();
-
-    if (fromDateUtc.isAtSameMomentAs(toDateUtc)) {
-      toDateUtc = toDateUtc.add(const Duration(hours: 23, minutes: 59));
-    }
-
-    queryParams['fromDate'] = fromDateUtc.toIso8601String();
-    queryParams['toDate'] = toDateUtc.toIso8601String();
+    final utcRange = dateRangeToUtcStrings(dateRange);
+    queryParams['fromDate'] = utcRange.startDate;
+    queryParams['toDate'] = utcRange.endDate;
 
     return queryParams;
   }

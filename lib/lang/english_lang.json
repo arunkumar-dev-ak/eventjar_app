@@ -1061,6 +1061,21 @@
     "travel": "Travel",
     "food": "Food",
     "entertainment": "Entertainment",
-    "utilities": "Utilities"
+    "utilities": "Utilities",
+    "meeting_preferences": "Meeting Preferences",
+    "timezone": "Timezone",
+    "slot_interval": "Slot Interval",
+    "minimum_notice": "Minimum Notice",
+    "buffer_before": "Buffer Before",
+    "buffer_after": "Buffer After",
+    "max_advance_booking": "Max Advance Booking",
+    "allowed_durations": "Allowed Meeting Durations",
+    "allowed_durations_hint": "Select which meeting lengths others can book with you",
+    "weekly_availability": "Weekly Availability",
+    "save_preferences": "Save Preferences",
+    "saving": "Saving...",
+    "preferences_saved": "Meeting preferences saved",
+    "save_failed": "Failed to save preferences",
+    "failed_load_preferences": "Failed to load preferences"
   }
 }

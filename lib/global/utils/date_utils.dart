@@ -1,6 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+typedef UtcDateRange = ({String startDate, String endDate});
+
+UtcDateRange dateRangeToUtcStrings(DateTimeRange range) {
+  final startLocal = DateTime(
+    range.start.year,
+    range.start.month,
+    range.start.day,
+  );
+  final endLocal = DateTime(
+    range.end.year,
+    range.end.month,
+    range.end.day,
+    23,
+    59,
+    59,
+  );
+  return (
+    startDate: startLocal.toUtc().toIso8601String(),
+    endDate: endLocal.toUtc().toIso8601String(),
+  );
+}
+
 // Defines our custom return type: (Date, Time, Timezone)
 typedef FormattedDateTime = (String date, String time, String timezone);
 

@@ -1,6 +1,7 @@
 import 'package:eventjar/api/google_calendar_api/google_calendar_api.dart';
 import 'package:eventjar/controller/meeting_preferences/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
+import 'package:eventjar/global/app_toast.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/model/meeting_preferences/meeting_preferences_model.dart';
@@ -14,7 +15,47 @@ class MeetingPreferencesController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _ensureDeviceTimezone();
     fetchPreferences();
+  }
+
+  void _ensureDeviceTimezone() {
+    final now = DateTime.now();
+    final offset = now.timeZoneOffset;
+    final detectedTz = _guessTimezoneFromOffset(offset);
+    if (detectedTz != null && !state.timezones.contains(detectedTz)) {
+      state.timezones.insert(0, detectedTz);
+    }
+  }
+
+  String? _guessTimezoneFromOffset(Duration offset) {
+    final hours = offset.inHours;
+    final mins = offset.inMinutes % 60;
+    final map = {
+      330: 'Asia/Kolkata',
+      300: 'Asia/Karachi',
+      345: 'Asia/Kathmandu',
+      360: 'Asia/Dhaka',
+      390: 'Asia/Yangon',
+      420: 'Asia/Bangkok',
+      480: 'Asia/Shanghai',
+      540: 'Asia/Tokyo',
+      570: 'Australia/Adelaide',
+      600: 'Australia/Sydney',
+      -300: 'America/New_York',
+      -360: 'America/Chicago',
+      -420: 'America/Denver',
+      -480: 'America/Los_Angeles',
+      0: 'UTC',
+      60: 'Europe/Paris',
+      120: 'Europe/Athens',
+      180: 'Europe/Moscow',
+      210: 'Asia/Tehran',
+      240: 'Asia/Dubai',
+      270: 'Asia/Kabul',
+    };
+    final totalMins = hours * 60 + mins;
+    return map[totalMins];
   }
 
   Future<void> fetchPreferences() async {
@@ -38,21 +79,22 @@ class MeetingPreferencesController extends GetxController {
 
   void _applyResponse(MeetingPreferencesResponse response) {
     state.selectedTimezone.value = response.timezone;
+    state.selectedTimezoneRxn.value = response.timezone;
     state.selectedSlotInterval.value = _minsToSlotLabel(
       response.slotIntervalMins,
     );
-    state.selectedMinNotice.value = _minsToNoticeLabel(
-      response.minNoticeMins,
-    );
+    state.selectedMinNotice.value = _minsToNoticeLabel(response.minNoticeMins);
     state.selectedBufferBefore.value = _minsToBufferLabel(
       response.bufferBeforeMins,
     );
     state.selectedBufferAfter.value = _minsToBufferLabel(
       response.bufferAfterMins,
     );
+    state.selectedMaxAdvanceDays.value = response.maxAdvanceDays;
+    state.selectedAllowedDurations.value = List<int>.from(
+      response.allowedDurations,
+    );
 
-    // day index mapping: API day 0=Sunday,1=Monday,...,6=Saturday
-    // State order: 0=Monday,1=Tuesday,...,5=Saturday,6=Sunday
     for (final wh in response.weeklyHours) {
       final stateIndex = _apiDayToStateIndex(wh.day);
       if (stateIndex < 0 || stateIndex >= state.weeklyAvailability.length) {
@@ -66,23 +108,21 @@ class MeetingPreferencesController extends GetxController {
   }
 
   int _apiDayToStateIndex(int apiDay) {
-    // API: 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
-    // State: 0=Mon,1=Tue,2=Wed,3=Thu,4=Fri,5=Sat,6=Sun
     if (apiDay == 0) return 6;
     return apiDay - 1;
   }
 
-  TimeOfDay _parseTime(String time) {
-    final parts = time.split(':');
-    return TimeOfDay(
-      hour: int.parse(parts[0]),
-      minute: int.parse(parts[1]),
-    );
+  int _stateIndexToApiDay(int stateIndex) {
+    if (stateIndex == 6) return 0;
+    return stateIndex + 1;
   }
 
-  String _minsToSlotLabel(int mins) {
-    return '$mins min';
+  TimeOfDay _parseTime(String time) {
+    final parts = time.split(':');
+    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
   }
+
+  String _minsToSlotLabel(int mins) => '$mins min';
 
   String _minsToNoticeLabel(int mins) {
     if (mins == 0) return 'No minimum';
@@ -99,8 +139,38 @@ class MeetingPreferencesController extends GetxController {
     return '$mins min';
   }
 
+  int _slotLabelToMins(String label) {
+    if (label == 'No minimum') return 0;
+    return int.tryParse(label.replaceAll(' min', '')) ?? 30;
+  }
+
+  int _noticeLabelToMins(String label) {
+    switch (label) {
+      case 'No minimum':
+        return 0;
+      case '30 min':
+        return 30;
+      case '1 hour':
+        return 60;
+      case '2 hours':
+        return 120;
+      case '4 hours':
+        return 240;
+      case '1 day':
+        return 1440;
+      default:
+        return 60;
+    }
+  }
+
+  int _bufferLabelToMins(String label) {
+    if (label == 'None') return 0;
+    return int.tryParse(label.replaceAll(' min', '')) ?? 0;
+  }
+
   void updateTimezone(String value) {
     state.selectedTimezone.value = value;
+    state.selectedTimezoneRxn.value = value;
   }
 
   void updateSlotInterval(String value) {
@@ -117,6 +187,22 @@ class MeetingPreferencesController extends GetxController {
 
   void updateBufferAfter(String value) {
     state.selectedBufferAfter.value = value;
+  }
+
+  void updateMaxAdvanceDays(int value) {
+    state.selectedMaxAdvanceDays.value = value;
+  }
+
+  void toggleDuration(int mins) {
+    final current = List<int>.from(state.selectedAllowedDurations);
+    if (current.contains(mins)) {
+      if (current.length <= 1) return;
+      current.remove(mins);
+    } else {
+      current.add(mins);
+      current.sort();
+    }
+    state.selectedAllowedDurations.value = current;
   }
 
   void toggleDay(int index, bool value) {
@@ -137,10 +223,7 @@ class MeetingPreferencesController extends GetxController {
     final pickedMins = _toMinutes(picked);
 
     if (pickedMins >= endMins || (endMins - pickedMins) < 30) {
-      AppSnackbar.warning(
-        title: 'invalid_time'.tr,
-        message: 'start_time_before_end'.tr,
-      );
+      AppToast.warning('start_time_before_end'.tr);
       return;
     }
 
@@ -159,10 +242,7 @@ class MeetingPreferencesController extends GetxController {
     final pickedMins = _toMinutes(picked);
 
     if (pickedMins <= startMins || (pickedMins - startMins) < 30) {
-      AppSnackbar.warning(
-        title: 'invalid_time'.tr,
-        message: 'end_time_after_start'.tr,
-      );
+      AppToast.warning('end_time_after_start'.tr);
       return;
     }
 
@@ -176,14 +256,61 @@ class MeetingPreferencesController extends GetxController {
     return '${hour.toString().padLeft(2, '0')}:$minute $period';
   }
 
+  Map<String, dynamic> _buildPayload() {
+    final weeklyHours = <Map<String, dynamic>>[];
+    for (int i = 0; i < state.weeklyAvailability.length; i++) {
+      final day = state.weeklyAvailability[i];
+      final start = day.startTime.value;
+      final end = day.endTime.value;
+      weeklyHours.add({
+        'day': _stateIndexToApiDay(i),
+        'enabled': day.isEnabled.value,
+        'startTime':
+            '${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}',
+        'endTime':
+            '${end.hour.toString().padLeft(2, '0')}:${end.minute.toString().padLeft(2, '0')}',
+      });
+    }
+
+    return {
+      'timezone': state.selectedTimezone.value,
+      'slot_interval_mins': _slotLabelToMins(state.selectedSlotInterval.value),
+      'buffer_before_mins': _bufferLabelToMins(
+        state.selectedBufferBefore.value,
+      ),
+      'buffer_after_mins': _bufferLabelToMins(state.selectedBufferAfter.value),
+      'min_notice_mins': _noticeLabelToMins(state.selectedMinNotice.value),
+      'max_advance_days': state.selectedMaxAdvanceDays.value,
+      'weekly_hours': weeklyHours,
+      'allowed_durations': state.selectedAllowedDurations.toList(),
+    };
+  }
+
   Future<void> savePreferences() async {
     state.isSaving.value = true;
-    // TODO: Implement save API when endpoint is available
-    await Future.delayed(const Duration(seconds: 1));
-    state.isSaving.value = false;
-    AppSnackbar.success(
-      title: 'success'.tr,
-      message: 'preferences_saved'.tr,
-    );
+    try {
+      final payload = _buildPayload();
+      final success = await GoogleCalendarApi.updateMeetingPreferences(payload);
+      if (success) {
+        AppSnackbar.success(
+          title: 'success'.tr,
+          message: 'preferences_saved'.tr,
+        );
+        Navigator.pop(Get.context!);
+      } else {
+        AppSnackbar.error(title: 'error'.tr, message: 'save_failed'.tr);
+      }
+    } catch (err) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: 'save_failed'.tr,
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          Get.toNamed(RouteName.signInPage);
+        },
+      );
+    } finally {
+      state.isSaving.value = false;
+    }
   }
 }
