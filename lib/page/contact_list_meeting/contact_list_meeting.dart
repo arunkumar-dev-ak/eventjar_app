@@ -158,13 +158,8 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
 
           _buildDetailRow(
             Icons.access_time,
-            'date'.tr,
-            '$timeText ($timezoneText)',
-          ),
-          _buildDetailRow(
-            Icons.access_time,
             'time'.tr,
-            controller.formattedTime,
+            '$timeText ($timezoneText)',
           ),
           _buildDetailRow(
             Icons.email,
