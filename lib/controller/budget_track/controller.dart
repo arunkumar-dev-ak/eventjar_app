@@ -220,6 +220,16 @@ class BudgetTrackController extends GetxController
     });
   }
 
+  void navigateToEditTrip(TripModel trip) {
+    Get.toNamed(RouteName.createTripPage, arguments: trip)?.then(
+      (result) async {
+        if (result == "refresh") {
+          await refreshTrips();
+        }
+      },
+    );
+  }
+
   void navigateToCreateExpense() {
     Get.toNamed(RouteName.createExpensePage)?.then((result) async {
       // if (result == "logged_in") {

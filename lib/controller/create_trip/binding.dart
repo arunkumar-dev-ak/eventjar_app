@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 class CreateTripBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<CreateTripController>(() => CreateTripController());
+    Get.delete<CreateTripController>(force: true);
+    Get.put<CreateTripController>(CreateTripController());
   }
 }

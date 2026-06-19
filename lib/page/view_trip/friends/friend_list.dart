@@ -182,7 +182,7 @@ class FriendsList extends GetView<ViewTripController> {
 
     if (f.balanceType == 'owe') {
       return Text(
-        "${'you_owe'.tr} ₹${f.myOwe.toStringAsFixed(0)}",
+        "${'you_owe'.tr} ${f.currency} ${f.myOwe.toStringAsFixed(0)}",
         style: TextStyle(
           color: Colors.red,
           fontSize: 8.5.sp,
@@ -192,7 +192,7 @@ class FriendsList extends GetView<ViewTripController> {
     }
 
     return Text(
-      "${'you_receive'.tr} ₹${f.myReceive.toStringAsFixed(0)}",
+      "${'you_receive'.tr} ${f.currency} ${f.myReceive.toStringAsFixed(0)}",
       style: TextStyle(
         color: Colors.green,
         fontSize: 8.5.sp,

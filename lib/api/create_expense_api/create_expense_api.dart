@@ -20,6 +20,24 @@ class CreateExpenseApi {
     }
   }
 
+  static Future<void> updateExpense({
+    required String expenseId,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      final response = await _dio.put(
+        '/mobile/split-track/expenses/$expenseId',
+        data: data,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Future<void> createExpense({
     required Map<String, dynamic> data,
   }) async {

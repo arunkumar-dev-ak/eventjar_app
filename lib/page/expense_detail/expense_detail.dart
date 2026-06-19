@@ -19,6 +19,13 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context,
+                controller.state.hasEdited ? "refresh" : null);
+          },
+        ),
         title: Obx(
           () => Text(
             controller.state.appBarTitle.value,
@@ -30,6 +37,12 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.light,
         ),
+        actions: [
+          IconButton(
+            onPressed: () => controller.editExpenseName(context),
+            icon: const Icon(Icons.edit_outlined, size: 20),
+          ),
+        ],
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: AppColors.appBarGradientFor(context),

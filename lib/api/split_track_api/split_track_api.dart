@@ -21,6 +21,26 @@ class SplitTrackApi {
     }
   }
 
+  static Future<void> updateTrip({
+    required String tripId,
+    required Map<String, dynamic> body,
+  }) async {
+    try {
+      final response = await _dio.put(
+        '/mobile/split-track/trips/$tripId',
+        data: body,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return;
+      }
+
+      throw Exception('Failed to update trip');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Future<void> deleteTrip({required String tripId}) async {
     try {
       final response = await _dio.delete('/mobile/split-track/trips/$tripId');

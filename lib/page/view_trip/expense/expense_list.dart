@@ -156,6 +156,7 @@ class ExpenseList extends GetView<ViewTripController> {
   }) {
     final splitCount = e.count?.participants ?? e.participants.length;
     final myParticipant = _myParticipant(e);
+    final currency = e.currency;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,7 +201,7 @@ class ExpenseList extends GetView<ViewTripController> {
                   ),
                   SizedBox(height: 0.3.hp),
                   Text(
-                    "₹${e.amount.toStringAsFixed(0)}",
+                    "${e.currency} ${e.amount.toStringAsFixed(0)}",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 11.sp,
@@ -272,7 +273,7 @@ class ExpenseList extends GetView<ViewTripController> {
                 const Icon(Icons.check_circle, size: 14, color: Colors.green),
                 SizedBox(width: 1.wp),
                 Text(
-                  "${'paid'.tr} ₹${e.amount.toStringAsFixed(0)}",
+                  "${'paid'.tr} ${e.currency} ${e.amount.toStringAsFixed(0)}",
                   style: TextStyle(
                     fontSize: 8.5.sp,
                     color: Theme.of(context).brightness == Brightness.dark
@@ -294,7 +295,7 @@ class ExpenseList extends GetView<ViewTripController> {
                   const Icon(Icons.check_circle, size: 14, color: Colors.green),
                   SizedBox(width: 1.wp),
                   Text(
-                    "${'paid'.tr} ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
+                    "${'paid'.tr} $currency ${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
                     style: TextStyle(
                       fontSize: 8.5.sp,
                       color: Theme.of(context).brightness == Brightness.dark
@@ -305,7 +306,7 @@ class ExpenseList extends GetView<ViewTripController> {
                   ),
                 ] else ...[
                   Text(
-                    "${'my_share'.tr} ₹${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
+                    "${'my_share'.tr} $currency ${myParticipant?.shareAmount.toStringAsFixed(0) ?? '0'}",
                     style: TextStyle(
                       fontSize: 9.sp,
                       fontWeight: FontWeight.w600,

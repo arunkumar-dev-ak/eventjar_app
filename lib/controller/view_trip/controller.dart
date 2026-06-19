@@ -708,7 +708,11 @@ class ViewTripController extends GetxController
     Get.toNamed(
       RouteName.expenseDetailPage,
       arguments: {'expense': expense},
-    )?.then((result) async {});
+    )?.then((result) async {
+      if (result == "refresh") {
+        await fetchTripExpenses();
+      }
+    });
   }
 
   Future<bool> removeMemberFromTrip(String memberId) async {

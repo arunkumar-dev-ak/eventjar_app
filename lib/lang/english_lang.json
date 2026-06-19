@@ -1076,6 +1076,16 @@
     "saving": "Saving...",
     "preferences_saved": "Meeting preferences saved",
     "save_failed": "Failed to save preferences",
-    "failed_load_preferences": "Failed to load preferences"
+    "failed_load_preferences": "Failed to load preferences",
+    "edit_trip": "Edit Trip",
+    "update_trip": "Update Trip",
+    "updating": "Updating...",
+    "creating": "Creating...",
+    "trip_updated_success": "Trip updated successfully",
+    "failed_update_trip": "Failed to update trip",
+    "edit_expense_name": "Edit Expense Name",
+    "expense_name": "Expense name",
+    "expense_updated": "Expense updated successfully",
+    "failed_update_expense": "Failed to update expense"
   }
 }

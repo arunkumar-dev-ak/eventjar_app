@@ -1,5 +1,7 @@
+import 'package:eventjar/api/create_expense_api/create_expense_api.dart';
 import 'package:eventjar/api/expense_detail_api/expense_detail_api.dart';
 import 'package:eventjar/controller/expense_detail/state.dart';
+import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/view_trip/trip_expense_model.dart';
@@ -101,6 +103,72 @@ class ExpenseDetailController extends GetxController {
 
   Future<void> retry() async {
     await _fetchParticipants();
+  }
+
+  Future<void> editExpenseName(BuildContext context) async {
+    final expense = state.expense.value;
+    if (expense == null) return;
+
+    final nameController = TextEditingController(text: expense.title);
+
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text('edit_expense_name'.tr),
+        content: TextField(
+          controller: nameController,
+          autofocus: true,
+          decoration: InputDecoration(
+            hintText: 'expense_name'.tr,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('cancel'.tr),
+          ),
+          FilledButton(
+            onPressed: () {
+              final text = nameController.text.trim();
+              if (text.isNotEmpty) {
+                Navigator.pop(ctx, text);
+              }
+            },
+            child: Text('save'.tr),
+          ),
+        ],
+      ),
+    );
+
+    if (newName == null || newName == expense.title) return;
+
+    try {
+      await CreateExpenseApi.updateExpense(
+        expenseId: expense.id,
+        data: {'title': newName},
+      );
+
+      final updatedJson = expense.toJson();
+      updatedJson['title'] = newName;
+      state.expense.value = TripExpenseModel.fromJson(updatedJson);
+      state.appBarTitle.value = newName;
+      state.hasEdited = true;
+
+      AppSnackbar.success(
+        title: 'success'.tr,
+        message: 'expense_updated'.tr,
+      );
+    } catch (e) {
+      LoggerService.loggerInstance.e("Update expense name error: $e");
+      AppSnackbar.error(
+        title: 'error'.tr,
+        message: 'failed_update_expense'.tr,
+      );
+    }
   }
 
   @override
