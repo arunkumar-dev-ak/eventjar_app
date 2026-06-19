@@ -33,11 +33,11 @@ class MeetingPage extends GetView<MeetingController> {
             return Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                AppbarButton(
-                  icon: Icons.settings_outlined,
-                  onPressed: () =>
-                      Get.toNamed(RouteName.meetingPreferencesPage),
-                ),
+                // AppbarButton(
+                //   icon: Icons.settings_outlined,
+                //   onPressed: () =>
+                //       Get.toNamed(RouteName.meetingPreferencesPage),
+                // ),
                 if (controller.state.selectedTab.value == 1)
                   SizedBox(width: 2.wp),
                 if (controller.state.selectedTab.value == 1)

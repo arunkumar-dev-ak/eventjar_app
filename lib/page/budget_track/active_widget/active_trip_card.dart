@@ -196,7 +196,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                     ),
                     SizedBox(width: 2.wp),
                     _chipInfo(
-                      "${trip.membersCount} ${'memebers'.tr})",
+                      "${trip.membersCount} ${'members'.tr}",
                       Icons.people_outline,
                       context,
                     ),
