@@ -33,6 +33,8 @@ class CreateExpenseApi {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return;
       }
+
+      throw Exception('Failed to update expense');
     } catch (e) {
       rethrow;
     }

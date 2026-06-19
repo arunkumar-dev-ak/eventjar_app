@@ -109,39 +109,50 @@ class ExpenseDetailController extends GetxController {
     final expense = state.expense.value;
     if (expense == null) return;
 
-    final nameController = TextEditingController(text: expense.title);
-
     final newName = await showDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('edit_expense_name'.tr),
-        content: TextField(
-          controller: nameController,
-          autofocus: true,
-          decoration: InputDecoration(
-            hintText: 'expense_name'.tr,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text('cancel'.tr),
-          ),
-          FilledButton(
-            onPressed: () {
-              final text = nameController.text.trim();
-              if (text.isNotEmpty) {
-                Navigator.pop(ctx, text);
-              }
-            },
-            child: Text('save'.tr),
-          ),
-        ],
-      ),
+      builder: (ctx) {
+        final nameController = TextEditingController(text: expense.title);
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: Text('edit_expense_name'.tr),
+              content: TextField(
+                controller: nameController,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'expense_name'.tr,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    nameController.dispose();
+                    Navigator.pop(ctx);
+                  },
+                  child: Text('cancel'.tr),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    final text = nameController.text.trim();
+                    nameController.dispose();
+                    if (text.isNotEmpty) {
+                      Navigator.pop(ctx, text);
+                    }
+                  },
+                  child: Text('save'.tr),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
 
     if (newName == null || newName == expense.title) return;
@@ -158,16 +169,10 @@ class ExpenseDetailController extends GetxController {
       state.appBarTitle.value = newName;
       state.hasEdited = true;
 
-      AppSnackbar.success(
-        title: 'success'.tr,
-        message: 'expense_updated'.tr,
-      );
+      AppSnackbar.success(title: 'success'.tr, message: 'expense_updated'.tr);
     } catch (e) {
       LoggerService.loggerInstance.e("Update expense name error: $e");
-      AppSnackbar.error(
-        title: 'error'.tr,
-        message: 'failed_update_expense'.tr,
-      );
+      AppSnackbar.error(title: 'error'.tr, message: 'failed_update_expense'.tr);
     }
   }
 

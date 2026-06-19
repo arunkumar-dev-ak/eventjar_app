@@ -214,12 +214,12 @@ class MeetingPreferencesPage extends GetView<MeetingPreferencesController> {
             padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 1.hp),
             decoration: BoxDecoration(
               color: isActive
-                  ? const Color(0xFF4A6CF7).withValues(alpha: 0.1)
+                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
                   : AppColors.inputBg(context),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: isActive
-                    ? const Color(0xFF4A6CF7)
+                    ? Theme.of(context).colorScheme.primary
                     : AppColors.border(context),
               ),
             ),

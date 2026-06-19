@@ -384,9 +384,9 @@ Widget _buildSmallChart(
   List<PieChartModel> stages,
   double size,
   String? avatarUrl,
-  String name,
+  String? name,
 ) {
-  final initials = name
+  final initials = (name ?? "")
       .split(' ')
       .map((n) => n.isNotEmpty ? n[0] : '')
       .take(2)

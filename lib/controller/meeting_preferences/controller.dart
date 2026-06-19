@@ -29,8 +29,6 @@ class MeetingPreferencesController extends GetxController {
   }
 
   String? _guessTimezoneFromOffset(Duration offset) {
-    final hours = offset.inHours;
-    final mins = offset.inMinutes % 60;
     final map = {
       330: 'Asia/Kolkata',
       300: 'Asia/Karachi',
@@ -54,8 +52,7 @@ class MeetingPreferencesController extends GetxController {
       240: 'Asia/Dubai',
       270: 'Asia/Kabul',
     };
-    final totalMins = hours * 60 + mins;
-    return map[totalMins];
+    return map[offset.inMinutes];
   }
 
   Future<void> fetchPreferences() async {

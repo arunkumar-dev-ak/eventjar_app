@@ -248,6 +248,8 @@ class MeetingController extends GetxController {
     qualifiedContactScrollController.removeListener(_onQualifiedContactScroll);
     oneOnOneScrollController.dispose();
     qualifiedContactScrollController.dispose();
+    rescheduleDateController.dispose();
+    rescheduleTimeController.dispose();
     qualifiedDebounceWorker.dispose();
     oneOnOneDebounceWorker.dispose();
     super.onClose();
