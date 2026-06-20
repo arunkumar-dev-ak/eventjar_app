@@ -81,7 +81,7 @@ class ExpenseList extends GetView<ViewTripController> {
         child: GestureDetector(
           onTap: () {
             HapticHelper.light();
-            controller.navigateToExpenseDetailPage(e);
+            controller.navigateToExpenseDetailPage(e, index);
           },
           child: Container(
             width: 78.wp,

@@ -64,6 +64,40 @@ class TripExpenseModel {
     required this.participants,
   });
 
+  TripExpenseModel copyWith({
+    String? id,
+    String? createdById,
+    String? paidById,
+    String? title,
+    String? description,
+    double? amount,
+    String? currency,
+    DateTime? createdAt,
+    TripExpenseCreatedBy? createdBy,
+    TripExpensePaidBy? paidBy,
+    TripExpensePaidByFriend? paidByFriend,
+    TripExpenseCount? count,
+    bool? isDeleted,
+    List<TripExpenseParticipant>? participants,
+  }) {
+    return TripExpenseModel(
+      id: id ?? this.id,
+      createdById: createdById ?? this.createdById,
+      paidById: paidById ?? this.paidById,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      amount: amount ?? this.amount,
+      currency: currency ?? this.currency,
+      createdAt: createdAt ?? this.createdAt,
+      createdBy: createdBy ?? this.createdBy,
+      paidBy: paidBy ?? this.paidBy,
+      paidByFriend: paidByFriend ?? this.paidByFriend,
+      count: count ?? this.count,
+      isDeleted: isDeleted ?? this.isDeleted,
+      participants: participants ?? this.participants,
+    );
+  }
+
   factory TripExpenseModel.fromJson(Map<String, dynamic> json) {
     try {
       return TripExpenseModel(

@@ -19,13 +19,6 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg(context),
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context,
-                controller.state.hasEdited ? "refresh" : null);
-          },
-        ),
         title: Obx(
           () => Text(
             controller.state.appBarTitle.value,
@@ -38,10 +31,21 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
           statusBarIconBrightness: Brightness.light,
         ),
         actions: [
-          IconButton(
-            onPressed: () => controller.editExpenseName(context),
-            icon: const Icon(Icons.edit_outlined, size: 20),
-          ),
+          Obx(() {
+            final currentUserId = UserStore.to.profile['id'];
+
+            final createdById = controller.state.expense.value?.createdById;
+
+            if (createdById != null && currentUserId == createdById) {
+              return IconButton(
+                onPressed: () => controller.editExpenseName(),
+                icon: const Icon(Icons.edit_outlined, size: 20),
+                tooltip: 'edit_expense_name'.tr,
+              );
+            }
+
+            return const SizedBox.shrink();
+          }),
         ],
         flexibleSpace: Container(
           decoration: BoxDecoration(

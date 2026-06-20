@@ -8,7 +8,8 @@ class ExpenseDetailState {
   RxBool isLoadingMore = false.obs;
   RxBool hasError = false.obs;
   RxString appBarTitle = ''.obs;
-  bool hasEdited = false;
+
+  RxBool isEditLoading = false.obs;
 
   Rx<TripExpenseModel?> expense = Rx<TripExpenseModel?>(null);
   RxList<ExpenseParticipantModel> participants =

@@ -704,15 +704,22 @@ class ViewTripController extends GetxController
     });
   }
 
-  void navigateToExpenseDetailPage(TripExpenseModel expense) {
+  void navigateToExpenseDetailPage(TripExpenseModel expense, int index) {
     Get.toNamed(
       RouteName.expenseDetailPage,
-      arguments: {'expense': expense},
-    )?.then((result) async {
-      if (result == "refresh") {
-        await fetchTripExpenses();
+      arguments: {'expense': expense, 'index': index},
+    );
+  }
+
+  void updateExpenseSafely(TripExpenseModel updatedExpense, int index) {
+    if (index >= 0 && index < state.expenses.length) {
+      if (state.expenses[index].id == updatedExpense.id) {
+        if (state.expenses[index].title != updatedExpense.title) {
+          state.expenses[index] = updatedExpense;
+        }
+        return;
       }
-    });
+    }
   }
 
   Future<bool> removeMemberFromTrip(String memberId) async {
