@@ -17,9 +17,7 @@ class FriendsList extends GetView<ViewTripController> {
   Widget build(BuildContext context) {
     return Obx(() {
       final friends = controller.state.friends;
-
       final isLoading = controller.state.isLoading.value;
-
       final haveNextPage = controller.hasFriendMore;
 
       // 🔥 FULL LOADING SHIMMER
@@ -60,20 +58,24 @@ class FriendsList extends GetView<ViewTripController> {
   }
 
   Widget _friendItem(BuildContext context, TripFriendModel f) {
-    // --- 1. SECURITY CHECK ---
+    // --- 1. SECURITY & PERMISSION CHECK ---
     final currentUserId = UserStore.to.profile['id'];
     final creatorId = controller.state.trip.value?.createdById;
     final isAdmin = f.isAdmin;
 
-    // Only true if the logged-in user made the trip
     final isCurrentUserCreator = currentUserId == creatorId;
+    final isAddedByMe = f.addedBy?.id == currentUserId;
+    final isMe = f.memberUserId == currentUserId;
+
+    // 🔥 NEW: Can delete if they are admin OR they invited the user (but cannot delete themselves)
+    final canDelete = (isCurrentUserCreator || isAddedByMe) && !isMe;
 
     // --- 2. YOUR CARD UI ---
     final isOwe = f.balanceType == 'owe';
     final isReceive = f.balanceType == 'receive';
     final isSettled = f.balance == 0;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final name = f.displayName;
+    final name = isMe ? "${f.displayName} (${'you'.tr})" : f.displayName;
 
     final card = Container(
       margin: EdgeInsets.only(top: 1.hp),
@@ -119,9 +121,37 @@ class FriendsList extends GetView<ViewTripController> {
                     fontSize: 10.sp,
                     color: AppColors.textPrimary(context),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 0.3.hp),
                 _statusText(context, f),
+
+                // 🔥 NEW: ADDED BY YOU BADGE
+                if (isAddedByMe && !isMe) ...[
+                  SizedBox(height: 0.6.hp),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 2.wp,
+                      vertical: 0.3.hp,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: Colors.blue.withValues(alpha: 0.2),
+                      ),
+                    ),
+                    child: Text(
+                      'added_by_you'.tr,
+                      style: TextStyle(
+                        fontSize: 7.5.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -132,8 +162,8 @@ class FriendsList extends GetView<ViewTripController> {
     );
 
     // --- 3. SWIPE TO DELETE LOGIC ---
-    // If the user is NOT the creator, just return the static card (Disables the swipe).
-    if (!isCurrentUserCreator) {
+    // 🔥 NEW: Uses the combined `canDelete` permission boolean
+    if (!canDelete) {
       return card;
     }
 
@@ -153,12 +183,13 @@ class FriendsList extends GetView<ViewTripController> {
       ),
       confirmDismiss: (_) async {
         HapticHelper.medium();
-        // Open the modern stateless confirmation dialog
         final result = await showDialog<bool>(
           context: context,
           barrierDismissible: false,
-          builder: (_) =>
-              RemoveMemberDialog(memberName: name, memberId: f.memberId),
+          builder: (_) => RemoveMemberDialog(
+            memberName: f.displayName,
+            memberId: f.memberId,
+          ),
         );
         return result == true;
       },
@@ -209,7 +240,11 @@ class FriendsList extends GetView<ViewTripController> {
     bool isSettled,
   ) {
     if (isSettled) {
-      return Icon(Icons.check_circle_outline, color: Colors.green, size: 22);
+      return const Icon(
+        Icons.check_circle_outline,
+        color: Colors.green,
+        size: 22,
+      );
     }
 
     // ❌ OWE → SettleUp
@@ -223,7 +258,10 @@ class FriendsList extends GetView<ViewTripController> {
             gradient: AppColors.buttonGradientFor(context),
             borderRadius: BorderRadius.circular(20),
           ),
-          child: Text("settle_up".tr, style: TextStyle(color: Colors.white)),
+          child: Text(
+            "settle_up".tr,
+            style: const TextStyle(color: Colors.white),
+          ),
         ),
       );
     }
