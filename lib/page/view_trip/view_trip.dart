@@ -53,26 +53,13 @@ class ViewTripPage extends GetView<ViewTripController> {
       floatingActionButton: Obx(() {
         final isExpenseTab = controller.state.selectedTab.value == 0;
 
-        // 1. Get the current logged-in user
-        final currentUserId = UserStore.to.profile['id'];
-
-        final creatorId = controller.state.trip.value?.createdById;
-
-        final isCreator = currentUserId == creatorId;
-
-        if (!isExpenseTab && !isCreator) {
-          return const SizedBox.shrink();
-        }
-
         return FloatingActionButton.extended(
           onPressed: () {
             HapticHelper.light();
 
             if (isExpenseTab) {
-              // Everyone can add an expense
               controller.navigateToCreateExpense();
             } else {
-              // Only the creator can reach this block
               controller.getDropdownFriendList();
               showAddMemberPopup(context);
             }
@@ -80,7 +67,7 @@ class ViewTripPage extends GetView<ViewTripController> {
           backgroundColor: AppColors.gradientDarkStart,
           icon: const Icon(Icons.add, color: Colors.white),
           label: Text(
-            isExpenseTab ? "expenses".tr : "members".tr,
+            isExpenseTab ? "expenses".tr : "friends".tr,
             style: TextStyle(
               color: Colors.white,
               fontSize: 8.5.sp,
