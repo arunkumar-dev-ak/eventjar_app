@@ -22,6 +22,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
         final yourSpent = controller.state.trip.value?.myShare ?? 0;
         final youOwe = controller.state.trip.value?.myOwe ?? 0;
         final youReceive = controller.state.trip.value?.myReceive ?? 0;
+        final currency = controller.state.trip.value?.currency ?? "INR";
 
         return Column(
           children: [
@@ -42,7 +43,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                     ),
                     SizedBox(height: 0.5.hp),
                     Text(
-                      "₹${yourSpent.toStringAsFixed(0)}",
+                      "$currency ${yourSpent.toStringAsFixed(0)}",
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -111,7 +112,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                   child: _amountCard(
                     context,
                     "you_owe".tr,
-                    "₹${youOwe.toStringAsFixed(0)}",
+                    "$currency ${youOwe.toStringAsFixed(0)}",
                     isOwe: true,
                   ),
                 ),
@@ -120,7 +121,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                   child: _amountCard(
                     context,
                     "you_receive".tr,
-                    "₹${youReceive.toStringAsFixed(0)}",
+                    "$currency ${youReceive.toStringAsFixed(0)}",
                     isOwe: false,
                   ),
                 ),

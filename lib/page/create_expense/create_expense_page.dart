@@ -75,12 +75,13 @@ class CreateExpensePage extends GetView<CreateExpenseController> {
                   getDefaultItem: () => 'shopping'.tr,
                   getDisplayValue: (item) {
                     final keyMap = {
-                      'Accommodation': 'accommodation',
-                      'Transportation': 'transportation',
-                      'Food & Drinks': 'food_and_drinks',
-                      'Activities': 'activities',
-                      'Tickets': 'tickets_label',
+                      'Meeting': 'meetings',
+                      'Event': 'events',
+                      'Travel': 'travel',
+                      'Food': 'food',
+                      'Entertainment': 'entertainment',
                       'Shopping': 'shopping',
+                      'Utilities': 'utilities',
                       'Other': 'other_label',
                     };
                     return (keyMap[item] ?? item).tr;

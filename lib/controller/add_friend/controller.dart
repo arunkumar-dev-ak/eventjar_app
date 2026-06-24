@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:eventjar/api/add_friend_api/add_friend_api.dart';
 import 'package:eventjar/api/contact_api/contact_api.dart';
+import 'package:eventjar/controller/add_friend/service/phone_contact_service.dart';
 import 'package:eventjar/controller/add_friend/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
@@ -23,7 +24,8 @@ class AddFriendController extends GetxController {
 
   Timer? _debounceTimer;
 
-  /// 🔹 Form controllers
+  final phoneContactService = PhoneContactService();
+
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final phoneController = TextEditingController();
@@ -31,7 +33,7 @@ class AddFriendController extends GetxController {
   @override
   void onInit() {
     // Default type
-    state.selectedType.value = AddFriendType.contact;
+    state.selectedType.value = AddFriendType.newFriend;
 
     super.onInit();
 
@@ -72,6 +74,40 @@ class AddFriendController extends GetxController {
     );
   }
 
+  /// ================= PICK PHONE CONTACT =================
+  Future<void> pickPhoneContact() async {
+    final result = await phoneContactService.pickContact();
+    if (result == null) return;
+
+    nameController.text = result.name;
+
+    if (result.email != null && result.email!.isNotEmpty) {
+      emailController.text = result.email!;
+    }
+
+    if (result.phone != null && result.phone!.isNotEmpty) {
+      final rawPhone = result.phone!.replaceAll(RegExp(r'[\s\-()]'), '');
+
+      if (rawPhone.startsWith('+')) {
+        final cleanDigits = rawPhone.substring(1);
+        final matched = countries.cast<Country?>().firstWhere(
+          (c) => cleanDigits.startsWith(c!.fullCountryCode),
+          orElse: () => null,
+        );
+
+        if (matched != null) {
+          state.selectedCountry.value = matched;
+          phoneController.text =
+              cleanDigits.substring(matched.fullCountryCode.length);
+        } else {
+          phoneController.text = cleanDigits;
+        }
+      } else {
+        phoneController.text = rawPhone;
+      }
+    }
+  }
+
   /// ================= CLEAR =================
   void clearForm() {
     state.selectedContact.value = null;
@@ -89,6 +125,10 @@ class AddFriendController extends GetxController {
   String _getSource() {
     if (state.selectedType.value == AddFriendType.contact) {
       return "contact";
+    }
+
+    if (state.selectedType.value == AddFriendType.phoneContact) {
+      return "phone";
     }
 
     if (state.sendViaEmail.value && emailController.text.trim().isNotEmpty) {

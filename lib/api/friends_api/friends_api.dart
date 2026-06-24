@@ -10,7 +10,7 @@ class FriendsApi {
   }) async {
     try {
       final response = await _dio.get(
-        '/mobile/split-track/friends',
+        '/mobile/budget-track/friends/list',
         queryParameters: queryParams,
       );
 
@@ -51,6 +51,26 @@ class FriendsApi {
       }
 
       throw Exception('Failed to Reject friend');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<void> resendInvitation({
+    required String id,
+    required List<String> channels,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/split-track/friends/$id/resend-invitation',
+        data: {'channels': channels},
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return;
+      }
+
+      throw Exception('Failed to resend invitation');
     } catch (e) {
       rethrow;
     }

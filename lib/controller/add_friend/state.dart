@@ -3,7 +3,7 @@ import 'package:flutter_intl_phone_field/countries.dart';
 import 'package:get/get.dart';
 import 'package:eventjar/model/meta/meta_model.dart';
 
-enum AddFriendType { contact, newFriend }
+enum AddFriendType { newFriend, contact, phoneContact }
 
 class AddFriendState {
   final RxBool isLoading = false.obs;

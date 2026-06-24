@@ -8,6 +8,7 @@ import 'package:eventjar/page/view_trip/friends/friend_list.dart';
 import 'package:eventjar/page/view_trip/widget/analytics_view_trip.dart';
 import 'package:eventjar/page/view_trip/expense/expense_list.dart';
 import 'package:eventjar/page/view_trip/widget/tab_view_trip.dart';
+import 'package:eventjar/page/view_trip/widget/trip_qr_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -41,6 +42,15 @@ class ViewTripPage extends GetView<ViewTripController> {
           overflow: TextOverflow.ellipsis,
         ),
 
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.qr_code, color: Colors.white),
+            onPressed: () {
+              HapticHelper.light();
+              showTripQRDialog(context);
+            },
+          ),
+        ],
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: AppColors.appBarGradientFor(context),
@@ -53,26 +63,13 @@ class ViewTripPage extends GetView<ViewTripController> {
       floatingActionButton: Obx(() {
         final isExpenseTab = controller.state.selectedTab.value == 0;
 
-        // 1. Get the current logged-in user
-        final currentUserId = UserStore.to.profile['id'];
-
-        final creatorId = controller.state.trip.value?.createdById;
-
-        final isCreator = currentUserId == creatorId;
-
-        if (!isExpenseTab && !isCreator) {
-          return const SizedBox.shrink();
-        }
-
         return FloatingActionButton.extended(
           onPressed: () {
             HapticHelper.light();
 
             if (isExpenseTab) {
-              // Everyone can add an expense
               controller.navigateToCreateExpense();
             } else {
-              // Only the creator can reach this block
               controller.getDropdownFriendList();
               showAddMemberPopup(context);
             }
@@ -80,7 +77,7 @@ class ViewTripPage extends GetView<ViewTripController> {
           backgroundColor: AppColors.gradientDarkStart,
           icon: const Icon(Icons.add, color: Colors.white),
           label: Text(
-            isExpenseTab ? "expenses".tr : "members".tr,
+            isExpenseTab ? "expenses".tr : "friends".tr,
             style: TextStyle(
               color: Colors.white,
               fontSize: 8.5.sp,

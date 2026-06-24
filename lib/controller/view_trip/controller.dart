@@ -639,6 +639,36 @@ class ViewTripController extends GetxController
     }
   }
 
+  Future<void> regenerateJoinToken() async {
+    try {
+      state.isRegeneratingToken.value = true;
+
+      final newToken = await ViewTripApi.regenerateJoinToken(
+        tripId: state.tripId.value,
+      );
+
+      if (newToken.isNotEmpty) {
+        await fetchTripAnalytics();
+
+        AppSnackbar.success(
+          title: 'success'.tr,
+          message: 'join_link_regenerated'.tr,
+        );
+      }
+    } catch (err) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: 'failed_regenerate_link'.tr,
+        onUnauthorized: () {
+          UserStore.to.clearStore();
+          navigateToSignInPage();
+        },
+      );
+    } finally {
+      state.isRegeneratingToken.value = false;
+    }
+  }
+
   void changeTab(int index) {
     // if (state.selectedTab.value != index &&
     //     state.expenseSelectedIndexes.isNotEmpty) {
@@ -704,11 +734,22 @@ class ViewTripController extends GetxController
     });
   }
 
-  void navigateToExpenseDetailPage(TripExpenseModel expense) {
+  void navigateToExpenseDetailPage(TripExpenseModel expense, int index) {
     Get.toNamed(
       RouteName.expenseDetailPage,
-      arguments: {'expense': expense},
-    )?.then((result) async {});
+      arguments: {'expense': expense, 'index': index},
+    );
+  }
+
+  void updateExpenseSafely(TripExpenseModel updatedExpense, int index) {
+    if (index >= 0 && index < state.expenses.length) {
+      if (state.expenses[index].id == updatedExpense.id) {
+        if (state.expenses[index].title != updatedExpense.title) {
+          state.expenses[index] = updatedExpense;
+        }
+        return;
+      }
+    }
   }
 
   Future<bool> removeMemberFromTrip(String memberId) async {

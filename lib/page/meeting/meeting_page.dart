@@ -4,6 +4,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/meeting/widget/meeting_build_tabs.dart';
 import 'package:eventjar/page/meeting/widget/meeting_list.dart';
 import 'package:flutter/material.dart';
+import 'package:eventjar/routes/route_name.dart';
 import 'package:get/get.dart';
 
 import '../../global/widget/appbar_button.dart';
@@ -28,11 +29,26 @@ class MeetingPage extends GetView<MeetingController> {
         elevation: 0,
         centerTitle: false,
         actions: [
-          AppbarButton(
-            icon: Icons.add,
-            onPressed: controller.navigateToSchedulePage,
-          ),
-          SizedBox(width: 3.wp),
+          Obx(() {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // AppbarButton(
+                //   icon: Icons.settings_outlined,
+                //   onPressed: () =>
+                //       Get.toNamed(RouteName.meetingPreferencesPage),
+                // ),
+                if (controller.state.selectedTab.value == 1)
+                  SizedBox(width: 2.wp),
+                if (controller.state.selectedTab.value == 1)
+                  AppbarButton(
+                    icon: Icons.add,
+                    onPressed: controller.navigateToSchedulePage,
+                  ),
+                SizedBox(width: 3.wp),
+              ],
+            );
+          }),
         ],
       ),
       body: Padding(

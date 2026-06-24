@@ -9,6 +9,8 @@ class ExpenseDetailState {
   RxBool hasError = false.obs;
   RxString appBarTitle = ''.obs;
 
+  RxBool isEditLoading = false.obs;
+
   Rx<TripExpenseModel?> expense = Rx<TripExpenseModel?>(null);
   RxList<ExpenseParticipantModel> participants =
       <ExpenseParticipantModel>[].obs;

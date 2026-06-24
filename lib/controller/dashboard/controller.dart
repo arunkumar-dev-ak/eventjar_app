@@ -220,6 +220,14 @@ class DashboardController extends GetxController {
         )?.then((_) => _triggerTabController(state.selectedIndex.value));
         break;
 
+      case "joinTrip":
+        final joinToken = args['parameters']?['joinToken'];
+        await Get.toNamed(
+          RouteName.joinTripPage,
+          arguments: {'joinToken': joinToken},
+        )?.then((_) => _triggerTabController(state.selectedIndex.value));
+        break;
+
       case "widgetAction":
         final widgetRoute = args["widgetRoute"] as String?;
         if (widgetRoute != null) {

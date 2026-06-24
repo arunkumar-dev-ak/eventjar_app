@@ -2,6 +2,7 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:eventjar/api/split_track_api/split_track_api.dart';
 import 'package:eventjar/controller/create_trip/state.dart';
 import 'package:eventjar/model/budget_track/split_track_friend_model.dart';
+import 'package:eventjar/model/budget_track/trip_model.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
@@ -9,6 +10,7 @@ import 'package:eventjar/logger_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../api/friends_api/friends_api.dart';
 import '../../routes/route_name.dart';
 
 class CreateTripController extends GetxController {
@@ -16,14 +18,51 @@ class CreateTripController extends GetxController {
 
   final formKey = GlobalKey<FormState>();
 
-  var appBarTitle = "create_trip".tr;
+  late String appBarTitle;
 
   static const _limit = 20;
 
   @override
   void onInit() {
     super.onInit();
+
+    final args = Get.arguments;
+    if (args is TripModel) {
+      state.isEditMode = true;
+      state.editTripId = args.id;
+      appBarTitle = "edit_trip".tr;
+      _prefillFromTrip(args);
+    } else {
+      appBarTitle = "create_trip".tr;
+    }
+
     fetchFriends(initial: true);
+  }
+
+  void _prefillFromTrip(TripModel trip) {
+    tripNameController.text = trip.name;
+    destinationController.text = trip.destination;
+    if (trip.totalBudget > 0) {
+      budgetController.text = trip.totalBudget.toStringAsFixed(0);
+    }
+    descriptionController.text = trip.description ?? '';
+
+    final currency = CurrencyService().findByCode(_symbolToCode(trip.currency));
+    if (currency != null) {
+      state.selectedCurrency.value = currency;
+    }
+  }
+
+  String _symbolToCode(String symbolOrCode) {
+    if (symbolOrCode.length == 3 &&
+        symbolOrCode == symbolOrCode.toUpperCase()) {
+      return symbolOrCode;
+    }
+    final all = CurrencyService().getAll();
+    for (final c in all) {
+      if (c.symbol == symbolOrCode) return c.code;
+    }
+    return symbolOrCode;
   }
 
   // Form Controllers
@@ -42,21 +81,24 @@ class CreateTripController extends GetxController {
     try {
       if (initial) {
         state.isDropdownLoading.value = true;
-        state.page = 1;
+        state.nextCursor = null;
         state.friends.clear();
       }
 
       final queryParams = <String, dynamic>{
-        'page': state.page,
         'limit': _limit,
       };
+
+      if (!initial && state.nextCursor != null) {
+        queryParams['cursor'] = state.nextCursor!;
+      }
 
       final search = state.searchQuery.value.trim();
       if (search.isNotEmpty) {
         queryParams['search'] = search;
       }
 
-      final response = await SplitTrackApi.getFriends(queryParams: queryParams);
+      final response = await FriendsApi.getFriends(queryParams: queryParams);
 
       if (initial) {
         state.friends.value = response.data;
@@ -64,8 +106,8 @@ class CreateTripController extends GetxController {
         state.friends.addAll(response.data);
       }
 
-      state.hasMore = response.pagination.hasNext;
-      state.page = response.pagination.page + 1;
+      state.hasMore = response.paging.hasNextPage;
+      state.nextCursor = response.paging.nextCursor;
     } catch (err) {
       LoggerService.loggerInstance.e('Fetch friends error: $err');
       ApiErrorHandler.handle(
@@ -108,11 +150,10 @@ class CreateTripController extends GetxController {
     state.selectedCurrency.value = CurrencyService().findByCode('INR')!;
   }
 
-  // Submit
   Future<void> submit() async {
     if (state.isLoading.value) return;
 
-    if (state.selectedFriendsMap.isEmpty) {
+    if (!state.isEditMode && state.selectedFriendsMap.isEmpty) {
       AppSnackbar.warning(message: "select_friend_error".tr);
       return;
     }
@@ -122,18 +163,25 @@ class CreateTripController extends GetxController {
     try {
       final budget = double.tryParse(budgetController.text.trim()) ?? 0;
 
-      final body = {
+      final body = <String, dynamic>{
         "name": tripNameController.text.trim(),
         "description": descriptionController.text.trim(),
         "destination": destinationController.text.trim(),
         "totalBudget": budget,
         "currency": state.selectedCurrency.value.symbol,
-        "members": state.selectedFriendsMap.values
-            .map((f) => _buildMemberEntry(f))
-            .toList(),
       };
 
-      await SplitTrackApi.createTrip(body: body);
+      if (!state.isEditMode) {
+        body["members"] = state.selectedFriendsMap.values
+            .map((f) => _buildMemberEntry(f))
+            .toList();
+      }
+
+      if (state.isEditMode) {
+        await SplitTrackApi.updateTrip(tripId: state.editTripId!, body: body);
+      } else {
+        await SplitTrackApi.createTrip(body: body);
+      }
 
       state.isLoading.value = false;
 
@@ -141,13 +189,19 @@ class CreateTripController extends GetxController {
 
       AppSnackbar.success(
         title: "success".tr,
-        message: "trip_created_success".tr,
+        message: state.isEditMode
+            ? "trip_updated_success".tr
+            : "trip_created_success".tr,
       );
     } catch (err) {
-      LoggerService.loggerInstance.e('Create trip error: $err');
+      LoggerService.loggerInstance.e(
+        '${state.isEditMode ? "Update" : "Create"} trip error: $err',
+      );
       ApiErrorHandler.handle(
         error: err,
-        title: "failed_create_trip".tr,
+        title: state.isEditMode
+            ? "failed_update_trip".tr
+            : "failed_create_trip".tr,
         onUnauthorized: () {
           UserStore.to.clearStore();
           Get.toNamed(RouteName.signInPage);

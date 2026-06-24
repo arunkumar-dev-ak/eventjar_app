@@ -9,7 +9,7 @@ import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-enum FriendAction { accept, reject, remove }
+enum FriendAction { accept, reject, remove, resendEmail, resendWhatsApp, resendBoth }
 
 class FriendsController extends GetxController {
   final state = FriendsState();
@@ -27,7 +27,7 @@ class FriendsController extends GetxController {
     fetchFriendsFirstLoad();
   }
 
-  bool get hasNextPage => state.pagination.value?.hasNext ?? false;
+  bool get hasNextPage => state.paging.value?.hasNextPage ?? false;
 
   void _onScroll() {
     if (!friendScrollController.hasClients) return;
@@ -45,10 +45,18 @@ class FriendsController extends GetxController {
   }
 
   Map<String, dynamic> getQueryParams({bool refresh = false}) {
-    return {
-      "page": refresh ? 1 : ((state.pagination.value?.page ?? 1) + 1),
+    final params = <String, dynamic>{
       "limit": _limit,
     };
+
+    if (!refresh) {
+      final cursor = state.paging.value?.nextCursor;
+      if (cursor != null) {
+        params["cursor"] = cursor;
+      }
+    }
+
+    return params;
   }
 
   Future<void> fetchFriendsFirstLoad() async {
@@ -60,7 +68,7 @@ class FriendsController extends GetxController {
       );
 
       state.friends.assignAll(response.data);
-      state.pagination.value = response.pagination;
+      state.paging.value = response.paging;
     } catch (err) {
       ApiErrorHandler.handle(
         error: err,
@@ -81,7 +89,7 @@ class FriendsController extends GetxController {
       );
 
       state.friends.assignAll(response.data);
-      state.pagination.value = response.pagination;
+      state.paging.value = response.paging;
     } catch (err) {
       ApiErrorHandler.handle(error: err, title: "Failed to refresh friends");
     }
@@ -96,7 +104,7 @@ class FriendsController extends GetxController {
       );
 
       state.friends.addAll(response.data);
-      state.pagination.value = response.pagination;
+      state.paging.value = response.paging;
     } catch (err) {
       ApiErrorHandler.handle(error: err, title: "Failed to load more friends");
     } finally {
@@ -158,6 +166,37 @@ class FriendsController extends GetxController {
       ApiErrorHandler.handle(error: err, title: "failed_remove_friend".tr);
     } finally {
       state.isLoading.value = false;
+    }
+  }
+
+  final RxString resendingFriendId = ''.obs;
+
+  Future<void> resendInvitation(
+    SplitTrackFriend friend,
+    List<String> channels,
+  ) async {
+    try {
+      resendingFriendId.value = friend.id;
+
+      await FriendsApi.resendInvitation(id: friend.id, channels: channels);
+
+      final channelLabel = channels.length > 1
+          ? 'Email + WhatsApp'
+          : channels.first == 'email'
+              ? 'Email'
+              : 'WhatsApp';
+
+      AppSnackbar.success(
+        title: "invitation_resent".tr,
+        message: "Invitation resent via $channelLabel",
+      );
+    } catch (err) {
+      ApiErrorHandler.handle(
+        error: err,
+        title: "failed_resend_invitation".tr,
+      );
+    } finally {
+      resendingFriendId.value = '';
     }
   }
 

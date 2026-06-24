@@ -1,5 +1,6 @@
 import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
 import 'package:eventjar/model/contact-meeting/contact_meeting_status.dart';
+import 'package:eventjar/model/network-meeting/network_meeting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,6 +10,23 @@ class MeetingState {
   RxInt selectedTab = 0.obs;
   RxMap<String, bool> buttonLoading = <String, bool>{}.obs;
 
+  // One-on-One tab state
+  RxBool isOneOnOneLoading = false.obs;
+  RxBool isOneOnOneLoadingMore = false.obs;
+  RxList<NetworkMeeting> oneOnOneMeetings = <NetworkMeeting>[].obs;
+  Rxn<String> oneOnOneNextCursor = Rxn<String>();
+  RxBool oneOnOneHasNextPage = false.obs;
+
+  // One-on-One tab filters
+  Rxn<MeetingStatus> oneOnOneSelectedStatus = Rxn();
+  final Rx<DateTimeRange> oneOnOneSelectedDateRange = Rx<DateTimeRange>(
+    DateTimeRange(
+      start: DateTime.now(),
+      end: DateTime.now().add(const Duration(days: 7)),
+    ),
+  );
+
+  // Qualified Contact tab filters
   Rxn<MeetingStatus> selectedStatus = Rxn();
 
   final Rx<DateTimeRange> selectedDateRange = Rx<DateTimeRange>(
@@ -31,4 +49,9 @@ class MeetingState {
   ];
 
   RxList<ContactMeeting> meetings = <ContactMeeting>[].obs;
+
+  // Reschedule dialog state
+  RxBool isRescheduling = false.obs;
+  Rx<DateTime> rescheduleMeetingDate = DateTime.now().obs;
+  Rx<TimeOfDay> rescheduleMeetingTime = TimeOfDay.now().obs;
 }

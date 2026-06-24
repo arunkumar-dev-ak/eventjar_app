@@ -135,6 +135,24 @@ class ViewTripApi {
     }
   }
 
+  static Future<String> regenerateJoinToken({
+    required String tripId,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/split-track/trips/$tripId/regenerate-join-token',
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data['joinToken'] ?? '';
+      }
+
+      throw Exception('Failed to regenerate join token');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Future<void> deleteMemberToTrip({
     required String tripId,
     required String memberId,

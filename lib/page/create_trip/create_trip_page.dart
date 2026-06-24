@@ -144,7 +144,8 @@ class CreateTripPage extends GetView<CreateTripController> {
 
                 SizedBox(height: 2.hp),
 
-                /// Invite Friends (Multi Select)
+                /// Invite Friends (Multi Select) — hidden in edit mode
+                if (!controller.state.isEditMode)
                 MultiSelectPaginatedDropdown<SplitTrackFriend>(
                   title: 'invite_friends'.tr,
                   hintText: 'select_friends'.tr,
@@ -285,11 +286,18 @@ class CreateTripPage extends GetView<CreateTripController> {
                         child: Obx(() {
                           final isLoading = controller.state.isLoading.value;
 
+                          final isEdit = controller.state.isEditMode;
                           return FormButton(
-                            text: isLoading ? "Creating..." : 'create_trip'.tr,
+                            text: isLoading
+                                ? (isEdit ? "updating".tr : "creating".tr)
+                                : (isEdit
+                                    ? 'update_trip'.tr
+                                    : 'create_trip'.tr),
                             isLoading: isLoading,
                             type: FormButtonType.primary,
-                            icon: Icons.flight_takeoff,
+                            icon: isEdit
+                                ? Icons.save_rounded
+                                : Icons.flight_takeoff,
                             onPressed: () {
                               if (isLoading) return;
 

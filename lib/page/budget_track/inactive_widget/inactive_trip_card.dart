@@ -191,7 +191,7 @@ class InactiveTripCard extends GetView<BudgetTrackController> {
                     ),
 
                   Text(
-                    "₹${formatAmount(mainAmount)}",
+                    "${trip.currency} ${formatAmount(mainAmount)}",
                     style: TextStyle(
                       fontSize: 11.sp,
                       fontWeight: FontWeight.bold,

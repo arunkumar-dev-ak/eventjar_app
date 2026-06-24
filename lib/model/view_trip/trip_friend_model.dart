@@ -37,9 +37,11 @@ class TripFriendModel {
   final String memberId;
   final String? memberUserId;
   final String? memberFriendId;
+  final String currency;
 
   final FriendUserModel? user;
   final FriendInfoModel? friend;
+  final FriendUserModel? addedBy;
 
   final double myOwe;
   final double myReceive;
@@ -51,6 +53,7 @@ class TripFriendModel {
   TripFriendModel({
     required this.tripId,
     required this.memberId,
+    this.addedBy,
     this.memberUserId,
     this.memberFriendId,
     this.user,
@@ -60,6 +63,7 @@ class TripFriendModel {
     required this.balance,
     required this.balanceType,
     required this.isAdmin,
+    required this.currency,
   });
 
   factory TripFriendModel.fromJson(Map<String, dynamic> json) {
@@ -75,11 +79,15 @@ class TripFriendModel {
         friend: json['friend'] != null
             ? FriendInfoModel.fromJson(json['friend'])
             : null,
+        addedBy: json['addedBy'] != null
+            ? FriendUserModel.fromJson(json['addedBy'])
+            : null,
         myOwe: double.tryParse(json['myOwe'].toString()) ?? 0,
         myReceive: double.tryParse(json['myReceive'].toString()) ?? 0,
         balance: double.tryParse(json['balance'].toString()) ?? 0,
         balanceType: json['balanceType'] ?? '',
         isAdmin: json['isAdmin'] ?? false,
+        currency: json['currency'] ?? "",
       );
     } catch (e) {
       throw Exception('Error in TripFriendModel.fromJson: $e');
@@ -93,6 +101,7 @@ class TripFriendModel {
         'memberId': memberId,
         'memberUserId': memberUserId,
         'memberFriendId': memberFriendId,
+        'addedBy': addedBy?.toJson(),
         'user': user?.toJson(),
         'friend': friend?.toJson(),
         'myOwe': myOwe,
@@ -100,6 +109,7 @@ class TripFriendModel {
         'balance': balance,
         'balanceType': balanceType,
         'isAdmin': isAdmin,
+        'currency': currency,
       };
     } catch (e) {
       throw Exception('Error in TripFriendModel.toJson: $e');

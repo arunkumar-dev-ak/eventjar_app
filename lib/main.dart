@@ -80,19 +80,38 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  //light theme
+  bool get _isHindi => LanguageStore.to.selectedLanguageCode == 'hi';
+
+  TextTheme _textTheme(Brightness brightness) {
+    final base = ThemeData(brightness: brightness).textTheme;
+    return _isHindi
+        ? GoogleFonts.notoSansDevanagariTextTheme(base)
+        : GoogleFonts.poppinsTextTheme(base);
+  }
+
+  TextStyle _appBarTitleStyle() {
+    return _isHindi
+        ? GoogleFonts.notoSansDevanagari(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          )
+        : GoogleFonts.inter(
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          );
+  }
+
   ThemeData _buildLightTheme() {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme(
         brightness: Brightness.light,
-        // Primary colors (1C56BF - blue)
         primary: const Color(0xFF1C56BF),
         onPrimary: Colors.white,
-        // Secondary colors (167B4D - green)
         secondary: const Color(0xFF167B4D),
         onSecondary: Colors.white,
-
         tertiary: const Color(0xFF789ADE),
         onTertiary: Colors.white,
         surface: Colors.white,
@@ -100,18 +119,12 @@ class _MyAppState extends State<MyApp> {
         error: Colors.red.shade700,
         onError: Colors.white,
       ),
-      textTheme: GoogleFonts.poppinsTextTheme(
-        ThemeData(brightness: Brightness.light).textTheme,
-      ),
+      textTheme: _textTheme(Brightness.light),
       appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
-        titleTextStyle: GoogleFonts.inter(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-        ),
+        titleTextStyle: _appBarTitleStyle(),
       ),
     );
   }
@@ -138,9 +151,7 @@ class _MyAppState extends State<MyApp> {
       ),
       cardColor: const Color(0xFF1E1E1E),
       dividerColor: Colors.grey.shade800,
-      textTheme: GoogleFonts.poppinsTextTheme(
-        ThemeData(brightness: Brightness.dark).textTheme,
-      ),
+      textTheme: _textTheme(Brightness.dark),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: const Color(0xFF2C2C2C),
@@ -171,11 +182,7 @@ class _MyAppState extends State<MyApp> {
         elevation: 0,
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
-        titleTextStyle: GoogleFonts.inter(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-        ),
+        titleTextStyle: _appBarTitleStyle(),
         systemOverlayStyle: const SystemUiOverlayStyle(
           systemNavigationBarColor: Color(0xFF1E1E1E),
           systemNavigationBarIconBrightness: Brightness.light,

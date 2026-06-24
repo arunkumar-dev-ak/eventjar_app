@@ -87,7 +87,6 @@ class MorePage extends GetView<MoreController> {
                         ),
 
                         SizedBox(height: 3.hp),
-                        SizedBox(height: 3.hp),
 
                         MoreSectionTitle(title: 'your_network_caps'.tr),
                         SizedBox(height: 1.5.hp),

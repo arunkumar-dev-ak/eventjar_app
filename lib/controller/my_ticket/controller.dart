@@ -5,6 +5,7 @@ import 'package:eventjar/controller/my_ticket/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/global_values.dart';
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/global/utils/date_utils.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/page/my_ticket/widget/my_ticketdate_range_picker_widget.dart';
 import 'package:eventjar/routes/route_name.dart';
@@ -148,18 +149,9 @@ class MyTicketController extends GetxController {
 
     /*------ Date filter -------*/
     if (state.selectedDateRange.value != null) {
-      final dateRange = state.selectedDateRange.value!;
-      final fromDateUtc = dateRange.start.toUtc();
-      var toDateUtc = dateRange.end.toUtc();
-
-      if (fromDateUtc.isAtSameMomentAs(toDateUtc)) {
-        toDateUtc = toDateUtc.add(
-          const Duration(hours: 23, minutes: 59, seconds: 59),
-        );
-      }
-
-      queryParams.add("eventStartDate=${fromDateUtc.toIso8601String()}");
-      queryParams.add("eventEndDate=${toDateUtc.toIso8601String()}");
+      final utcRange = dateRangeToUtcStrings(state.selectedDateRange.value!);
+      queryParams.add("eventStartDate=${utcRange.startDate}");
+      queryParams.add("eventEndDate=${utcRange.endDate}");
     }
 
     queryParams.add(

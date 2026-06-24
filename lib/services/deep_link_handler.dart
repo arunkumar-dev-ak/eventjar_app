@@ -142,8 +142,24 @@ class DeepLinkHandler {
 
       case 'trips':
         if (segments.length > 2 && segments[1] == 'join') {
-          // TODO: route to actual trip-join page once available.
-          Get.offAllNamed(RouteName.dashboardpage);
+          final joinToken = segments[2].trim();
+          if (joinToken.isEmpty) {
+            AppSnackbar.warning(
+              title: "Invalid Link",
+              message: "Trip join link is not valid.",
+            );
+            return false;
+          }
+
+          Get.offAllNamed(
+            RouteName.dashboardpage,
+            arguments: {
+              "initialTab": 0,
+              "openSubPage": "joinTrip",
+              "isLoginRequired": true,
+              "parameters": {"joinToken": joinToken},
+            },
+          );
           return true;
         }
         return false;

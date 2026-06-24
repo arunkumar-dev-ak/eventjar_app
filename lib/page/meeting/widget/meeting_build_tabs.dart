@@ -11,44 +11,161 @@ class MeetingBuildTabs extends GetView<MeetingController> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(width: 2.wp),
-
-          // Status Filter
-          SingleSelectFilterDropdown<MeetingStatus>(
-            title: 'status'.tr,
-            items: MeetingStatus.values,
-            selectedItem: controller.state.selectedStatus,
-            getDefaultItem: () => MeetingStatus.SCHEDULED,
-            getDisplayValue: (MeetingStatus status) => status.displayName,
-            getKeyValue: (MeetingStatus status) => status,
-            onSelected: (MeetingStatus status) {
-              controller.state.selectedStatus.value = status;
-              // controller.applyFilters();
-            },
-            selectedTextSize: 8.sp,
-            textFieldPadding: EdgeInsets.symmetric(
-              horizontal: 10.0,
-              vertical: 2.0,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Obx(() {
+          return Row(
+            children: [
+              MeetingTab(
+                label: 'one_on_one'.tr,
+                selected: controller.state.selectedTab.value == 0,
+                onTap: () => controller.changeTab(0),
+              ),
+              SizedBox(width: 2.wp),
+              MeetingTab(
+                label: 'qualified_contacts'.tr,
+                selected: controller.state.selectedTab.value == 1,
+                onTap: () => controller.changeTab(1),
+              ),
+            ],
+          );
+        }),
+        SizedBox(height: 1.5.hp),
+        Obx(() {
+          final isOneOnOneTab = controller.state.selectedTab.value == 0;
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(width: 2.wp),
+                SingleSelectFilterDropdown<MeetingStatus>(
+                  title: 'status'.tr,
+                  items: MeetingStatus.values,
+                  selectedItem: isOneOnOneTab
+                      ? controller.state.oneOnOneSelectedStatus
+                      : controller.state.selectedStatus,
+                  getDefaultItem: () => MeetingStatus.SCHEDULED,
+                  getDisplayValue: (MeetingStatus status) => status.displayName,
+                  getKeyValue: (MeetingStatus status) => status,
+                  onSelected: (MeetingStatus status) {
+                    if (isOneOnOneTab) {
+                      controller.state.oneOnOneSelectedStatus.value = status;
+                    } else {
+                      controller.state.selectedStatus.value = status;
+                    }
+                  },
+                  selectedTextSize: 8.sp,
+                  textFieldPadding: EdgeInsets.symmetric(
+                    horizontal: 10.0,
+                    vertical: 2.0,
+                  ),
+                  dropDownIconSize: 20,
+                ),
+                SizedBox(width: 2.wp),
+                Obx(
+                  () => DateRangeFilter(
+                    selectedRange: isOneOnOneTab
+                        ? controller.state.oneOnOneSelectedDateRange.value
+                        : controller.state.selectedDateRange.value,
+                    onRangeChanged: (range) {
+                      if (isOneOnOneTab) {
+                        controller.setOneOnOneDate(range);
+                      } else {
+                        controller.setDate(range);
+                      }
+                    },
+                    displayText: isOneOnOneTab
+                        ? controller.getOneOnOneDisplayText()
+                        : controller.getDisplayText(),
+                  ),
+                ),
+              ],
             ),
-            dropDownIconSize: 20,
-          ),
+          );
+        }),
+      ],
+    );
+  }
+}
 
-          SizedBox(width: 2.wp),
+class MeetingTab extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
 
-          Obx(
-            () => DateRangeFilter(
-              selectedRange: controller.state.selectedDateRange.value,
-              onRangeChanged: (range) {
-                controller.setDate(range);
-              },
-            ),
+  const MeetingTab({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 2.5.sp),
+        decoration: BoxDecoration(
+          gradient: selected
+              ? LinearGradient(
+                  colors: [
+                    AppColors.gradientDarkStart,
+                    AppColors.gradientDarkStart.withValues(alpha: 0.75),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                )
+              : LinearGradient(
+                  colors: [
+                    AppColors.cardBg(context).withValues(alpha: 0.7),
+                    AppColors.chipBg(context).withValues(alpha: 0.9),
+                  ],
+                ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: selected
+                ? AppColors.gradientDarkStart.withValues(alpha: 0.2)
+                : AppColors.border(context),
+            width: 1.2,
           ),
-        ],
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: AppColors.gradientDarkStart.withValues(alpha: 0.25),
+                    blurRadius: 10,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 3),
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? Colors.white : AppColors.textPrimary(context),
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+            fontSize: 8.5.sp,
+            shadows: selected
+                ? [
+                    Shadow(
+                      color: AppColors.gradientDarkStart.withValues(alpha: 0.3),
+                      blurRadius: 2,
+                      offset: const Offset(0, 1),
+                    ),
+                  ]
+                : null,
+          ),
+        ),
       ),
     );
   }
@@ -57,10 +174,12 @@ class MeetingBuildTabs extends GetView<MeetingController> {
 class DateRangeFilter extends GetView<MeetingController> {
   final DateTimeRange? selectedRange;
   final Function(DateTimeRange?) onRangeChanged;
+  final String? displayText;
 
   const DateRangeFilter({
     required this.selectedRange,
     required this.onRangeChanged,
+    this.displayText,
     super.key,
   });
 
@@ -92,7 +211,7 @@ class DateRangeFilter extends GetView<MeetingController> {
             ),
             SizedBox(width: 4),
             Text(
-              controller.getDisplayText(),
+              displayText ?? controller.getDisplayText(),
               style: TextStyle(
                 fontSize: 8.sp,
                 fontWeight: FontWeight.w500,

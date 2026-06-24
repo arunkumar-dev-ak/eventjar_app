@@ -196,10 +196,54 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                     ),
                     SizedBox(width: 2.wp),
                     _chipInfo(
-                      "${trip.membersCount} ${'memebers'.tr})",
+                      "${trip.membersCount} ${'members'.tr}",
                       Icons.people_outline,
                       context,
                     ),
+                    const Spacer(),
+                    if (controller.isTripOwner(trip))
+                      GestureDetector(
+                        onTap: () {
+                          HapticHelper.light();
+                          controller.navigateToEditTrip(trip);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 2.5.wp,
+                            vertical: 0.5.hp,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.gradientDarkStart.withValues(
+                              alpha: 0.08,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: AppColors.gradientDarkStart.withValues(
+                                alpha: 0.2,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.edit_outlined,
+                                size: 14,
+                                color: AppColors.gradientDarkStart,
+                              ),
+                              SizedBox(width: 1.wp),
+                              Text(
+                                'edit'.tr,
+                                style: TextStyle(
+                                  fontSize: 7.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.gradientDarkStart,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                   ],
                 ),
 
@@ -227,6 +271,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                     children: [
                       _analyticsItem(
                         "you_owe".tr.toUpperCase(),
+                        trip.currency,
                         trip.myOwe,
                         Colors.red,
                         context,
@@ -238,6 +283,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                       ),
                       _analyticsItem(
                         "you_receive".tr.toUpperCase(),
+                        trip.currency,
                         trip.myReceive,
                         Colors.green,
                         context,
@@ -249,6 +295,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                       ),
                       _analyticsItem(
                         "my_share".tr.toUpperCase(),
+                        trip.currency,
                         trip.myShare,
                         AppColors.gradientDarkStart,
                         context,
@@ -264,7 +311,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "₹${formatAmount(spent)} ${"spent".tr}",
+                      "${trip.currency} ${formatAmount(spent)} ${"spent".tr}",
                       style: TextStyle(
                         fontSize: 7.5.sp,
                         fontWeight: FontWeight.w600,
@@ -274,7 +321,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
                       ),
                     ),
                     Text(
-                      "₹${formatAmount(totalBudget)} ${'budget_label'.tr}",
+                      "${trip.currency} ${formatAmount(totalBudget)} ${'budget_label'.tr}",
                       style: TextStyle(
                         fontSize: 7.5.sp,
                         color: AppColors.textSecondary(context),
@@ -303,8 +350,8 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
 
                 Text(
                   isOverBudget
-                      ? "Exceeded by ₹${formatAmount(spent - totalBudget)}"
-                      : "₹${formatAmount(totalBudget - spent)} ${'remaining'.tr}",
+                      ? "Exceeded by ${trip.currency} ${formatAmount(spent - totalBudget)}"
+                      : "${trip.currency} ${formatAmount(totalBudget - spent)} ${'remaining'.tr}",
                   style: TextStyle(
                     fontSize: 7.sp,
                     fontWeight: FontWeight.w500,
@@ -387,6 +434,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
 
   Widget _analyticsItem(
     String label,
+    String currency,
     double amount,
     Color color,
     BuildContext context,
@@ -404,7 +452,7 @@ class ActiveTripCard extends GetView<BudgetTrackController> {
         ),
         SizedBox(height: 0.3.hp),
         Text(
-          "₹${formatAmount(amount)}",
+          "$currency ${formatAmount(amount)}",
           style: TextStyle(
             fontSize: 11.sp,
             fontWeight: FontWeight.w800,

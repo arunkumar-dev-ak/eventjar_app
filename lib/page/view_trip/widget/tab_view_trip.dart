@@ -26,7 +26,7 @@ class ViewTripTabs extends GetView<ViewTripController> {
             ),
             _tabItem(
               context,
-              'members'.tr,
+              'friends'.tr,
               controller.state.selectedTab.value == 1,
               1,
             ),
@@ -39,9 +39,13 @@ class ViewTripTabs extends GetView<ViewTripController> {
 
 Widget _tabItem(BuildContext context, String title, bool selected, int index) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
-  final selectedBg = isDark ? Colors.white.withValues(alpha: 0.15) : Colors.white;
+  final selectedBg = isDark
+      ? Colors.white.withValues(alpha: 0.15)
+      : Colors.white;
   final selectedText = isDark ? Colors.white : AppColors.gradientDarkStart;
-  final unselectedText = isDark ? Colors.white.withValues(alpha: 0.5) : AppColors.budgetTabTextColor;
+  final unselectedText = isDark
+      ? Colors.white.withValues(alpha: 0.5)
+      : AppColors.budgetTabTextColor;
 
   return Expanded(
     child: GestureDetector(

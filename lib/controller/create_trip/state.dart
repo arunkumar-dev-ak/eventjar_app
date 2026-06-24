@@ -5,6 +5,10 @@ import 'package:get/get.dart';
 class CreateTripState {
   final RxBool isLoading = false.obs;
 
+  // Edit mode
+  bool isEditMode = false;
+  String? editTripId;
+
   // Friends (for dropdown)
   final RxList<SplitTrackFriend> friends = <SplitTrackFriend>[].obs;
 
@@ -17,7 +21,7 @@ class CreateTripState {
   final RxBool isDropdownLoadMoreLoading = false.obs;
 
   // Pagination
-  int page = 1;
+  String? nextCursor;
   bool hasMore = true;
 
   // Search

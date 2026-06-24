@@ -182,6 +182,7 @@ class FriendsPage extends GetView<FriendsController> {
 
               final isPending = friend.status.toLowerCase() == "pending";
               final isAccepted = friend.status.toLowerCase() == "accepted";
+              final isRejected = friend.status.toLowerCase() == "rejected";
 
               final isSender = isSenderForFriendList(friend);
               final isReceiver = isReceiverForFriendList(friend);
@@ -204,6 +205,46 @@ class FriendsPage extends GetView<FriendsController> {
                     FriendAction.reject,
                   ),
                 );
+              }
+
+              if ((isPending || isRejected) && isSender) {
+                final canEmail = friend.invitedEmail.isNotEmpty;
+                final canWhatsApp =
+                    friend.invitedPhone != null &&
+                    friend.invitedPhone!.isNotEmpty;
+
+                if (canEmail) {
+                  menu.add(
+                    _menuItem(
+                      context,
+                      Icons.email_outlined,
+                      "resend_via_email".tr,
+                      FriendAction.resendEmail,
+                    ),
+                  );
+                }
+
+                if (canWhatsApp) {
+                  menu.add(
+                    _menuItem(
+                      context,
+                      Icons.message_outlined,
+                      "resend_via_whatsapp".tr,
+                      FriendAction.resendWhatsApp,
+                    ),
+                  );
+                }
+
+                // if (canEmail && canWhatsApp) {
+                //   menu.add(
+                //     _menuItem(
+                //       context,
+                //       Icons.send_outlined,
+                //       "resend_both".tr,
+                //       FriendAction.resendBoth,
+                //     ),
+                //   );
+                // }
               }
 
               if ((isPending && isSender)) {
@@ -244,6 +285,18 @@ class FriendsPage extends GetView<FriendsController> {
 
                 case FriendAction.remove:
                   controller.deleteFriend(friend);
+                  break;
+
+                case FriendAction.resendEmail:
+                  controller.resendInvitation(friend, ['email']);
+                  break;
+
+                case FriendAction.resendWhatsApp:
+                  controller.resendInvitation(friend, ['whatsapp']);
+                  break;
+
+                case FriendAction.resendBoth:
+                  controller.resendInvitation(friend, ['email', 'whatsapp']);
                   break;
               }
             },

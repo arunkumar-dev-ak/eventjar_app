@@ -30,6 +30,23 @@ class ExpenseDetailPage extends GetView<ExpenseDetailController> {
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.light,
         ),
+        actions: [
+          Obx(() {
+            final currentUserId = UserStore.to.profile['id'];
+
+            final createdById = controller.state.expense.value?.createdById;
+
+            if (createdById != null && currentUserId == createdById) {
+              return IconButton(
+                onPressed: () => controller.editExpenseName(),
+                icon: const Icon(Icons.edit_outlined, size: 20),
+                tooltip: 'edit_expense_name'.tr,
+              );
+            }
+
+            return const SizedBox.shrink();
+          }),
+        ],
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: AppColors.appBarGradientFor(context),

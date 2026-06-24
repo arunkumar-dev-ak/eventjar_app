@@ -21,6 +21,26 @@ class SplitTrackApi {
     }
   }
 
+  static Future<void> updateTrip({
+    required String tripId,
+    required Map<String, dynamic> body,
+  }) async {
+    try {
+      final response = await _dio.put(
+        '/mobile/split-track/trips/$tripId',
+        data: body,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return;
+      }
+
+      throw Exception('Failed to update trip');
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   static Future<void> deleteTrip({required String tripId}) async {
     try {
       final response = await _dio.delete('/mobile/split-track/trips/$tripId');
@@ -35,22 +55,22 @@ class SplitTrackApi {
     }
   }
 
-  static Future<SplitTrackFriendResponse> getFriends({
-    required Map<String, dynamic> queryParams,
-  }) async {
-    try {
-      final response = await _dio.get(
-        '/mobile/split-track/friends',
-        queryParameters: queryParams,
-      );
+  // static Future<SplitTrackFriendResponse> getFriends({
+  //   required Map<String, dynamic> queryParams,
+  // }) async {
+  //   try {
+  //     final response = await _dio.get(
+  //       '/mobile/split-track/friends',
+  //       queryParameters: queryParams,
+  //     );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return SplitTrackFriendResponse.fromJson(response.data);
-      }
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       return SplitTrackFriendResponse.fromJson(response.data);
+  //     }
 
-      throw Exception('Failed to fetch friends');
-    } catch (e) {
-      rethrow;
-    }
-  }
+  //     throw Exception('Failed to fetch friends');
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 }
