@@ -98,9 +98,14 @@ import 'package:eventjar/page/bio_profile/bio_profile_page.dart';
 
 import '../controller/categories_event/binding.dart';
 import '../controller/bio_profile/binding.dart';
+import '../controller/nis/binding.dart';
+import '../controller/nis_insights/binding.dart';
 import '../controller/scan_card/binding.dart';
 import '../page/category_events/event_list.dart';
 import '../page/expense_detail/expense_detail.dart';
+import '../page/nis/nis_breakdown_page.dart';
+import '../page/nis/nis_insights_page.dart';
+import '../page/nis/nis_page.dart';
 import '../page/scan_card/scan_card.dart';
 
 class RoutePage {
@@ -441,6 +446,25 @@ class RoutePage {
       name: RouteName.meetingPreferencesPage,
       page: () => const MeetingPreferencesPage(),
       binding: MeetingPreferencesBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+
+    //nis page
+    GetPage(
+      name: RouteName.nisPage,
+      page: () => const NisPage(),
+      binding: NisBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.nisBreakdownPage,
+      page: () => const NisBreakdownPage(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.nisInsightsPage,
+      page: () => const NisInsightsPage(),
+      binding: NisInsightsBinding(),
       middlewares: [LoginMiddleware()],
     ),
 

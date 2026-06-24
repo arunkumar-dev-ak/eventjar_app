@@ -27,200 +27,217 @@ class HomeProfile extends GetView<HomeController> {
       if (isLoading || profileData == null) {
         return _buildShimmerProfile();
       }
-      return Container(
-        margin: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.5.hp),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            // Profile Card Background with Glitter
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              width: double.infinity,
-              margin: EdgeInsets.only(
-                bottom:
-                    controller.allStepsComplete && controller.scoreCardExpanded
-                    ? (9.hp + (4 * 6.5.hp) + 1) - 9.hp + 3.7.hp
-                    : 3.7.hp,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
+      return GestureDetector(
+        onTap: () {
+          HapticHelper.light();
+          Get.toNamed(RouteName.nisPage);
+        },
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 1.5.hp),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              // Profile Card Background with Glitter
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+                width: double.infinity,
+                margin: EdgeInsets.only(
+                  bottom:
+                      controller.allStepsComplete &&
+                          controller.scoreCardExpanded
+                      ? (9.hp + (4 * 6.5.hp) + 1) - 9.hp + 3.7.hp
+                      : 3.7.hp,
                 ),
-                gradient: LinearGradient(
-                  colors: Theme.of(context).brightness == Brightness.dark
-                      ? [
-                          const Color(0xFF1A2A3A),
-                          const Color(0xFF1E3450),
-                          const Color(0xFF223E5A),
-                        ]
-                      : [
-                          const Color(0xFFE3F2FD),
-                          const Color(0xFFBBDEFB),
-                          const Color(0xFF90CAF9),
-                        ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 15,
-                    offset: const Offset(0, 5),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: CustomPaint(painter: GlitterPainter()),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(3.wp, 1.hp, 3.wp, 1.hp),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(14),
-                                child: profileData.avatarUrl == null
-                                    ? Image.asset(
-                                        'assets/king.png',
-                                        width: 24.wp,
-                                        height: 28.wp,
-                                        fit: BoxFit.fill,
-                                      )
-                                    : Image.network(
-                                        getFileUrl(profileData.avatarUrl!),
-                                        width: 30.wp,
-                                        height: 30.wp,
-                                        fit: BoxFit.cover,
-                                      ),
-                              ),
-                              SizedBox(width: 4.wp),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            capitalizeName(
-                                              profileData.name.toString(),
-                                            ),
-                                            style: TextStyle(
-                                              color: AppColors.textPrimary(
-                                                context,
-                                              ),
-                                              fontSize: 11.sp,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            final username =
-                                                UserStore.to.profile['username']
-                                                    ?.toString() ??
-                                                '';
-                                            if (username.isNotEmpty) {
-                                              SharePlus.instance.share(
-                                                ShareParams(
-                                                  text:
-                                                      'https://myeventjar.com/members/$username',
-                                                ),
-                                              );
-                                            }
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.all(1.5.wp),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.textPrimary(
-                                                context,
-                                              ).withValues(alpha: 0.1),
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: Icon(
-                                              Icons.share_rounded,
-                                              size: 18,
-                                              color:
-                                                  Theme.of(
-                                                        context,
-                                                      ).brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.white
-                                                  : AppColors.gradientDarkStart,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 1.hp),
-                                    Text(
-                                      profileData.email!,
-                                      style: TextStyle(
-                                        color: AppColors.textSecondary(context),
-                                        fontSize: 9.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    SizedBox(height: 1.hp),
-                                    Text(
-                                      profileData.phone ?? "Yet to add",
-                                      style: TextStyle(
-                                        color: AppColors.textSecondary(context),
-                                        fontSize: 9.sp,
-                                      ),
-                                    ),
-                                    if (profileData.phoneParsed?.countryCode !=
-                                        null) ...[
-                                      SizedBox(height: 0.8.hp),
-                                      Align(
-                                        alignment: Alignment.centerRight,
-                                        child: _AnimatedFlag(
-                                          countryCode: profileData
-                                              .phoneParsed!
-                                              .countryCode,
-                                        ),
-                                      ),
-                                    ],
-                                    //SizedBox(height: 1.hp),
-                                    //_buildBadgeMedals(),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 4.5.hp),
-                        ],
-                      ),
+                  gradient: LinearGradient(
+                    colors: Theme.of(context).brightness == Brightness.dark
+                        ? [
+                            const Color(0xFF1A2A3A),
+                            const Color(0xFF1E3450),
+                            const Color(0xFF223E5A),
+                          ]
+                        : [
+                            const Color(0xFFE3F2FD),
+                            const Color(0xFFBBDEFB),
+                            const Color(0xFF90CAF9),
+                          ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
                     ),
                   ],
                 ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: CustomPaint(painter: GlitterPainter()),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(3.wp, 1.hp, 3.wp, 1.hp),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(14),
+                                  child: profileData.avatarUrl == null
+                                      ? Image.asset(
+                                          'assets/king.png',
+                                          width: 24.wp,
+                                          height: 28.wp,
+                                          fit: BoxFit.fill,
+                                        )
+                                      : Image.network(
+                                          getFileUrl(profileData.avatarUrl!),
+                                          width: 30.wp,
+                                          height: 30.wp,
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
+                                SizedBox(width: 4.wp),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              capitalizeName(
+                                                profileData.name.toString(),
+                                              ),
+                                              style: TextStyle(
+                                                color: AppColors.textPrimary(
+                                                  context,
+                                                ),
+                                                fontSize: 11.sp,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              final username =
+                                                  UserStore
+                                                      .to
+                                                      .profile['username']
+                                                      ?.toString() ??
+                                                  '';
+                                              if (username.isNotEmpty) {
+                                                SharePlus.instance.share(
+                                                  ShareParams(
+                                                    text:
+                                                        'https://myeventjar.com/members/$username',
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.all(1.5.wp),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.textPrimary(
+                                                  context,
+                                                ).withValues(alpha: 0.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Icon(
+                                                Icons.share_rounded,
+                                                size: 18,
+                                                color:
+                                                    Theme.of(
+                                                          context,
+                                                        ).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.white
+                                                    : AppColors
+                                                          .gradientDarkStart,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 1.hp),
+                                      Text(
+                                        profileData.email!,
+                                        style: TextStyle(
+                                          color: AppColors.textSecondary(
+                                            context,
+                                          ),
+                                          fontSize: 9.sp,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      SizedBox(height: 1.hp),
+                                      Text(
+                                        profileData.phone ?? "Yet to add",
+                                        style: TextStyle(
+                                          color: AppColors.textSecondary(
+                                            context,
+                                          ),
+                                          fontSize: 9.sp,
+                                        ),
+                                      ),
+                                      if (profileData
+                                              .phoneParsed
+                                              ?.countryCode !=
+                                          null) ...[
+                                        SizedBox(height: 0.8.hp),
+                                        Align(
+                                          alignment: Alignment.centerRight,
+                                          child: _AnimatedFlag(
+                                            countryCode: profileData
+                                                .phoneParsed!
+                                                .countryCode,
+                                          ),
+                                        ),
+                                      ],
+                                      //SizedBox(height: 1.hp),
+                                      //_buildBadgeMedals(),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 4.5.hp),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            // Floating Networking Score Card
-            Positioned(
-              left: 2.5.wp,
-              right: 2.5.wp,
-              bottom: 0.7.hp,
-              child: _buildNetworkingScoreCard(),
-            ),
-          ],
+              // Floating Networking Score Card
+              Positioned(
+                left: 2.5.wp,
+                right: 2.5.wp,
+                bottom: 0.7.hp,
+                child: _buildNetworkingScoreCard(),
+              ),
+            ],
+          ),
         ),
       );
     });

@@ -85,6 +85,11 @@ class RouteName {
   //meeting preferences
   static const meetingPreferencesPage = '/meetingPreferencesPage';
 
+  //nis page
+  static const nisPage = '/nisPage';
+  static const nisBreakdownPage = '/nisBreakdownPage';
+  static const nisInsightsPage = '/nisInsightsPage';
+
   //more page
   static const morePage = '/morePage';
 }
