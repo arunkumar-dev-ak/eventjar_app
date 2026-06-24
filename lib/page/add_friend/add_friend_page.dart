@@ -6,6 +6,7 @@ import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/global/widget/form_submit_button.dart';
 import 'package:eventjar/page/add_friend/widget/contact_add_friend.dart';
 import 'package:eventjar/page/add_friend/widget/new_add_friend.dart';
+import 'package:eventjar/page/add_friend/widget/phone_contact_add_friend.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -64,7 +65,7 @@ class AddFriendPage extends GetView<AddFriendController> {
 
                   selectedItem: controller.state.selectedType,
 
-                  getDefaultItem: () => AddFriendType.contact,
+                  getDefaultItem: () => AddFriendType.newFriend,
 
                   getDisplayValue: (type) {
                     switch (type) {
@@ -72,6 +73,8 @@ class AddFriendPage extends GetView<AddFriendController> {
                         return 'new_friend'.tr;
                       case AddFriendType.contact:
                         return 'from_my_contacts'.tr;
+                      case AddFriendType.phoneContact:
+                        return 'from_phone_contacts'.tr;
                     }
                   },
 
@@ -102,10 +105,14 @@ class AddFriendPage extends GetView<AddFriendController> {
                 Obx(() {
                   final type = controller.state.selectedType.value;
 
-                  if (type == AddFriendType.contact) {
-                    return const ContactAddFriendContactView();
-                  } else {
-                    return const NewAddFriend();
+                  switch (type) {
+                    case AddFriendType.contact:
+                      return const ContactAddFriendContactView();
+                    case AddFriendType.phoneContact:
+                      return const PhoneContactAddFriend();
+                    case AddFriendType.newFriend:
+                    default:
+                      return const NewAddFriend();
                   }
                 }),
 
@@ -135,7 +142,9 @@ class AddFriendPage extends GetView<AddFriendController> {
                           final isLoading = controller.state.isLoading.value;
 
                           return FormButton(
-                            text: isLoading ? 'sending'.tr : 'send_invitation_btn'.tr,
+                            text: isLoading
+                                ? 'sending'.tr
+                                : 'send_invitation_btn'.tr,
                             isLoading: isLoading,
                             type: FormButtonType.primary,
                             icon: Icons.person_add,

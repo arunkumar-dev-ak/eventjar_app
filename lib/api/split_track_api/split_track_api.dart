@@ -55,22 +55,22 @@ class SplitTrackApi {
     }
   }
 
-  static Future<SplitTrackFriendResponse> getFriends({
-    required Map<String, dynamic> queryParams,
-  }) async {
-    try {
-      final response = await _dio.get(
-        '/mobile/split-track/friends',
-        queryParameters: queryParams,
-      );
+  // static Future<SplitTrackFriendResponse> getFriends({
+  //   required Map<String, dynamic> queryParams,
+  // }) async {
+  //   try {
+  //     final response = await _dio.get(
+  //       '/mobile/split-track/friends',
+  //       queryParameters: queryParams,
+  //     );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return SplitTrackFriendResponse.fromJson(response.data);
-      }
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       return SplitTrackFriendResponse.fromJson(response.data);
+  //     }
 
-      throw Exception('Failed to fetch friends');
-    } catch (e) {
-      rethrow;
-    }
-  }
+  //     throw Exception('Failed to fetch friends');
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
 }

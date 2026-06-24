@@ -46,4 +46,7 @@ class ViewTripState {
 
   // To track pagination from the backend response
   final Rxn<MobileMeta> friendDropdownMeta = Rxn<MobileMeta>();
+
+  // QR / Join token
+  final RxBool isRegeneratingToken = false.obs;
 }

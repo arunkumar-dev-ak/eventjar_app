@@ -21,7 +21,7 @@ class CreateTripState {
   final RxBool isDropdownLoadMoreLoading = false.obs;
 
   // Pagination
-  int page = 1;
+  String? nextCursor;
   bool hasMore = true;
 
   // Search

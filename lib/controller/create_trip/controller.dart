@@ -10,6 +10,7 @@ import 'package:eventjar/logger_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../api/friends_api/friends_api.dart';
 import '../../routes/route_name.dart';
 
 class CreateTripController extends GetxController {
@@ -46,9 +47,7 @@ class CreateTripController extends GetxController {
     }
     descriptionController.text = trip.description ?? '';
 
-    final currency = CurrencyService().findByCode(
-      _symbolToCode(trip.currency),
-    );
+    final currency = CurrencyService().findByCode(_symbolToCode(trip.currency));
     if (currency != null) {
       state.selectedCurrency.value = currency;
     }
@@ -82,21 +81,24 @@ class CreateTripController extends GetxController {
     try {
       if (initial) {
         state.isDropdownLoading.value = true;
-        state.page = 1;
+        state.nextCursor = null;
         state.friends.clear();
       }
 
       final queryParams = <String, dynamic>{
-        'page': state.page,
         'limit': _limit,
       };
+
+      if (!initial && state.nextCursor != null) {
+        queryParams['cursor'] = state.nextCursor!;
+      }
 
       final search = state.searchQuery.value.trim();
       if (search.isNotEmpty) {
         queryParams['search'] = search;
       }
 
-      final response = await SplitTrackApi.getFriends(queryParams: queryParams);
+      final response = await FriendsApi.getFriends(queryParams: queryParams);
 
       if (initial) {
         state.friends.value = response.data;
@@ -104,8 +106,8 @@ class CreateTripController extends GetxController {
         state.friends.addAll(response.data);
       }
 
-      state.hasMore = response.pagination.hasNext;
-      state.page = response.pagination.page + 1;
+      state.hasMore = response.paging.hasNextPage;
+      state.nextCursor = response.paging.nextCursor;
     } catch (err) {
       LoggerService.loggerInstance.e('Fetch friends error: $err');
       ApiErrorHandler.handle(
@@ -176,10 +178,7 @@ class CreateTripController extends GetxController {
       }
 
       if (state.isEditMode) {
-        await SplitTrackApi.updateTrip(
-          tripId: state.editTripId!,
-          body: body,
-        );
+        await SplitTrackApi.updateTrip(tripId: state.editTripId!, body: body);
       } else {
         await SplitTrackApi.createTrip(body: body);
       }

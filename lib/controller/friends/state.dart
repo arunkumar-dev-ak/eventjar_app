@@ -7,5 +7,5 @@ class FriendsState {
   RxBool isLoading = false.obs;
   RxBool isPaginationLoading = false.obs;
 
-  Rxn<SplitTrackPagination> pagination = Rxn<SplitTrackPagination>();
+  Rxn<SplitTrackPaging> paging = Rxn<SplitTrackPaging>();
 }
