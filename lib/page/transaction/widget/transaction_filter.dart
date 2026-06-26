@@ -8,7 +8,7 @@ class TransactionFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final filters = ["All Trips", 'date'.tr, 'amount'.tr, "Payment", "Type"];
+    final filters = ["All Trips", 'amount'.tr, "Payment", "Type"];
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,

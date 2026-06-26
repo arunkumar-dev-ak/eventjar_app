@@ -374,8 +374,8 @@ class ViewTripController extends GetxController
   //settlement dialog
   void openPaymentDialog(TripFriendModel friend, PaymentActionType type) {
     settleAmountController.text = type == PaymentActionType.record
-        ? friend.myReceive.abs().toStringAsFixed(0)
-        : friend.myOwe.abs().toStringAsFixed(0);
+        ? friend.myReceive.abs().toString()
+        : friend.myOwe.abs().toString();
 
     settleNotesController.clear();
     state.paymentMethod.value = 'UPI';

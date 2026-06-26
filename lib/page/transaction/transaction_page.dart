@@ -1,6 +1,7 @@
 import 'package:eventjar/controller/transaction/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/transaction/widget/transaction_date_selector.dart';
 import 'package:eventjar/page/transaction/widget/transaction_filter.dart';
 import 'package:eventjar/page/transaction/widget/transaction_list.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,6 @@ class TransactionPage extends GetView<TransactionController> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBg(context),
 
-      /// APP BAR
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -23,7 +23,7 @@ class TransactionPage extends GetView<TransactionController> {
           onPressed: () => Get.back(),
         ),
         title: Text(
-          "transaction".tr,
+          "transactions".tr,
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 15.sp,
@@ -38,17 +38,19 @@ class TransactionPage extends GetView<TransactionController> {
         centerTitle: false,
       ),
 
-      /// BODY
       body: ListView(
+        controller: controller.scrollController,
         children: [
           SizedBox(height: 1.5.hp),
 
-          /// 🔥 FILTERS
+          const TransactionDateSelector(),
+
+          SizedBox(height: 1.5.hp),
+
           const TransactionFilterBar(),
 
           SizedBox(height: 2.hp),
 
-          /// 🔥 HISTORY LIST
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 4.wp, vertical: 2.hp),
             child: const TransactionHistoryList(),

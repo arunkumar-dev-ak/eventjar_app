@@ -83,6 +83,11 @@ class MorePage extends GetView<MoreController> {
                               label: 'friends'.tr,
                               onTap: controller.navigateToFriendList,
                             ),
+                            MoreGridItem(
+                              icon: Icons.receipt_long,
+                              label: 'transactions'.tr,
+                              onTap: controller.navigateToTransaction,
+                            ),
                           ],
                         ),
 

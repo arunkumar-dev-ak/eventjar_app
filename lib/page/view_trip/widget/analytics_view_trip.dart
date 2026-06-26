@@ -43,7 +43,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                     ),
                     SizedBox(height: 0.5.hp),
                     Text(
-                      "$currency ${yourSpent.toStringAsFixed(0)}",
+                      "$currency ${yourSpent.toStringAsFixed(2)}",
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -112,7 +112,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                   child: _amountCard(
                     context,
                     "you_owe".tr,
-                    "$currency ${youOwe.toStringAsFixed(0)}",
+                    "$currency ${youOwe.toStringAsFixed(2)}",
                     isOwe: true,
                   ),
                 ),
@@ -121,7 +121,7 @@ class ViewTripAnalytics extends GetView<ViewTripController> {
                   child: _amountCard(
                     context,
                     "you_receive".tr,
-                    "$currency ${youReceive.toStringAsFixed(0)}",
+                    "$currency ${youReceive.toStringAsFixed(2)}",
                     isOwe: false,
                   ),
                 ),

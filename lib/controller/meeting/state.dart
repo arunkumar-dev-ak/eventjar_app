@@ -1,5 +1,4 @@
 import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
-import 'package:eventjar/model/contact-meeting/contact_meeting_status.dart';
 import 'package:eventjar/model/network-meeting/network_meeting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,36 +16,15 @@ class MeetingState {
   Rxn<String> oneOnOneNextCursor = Rxn<String>();
   RxBool oneOnOneHasNextPage = false.obs;
 
-  // One-on-One tab filters
-  Rxn<MeetingStatus> oneOnOneSelectedStatus = Rxn();
-  final Rx<DateTimeRange> oneOnOneSelectedDateRange = Rx<DateTimeRange>(
-    DateTimeRange(
-      start: DateTime.now(),
-      end: DateTime.now().add(const Duration(days: 7)),
-    ),
-  );
+  // One-on-One tab date selection
+  Rx<DateTime> oneOnOneSelectedDate = DateTime.now().obs;
+  RxInt oneOnOneDisplayedMonth = DateTime.now().month.obs;
+  RxInt oneOnOneDisplayedYear = DateTime.now().year.obs;
 
-  // Qualified Contact tab filters
-  Rxn<MeetingStatus> selectedStatus = Rxn();
-
-  final Rx<DateTimeRange> selectedDateRange = Rx<DateTimeRange>(
-    DateTimeRange(
-      start: DateTime.now(),
-      end: DateTime.now().add(const Duration(days: 7)),
-    ),
-  );
-
-  List<DateTimeRange> get quickDateRanges => [
-    DateTimeRange(
-      start: DateTime.now().subtract(Duration(days: 7)),
-      end: DateTime.now(),
-    ),
-    DateTimeRange(
-      start: DateTime.now().subtract(Duration(days: 30)),
-      end: DateTime.now(),
-    ),
-    DateTimeRange(start: DateTime(2026, 1, 1), end: DateTime.now()),
-  ];
+  // Qualified Contact tab date selection
+  Rx<DateTime> qualifiedSelectedDate = DateTime.now().obs;
+  RxInt qualifiedDisplayedMonth = DateTime.now().month.obs;
+  RxInt qualifiedDisplayedYear = DateTime.now().year.obs;
 
   RxList<ContactMeeting> meetings = <ContactMeeting>[].obs;
 

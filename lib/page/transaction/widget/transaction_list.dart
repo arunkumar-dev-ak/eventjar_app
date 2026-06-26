@@ -1,195 +1,88 @@
+import 'package:eventjar/controller/transaction/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
-import 'package:eventjar/page/transaction/widget/dummy_model.dart';
+import 'package:eventjar/global/widget/empty_widget.dart';
 import 'package:eventjar/page/transaction/widget/transaction_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class TransactionHistoryList extends StatelessWidget {
+class TransactionHistoryList extends GetView<TransactionController> {
   const TransactionHistoryList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final primaryText = AppColors.textPrimary(context);
+    return Obx(() {
+      final isLoading = controller.state.isLoading.value;
+      final transactions = controller.state.transactions;
+      final dailyTotal = controller.state.dailyTotal.value;
+      final isLoadingMore = controller.state.isLoadingMore.value;
+
+      if (isLoading) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (transactions.isEmpty) {
+        return SizedBox(
+          height: 40.hp,
+          child: EmptyStateWidget(
+            icon: Icons.receipt_long_outlined,
+            title: 'no_transactions'.tr,
+            subtitle: 'no_transactions_desc'.tr,
+          ),
+        );
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _dailyTotalHeader(context, dailyTotal),
+          SizedBox(height: 1.5.hp),
+          ...transactions.map(
+            (tx) => TransactionCard(transaction: tx),
+          ),
+          if (isLoadingMore)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 2.hp),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+        ],
+      );
+    });
+  }
+
+  Widget _dailyTotalHeader(BuildContext context, dynamic dailyTotal) {
     final mutedText = AppColors.textSecondary(context);
     final mutedIcon = AppColors.iconMuted(context);
 
-    /// 🔥 Dummy Data
-    final transactions = [
-      TransactionModel(
-        name: "Gokul",
-        subtitle: 'dinner_split'.tr,
-        date: "14 April",
-        amount: 500,
-        isReceived: false,
-        month: "April",
-        year: "2026",
-      ),
-      TransactionModel(
-        name: "Arun",
-        subtitle: 'taxi_share'.tr,
-        date: "12 April",
-        amount: 300,
-        isReceived: true,
-        month: "April",
-        year: "2026",
-      ),
-      TransactionModel(
-        name: "Rahul",
-        subtitle: 'snacks'.tr,
-        date: "2 March",
-        amount: 200,
-        isReceived: false,
-        month: "March",
-        year: "2026",
-      ),
-    ];
-
-    /// 🔥 Group by Year → Month
-    final grouped = <String, Map<String, List<TransactionModel>>>{};
-
-    for (var tx in transactions) {
-      grouped.putIfAbsent(tx.year, () => {});
-      grouped[tx.year]!.putIfAbsent(tx.month, () => []);
-      grouped[tx.year]![tx.month]!.add(tx);
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: grouped.entries.map((yearEntry) {
-        final year = yearEntry.key;
-        final months = yearEntry.value;
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Row(
           children: [
-            /// 🔥 YEAR HEADER
+            Icon(Icons.arrow_upward, size: 10.sp, color: mutedIcon),
+            SizedBox(width: 1.wp),
             Text(
-              year,
-              style: TextStyle(
-                fontSize: 10.sp,
-                fontWeight: FontWeight.bold,
-                color: primaryText,
-              ),
+              "${dailyTotal.paid.toStringAsFixed(2)}",
+              style: TextStyle(fontSize: 8.sp, color: mutedText),
             ),
-
-            SizedBox(height: 1.hp),
-
-            /// 🔥 MONTHS
-            ...List.generate(5, (index) {
-              return Column(
-                children: months.entries.map((monthEntry) {
-                  final month = monthEntry.key;
-                  final txList = monthEntry.value;
-
-                  /// 🔥 SENT
-                  final sent = txList
-                      .where((e) => !e.isReceived)
-                      .fold(0, (sum, e) => sum + e.amount);
-
-                  /// 🔥 RECEIVED
-                  final received = txList
-                      .where((e) => e.isReceived)
-                      .fold(0, (sum, e) => sum + e.amount);
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// 🔥 MONTH HEADER
-                      buildMonthHeader(
-                        month: "$month ${index + 1}", // optional differentiate
-                        sent: sent,
-                        received: received,
-                        primaryText: primaryText,
-                        mutedText: mutedText,
-                        mutedIcon: mutedIcon,
-                      ),
-
-                      SizedBox(height: 1.hp),
-
-                      /// 🔥 TRANSACTIONS
-                      ...txList.map(
-                        (tx) => TransactionCard(
-                          name: tx.name,
-                          subtitle: tx.subtitle,
-                          date: tx.date,
-                          amount: tx.amount,
-                          isReceived: tx.isReceived,
-                        ),
-                      ),
-
-                      SizedBox(height: 1.5.hp),
-                    ],
-                  );
-                }).toList(),
-              );
-            }),
           ],
-        );
-      }).toList(),
-    );
-  }
-
-  /// 🔥 MONTH HEADER WITH ICONS
-  Widget buildMonthHeader({
-    required String month,
-    required int sent,
-    required int received,
-    required Color primaryText,
-    required Color mutedText,
-    required Color mutedIcon,
-  }) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 1.hp),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          /// Month
-          Text(
-            month,
-            style: TextStyle(
-              fontSize: 9.sp,
-              fontWeight: FontWeight.w600,
-              color: primaryText,
+        ),
+        SizedBox(width: 3.wp),
+        Row(
+          children: [
+            Icon(Icons.arrow_downward, size: 10.sp, color: Colors.green),
+            SizedBox(width: 1.wp),
+            Text(
+              "+${dailyTotal.received.toStringAsFixed(2)}",
+              style: TextStyle(
+                fontSize: 8.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.green,
+              ),
             ),
-          ),
-
-          /// Summary (Icons + Amounts)
-          Row(
-            children: [
-              /// 🔻 SENT
-              Row(
-                children: [
-                  Icon(Icons.arrow_upward, size: 10.sp, color: mutedIcon),
-                  SizedBox(width: 1.wp),
-                  Text(
-                    "₹$sent",
-                    style: TextStyle(fontSize: 8.sp, color: mutedText),
-                  ),
-                ],
-              ),
-
-              SizedBox(width: 3.wp),
-
-              /// 🔺 RECEIVED
-              Row(
-                children: [
-                  Icon(Icons.arrow_downward, size: 10.sp, color: Colors.green),
-                  SizedBox(width: 1.wp),
-                  Text(
-                    "+₹$received",
-                    style: TextStyle(
-                      fontSize: 8.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.green,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
   }
 }

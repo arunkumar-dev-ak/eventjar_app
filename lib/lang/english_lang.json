@@ -1124,6 +1124,10 @@
     "login_required_to_join": "Please log in to join this trip",
     "failed_to_join_trip": "Failed to join trip",
     "join_trip_error_desc": "The link may be invalid or expired. Please ask the trip creator for a new link.",
-    "go_home": "Go Home"
+    "go_home": "Go Home",
+    "no_transactions": "No Transactions",
+    "no_transactions_desc": "No transactions found for this date",
+    "failed_load_transactions": "Failed to load transactions",
+    "unknown": "Unknown"
   }
 }

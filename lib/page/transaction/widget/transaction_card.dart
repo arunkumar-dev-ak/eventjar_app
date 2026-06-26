@@ -1,28 +1,27 @@
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/utils/date_utils.dart';
+import 'package:eventjar/model/transaction/transaction_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:eventjar/global/store/user_store.dart';
 
 class TransactionCard extends StatelessWidget {
-  final String name;
-  final String subtitle;
-  final String date;
-  final int amount;
-  final bool isReceived;
+  final Transaction transaction;
 
-  const TransactionCard({
-    super.key,
-    required this.name,
-    required this.subtitle,
-    required this.date,
-    required this.amount,
-    required this.isReceived,
-  });
+  const TransactionCard({super.key, required this.transaction});
 
   @override
   Widget build(BuildContext context) {
     final primaryText = AppColors.textPrimary(context);
     final mutedText = AppColors.textSecondary(context);
+    final currentUserId = UserStore.to.profile['id'];
+
+    final isReceived = transaction.toUserId == currentUserId;
+    final otherName = isReceived ? transaction.fromName : transaction.toName;
+    final displayName = otherName.isNotEmpty ? otherName : 'unknown'.tr;
+
+    final (date, time, _) = formatUtcToLocal(transaction.createdAt, context);
 
     return Container(
       padding: EdgeInsets.all(3.wp),
@@ -33,41 +32,44 @@ class TransactionCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          /// 🔥 Avatar
-          CircleAvatar(radius: 16.sp, child: Text(name[0])),
-
+          CircleAvatar(
+            radius: 16.sp,
+            child: Text(displayName[0].toUpperCase()),
+          ),
           SizedBox(width: 3.wp),
-
-          /// 🔥 Text
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isReceived ? "${"received_from".tr} $name" : "${"paid_to".tr} $name",
+                  isReceived
+                      ? "${"received_from".tr} $displayName"
+                      : "${"paid_to".tr} $displayName",
                   style: TextStyle(
                     fontSize: 9.sp,
                     fontWeight: FontWeight.w600,
                     color: primaryText,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 0.3.hp),
                 Text(
-                  subtitle,
+                  transaction.trip.name,
                   style: TextStyle(fontSize: 8.sp, color: mutedText),
                 ),
                 SizedBox(height: 0.3.hp),
                 Text(
-                  date,
+                  '$date • $time',
                   style: TextStyle(fontSize: 7.sp, color: mutedText),
                 ),
               ],
             ),
           ),
-
-          /// 🔥 Amount (NEW STYLE)
           Text(
-            isReceived ? "+₹$amount" : "₹$amount",
+            isReceived
+                ? "+${transaction.currency} ${transaction.amount.toStringAsFixed(2)}"
+                : "${transaction.currency} ${transaction.amount.toStringAsFixed(2)}",
             style: TextStyle(
               fontSize: 9.5.sp,
               fontWeight: FontWeight.bold,

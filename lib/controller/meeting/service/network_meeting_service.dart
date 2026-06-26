@@ -3,6 +3,7 @@ import 'package:eventjar/controller/meeting/helper/meeting_query_helper.dart';
 import 'package:eventjar/controller/meeting/state.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class NetworkMeetingService {
@@ -19,9 +20,14 @@ class NetworkMeetingService {
 
     state.isOneOnOneLoading.value = true;
     try {
+      final date = state.oneOnOneSelectedDate.value;
+      final dateRange = DateTimeRange(
+        start: DateTime(date.year, date.month, date.day),
+        end: DateTime(date.year, date.month, date.day, 23, 59, 59),
+      );
       final queryParams = MeetingQueryHelper.gatherOneOnOneQueryData(
-        status: state.oneOnOneSelectedStatus.value,
-        dateRange: state.oneOnOneSelectedDateRange.value,
+        status: null,
+        dateRange: dateRange,
       );
 
       final response = await NetworkMeetingApi.getNetworkMeetings(
@@ -43,9 +49,14 @@ class NetworkMeetingService {
 
     state.isOneOnOneLoadingMore.value = true;
     try {
+      final date = state.oneOnOneSelectedDate.value;
+      final dateRange = DateTimeRange(
+        start: DateTime(date.year, date.month, date.day),
+        end: DateTime(date.year, date.month, date.day, 23, 59, 59),
+      );
       final queryParams = MeetingQueryHelper.gatherOneOnOneQueryData(
-        status: state.oneOnOneSelectedStatus.value,
-        dateRange: state.oneOnOneSelectedDateRange.value,
+        status: null,
+        dateRange: dateRange,
         cursor: state.oneOnOneNextCursor.value,
       );
 

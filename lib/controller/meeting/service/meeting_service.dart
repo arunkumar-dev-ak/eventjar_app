@@ -3,6 +3,7 @@ import 'package:eventjar/controller/meeting/helper/meeting_query_helper.dart';
 import 'package:eventjar/controller/meeting/state.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MeetingService {
@@ -21,9 +22,14 @@ class MeetingService {
         state.isSearching.value = true;
       }
 
+      final date = state.qualifiedSelectedDate.value;
+      final dateRange = DateTimeRange(
+        start: DateTime(date.year, date.month, date.day),
+        end: DateTime(date.year, date.month, date.day, 23, 59, 59),
+      );
       final queryParams = MeetingQueryHelper.gatherQueryData(
-        status: state.selectedStatus.value,
-        dateRange: state.selectedDateRange.value,
+        status: null,
+        dateRange: dateRange,
       );
 
       final response = await MeetingApi.getConnectionResponse(

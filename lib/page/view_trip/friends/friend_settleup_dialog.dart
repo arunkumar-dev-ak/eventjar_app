@@ -146,7 +146,7 @@ class SettleUpDialog extends GetView<ViewTripController> {
           SizedBox(height: 0.5.hp),
 
           Text(
-            "₹ ${raw.toStringAsFixed(0)}",
+            "₹ ${raw.toStringAsFixed(2)}",
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.bold,

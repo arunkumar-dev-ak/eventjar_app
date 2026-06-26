@@ -1,10 +1,8 @@
-import 'package:eventjar/controller/meeting/helper/meeting_date_helper.dart';
 import 'package:eventjar/controller/meeting/service/meeting_action_service.dart';
 import 'package:eventjar/controller/meeting/service/meeting_service.dart';
 import 'package:eventjar/controller/meeting/service/network_meeting_service.dart';
 import 'package:eventjar/controller/meeting/state.dart';
 import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
-import 'package:eventjar/model/contact-meeting/contact_meeting_status.dart';
 import 'package:eventjar/model/network-meeting/network_meeting.dart';
 import 'package:eventjar/page/meeting/widget/reschedule_meeting_dialog.dart';
 import 'package:eventjar/routes/route_name.dart';
@@ -30,50 +28,40 @@ class MeetingController extends GetxController {
   late final MeetingService _meetingService;
   late final MeetingActionService _actionService;
 
+  DateTimeRange _singleDateToRange(DateTime date) {
+    return DateTimeRange(
+      start: DateTime(date.year, date.month, date.day),
+      end: DateTime(date.year, date.month, date.day, 23, 59, 59),
+    );
+  }
+
   @override
   void onInit() {
     UserStore.cancelAllRequests();
     super.onInit();
 
-    //one on one
     _networkMeetingService = NetworkMeetingService(
       state: state,
       navigateToSignInPage: navigateToSignInPage,
     );
-    //qualified contact
     _meetingService = MeetingService(
       state: state,
       navigateToSignInPage: navigateToSignInPage,
     );
-    //form actions
     _actionService = MeetingActionService(
       state: state,
       navigateToSignInPage: navigateToSignInPage,
     );
 
-    qualifiedDebounceWorker = everAll(
-      [state.selectedStatus, state.selectedDateRange],
-      (_) {
-        _debouncedFetchQualifiedMeetings();
-      },
+    qualifiedDebounceWorker = ever(
+      state.qualifiedSelectedDate,
+      (_) => _debouncedFetchQualifiedMeetings(),
     );
 
-    oneOnOneDebounceWorker = everAll(
-      [state.oneOnOneSelectedStatus, state.oneOnOneSelectedDateRange],
-      (_) {
-        _debouncedFetchOneOnOneMeetings();
-      },
+    oneOnOneDebounceWorker = ever(
+      state.oneOnOneSelectedDate,
+      (_) => _debouncedFetchOneOnOneMeetings(),
     );
-
-    final args = Get.arguments;
-    if (args != null &&
-        args is Map<String, dynamic> &&
-        args['status'] != null) {
-      state.selectedStatus.value = args['status'] as MeetingStatus;
-    } else {
-      state.selectedStatus.value = MeetingStatus.ALL;
-    }
-    state.oneOnOneSelectedStatus.value = MeetingStatus.ALL;
 
     oneOnOneScrollController.addListener(_onOneOnOneScroll);
     qualifiedContactScrollController.addListener(_onQualifiedContactScroll);
@@ -119,29 +107,56 @@ class MeetingController extends GetxController {
     await fetchMeetings();
   }
 
-  // Delegate down to Services/Helpers
-  String getOneOnOneDisplayText() => MeetingDateHelper.getDateRangeDisplayText(
-    state.oneOnOneSelectedDateRange.value,
-  );
-  String getDisplayText() =>
-      MeetingDateHelper.getDateRangeDisplayText(state.selectedDateRange.value);
-
-  void setOneOnOneDate(DateTimeRange<DateTime>? range) {
-    state.oneOnOneSelectedDateRange.value =
-        range ??
-        DateTimeRange(
-          start: DateTime.now(),
-          end: DateTime.now().add(const Duration(days: 7)),
-        );
+  // Month navigation for One-on-One tab
+  void oneOnOnePreviousMonth() {
+    if (state.oneOnOneDisplayedYear.value == 2025 &&
+        state.oneOnOneDisplayedMonth.value == 1) return;
+    if (state.oneOnOneDisplayedMonth.value == 1) {
+      state.oneOnOneDisplayedMonth.value = 12;
+      state.oneOnOneDisplayedYear.value--;
+    } else {
+      state.oneOnOneDisplayedMonth.value--;
+    }
   }
 
-  void setDate(DateTimeRange<DateTime>? range) {
-    state.selectedDateRange.value =
-        range ??
-        DateTimeRange(
-          start: DateTime.now(),
-          end: DateTime.now().add(const Duration(days: 7)),
-        );
+  void oneOnOneNextMonth() {
+    if (state.oneOnOneDisplayedMonth.value == 12) {
+      state.oneOnOneDisplayedMonth.value = 1;
+      state.oneOnOneDisplayedYear.value++;
+    } else {
+      state.oneOnOneDisplayedMonth.value++;
+    }
+  }
+
+  void setOneOnOneMonthYear(int month, int year) {
+    state.oneOnOneDisplayedMonth.value = month;
+    state.oneOnOneDisplayedYear.value = year;
+  }
+
+  // Month navigation for Qualified Contact tab
+  void qualifiedPreviousMonth() {
+    if (state.qualifiedDisplayedYear.value == 2025 &&
+        state.qualifiedDisplayedMonth.value == 1) return;
+    if (state.qualifiedDisplayedMonth.value == 1) {
+      state.qualifiedDisplayedMonth.value = 12;
+      state.qualifiedDisplayedYear.value--;
+    } else {
+      state.qualifiedDisplayedMonth.value--;
+    }
+  }
+
+  void qualifiedNextMonth() {
+    if (state.qualifiedDisplayedMonth.value == 12) {
+      state.qualifiedDisplayedMonth.value = 1;
+      state.qualifiedDisplayedYear.value++;
+    } else {
+      state.qualifiedDisplayedMonth.value++;
+    }
+  }
+
+  void setQualifiedMonthYear(int month, int year) {
+    state.qualifiedDisplayedMonth.value = month;
+    state.qualifiedDisplayedYear.value = year;
   }
 
   Future<void> fetchOneOnOneMeetings({bool forceRefresh = false}) =>
