@@ -1,23 +1,36 @@
-import 'package:dio/dio.dart';
 import 'package:eventjar/api/contact_api/config_status_api.dart';
 import 'package:eventjar/api/schedule_meeting_api/schedule_meeting.dart';
+import 'package:eventjar/controller/schedule_meeting/availability_mixin.dart';
+import 'package:eventjar/controller/schedule_meeting/availability_state.dart';
 import 'package:eventjar/controller/schedule_meeting/state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ScheduleMeetingController extends GetxController {
+class ScheduleMeetingController extends GetxController with AvailabilityMixin {
   var appBarTitle = "schedule_meeting".tr;
   final state = ScheduleMeetingState();
 
   final formKey = GlobalKey<FormState>();
-  //meeting form
   TextEditingController meetingDateController = TextEditingController();
   TextEditingController meetingTimeController = TextEditingController();
+
+  @override
+  AvailabilityState get availability => state.availability;
+
+  @override
+  int get selectedDurationMins => state.selectedDuration.value;
+
+  @override
+  void onDurationApplied(List<int> allowedDurations) {
+    if (allowedDurations.isEmpty) return;
+    if (!allowedDurations.contains(state.selectedDuration.value)) {
+      state.selectedDuration.value = allowedDurations.first;
+    }
+  }
 
   bool get canSendEmail => state.configStatus.value?.emailConfig ?? false;
   bool get canSendWhatsApp => state.configStatus.value?.whatsappConfig ?? false;
@@ -41,9 +54,29 @@ class ScheduleMeetingController extends GetxController {
     updateMeetingDate(DateTime.now());
     updateMeetingTime(TimeOfDay.now());
     getConfigDetails();
+    _startAvailability();
   }
 
-  // Update date/time display
+  void _startAvailability() {
+    final contact = state.contact.value;
+    if (contact == null) return;
+
+    String? targetUserId;
+    final currentUserId = UserStore.to.profile['id'];
+    if (contact.isEventJarUser) {
+      targetUserId = contact.user1Id == currentUserId
+          ? contact.user2Id
+          : contact.user1Id;
+    }
+
+    initAvailability(targetUserId);
+  }
+
+  void selectDuration(int mins) {
+    state.selectedDuration.value = mins;
+    onDurationChanged();
+  }
+
   void updateMeetingDate(DateTime dateTime) {
     state.meetingDate.value = dateTime;
     meetingDateController.text =
@@ -56,7 +89,6 @@ class ScheduleMeetingController extends GetxController {
     meetingTimeController.text = time.format(Get.context!);
   }
 
-  // Pick date
   Future<void> pickMeetingDate() async {
     final picked = await showDatePicker(
       context: Get.context!,
@@ -69,7 +101,6 @@ class ScheduleMeetingController extends GetxController {
     }
   }
 
-  // Pick time
   Future<void> pickMeetingTime() async {
     final picked = await showTimePicker(
       context: Get.context!,
@@ -82,21 +113,28 @@ class ScheduleMeetingController extends GetxController {
 
   Map<String, dynamic> _buildMeetingDto() {
     final contact = state.contact.value!;
-    final date = state.meetingDate.value;
-    final time = state.meetingTime.value;
 
-    final localScheduledAt = DateTime(
-      date.year,
-      date.month,
-      date.day,
-      time.hour,
-      time.minute,
-    );
+    final slotDt = selectedSlotDateTime;
 
-    // 2. Convert it explicitly to UTC so it serializes with the trailing 'Z'
-    final utcScheduledAt = localScheduledAt.toUtc();
+    final DateTime scheduledAtLocal;
+    final String meetingTime;
 
-    // Decide method like web: 'email' | 'whatsapp' | 'both'
+    if (slotDt != null) {
+      scheduledAtLocal = slotDt;
+      meetingTime =
+          '${slotDt.hour.toString().padLeft(2, '0')}:${slotDt.minute.toString().padLeft(2, '0')}';
+    } else {
+      final date = state.meetingDate.value;
+      final time = state.meetingTime.value;
+      scheduledAtLocal = DateTime(
+        date.year, date.month, date.day, time.hour, time.minute,
+      );
+      meetingTime =
+          '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+    }
+
+    final utcScheduledAt = scheduledAtLocal.toUtc();
+
     String method;
     final email = state.meetingEmailChecked.value;
     final whatsapp = state.meetingWhatsappChecked.value;
@@ -108,25 +146,19 @@ class ScheduleMeetingController extends GetxController {
     } else if (whatsapp) {
       method = 'whatsapp';
     } else {
-      // fallback to email if user unchecks everything
       method = 'email';
     }
-
-    // meetingTime in "HH:mm" format
-    final meetingTime =
-        '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
 
     return {
       'contactId': contact.id,
       'scheduledAt': utcScheduledAt.toIso8601String(),
       'meetingTime': meetingTime,
-      'duration': 60,
+      'duration': state.selectedDuration.value,
       'method': method,
       'notes': 'Contact method: $method',
     };
   }
 
-  // Schedule meeting
   Future<void> scheduleMeeting(BuildContext context) async {
     if (state.isLoading.value == true) return;
     try {
@@ -207,8 +239,11 @@ class ScheduleMeetingController extends GetxController {
   void resetForm() {
     state.meetingEmailChecked.value = true;
     state.meetingWhatsappChecked.value = false;
+    state.selectedDuration.value = 30;
     updateMeetingDate(DateTime.now());
     updateMeetingTime(TimeOfDay.now());
+    state.availability.reset();
+    _startAvailability();
 
     formKey.currentState?.reset();
   }
@@ -217,6 +252,7 @@ class ScheduleMeetingController extends GetxController {
   void onClose() {
     meetingDateController.dispose();
     meetingTimeController.dispose();
+    state.availability.dispose();
     super.onClose();
   }
 }

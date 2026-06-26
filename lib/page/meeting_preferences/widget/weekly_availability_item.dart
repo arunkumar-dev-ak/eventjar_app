@@ -22,74 +22,88 @@ class WeeklyAvailabilityItem extends StatelessWidget {
     return Obx(() {
       final enabled = day.isEnabled.value;
 
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 1.hp),
-        child: Row(
+      return Container(
+        margin: EdgeInsets.only(bottom: 1.hp),
+        padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 1.2.hp),
+        decoration: BoxDecoration(
+          color: enabled
+              ? AppColors.cardBg(context)
+              : AppColors.inputBg(context),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: enabled
+                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
+                : AppColors.border(context),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              width: 40,
-              child: Switch(
-                value: enabled,
-                onChanged: (val) => controller.toggleDay(index, val),
-                activeThumbColor: Colors.white,
-                activeTrackColor: const Color(0xFF4A6CF7),
-                inactiveThumbColor: Colors.white,
-                inactiveTrackColor: AppColors.border(context),
-              ),
-            ),
-            SizedBox(width: 2.wp),
-            SizedBox(
-              width: 22.wp,
-              child: Text(
-                day.day,
-                style: TextStyle(
-                  fontSize: 8.sp,
-                  fontWeight: FontWeight.w500,
-                  color: enabled
-                      ? AppColors.textPrimary(context)
-                      : AppColors.textHint(context),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  day.day,
+                  style: TextStyle(
+                    fontSize: 8.5.sp,
+                    fontWeight: FontWeight.w600,
+                    color: enabled
+                        ? AppColors.textPrimary(context)
+                        : AppColors.textHint(context),
+                  ),
                 ),
-              ),
+                SizedBox(
+                  height: 28,
+                  child: Switch(
+                    value: enabled,
+                    onChanged: (val) => controller.toggleDay(index, val),
+                    activeThumbColor: Colors.white,
+                    activeTrackColor: const Color(0xFF4A6CF7),
+                    inactiveThumbColor: Colors.white,
+                    inactiveTrackColor: AppColors.border(context),
+                  ),
+                ),
+              ],
             ),
             if (enabled) ...[
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildTimePicker(
+              SizedBox(height: 0.8.hp),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildTimePicker(
                       context,
                       controller.formatTimeOfDay(day.startTime.value),
                       () => controller.pickStartTime(context, index),
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 1.5.wp),
-                      child: Text(
-                        'to',
-                        style: TextStyle(
-                          fontSize: 8.sp,
-                          color: AppColors.textSecondary(context),
-                        ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 2.wp),
+                    child: Text(
+                      'to',
+                      style: TextStyle(
+                        fontSize: 8.sp,
+                        color: AppColors.textSecondary(context),
                       ),
                     ),
-                    _buildTimePicker(
+                  ),
+                  Expanded(
+                    child: _buildTimePicker(
                       context,
                       controller.formatTimeOfDay(day.endTime.value),
                       () => controller.pickEndTime(context, index),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ] else
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(left: 2.wp),
-                  child: Text(
-                    'Unavailable',
-                    style: TextStyle(
-                      fontSize: 8.sp,
-                      color: AppColors.textHint(context),
-                      fontStyle: FontStyle.italic,
-                    ),
+              Padding(
+                padding: EdgeInsets.only(top: 0.3.hp),
+                child: Text(
+                  'unavailable'.tr,
+                  style: TextStyle(
+                    fontSize: 7.5.sp,
+                    color: AppColors.textHint(context),
+                    fontStyle: FontStyle.italic,
                   ),
                 ),
               ),
@@ -108,15 +122,21 @@ class WeeklyAvailabilityItem extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 2.5.wp, vertical: 1.hp),
+        padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 1.hp),
         decoration: BoxDecoration(
           color: AppColors.inputBg(context),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: AppColors.border(context)),
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Icon(
+              Icons.access_time_rounded,
+              size: 3.5.wp,
+              color: AppColors.iconMuted(context),
+            ),
+            SizedBox(width: 1.5.wp),
             Text(
               timeText,
               style: TextStyle(
@@ -124,12 +144,6 @@ class WeeklyAvailabilityItem extends StatelessWidget {
                 fontWeight: FontWeight.w500,
                 color: AppColors.textPrimary(context),
               ),
-            ),
-            SizedBox(width: 1.wp),
-            Icon(
-              Icons.access_time_rounded,
-              size: 3.5.wp,
-              color: AppColors.iconMuted(context),
             ),
           ],
         ),

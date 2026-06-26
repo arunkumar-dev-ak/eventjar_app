@@ -1,3 +1,4 @@
+import 'package:eventjar/controller/schedule_meeting/availability_state.dart';
 import 'package:eventjar/model/contact/config_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:flutter/material.dart';
@@ -14,4 +15,10 @@ class ScheduleMeetingState {
   var meetingTime = TimeOfDay.now().obs;
   var meetingEmailChecked = true.obs;
   var meetingWhatsappChecked = false.obs;
+
+  // Duration
+  final RxInt selectedDuration = 30.obs;
+
+  // Availability
+  final AvailabilityState availability = AvailabilityState();
 }

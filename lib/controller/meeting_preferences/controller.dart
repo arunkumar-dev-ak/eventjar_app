@@ -8,6 +8,7 @@ import 'package:eventjar/model/meeting_preferences/meeting_preferences_model.dar
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class MeetingPreferencesController extends GetxController {
   final state = MeetingPreferencesState();
@@ -91,6 +92,10 @@ class MeetingPreferencesController extends GetxController {
     state.selectedAllowedDurations.value = List<int>.from(
       response.allowedDurations,
     );
+    state.videoProvider.value = response.videoProvider;
+    state.customVideoUrl.value = response.customVideoUrl;
+
+    state.dateOverrides.value = List<DateOverride>.from(response.dateOverrides);
 
     for (final wh in response.weeklyHours) {
       final stateIndex = _apiDayToStateIndex(wh.day);
@@ -253,6 +258,196 @@ class MeetingPreferencesController extends GetxController {
     return '${hour.toString().padLeft(2, '0')}:$minute $period';
   }
 
+  /// Returns the set of `DateTime.weekday` values (1=Mon..7=Sun) that are disabled.
+  Set<int> getDisabledWeekdays() {
+    final disabled = <int>{};
+    for (int i = 0; i < state.weeklyAvailability.length; i++) {
+      if (!state.weeklyAvailability[i].isEnabled.value) {
+        // state index: 0=Mon..5=Sat, 6=Sun → DateTime.weekday: 1=Mon..6=Sat, 7=Sun
+        disabled.add(i == 6 ? 7 : i + 1);
+      }
+    }
+    return disabled;
+  }
+
+  // --- Date Overrides ---
+
+  void addDateOverrides(List<DateTime> dates) {
+    final existingDates = state.dateOverrides.map((o) => o.date).toSet();
+    final additions = dates
+        .map((d) => DateFormat('yyyy-MM-dd').format(d))
+        .where((d) => !existingDates.contains(d))
+        .map((date) => DateOverride(date: date, enabled: false))
+        .toList();
+    if (additions.isEmpty) return;
+    state.dateOverrides.addAll(additions);
+    _sortOverrides();
+  }
+
+  void updateOverride(String date, {bool? enabled, String? startTime, String? endTime, String? label}) {
+    final idx = state.dateOverrides.indexWhere((o) => o.date == date);
+    if (idx < 0) return;
+    final old = state.dateOverrides[idx];
+    state.dateOverrides[idx] = old.copyWith(
+      enabled: enabled ?? old.enabled,
+      startTime: startTime ?? old.startTime,
+      endTime: endTime ?? old.endTime,
+      label: label ?? old.label,
+    );
+  }
+
+  void toggleOverrideMode(String date, bool customHours) {
+    final idx = state.dateOverrides.indexWhere((o) => o.date == date);
+    if (idx < 0) return;
+    final old = state.dateOverrides[idx];
+    state.dateOverrides[idx] = DateOverride(
+      date: old.date,
+      enabled: customHours,
+      startTime: customHours ? (old.startTime ?? '09:00') : old.startTime,
+      endTime: customHours ? (old.endTime ?? '17:00') : old.endTime,
+      label: old.label,
+    );
+  }
+
+  void removeOverride(String date) {
+    state.dateOverrides.removeWhere((o) => o.date == date);
+  }
+
+  void addHolidaysAsOverrides(List<Holiday> holidays) {
+    final existingDates = state.dateOverrides.map((o) => o.date).toSet();
+    final additions = holidays
+        .where((h) => !existingDates.contains(h.date))
+        .map((h) => DateOverride(date: h.date, enabled: false, label: h.name))
+        .toList();
+    if (additions.isEmpty) return;
+    state.dateOverrides.addAll(additions);
+    _sortOverrides();
+  }
+
+  void _sortOverrides() {
+    state.dateOverrides.sort((a, b) => a.date.compareTo(b.date));
+  }
+
+  String formatOverrideDate(String dateStr) {
+    try {
+      final date = DateTime.parse(dateStr);
+      return DateFormat('EEE, MMM d, yyyy').format(date);
+    } catch (_) {
+      return dateStr;
+    }
+  }
+
+  Future<void> pickOverrideStartTime(BuildContext context, String date) async {
+    final idx = state.dateOverrides.indexWhere((o) => o.date == date);
+    if (idx < 0) return;
+    final override = state.dateOverrides[idx];
+    final initial = _parseTime(override.startTime ?? '09:00');
+    final picked = await showTimePicker(context: context, initialTime: initial);
+    if (picked == null) return;
+
+    final endTime = _parseTime(override.endTime ?? '17:00');
+    if (_toMinutes(picked) >= _toMinutes(endTime)) {
+      AppToast.warning('start_time_before_end'.tr);
+      return;
+    }
+
+    final timeStr = '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+    updateOverride(date, startTime: timeStr);
+  }
+
+  Future<void> pickOverrideEndTime(BuildContext context, String date) async {
+    final idx = state.dateOverrides.indexWhere((o) => o.date == date);
+    if (idx < 0) return;
+    final override = state.dateOverrides[idx];
+    final initial = _parseTime(override.endTime ?? '17:00');
+    final picked = await showTimePicker(context: context, initialTime: initial);
+    if (picked == null) return;
+
+    final startTime = _parseTime(override.startTime ?? '09:00');
+    if (_toMinutes(picked) <= _toMinutes(startTime)) {
+      AppToast.warning('end_time_after_start'.tr);
+      return;
+    }
+
+    final timeStr = '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+    updateOverride(date, endTime: timeStr);
+  }
+
+  // --- Holiday Import ---
+
+  void resetHolidayDialogState() {
+    state.holidays.clear();
+    state.selectedHolidayDates.clear();
+    state.isLoadingHolidays.value = false;
+  }
+
+  Future<void> fetchHolidayCountries() async {
+    if (state.holidayCountries.isNotEmpty) return;
+    state.isLoadingCountries.value = true;
+    try {
+      final countries = await GoogleCalendarApi.getHolidayCountries();
+      state.holidayCountries.value = countries;
+      if (countries.isNotEmpty && state.selectedCountryCode.value.isEmpty) {
+        state.selectedCountryCode.value = countries.first.code;
+      }
+    } catch (_) {
+      AppToast.warning('failed_load_countries'.tr);
+    } finally {
+      state.isLoadingCountries.value = false;
+    }
+  }
+
+  Future<void> fetchHolidays() async {
+    if (state.selectedCountryCode.value.isEmpty) return;
+    state.isLoadingHolidays.value = true;
+    state.selectedHolidayDates.clear();
+    try {
+      final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      final holidays = await GoogleCalendarApi.getHolidays(
+        state.selectedCountryCode.value,
+        state.selectedHolidayYear.value,
+      );
+      state.holidays.value = holidays.where((h) => h.date.compareTo(today) >= 0).toList();
+    } catch (_) {
+      state.holidays.clear();
+    } finally {
+      state.isLoadingHolidays.value = false;
+    }
+  }
+
+  void toggleHolidaySelection(String date) {
+    if (state.selectedHolidayDates.contains(date)) {
+      state.selectedHolidayDates.remove(date);
+    } else {
+      state.selectedHolidayDates.add(date);
+    }
+  }
+
+  void selectAllHolidays() {
+    final existingDates = state.dateOverrides.map((o) => o.date).toSet();
+    final selectable = state.holidays
+        .where((h) => !existingDates.contains(h.date))
+        .map((h) => h.date)
+        .toSet();
+    if (selectable.length == state.selectedHolidayDates.length &&
+        selectable.every((d) => state.selectedHolidayDates.contains(d))) {
+      state.selectedHolidayDates.clear();
+    } else {
+      state.selectedHolidayDates.clear();
+      state.selectedHolidayDates.addAll(selectable);
+    }
+  }
+
+  void importSelectedHolidays() {
+    final selected = state.holidays
+        .where((h) => state.selectedHolidayDates.contains(h.date))
+        .toList();
+    addHolidaysAsOverrides(selected);
+    state.selectedHolidayDates.clear();
+  }
+
+  // --- Build Payload & Save ---
+
   Map<String, dynamic> _buildPayload() {
     final weeklyHours = <Map<String, dynamic>>[];
     for (int i = 0; i < state.weeklyAvailability.length; i++) {
@@ -269,7 +464,7 @@ class MeetingPreferencesController extends GetxController {
       });
     }
 
-    return {
+    final payload = <String, dynamic>{
       'timezone': state.selectedTimezone.value,
       'slot_interval_mins': _slotLabelToMins(state.selectedSlotInterval.value),
       'buffer_before_mins': _bufferLabelToMins(
@@ -280,7 +475,13 @@ class MeetingPreferencesController extends GetxController {
       'max_advance_days': state.selectedMaxAdvanceDays.value,
       'weekly_hours': weeklyHours,
       'allowed_durations': state.selectedAllowedDurations.toList(),
+      'video_provider': state.videoProvider.value,
+      'date_overrides': state.dateOverrides.map((o) => o.toJson()).toList(),
     };
+    if (state.customVideoUrl.value != null) {
+      payload['custom_video_url'] = state.customVideoUrl.value;
+    }
+    return payload;
   }
 
   Future<void> savePreferences() async {

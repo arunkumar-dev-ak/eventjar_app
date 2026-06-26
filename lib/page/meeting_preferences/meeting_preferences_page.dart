@@ -2,6 +2,8 @@ import 'package:eventjar/controller/meeting_preferences/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/dropdown/single_selected_dropdown.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/page/meeting_preferences/widget/date_override_item.dart';
+import 'package:eventjar/page/meeting_preferences/widget/holiday_import_dialog.dart';
 import 'package:eventjar/page/meeting_preferences/widget/preferences_dropdown.dart';
 import 'package:eventjar/page/meeting_preferences/widget/weekly_availability_item.dart';
 import 'package:flutter/material.dart';
@@ -36,155 +38,305 @@ class MeetingPreferencesPage extends GetView<MeetingPreferencesController> {
         if (controller.state.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
-        return SingleChildScrollView(
-          padding: EdgeInsets.all(4.wp),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Timezone
-              _buildCard(
-                context,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLabel(context, 'timezone'.tr),
-                    SizedBox(height: 1.hp),
-                    SingleSelectFilterDropdown<String>(
-                      title: 'timezone'.tr,
-                      items: controller.state.timezones,
-                      selectedItem: controller.state.selectedTimezoneRxn,
-                      getDefaultItem: () => 'UTC',
-                      getDisplayValue: (tz) => tz.replaceAll('_', ' '),
-                      getKeyValue: (tz) => tz,
-                      onSelected: controller.updateTimezone,
-                      searchable: true,
-                      searchHint: 'search_timezone'.tr,
-                    ),
-                  ],
+        return RefreshIndicator(
+          onRefresh: controller.fetchPreferences,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.all(4.wp),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── General Settings ──
+                // Timezone
+                _buildCard(
+                  context,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLabel(context, 'timezone'.tr),
+                      SizedBox(height: 1.hp),
+                      SingleSelectFilterDropdown<String>(
+                        title: 'timezone'.tr,
+                        items: controller.state.timezones,
+                        selectedItem: controller.state.selectedTimezoneRxn,
+                        getDefaultItem: () => 'UTC',
+                        getDisplayValue: (tz) => tz.replaceAll('_', ' '),
+                        getKeyValue: (tz) => tz,
+                        onSelected: controller.updateTimezone,
+                        searchable: true,
+                        searchHint: 'search_timezone'.tr,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(height: 2.hp),
+                SizedBox(height: 2.hp),
 
-              // Slot Interval + Minimum Notice
-              _buildCard(
-                context,
-                child: Row(
+                // Slot Interval + Minimum Notice
+                _buildCard(
+                  context,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: PreferencesDropdown(
+                          label: 'slot_interval'.tr,
+                          selectedValue: controller.state.selectedSlotInterval,
+                          items: controller.state.slotIntervals,
+                          onChanged: controller.updateSlotInterval,
+                        ),
+                      ),
+                      SizedBox(width: 3.wp),
+                      Expanded(
+                        child: PreferencesDropdown(
+                          label: 'minimum_notice'.tr,
+                          selectedValue: controller.state.selectedMinNotice,
+                          items: controller.state.minNoticeOptions,
+                          onChanged: controller.updateMinNotice,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 2.hp),
+
+                // Buffer Before + Buffer After
+                _buildCard(
+                  context,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: PreferencesDropdown(
+                          label: 'buffer_before'.tr,
+                          selectedValue: controller.state.selectedBufferBefore,
+                          items: controller.state.bufferOptions,
+                          onChanged: controller.updateBufferBefore,
+                        ),
+                      ),
+                      SizedBox(width: 3.wp),
+                      Expanded(
+                        child: PreferencesDropdown(
+                          label: 'buffer_after'.tr,
+                          selectedValue: controller.state.selectedBufferAfter,
+                          items: controller.state.bufferOptions,
+                          onChanged: controller.updateBufferAfter,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 2.hp),
+
+                // Max Advance Booking
+                _buildCard(
+                  context,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLabel(context, 'max_advance_booking'.tr),
+                      SizedBox(height: 1.hp),
+                      Obx(() => _buildMaxAdvanceDaysSelector(context)),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 2.hp),
+
+                // Allowed Durations (multi-select)
+                _buildCard(
+                  context,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildLabel(context, 'allowed_durations'.tr),
+                      SizedBox(height: 1.hp),
+                      Obx(() => _buildAllowedDurationsSelector(context)),
+                      SizedBox(height: 0.5.hp),
+                      Text(
+                        'allowed_durations_hint'.tr,
+                        style: TextStyle(
+                          fontSize: 6.5.sp,
+                          color: AppColors.textHint(context),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 3.hp),
+
+                // ── Weekly Availability ──
+                _buildSectionDivider(context, 'weekly_availability'.tr),
+                SizedBox(height: 1.5.hp),
+                Obx(
+                  () => Column(
+                    children: List.generate(
+                      controller.state.weeklyAvailability.length,
+                      (index) => WeeklyAvailabilityItem(
+                        index: index,
+                        day: controller.state.weeklyAvailability[index],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 3.hp),
+
+                // ── Date Overrides & Holidays ──
+                _buildSectionDivider(context, 'date_overrides_holidays'.tr),
+                SizedBox(height: 0.5.hp),
+                Text(
+                  'date_overrides_hint'.tr,
+                  style: TextStyle(
+                    fontSize: 7.sp,
+                    color: AppColors.textHint(context),
+                  ),
+                ),
+                SizedBox(height: 1.5.hp),
+
+                // Action buttons: Pick dates + Import holidays
+                Row(
                   children: [
                     Expanded(
-                      child: PreferencesDropdown(
-                        label: 'slot_interval'.tr,
-                        selectedValue: controller.state.selectedSlotInterval,
-                        items: controller.state.slotIntervals,
-                        onChanged: controller.updateSlotInterval,
+                      child: OutlinedButton.icon(
+                        onPressed: () => _showDatePicker(context),
+                        icon: Icon(Icons.calendar_today_rounded, size: 4.wp),
+                        label: Text(
+                          'pick_dates'.tr,
+                          style: TextStyle(fontSize: 7.5.sp),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 1.2.hp),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
                       ),
                     ),
                     SizedBox(width: 3.wp),
                     Expanded(
-                      child: PreferencesDropdown(
-                        label: 'minimum_notice'.tr,
-                        selectedValue: controller.state.selectedMinNotice,
-                        items: controller.state.minNoticeOptions,
-                        onChanged: controller.updateMinNotice,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 2.hp),
-
-              // Buffers
-              _buildCard(
-                context,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: PreferencesDropdown(
-                        label: 'buffer_before'.tr,
-                        selectedValue: controller.state.selectedBufferBefore,
-                        items: controller.state.bufferOptions,
-                        onChanged: controller.updateBufferBefore,
-                      ),
-                    ),
-                    SizedBox(width: 3.wp),
-                    Expanded(
-                      child: PreferencesDropdown(
-                        label: 'buffer_after'.tr,
-                        selectedValue: controller.state.selectedBufferAfter,
-                        items: controller.state.bufferOptions,
-                        onChanged: controller.updateBufferAfter,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 2.hp),
-
-              // Max Advance Booking
-              _buildCard(
-                context,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLabel(context, 'max_advance_booking'.tr),
-                    SizedBox(height: 1.hp),
-                    Obx(() => _buildMaxAdvanceDaysSelector(context)),
-                  ],
-                ),
-              ),
-              SizedBox(height: 2.hp),
-
-              // Allowed Durations
-              _buildCard(
-                context,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLabel(context, 'allowed_durations'.tr),
-                    SizedBox(height: 1.hp),
-                    Obx(() => _buildAllowedDurationsSelector(context)),
-                    SizedBox(height: 0.5.hp),
-                    Text(
-                      'allowed_durations_hint'.tr,
-                      style: TextStyle(
-                        fontSize: 6.5.sp,
-                        color: AppColors.textHint(context),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 2.hp),
-
-              // Weekly Availability
-              _buildCard(
-                context,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildLabel(context, 'weekly_availability'.tr),
-                    SizedBox(height: 1.hp),
-                    Obx(
-                      () => Column(
-                        children: List.generate(
-                          controller.state.weeklyAvailability.length,
-                          (index) => WeeklyAvailabilityItem(
-                            index: index,
-                            day: controller.state.weeklyAvailability[index],
+                      child: OutlinedButton.icon(
+                        onPressed: () => _showHolidayImport(context),
+                        icon: Icon(Icons.public_rounded, size: 4.wp),
+                        label: Text(
+                          'import_public_holidays'.tr,
+                          style: TextStyle(fontSize: 7.5.sp),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 1.2.hp),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
                     ),
                   ],
                 ),
-              ),
-              SizedBox(height: 3.hp),
-              _buildSaveButton(context),
-              SizedBox(height: 2.hp),
-            ],
+                SizedBox(height: 1.5.hp),
+
+                // Override list
+                Obx(() {
+                  final overrides = controller.state.dateOverrides;
+                  if (overrides.isEmpty) {
+                    return Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 3.hp),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: AppColors.border(context),
+                          style: BorderStyle.solid,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'no_overrides_yet'.tr,
+                          style: TextStyle(
+                            fontSize: 7.5.sp,
+                            color: AppColors.textHint(context),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  return Column(
+                    children: overrides
+                        .map((o) => DateOverrideItem(dateOverride: o))
+                        .toList(),
+                  );
+                }),
+
+                SizedBox(height: 3.hp),
+                _buildSaveButton(context),
+                SizedBox(height: 2.hp),
+              ],
+            ),
           ),
         );
       }),
     );
+  }
+
+  Widget _buildSectionDivider(BuildContext context, String title) {
+    return Row(
+      children: [
+        Expanded(
+          child: Divider(color: AppColors.border(context), thickness: 1),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 3.wp),
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 9.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary(context),
+            ),
+          ),
+        ),
+        Expanded(
+          child: Divider(color: AppColors.border(context), thickness: 1),
+        ),
+      ],
+    );
+  }
+
+  void _showDatePicker(BuildContext context) async {
+    final now = DateTime.now();
+    final disabledWeekdays = controller.getDisabledWeekdays();
+    final existingDates = controller.state.dateOverrides
+        .map((o) => o.date)
+        .toSet();
+
+    DateTime initialDate = now;
+    while (disabledWeekdays.contains(initialDate.weekday) ||
+        existingDates.contains(
+          '${initialDate.year}-${initialDate.month.toString().padLeft(2, '0')}-${initialDate.day.toString().padLeft(2, '0')}',
+        )) {
+      initialDate = initialDate.add(const Duration(days: 1));
+      if (initialDate.difference(now).inDays > 365) {
+        initialDate = now;
+        break;
+      }
+    }
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 365)),
+      selectableDayPredicate: (date) {
+        if (disabledWeekdays.contains(date.weekday)) return false;
+        final dateStr =
+            '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+        if (existingDates.contains(dateStr)) return false;
+        return true;
+      },
+    );
+    if (picked != null) {
+      controller.addDateOverrides([picked]);
+    }
+  }
+
+  void _showHolidayImport(BuildContext context) {
+    controller.resetHolidayDialogState();
+    controller.fetchHolidayCountries();
+    showDialog(context: context, builder: (_) => const HolidayImportDialog());
   }
 
   Widget _buildLabel(BuildContext context, String text) {

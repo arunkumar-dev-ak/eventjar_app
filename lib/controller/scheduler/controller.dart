@@ -136,7 +136,6 @@ class SchedulerController extends GetxController {
     state.isContactDropdownLoading.value = true;
 
     try {
-      // Your qualified contact API endpoint
       final endPoint = '/mobile/contacts?limit=25&page=1&stage=qualified';
 
       ContactApi.getEventList(endPoint)
@@ -178,17 +177,14 @@ class SchedulerController extends GetxController {
 
     final String query = val?.trim() ?? '';
 
-    // Cancel previous debounce
     if (_debounceTimer?.isActive ?? false) {
       _debounceTimer?.cancel();
     }
 
-    // Show loading state
     state.isContactDropdownLoading.value = true;
 
     _debounceTimer = Timer(const Duration(milliseconds: 800), () {
       try {
-        // Build endpoint with search=param
         final String endpoint =
             '/mobile/contacts?limit=25&page=1&stage=qualified&search=${Uri.encodeComponent(query)}';
 
@@ -345,30 +341,9 @@ class SchedulerController extends GetxController {
     return dto;
   }
 
-  // Change detection
-  // bool _hasStatusChanged(String originalStatus) {
-  //   return state.selectedStatus.value?.name != originalStatus;
-  // }
-
   bool _hasDateTimeChanged(DateTime original) {
     return !original.isAtSameMomentAs(state.scheduledAt.value!);
   }
-
-  // bool _hasDurationChanged(int original) {
-  //   return int.tryParse(state.selectedDurationMap.value?['key'] ?? '0') !=
-  //       original;
-  // }
-
-  // bool _hasNotesChanged(String? original) {
-  //   final originalNotes = original ?? '';
-  //   return state.notesController.text.trim() != originalNotes;
-  // }
-
-  // bool _hasDeclineReasonChanged(String? original) {
-  //   final originalReason = original ?? '';
-  //   final newReason = state.notesController.text.trim();
-  //   return newReason != originalReason && newReason.isNotEmpty;
-  // }
 
   bool _validateForm() {
     if (!formKey.currentState!.validate()) return false;

@@ -1,3 +1,4 @@
+import 'package:eventjar/model/meeting_preferences/meeting_preferences_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -29,6 +30,22 @@ class MeetingPreferencesState {
   final RxString selectedBufferAfter = 'None'.obs;
   final RxInt selectedMaxAdvanceDays = 60.obs;
   final RxList<int> selectedAllowedDurations = <int>[15, 30, 45, 60].obs;
+
+  // Video provider (round-trip: read from API, send back on save)
+  final RxString videoProvider = 'google_meet'.obs;
+  final Rxn<String> customVideoUrl = Rxn<String>();
+
+  // Date overrides
+  final RxList<DateOverride> dateOverrides = <DateOverride>[].obs;
+
+  // Holiday import state
+  final RxBool isLoadingCountries = false.obs;
+  final RxBool isLoadingHolidays = false.obs;
+  final RxList<HolidayCountry> holidayCountries = <HolidayCountry>[].obs;
+  final RxList<Holiday> holidays = <Holiday>[].obs;
+  final RxString selectedCountryCode = ''.obs;
+  final RxInt selectedHolidayYear = DateTime.now().year.obs;
+  final RxSet<String> selectedHolidayDates = <String>{}.obs;
 
   final List<String> timezones = List<String>.from(_allTimezones);
 

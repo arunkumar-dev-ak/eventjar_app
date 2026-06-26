@@ -2,6 +2,7 @@ import 'package:eventjar/controller/schedule_meeting/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
 import 'package:eventjar/page/schedule_meeting/schedule_meeting_button.dart';
+import 'package:eventjar/page/schedule_meeting/widget/availability_picker.dart';
 import 'package:eventjar/page/schedule_meeting/widget/schedule_meeting_message_method.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -60,39 +61,10 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
 
                   SizedBox(height: 3.hp),
 
-                  // Meeting Date
-                  TextFormField(
-                    readOnly: true,
-                    controller: controller.meetingDateController,
-                    decoration: InputDecoration(
-                      labelText: 'meeting_date'.tr,
-                      suffixIcon: Icon(Icons.calendar_today),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: EdgeInsets.all(3.wp),
-                    ),
-                    onTap: controller.pickMeetingDate,
-                  ),
+                  // Availability Picker (duration + date + time slots)
+                  const AvailabilityPicker(),
 
-                  SizedBox(height: 2.hp),
-
-                  // Meeting Time
-                  TextFormField(
-                    readOnly: true,
-                    controller: controller.meetingTimeController,
-                    decoration: InputDecoration(
-                      labelText: 'meeting_time'.tr,
-                      suffixIcon: Icon(Icons.access_time),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: EdgeInsets.all(3.wp),
-                    ),
-                    onTap: controller.pickMeetingTime,
-                  ),
-
-                  // Send via section - Updated with config checks
+                  // Send via section
                   SizedBox(height: 3.hp),
 
                   Text(
@@ -173,7 +145,6 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
                     SizedBox(height: 2.hp),
                   ],
 
-                  // ✅ Email Card with Config + Loading
                   Obx(
                     () => scheduleMeetingMessageBuildMethodCard(
                       title: 'email'.tr,
@@ -189,7 +160,6 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
 
                   SizedBox(height: 1.5.hp),
 
-                  // ✅ WhatsApp Card with Config + Loading
                   Obx(
                     () => scheduleMeetingMessageBuildMethodCard(
                       title: 'whatsapp'.tr,
@@ -205,7 +175,6 @@ class ScheduleMeetingPage extends GetView<ScheduleMeetingController> {
 
                   SizedBox(height: 4.hp),
 
-                  // Action Buttons
                   SafeArea(
                     child: ScheduleMeetingActionButtons(controller: controller),
                   ),
