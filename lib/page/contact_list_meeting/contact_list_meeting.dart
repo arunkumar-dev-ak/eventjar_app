@@ -296,39 +296,43 @@ class ContactListMeetingPage extends GetView<ContactListMeetingController> {
 
         const SizedBox(height: 12),
 
-        // Secondary Button (Reschedule) - Only for SCHEDULED
-        Obx(
-          () =>
-              controller.state.primaryButtonType.value ==
-                  MeetingButtonType.accept
-              ? SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: OutlinedButton(
-                    onPressed: controller.state.isLoading.value
-                        ? null
-                        : controller.onRescheduleMeeting,
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                        color: AppColors.borderStatic,
-                        width: 1.5,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      'reschedule'.tr,
-                      style: TextStyle(
-                        color: AppColors.textSecondaryStatic,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ),
+        // Secondary Button (Reschedule) - For SCHEDULED and CONFIRMED
+        Obx(() {
+          final buttonType = controller.state.primaryButtonType.value;
+          final isScheduled = buttonType == MeetingButtonType.accept;
+          final isConfirmed = buttonType == MeetingButtonType.complete;
+
+          if (!isScheduled && !isConfirmed) return const SizedBox.shrink();
+
+          return SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: OutlinedButton(
+              onPressed: controller.state.isLoading.value
+                  ? null
+                  : isConfirmed
+                      ? controller.onRescheduleConfirmedMeeting
+                      : controller.onRescheduleMeeting,
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(
+                  color: AppColors.borderStatic,
+                  width: 1.5,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                'reschedule'.tr,
+                style: TextStyle(
+                  color: AppColors.textSecondaryStatic,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          );
+        }),
       ],
     );
   }

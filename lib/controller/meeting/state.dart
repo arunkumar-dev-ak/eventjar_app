@@ -1,3 +1,4 @@
+import 'package:eventjar/controller/schedule_meeting/availability_state.dart';
 import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
 import 'package:eventjar/model/network-meeting/network_meeting.dart';
 import 'package:flutter/material.dart';
@@ -32,4 +33,8 @@ class MeetingState {
   RxBool isRescheduling = false.obs;
   Rx<DateTime> rescheduleMeetingDate = DateTime.now().obs;
   Rx<TimeOfDay> rescheduleMeetingTime = TimeOfDay.now().obs;
+
+  // Availability
+  final AvailabilityState rescheduleAvailability = AvailabilityState();
+  final RxInt rescheduleSelectedDuration = 30.obs;
 }

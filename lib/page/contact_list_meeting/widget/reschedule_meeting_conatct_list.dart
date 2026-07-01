@@ -1,9 +1,9 @@
+import 'package:eventjar/controller/contact_list_meeting/controller.dart';
 import 'package:eventjar/global/app_colors.dart';
-import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/widget/reschedule_availability_content.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:eventjar/controller/contact_list_meeting/controller.dart';
 
 class RescheduleMeetingContactList
     extends GetView<ContactListMeetingController> {
@@ -18,19 +18,12 @@ class RescheduleMeetingContactList
 
       return PopScope(
         canPop: !isLoading,
-        onPopInvokedWithResult: (didPop, result) {
-          // if (isLoading) {
-          //   AppSnackbar.warning(
-          //     title: "Please wait",
-          //     message: "Rescheduling in progress...",
-          //   );
-          // }
-        },
         child: Center(
           child: Material(
             borderRadius: BorderRadius.circular(20),
             child: Container(
-              width: 85.wp,
+              width: 90.wp,
+              constraints: BoxConstraints(maxHeight: 85.hp),
               padding: EdgeInsets.all(5.wp),
               decoration: BoxDecoration(
                 color: AppColors.cardBg(context),
@@ -40,7 +33,6 @@ class RescheduleMeetingContactList
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Title
                     Text(
                       "reschedule_meeting".tr,
                       style: TextStyle(
@@ -48,101 +40,79 @@ class RescheduleMeetingContactList
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-
-                    SizedBox(height: 3.hp),
-
-                    /// DATE FIELD
-                    TextField(
-                      controller: controller.meetingDateController,
-                      readOnly: true,
-                      onTap: isLoading ? null : controller.pickMeetingDate,
-                      decoration: InputDecoration(
-                        labelText: 'select_date'.tr,
-                        filled: true,
-                        fillColor: AppColors.inputBg(context),
-                        suffixIcon: Icon(Icons.calendar_today, size: 15.sp),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-
                     SizedBox(height: 2.hp),
-
-                    // TIME FIELD
-                    TextField(
-                      controller: controller.meetingTimeController,
-                      readOnly: true,
-                      onTap: isLoading ? null : controller.pickMeetingTime,
-                      decoration: InputDecoration(
-                        labelText: 'select_time'.tr,
-                        filled: true,
-                        fillColor: AppColors.inputBg(context),
-                        suffixIcon: Icon(Icons.access_time, size: 15.sp),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: 4.hp),
-
-                    // Confirm Button
+                    Obx(() => RescheduleAvailabilityContent(
+                          availability: controller.availability,
+                          selectedDuration:
+                              controller.state.selectedDuration.value,
+                          allowedDurations: controller.hostAllowedDurations,
+                          onDurationSelected: controller.selectDuration,
+                          onDateSelected: controller.onDateSelected,
+                          onSlotSelected: controller.onSlotSelected,
+                          formatSlotLabel: controller.formatSlotLabel,
+                          isDayAvailable: controller.isDayAvailable,
+                          maxBookingDate: controller.maxBookingDate,
+                        )),
+                    SizedBox(height: 3.hp),
                     SizedBox(
                       width: double.infinity,
                       height: 6.hp,
-                      child: ElevatedButton(
-                        onPressed: isLoading
-                            ? null
-                            : () async {
-                                final success = await controller
-                                    .rescheduleMeeting(meetingId: meetingId);
-
-                                if (success) {
-                                  Navigator.pop(Get.context!);
-                                  Navigator.pop(Get.context!, "refresh");
-                                }
-                              },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                      child: Obx(() {
+                        final hasSlot = controller
+                                .availability.selectedSlotIso.value !=
+                            null;
+                        return ElevatedButton(
+                          onPressed: isLoading || !hasSlot
+                              ? null
+                              : () async {
+                                  final success = await controller
+                                      .rescheduleMeeting(meetingId: meetingId);
+                                  if (success) {
+                                    Navigator.pop(Get.context!);
+                                    Navigator.pop(Get.context!, "refresh");
+                                  }
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueAccent,
+                            disabledBackgroundColor:
+                                Colors.blueAccent.withValues(alpha: 0.4),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            elevation: 4,
                           ),
-                          elevation: 4,
-                        ),
-                        child: isLoading
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 2.2.hp,
-                                    width: 2.2.hp,
-                                    child: const CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
+                          child: isLoading
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 2.2.hp,
+                                      width: 2.2.hp,
+                                      child: const CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(width: 3.wp),
-                                  Text(
-                                    "confirming".tr,
-                                    style: TextStyle(
-                                      fontSize: 11.sp,
-                                      color: Colors.white,
+                                    SizedBox(width: 3.wp),
+                                    Text(
+                                      "confirming".tr,
+                                      style: TextStyle(
+                                        fontSize: 11.sp,
+                                        color: Colors.white,
+                                      ),
                                     ),
+                                  ],
+                                )
+                              : Text(
+                                  "confirm".tr,
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
                                   ),
-                                ],
-                              )
-                            : Text(
-                                "confirm".tr,
-                                style: TextStyle(
-                                  fontSize: 11.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
                                 ),
-                              ),
-                      ),
+                        );
+                      }),
                     ),
                   ],
                 ),

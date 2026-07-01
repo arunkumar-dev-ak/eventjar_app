@@ -5,7 +5,6 @@ import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/app_toast.dart';
 import 'package:eventjar/global/store/user_store.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MeetingActionService {
@@ -89,25 +88,15 @@ class MeetingActionService {
 
   Future<bool> rescheduleNetworkMeeting({
     required String meetingId,
-    required DateTime date,
-    required TimeOfDay time,
+    required String scheduledAtIso,
+    required String meetingTimeStr,
   }) async {
     try {
       state.isRescheduling.value = true;
-      final localScheduledAt = DateTime(
-        date.year,
-        date.month,
-        date.day,
-        time.hour,
-        time.minute,
-      );
-      final utcScheduledAt = localScheduledAt.toUtc();
-      final meetingTimeFormatted =
-          '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
 
       final dto = {
-        'scheduledAt': utcScheduledAt.toIso8601String(),
-        'meetingTime': meetingTimeFormatted,
+        'scheduledAt': scheduledAtIso,
+        'meetingTime': meetingTimeStr,
       };
 
       await NetworkMeetingApi.rescheduleMeeting(id: meetingId, dto: dto);

@@ -7,6 +7,7 @@ import 'package:eventjar/helper/apierror_handler.dart';
 import 'package:eventjar/model/meeting_preferences/meeting_preferences_model.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -20,41 +21,23 @@ class MeetingPreferencesController extends GetxController {
     fetchPreferences();
   }
 
-  void _ensureDeviceTimezone() {
-    final now = DateTime.now();
-    final offset = now.timeZoneOffset;
-    final detectedTz = _guessTimezoneFromOffset(offset);
-    if (detectedTz != null && !state.timezones.contains(detectedTz)) {
-      state.timezones.insert(0, detectedTz);
-    }
+  // ═══════════════════════════════════════════════════════════════
+  //  Timezone Detection
+  // ═══════════════════════════════════════════════════════════════
+
+  Future<void> _ensureDeviceTimezone() async {
+    try {
+      final tzInfo = await FlutterTimezone.getLocalTimezone();
+      final detectedTz = tzInfo.identifier;
+      if (detectedTz.isNotEmpty && !state.timezones.contains(detectedTz)) {
+        state.timezones.insert(0, detectedTz);
+      }
+    } catch (_) {}
   }
 
-  String? _guessTimezoneFromOffset(Duration offset) {
-    final map = {
-      330: 'Asia/Kolkata',
-      300: 'Asia/Karachi',
-      345: 'Asia/Kathmandu',
-      360: 'Asia/Dhaka',
-      390: 'Asia/Yangon',
-      420: 'Asia/Bangkok',
-      480: 'Asia/Shanghai',
-      540: 'Asia/Tokyo',
-      570: 'Australia/Adelaide',
-      600: 'Australia/Sydney',
-      -300: 'America/New_York',
-      -360: 'America/Chicago',
-      -420: 'America/Denver',
-      -480: 'America/Los_Angeles',
-      0: 'UTC',
-      60: 'Europe/Paris',
-      120: 'Europe/Athens',
-      180: 'Europe/Moscow',
-      210: 'Asia/Tehran',
-      240: 'Asia/Dubai',
-      270: 'Asia/Kabul',
-    };
-    return map[offset.inMinutes];
-  }
+  // ═══════════════════════════════════════════════════════════════
+  //  Fetch Preferences (API)
+  // ═══════════════════════════════════════════════════════════════
 
   Future<void> fetchPreferences() async {
     state.isLoading.value = true;
@@ -76,99 +59,55 @@ class MeetingPreferencesController extends GetxController {
   }
 
   void _applyResponse(MeetingPreferencesResponse response) {
+    _applyGeneralSettings(response);
+    _applyWeeklyHours(response);
+    _applyDateOverrides(response);
+  }
+
+  void _applyGeneralSettings(MeetingPreferencesResponse response) {
     state.selectedTimezone.value = response.timezone;
     state.selectedTimezoneRxn.value = response.timezone;
-    state.selectedSlotInterval.value = _minsToSlotLabel(
-      response.slotIntervalMins,
-    );
+    state.selectedSlotInterval.value = _minsToSlotLabel(response.slotIntervalMins);
     state.selectedMinNotice.value = _minsToNoticeLabel(response.minNoticeMins);
-    state.selectedBufferBefore.value = _minsToBufferLabel(
-      response.bufferBeforeMins,
-    );
-    state.selectedBufferAfter.value = _minsToBufferLabel(
-      response.bufferAfterMins,
-    );
+    state.selectedBufferBefore.value = _minsToBufferLabel(response.bufferBeforeMins);
+    state.selectedBufferAfter.value = _minsToBufferLabel(response.bufferAfterMins);
     state.selectedMaxAdvanceDays.value = response.maxAdvanceDays;
-    state.selectedAllowedDurations.value = List<int>.from(
-      response.allowedDurations,
-    );
+    state.selectedAllowedDurations.value = List<int>.from(response.allowedDurations);
     state.videoProvider.value = response.videoProvider;
     state.customVideoUrl.value = response.customVideoUrl;
+  }
 
-    state.dateOverrides.value = List<DateOverride>.from(response.dateOverrides);
-
+  void _applyWeeklyHours(MeetingPreferencesResponse response) {
     for (final wh in response.weeklyHours) {
       final stateIndex = _apiDayToStateIndex(wh.day);
-      if (stateIndex < 0 || stateIndex >= state.weeklyAvailability.length) {
-        continue;
-      }
+      if (stateIndex < 0 || stateIndex >= state.weeklyAvailability.length) continue;
+
       final day = state.weeklyAvailability[stateIndex];
       day.isEnabled.value = wh.enabled;
-      day.startTime.value = _parseTime(wh.startTime);
-      day.endTime.value = _parseTime(wh.endTime);
+
+      day.ranges.clear();
+      for (final range in wh.ranges) {
+        day.ranges.add(DayTimeRange(
+          start: _parseTime(range.startTime),
+          end: _parseTime(range.endTime),
+        ));
+      }
+      if (day.ranges.isEmpty) {
+        day.ranges.add(DayTimeRange(
+          start: _parseTime(wh.startTime),
+          end: _parseTime(wh.endTime),
+        ));
+      }
     }
   }
 
-  int _apiDayToStateIndex(int apiDay) {
-    if (apiDay == 0) return 6;
-    return apiDay - 1;
+  void _applyDateOverrides(MeetingPreferencesResponse response) {
+    state.dateOverrides.value = List<DateOverride>.from(response.dateOverrides);
   }
 
-  int _stateIndexToApiDay(int stateIndex) {
-    if (stateIndex == 6) return 0;
-    return stateIndex + 1;
-  }
-
-  TimeOfDay _parseTime(String time) {
-    final parts = time.split(':');
-    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
-  }
-
-  String _minsToSlotLabel(int mins) => '$mins min';
-
-  String _minsToNoticeLabel(int mins) {
-    if (mins == 0) return 'No minimum';
-    if (mins >= 1440) return '1 day';
-    if (mins >= 60) {
-      final hours = mins ~/ 60;
-      return hours == 1 ? '1 hour' : '$hours hours';
-    }
-    return '$mins min';
-  }
-
-  String _minsToBufferLabel(int mins) {
-    if (mins == 0) return 'None';
-    return '$mins min';
-  }
-
-  int _slotLabelToMins(String label) {
-    if (label == 'No minimum') return 0;
-    return int.tryParse(label.replaceAll(' min', '')) ?? 30;
-  }
-
-  int _noticeLabelToMins(String label) {
-    switch (label) {
-      case 'No minimum':
-        return 0;
-      case '30 min':
-        return 30;
-      case '1 hour':
-        return 60;
-      case '2 hours':
-        return 120;
-      case '4 hours':
-        return 240;
-      case '1 day':
-        return 1440;
-      default:
-        return 60;
-    }
-  }
-
-  int _bufferLabelToMins(String label) {
-    if (label == 'None') return 0;
-    return int.tryParse(label.replaceAll(' min', '')) ?? 0;
-  }
+  // ═══════════════════════════════════════════════════════════════
+  //  General Settings
+  // ═══════════════════════════════════════════════════════════════
 
   void updateTimezone(String value) {
     state.selectedTimezone.value = value;
@@ -207,70 +146,79 @@ class MeetingPreferencesController extends GetxController {
     state.selectedAllowedDurations.value = current;
   }
 
+  // ═══════════════════════════════════════════════════════════════
+  //  Weekly Hours
+  // ═══════════════════════════════════════════════════════════════
+
   void toggleDay(int index, bool value) {
-    state.weeklyAvailability[index].isEnabled.value = value;
+    final day = state.weeklyAvailability[index];
+    day.isEnabled.value = value;
+    if (value && day.ranges.isEmpty) {
+      day.ranges.add(DayTimeRange(
+        start: const TimeOfDay(hour: 9, minute: 0),
+        end: const TimeOfDay(hour: 18, minute: 0),
+      ));
+    }
   }
 
-  int _toMinutes(TimeOfDay t) => t.hour * 60 + t.minute;
+  void addRange(int dayIndex) {
+    final day = state.weeklyAvailability[dayIndex];
+    final lastRange = day.ranges.isNotEmpty ? day.ranges.last : null;
+    final startTime = lastRange != null
+        ? _nextTime15After(lastRange.endTime.value)
+        : const TimeOfDay(hour: 9, minute: 0);
+    final endTime = _nextTime15After(startTime);
 
-  Future<void> pickStartTime(BuildContext context, int index) async {
-    final day = state.weeklyAvailability[index];
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: day.startTime.value,
-    );
-    if (picked == null) return;
+    if (_toMinutes(startTime) >= 24 * 60 - 15) return;
 
-    final endMins = _toMinutes(day.endTime.value);
-    final pickedMins = _toMinutes(picked);
+    day.ranges.add(DayTimeRange(start: startTime, end: endTime));
+  }
 
-    if (pickedMins >= endMins || (endMins - pickedMins) < 30) {
-      AppToast.warning('start_time_before_end'.tr);
-      return;
+  void removeRange(int dayIndex, int rangeIndex) {
+    final day = state.weeklyAvailability[dayIndex];
+    if (day.ranges.length > 1) {
+      day.ranges.removeAt(rangeIndex);
+    }
+  }
+
+  void updateRangeStartTime(int dayIndex, int rangeIndex, TimeOfDay picked) {
+    final day = state.weeklyAvailability[dayIndex];
+    if (rangeIndex >= day.ranges.length) return;
+    final range = day.ranges[rangeIndex];
+
+    if (_toMinutes(picked) >= _toMinutes(range.endTime.value)) {
+      range.endTime.value = _nextTime15After(picked);
     }
 
-    day.startTime.value = picked;
+    range.startTime.value = picked;
   }
 
-  Future<void> pickEndTime(BuildContext context, int index) async {
-    final day = state.weeklyAvailability[index];
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: day.endTime.value,
-    );
-    if (picked == null) return;
+  void updateRangeEndTime(int dayIndex, int rangeIndex, TimeOfDay picked) {
+    final day = state.weeklyAvailability[dayIndex];
+    if (rangeIndex >= day.ranges.length) return;
+    final range = day.ranges[rangeIndex];
 
-    final startMins = _toMinutes(day.startTime.value);
-    final pickedMins = _toMinutes(picked);
-
-    if (pickedMins <= startMins || (pickedMins - startMins) < 30) {
+    if (_toMinutes(picked) <= _toMinutes(range.startTime.value)) {
       AppToast.warning('end_time_after_start'.tr);
       return;
     }
 
-    day.endTime.value = picked;
+    range.endTime.value = picked;
   }
 
-  String formatTimeOfDay(TimeOfDay time) {
-    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
-    final minute = time.minute.toString().padLeft(2, '0');
-    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
-    return '${hour.toString().padLeft(2, '0')}:$minute $period';
-  }
-
-  /// Returns the set of `DateTime.weekday` values (1=Mon..7=Sun) that are disabled.
   Set<int> getDisabledWeekdays() {
     final disabled = <int>{};
     for (int i = 0; i < state.weeklyAvailability.length; i++) {
       if (!state.weeklyAvailability[i].isEnabled.value) {
-        // state index: 0=Mon..5=Sat, 6=Sun → DateTime.weekday: 1=Mon..6=Sat, 7=Sun
         disabled.add(i == 6 ? 7 : i + 1);
       }
     }
     return disabled;
   }
 
-  // --- Date Overrides ---
+  // ═══════════════════════════════════════════════════════════════
+  //  Date Overrides
+  // ═══════════════════════════════════════════════════════════════
 
   void addDateOverrides(List<DateTime> dates) {
     final existingDates = state.dateOverrides.map((o) => o.date).toSet();
@@ -373,7 +321,9 @@ class MeetingPreferencesController extends GetxController {
     updateOverride(date, endTime: timeStr);
   }
 
-  // --- Holiday Import ---
+  // ═══════════════════════════════════════════════════════════════
+  //  Holiday Import
+  // ═══════════════════════════════════════════════════════════════
 
   void resetHolidayDialogState() {
     state.holidays.clear();
@@ -446,42 +396,62 @@ class MeetingPreferencesController extends GetxController {
     state.selectedHolidayDates.clear();
   }
 
-  // --- Build Payload & Save ---
+  // ═══════════════════════════════════════════════════════════════
+  //  Build Payload & Save
+  // ═══════════════════════════════════════════════════════════════
 
-  Map<String, dynamic> _buildPayload() {
-    final weeklyHours = <Map<String, dynamic>>[];
-    for (int i = 0; i < state.weeklyAvailability.length; i++) {
-      final day = state.weeklyAvailability[i];
-      final start = day.startTime.value;
-      final end = day.endTime.value;
-      weeklyHours.add({
-        'day': _stateIndexToApiDay(i),
-        'enabled': day.isEnabled.value,
-        'startTime':
-            '${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}',
-        'endTime':
-            '${end.hour.toString().padLeft(2, '0')}:${end.minute.toString().padLeft(2, '0')}',
-      });
-    }
-
-    final payload = <String, dynamic>{
+  Map<String, dynamic> _buildGeneralPayload() {
+    return {
       'timezone': state.selectedTimezone.value,
       'slot_interval_mins': _slotLabelToMins(state.selectedSlotInterval.value),
-      'buffer_before_mins': _bufferLabelToMins(
-        state.selectedBufferBefore.value,
-      ),
+      'buffer_before_mins': _bufferLabelToMins(state.selectedBufferBefore.value),
       'buffer_after_mins': _bufferLabelToMins(state.selectedBufferAfter.value),
       'min_notice_mins': _noticeLabelToMins(state.selectedMinNotice.value),
       'max_advance_days': state.selectedMaxAdvanceDays.value,
-      'weekly_hours': weeklyHours,
       'allowed_durations': state.selectedAllowedDurations.toList(),
       'video_provider': state.videoProvider.value,
-      'date_overrides': state.dateOverrides.map((o) => o.toJson()).toList(),
+      if (state.customVideoUrl.value != null)
+        'custom_video_url': state.customVideoUrl.value,
     };
-    if (state.customVideoUrl.value != null) {
-      payload['custom_video_url'] = state.customVideoUrl.value;
+  }
+
+  List<Map<String, dynamic>> _buildWeeklyHoursPayload() {
+    final weeklyHours = <Map<String, dynamic>>[];
+    for (int i = 0; i < state.weeklyAvailability.length; i++) {
+      final day = state.weeklyAvailability[i];
+      final ranges = day.ranges.map((r) {
+        final start = r.startTime.value;
+        final end = r.endTime.value;
+        return {
+          'startTime': '${start.hour.toString().padLeft(2, '0')}:${start.minute.toString().padLeft(2, '0')}',
+          'endTime': '${end.hour.toString().padLeft(2, '0')}:${end.minute.toString().padLeft(2, '0')}',
+        };
+      }).toList();
+
+      final firstStart = day.ranges.isNotEmpty ? day.ranges.first.startTime.value : const TimeOfDay(hour: 9, minute: 0);
+      final firstEnd = day.ranges.isNotEmpty ? day.ranges.first.endTime.value : const TimeOfDay(hour: 18, minute: 0);
+
+      weeklyHours.add({
+        'day': _stateIndexToApiDay(i),
+        'enabled': day.isEnabled.value,
+        'ranges': ranges,
+        'startTime': '${firstStart.hour.toString().padLeft(2, '0')}:${firstStart.minute.toString().padLeft(2, '0')}',
+        'endTime': '${firstEnd.hour.toString().padLeft(2, '0')}:${firstEnd.minute.toString().padLeft(2, '0')}',
+      });
     }
-    return payload;
+    return weeklyHours;
+  }
+
+  List<Map<String, dynamic>> _buildDateOverridesPayload() {
+    return state.dateOverrides.map((o) => o.toJson()).toList();
+  }
+
+  Map<String, dynamic> _buildPayload() {
+    return {
+      ..._buildGeneralPayload(),
+      'weekly_hours': _buildWeeklyHoursPayload(),
+      'date_overrides': _buildDateOverridesPayload(),
+    };
   }
 
   Future<void> savePreferences() async {
@@ -510,5 +480,103 @@ class MeetingPreferencesController extends GetxController {
     } finally {
       state.isSaving.value = false;
     }
+  }
+
+  // ═══════════════════════════════════════════════════════════════
+  //  Helpers
+  // ═══════════════════════════════════════════════════════════════
+
+  int _apiDayToStateIndex(int apiDay) {
+    if (apiDay == 0) return 6;
+    return apiDay - 1;
+  }
+
+  int _stateIndexToApiDay(int stateIndex) {
+    if (stateIndex == 6) return 0;
+    return stateIndex + 1;
+  }
+
+  TimeOfDay _parseTime(String time) {
+    final parts = time.split(':');
+    return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+  }
+
+  TimeOfDay _nextTime15After(TimeOfDay time) {
+    final mins = _toMinutes(time) + 15;
+    if (mins >= 24 * 60) return const TimeOfDay(hour: 23, minute: 45);
+    return TimeOfDay(hour: mins ~/ 60, minute: mins % 60);
+  }
+
+  List<TimeOfDay> _generate15MinSlots({TimeOfDay? after, TimeOfDay? before}) {
+    final slots = <TimeOfDay>[];
+    for (int h = 0; h < 24; h++) {
+      for (int m = 0; m < 60; m += 15) {
+        final t = TimeOfDay(hour: h, minute: m);
+        final mins = _toMinutes(t);
+        if (after != null && mins <= _toMinutes(after)) continue;
+        if (before != null && mins >= _toMinutes(before)) continue;
+        slots.add(t);
+      }
+    }
+    return slots;
+  }
+
+  List<TimeOfDay> getTimeSlots({TimeOfDay? after, TimeOfDay? before}) {
+    return _generate15MinSlots(after: after, before: before);
+  }
+
+  int _toMinutes(TimeOfDay t) => t.hour * 60 + t.minute;
+
+  String formatTimeOfDay(TimeOfDay time) {
+    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+    final minute = time.minute.toString().padLeft(2, '0');
+    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+    return '${hour.toString().padLeft(2, '0')}:$minute $period';
+  }
+
+  String _minsToSlotLabel(int mins) => '$mins min';
+
+  String _minsToNoticeLabel(int mins) {
+    if (mins == 0) return 'No minimum';
+    if (mins >= 1440) return '1 day';
+    if (mins >= 60) {
+      final hours = mins ~/ 60;
+      return hours == 1 ? '1 hour' : '$hours hours';
+    }
+    return '$mins min';
+  }
+
+  String _minsToBufferLabel(int mins) {
+    if (mins == 0) return 'None';
+    return '$mins min';
+  }
+
+  int _slotLabelToMins(String label) {
+    if (label == 'No minimum') return 0;
+    return int.tryParse(label.replaceAll(' min', '')) ?? 30;
+  }
+
+  int _noticeLabelToMins(String label) {
+    switch (label) {
+      case 'No minimum':
+        return 0;
+      case '30 min':
+        return 30;
+      case '1 hour':
+        return 60;
+      case '2 hours':
+        return 120;
+      case '4 hours':
+        return 240;
+      case '1 day':
+        return 1440;
+      default:
+        return 60;
+    }
+  }
+
+  int _bufferLabelToMins(String label) {
+    if (label == 'None') return 0;
+    return int.tryParse(label.replaceAll(' min', '')) ?? 0;
   }
 }

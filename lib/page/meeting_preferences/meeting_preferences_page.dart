@@ -65,6 +65,18 @@ class MeetingPreferencesPage extends GetView<MeetingPreferencesController> {
                         onSelected: controller.updateTimezone,
                         searchable: true,
                         searchHint: 'search_timezone'.tr,
+                        themeColor: const Color(0xFF4A6CF7),
+                        headerColor: const Color(0xFF4A6CF7),
+                        selectedDisplayColor: const Color(0xFF4A6CF7),
+                        selectedShade1: const Color(
+                          0xFF4A6CF7,
+                        ).withValues(alpha: 0.08),
+                        selectedShade2: const Color(
+                          0xFF4A6CF7,
+                        ).withValues(alpha: 0.15),
+                        selectedShade3: const Color(
+                          0xFF4A6CF7,
+                        ).withValues(alpha: 0.3),
                       ),
                     ],
                   ),

@@ -8,6 +8,12 @@ class DeleteConfirmDialog extends StatelessWidget {
   final String itemName;
   final String warningText;
   final VoidCallback onDelete;
+  final IconData? icon;
+  final Color? iconColor;
+  final Color? iconBgColor;
+  final String? actionText;
+  final Color? actionColor;
+  final String? promptText;
 
   DeleteConfirmDialog({
     super.key,
@@ -15,10 +21,24 @@ class DeleteConfirmDialog extends StatelessWidget {
     required this.itemName,
     required this.onDelete,
     String? warningText,
+    this.icon,
+    this.iconColor,
+    this.iconBgColor,
+    this.actionText,
+    this.actionColor,
+    this.promptText,
   }) : warningText = warningText ?? 'permanent_action_warning'.tr;
 
   @override
   Widget build(BuildContext context) {
+    final resolvedIcon = icon ?? Icons.delete_forever_rounded;
+    final resolvedIconColor = iconColor ?? Colors.red.shade500;
+    final resolvedIconBgColor = iconBgColor ?? Colors.red.shade50;
+    final resolvedActionText = actionText ?? 'delete'.tr;
+    final resolvedActionColor = actionColor ?? Colors.red.shade500;
+    final resolvedPromptText =
+        promptText ?? '${'delete_confirm_prompt'.tr} "$itemName"?';
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
@@ -42,13 +62,13 @@ class DeleteConfirmDialog extends StatelessWidget {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: Colors.red.shade50,
+                color: resolvedIconBgColor,
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.delete_forever_rounded,
+                resolvedIcon,
                 size: 36,
-                color: Colors.red.shade500,
+                color: resolvedIconColor,
               ),
             ),
             SizedBox(height: 1.hp),
@@ -65,7 +85,7 @@ class DeleteConfirmDialog extends StatelessWidget {
             SizedBox(height: 1.hp),
 
             Text(
-              '${'delete_confirm_prompt'.tr} "$itemName"?',
+              resolvedPromptText,
               style: TextStyle(
                 fontSize: 10.sp,
                 color: AppColors.textSecondary(context),
@@ -133,7 +153,7 @@ class DeleteConfirmDialog extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade500,
+                      backgroundColor: resolvedActionColor,
                       foregroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(vertical: 1.5.hp),
                       shape: RoundedRectangleBorder(
@@ -146,7 +166,7 @@ class DeleteConfirmDialog extends StatelessWidget {
                       onDelete();
                     },
                     child: Text(
-                      'delete'.tr,
+                      resolvedActionText,
                       style: TextStyle(
                         fontSize: 9.sp,
                         fontWeight: FontWeight.bold,

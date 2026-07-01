@@ -1,20 +1,36 @@
-import 'package:dio/dio.dart';
 import 'package:eventjar/api/contact_list_meeting_api/contact_list_meeting_api.dart';
 import 'package:eventjar/controller/contact_list_meeting/state.dart';
+import 'package:eventjar/controller/schedule_meeting/availability_mixin.dart';
+import 'package:eventjar/controller/schedule_meeting/availability_state.dart';
 import 'package:eventjar/global/app_snackbar.dart';
 import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/global/widget/delete_confirm_dialog.dart';
 import 'package:eventjar/helper/apierror_handler.dart';
-import 'package:eventjar/logger_service.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/page/contact_list_meeting/widget/reschedule_meeting_conatct_list.dart';
 import 'package:eventjar/routes/route_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ContactListMeetingController extends GetxController {
+class ContactListMeetingController extends GetxController
+    with AvailabilityMixin {
   final state = ContactListMeetingState();
   TextEditingController meetingDateController = TextEditingController();
   TextEditingController meetingTimeController = TextEditingController();
+
+  @override
+  AvailabilityState get availability => state.availability;
+
+  @override
+  int get selectedDurationMins => state.selectedDuration.value;
+
+  @override
+  void onDurationApplied(List<int> allowedDurations) {
+    if (allowedDurations.isEmpty) return;
+    if (!allowedDurations.contains(state.selectedDuration.value)) {
+      state.selectedDuration.value = allowedDurations.first;
+    }
+  }
 
   @override
   void onInit() {
@@ -24,7 +40,6 @@ class ContactListMeetingController extends GetxController {
   }
 
   Future<void> _initializePage() async {
-    // Get MobileContact from args
     final mobileContact = Get.arguments as MobileContact?;
     if (mobileContact != null) {
       state.mobileContact.value = mobileContact;
@@ -33,41 +48,6 @@ class ContactListMeetingController extends GetxController {
   }
 
   void _fetchMeetings() {
-    // try {
-    //   state.isShimmerLoading.value = true;
-    //   state.isLoading.value = true;
-
-    //   String endpoint;
-
-    //   bool isCompleted = state.mobileContact.value?.meetingCompleted ?? false;
-    //   bool isConfirmed = state.mobileContact.value?.meetingConfirmed ?? false;
-    //   bool isScheduled = state.mobileContact.value?.meetingScheduled ?? false;
-
-    //   if (isCompleted || !isScheduled) {
-    //     state.currentMeeting.value = null;
-    //   } else {
-    //     final status = isConfirmed ? 'CONFIRMED' : 'SCHEDULED';
-
-    //     endpoint = '/network-meetings?contactId=$contactId&status=$status';
-    //     LoggerService.loggerInstance.dynamic_d(endpoint);
-    //     NetworkMeetingsListResponse response =
-    //         await ContactListMeetingApi.getNetworkMeeting(endpoint);
-    //     state.currentMeeting.value = response.meetings.first;
-    //     LoggerService.loggerInstance.dynamic_d(
-    //       state.currentMeeting.value?.toJson(),
-    //     );
-    //     _updateButtonType();
-    //   }
-    // } catch (e) {
-    //   debugPrint('Error fetching meetings: $e');
-    //   if (e is DioException) {
-    //     Get.snackbar('Error', 'Failed to load meetings');
-    //   }
-    // } finally {
-    //   state.isShimmerLoading.value = false;
-    //   state.isLoading.value = false;
-    // }
-    // LoggerService.loggerInstance.dynamic_d(state.mobileContact)
     bool isCompleted =
         state.mobileContact.value?.activeMeeting?.completedAt != null;
 
@@ -119,65 +99,71 @@ class ContactListMeetingController extends GetxController {
     }
   }
 
-  /*----- Reschedule Meeting -----*/
-  void updateMeetingDate(DateTime dateTime) {
-    state.meetingDate.value = dateTime;
-    meetingDateController.text =
-        '${dateTime.day.toString().padLeft(2, '0')}-'
-        '${dateTime.month.toString().padLeft(2, '0')}-${dateTime.year}';
+  void selectDuration(int mins) {
+    state.selectedDuration.value = mins;
+    onDurationChanged();
   }
 
-  void updateMeetingTime(TimeOfDay time) {
-    state.meetingTime.value = time;
-    meetingTimeController.text = time.format(Get.context!);
+  void _initAvailabilityForReschedule() {
+    final contact = state.mobileContact.value;
+    if (contact == null) return;
+
+    String? targetUserId;
+    final currentUserId = UserStore.to.profile['id'];
+    if (contact.isEventJarUser) {
+      targetUserId =
+          contact.user1Id == currentUserId ? contact.user2Id : contact.user1Id;
+    }
+
+    initAvailability(targetUserId);
   }
 
-  Future<void> pickMeetingDate() async {
-    final picked = await showDatePicker(
-      context: Get.context!,
-      initialDate: state.meetingDate.value,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
+  void onRescheduleMeeting() async {
+    final meeting = state.currentMeeting.value;
+    if (meeting == null) return;
+
+    _initAvailabilityForReschedule();
+
+    final result = await Get.dialog(
+      RescheduleMeetingContactList(meetingId: meeting.id),
     );
 
-    if (picked != null) {
-      updateMeetingDate(picked);
+    if (result == true) {
+      Navigator.pop(Get.context!, "refresh");
     }
   }
 
-  Future<void> pickMeetingTime() async {
-    final picked = await showTimePicker(
-      context: Get.context!,
-      initialTime: state.meetingTime.value,
-    );
+  void onRescheduleConfirmedMeeting() {
+    final meeting = state.currentMeeting.value;
+    if (meeting == null) return;
 
-    if (picked != null) {
-      updateMeetingTime(picked);
-    }
+    Get.dialog(
+      DeleteConfirmDialog(
+        title: 'reschedule_meeting'.tr,
+        itemName: '',
+        icon: Icons.edit_calendar_rounded,
+        iconColor: Colors.orange.shade600,
+        iconBgColor: Colors.orange.shade50,
+        promptText:
+            'This meeting is already confirmed. Rescheduling a confirmed meeting will require the other participant to re-confirm the new time.',
+        warningText: 'Would you like to continue?',
+        actionText: 'continue'.tr,
+        actionColor: Colors.orange.shade600,
+        onDelete: () => onRescheduleMeeting(),
+      ),
+    );
   }
 
-  Map<String, dynamic> _buildMeetingDto() {
-    final date = state.meetingDate.value;
-    final time = state.meetingTime.value;
+  Map<String, dynamic> _buildRescheduleDtoFromSlot() {
+    final slotDt = selectedSlotDateTime;
+    if (slotDt == null) return {};
 
-    // 1. Combine date and time (creates a localized DateTime object)
-    final localScheduledAt = DateTime(
-      date.year,
-      date.month,
-      date.day,
-      time.hour,
-      time.minute,
-    );
-
-    // 2. Explicitly convert to UTC so it appends the 'Z' properly
-    final utcScheduledAt = localScheduledAt.toUtc();
-
-    final meetingTimeFormatted =
-        '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+    final meetingTime =
+        '${slotDt.hour.toString().padLeft(2, '0')}:${slotDt.minute.toString().padLeft(2, '0')}';
 
     return {
-      'scheduledAt': utcScheduledAt.toIso8601String(),
-      'meetingTime': meetingTimeFormatted,
+      'scheduledAt': slotDt.toIso8601String(),
+      'meetingTime': meetingTime,
     };
   }
 
@@ -185,7 +171,8 @@ class ContactListMeetingController extends GetxController {
     try {
       state.isRescheduling.value = true;
 
-      final dto = _buildMeetingDto();
+      final dto = _buildRescheduleDtoFromSlot();
+      if (dto.isEmpty) return false;
 
       await ContactListMeetingApi.rescheduleMeeting(id: meetingId, dto: dto);
       AppSnackbar.success(
@@ -209,29 +196,6 @@ class ContactListMeetingController extends GetxController {
     }
   }
 
-  void onRescheduleMeeting() async {
-    final meeting = state.currentMeeting.value;
-    if (meeting == null) return;
-
-    // 1. Convert the UTC database time to the user's local device time
-    final localDateTime = meeting.scheduledAt.toLocal();
-    updateMeetingDate(localDateTime);
-
-    // 2. Fallback check for time parsing
-    updateMeetingTime(
-      TimeOfDay(hour: localDateTime.hour, minute: localDateTime.minute),
-    );
-
-    final result = await Get.dialog(
-      RescheduleMeetingContactList(meetingId: meeting.id),
-    );
-
-    if (result == true) {
-      Navigator.pop(Get.context!, "refresh");
-    }
-  }
-
-  /*-----Complete Meeting -----*/
   Future<void> onCompleteMeeting(String meetingId) async {
     state.isLoading.value = true;
     try {
@@ -255,25 +219,6 @@ class ContactListMeetingController extends GetxController {
     }
   }
 
-  Future<void> _updateMeetingStatus(String status) async {
-    try {
-      state.isLoading.value = true;
-      // TODO: Call API to update meeting status
-      // await updateMeetingApi(state.currentMeeting.value!.id, status);
-
-      // Update local state
-      final meeting = state.currentMeeting.value!;
-      // state.currentMeeting.value = meeting.copyWith(status: status);
-      _updateButtonType();
-
-      Get.snackbar('Success', 'Meeting updated successfully');
-    } catch (e) {
-      Get.snackbar('Error', 'Failed to update meeting');
-    } finally {
-      state.isLoading.value = false;
-    }
-  }
-
   String get formattedDate => state.currentMeeting.value != null
       ? _formatDate(state.currentMeeting.value!.scheduledAt)
       : '';
@@ -286,5 +231,13 @@ class ContactListMeetingController extends GetxController {
 
   void navigateToSignInPage() {
     Get.toNamed(RouteName.signInPage);
+  }
+
+  @override
+  void onClose() {
+    meetingDateController.dispose();
+    meetingTimeController.dispose();
+    state.availability.dispose();
+    super.onClose();
   }
 }

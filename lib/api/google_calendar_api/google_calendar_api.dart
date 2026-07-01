@@ -245,6 +245,74 @@ class GoogleCalendarApi {
     }
   }
 
+  static Future<AvailableDatesResponse> getAvailableDates({
+    required String timeMin,
+    required String timeMax,
+    String? targetUserId,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/google-calendar/available-dates',
+        data: {
+          'time_min': timeMin,
+          'time_max': timeMax,
+          'target_user_id': targetUserId,
+        },
+      );
+      if (response.statusCode == 201) {
+        return AvailableDatesResponse.fromJson(response.data);
+      }
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        error: "something_went_wrong".tr,
+      );
+    } on DioException catch (err) {
+      if (err.response?.statusCode == 401) {
+        await UserStore.to.clearStore();
+        Get.toNamed(RouteName.signInPage);
+      }
+      rethrow;
+    } catch (err) {
+      rethrow;
+    }
+  }
+
+  static Future<AvailableSlotsResponse> getAvailableSlots({
+    required String timeMin,
+    required String timeMax,
+    required int duration,
+    String? targetUserId,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/google-calendar/available-slots',
+        data: {
+          'time_min': timeMin,
+          'time_max': timeMax,
+          'duration': duration,
+          'target_user_id': targetUserId,
+        },
+      );
+      if (response.statusCode == 201) {
+        return AvailableSlotsResponse.fromJson(response.data);
+      }
+      throw DioException(
+        requestOptions: response.requestOptions,
+        response: response,
+        error: "something_went_wrong".tr,
+      );
+    } on DioException catch (err) {
+      if (err.response?.statusCode == 401) {
+        await UserStore.to.clearStore();
+        Get.toNamed(RouteName.signInPage);
+      }
+      rethrow;
+    } catch (err) {
+      rethrow;
+    }
+  }
+
   static Future<void> disconnect() async {
     try {
       final response = await _dio.delete('/google-calendar/disconnect');

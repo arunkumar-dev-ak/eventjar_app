@@ -2,15 +2,18 @@ import 'package:eventjar/controller/meeting/service/meeting_action_service.dart'
 import 'package:eventjar/controller/meeting/service/meeting_service.dart';
 import 'package:eventjar/controller/meeting/service/network_meeting_service.dart';
 import 'package:eventjar/controller/meeting/state.dart';
+import 'package:eventjar/controller/schedule_meeting/availability_mixin.dart';
+import 'package:eventjar/controller/schedule_meeting/availability_state.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/global/widget/delete_confirm_dialog.dart';
 import 'package:eventjar/model/contact-meeting/contact_meeting.dart';
 import 'package:eventjar/model/network-meeting/network_meeting.dart';
 import 'package:eventjar/page/meeting/widget/reschedule_meeting_dialog.dart';
 import 'package:eventjar/routes/route_name.dart';
-import 'package:eventjar/global/store/user_store.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class MeetingController extends GetxController {
+class MeetingController extends GetxController with AvailabilityMixin {
   var appBarTitle = "my_meetings".tr;
   final state = MeetingState();
 
@@ -28,11 +31,23 @@ class MeetingController extends GetxController {
   late final MeetingService _meetingService;
   late final MeetingActionService _actionService;
 
-  DateTimeRange _singleDateToRange(DateTime date) {
-    return DateTimeRange(
-      start: DateTime(date.year, date.month, date.day),
-      end: DateTime(date.year, date.month, date.day, 23, 59, 59),
-    );
+  @override
+  AvailabilityState get availability => state.rescheduleAvailability;
+
+  @override
+  int get selectedDurationMins => state.rescheduleSelectedDuration.value;
+
+  @override
+  void onDurationApplied(List<int> allowedDurations) {
+    if (allowedDurations.isEmpty) return;
+    if (!allowedDurations.contains(state.rescheduleSelectedDuration.value)) {
+      state.rescheduleSelectedDuration.value = allowedDurations.first;
+    }
+  }
+
+  void selectRescheduleDuration(int mins) {
+    state.rescheduleSelectedDuration.value = mins;
+    onDurationChanged();
   }
 
   @override
@@ -177,20 +192,47 @@ class MeetingController extends GetxController {
   Future<void> completeMeeting(String meetingId) => _actionService
       .completeMeeting(meetingId, () => fetchMeetings(forceRefresh: true));
 
+  String? _getTargetUserIdFromMeeting(NetworkMeeting meeting) {
+    final contact = meeting.contact;
+    if (contact == null) return null;
+
+    final currentUserId = UserStore.to.profile['id'];
+    final user1 = contact.user1;
+    final user2 = contact.user2;
+
+    if (user1 != null && user1['id'] == currentUserId && user2 != null) {
+      return user2['id'];
+    }
+    if (user2 != null && user2['id'] == currentUserId && user1 != null) {
+      return user1['id'];
+    }
+    return null;
+  }
+
   void handleNetworkMeetingReschedule(NetworkMeeting meeting) {
-    final localDateTime = meeting.scheduledAt.toLocal();
-    state.rescheduleMeetingDate.value = localDateTime;
-    state.rescheduleMeetingTime.value = TimeOfDay(
-      hour: localDateTime.hour,
-      minute: localDateTime.minute,
-    );
-    rescheduleDateController.text =
-        '${localDateTime.day.toString().padLeft(2, '0')}-${localDateTime.month.toString().padLeft(2, '0')}-${localDateTime.year}';
-    rescheduleTimeController.text = state.rescheduleMeetingTime.value.format(
-      Get.context!,
-    );
+    final targetUserId = _getTargetUserIdFromMeeting(meeting);
+    state.rescheduleAvailability.reset();
+    initAvailability(targetUserId);
 
     Get.dialog(RescheduleMeetingDialog(meetingId: meeting.id));
+  }
+
+  void handleConfirmedMeetingReschedule(NetworkMeeting meeting) {
+    Get.dialog(
+      DeleteConfirmDialog(
+        title: 'reschedule_meeting'.tr,
+        itemName: '',
+        icon: Icons.edit_calendar_rounded,
+        iconColor: Colors.orange.shade600,
+        iconBgColor: Colors.orange.shade50,
+        promptText:
+            'This meeting is already confirmed. Rescheduling a confirmed meeting will require the other participant to re-confirm the new time.',
+        warningText: 'Would you like to continue?',
+        actionText: 'continue'.tr,
+        actionColor: Colors.orange.shade600,
+        onDelete: () => handleNetworkMeetingReschedule(meeting),
+      ),
+    );
   }
 
   Future<void> pickRescheduleDate() async {
@@ -218,12 +260,19 @@ class MeetingController extends GetxController {
     }
   }
 
-  Future<bool> rescheduleNetworkMeeting({required String meetingId}) =>
-      _actionService.rescheduleNetworkMeeting(
-        meetingId: meetingId,
-        date: state.rescheduleMeetingDate.value,
-        time: state.rescheduleMeetingTime.value,
-      );
+  Future<bool> rescheduleNetworkMeeting({required String meetingId}) async {
+    final slotDt = selectedSlotDateTime;
+    if (slotDt == null) return false;
+
+    final meetingTime =
+        '${slotDt.hour.toString().padLeft(2, '0')}:${slotDt.minute.toString().padLeft(2, '0')}';
+
+    return _actionService.rescheduleNetworkMeeting(
+      meetingId: meetingId,
+      scheduledAtIso: slotDt.toIso8601String(),
+      meetingTimeStr: meetingTime,
+    );
+  }
 
   void navigateToSignInPage() {
     Get.toNamed(RouteName.signInPage)?.then((result) async {
@@ -267,6 +316,7 @@ class MeetingController extends GetxController {
     rescheduleTimeController.dispose();
     qualifiedDebounceWorker.dispose();
     oneOnOneDebounceWorker.dispose();
+    state.rescheduleAvailability.dispose();
     super.onClose();
   }
 }

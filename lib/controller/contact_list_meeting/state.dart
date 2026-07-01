@@ -1,3 +1,4 @@
+import 'package:eventjar/controller/schedule_meeting/availability_state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
@@ -15,11 +16,15 @@ class ContactListMeetingState {
   RxBool isRescheduling = false.obs;
 
   // Meetings data
-  // RxList<NetworkMeetingResponseModel> meetings =
-  //     <NetworkMeetingResponseModel>[].obs;
   Rx<ActiveMeeting?> currentMeeting = Rx<ActiveMeeting?>(null);
 
   // UI states
   RxString appBarTitle = 'contact_meeting'.tr.obs;
   Rx<MeetingButtonType> primaryButtonType = MeetingButtonType.accept.obs;
+
+  // Availability
+  final AvailabilityState availability = AvailabilityState();
+
+  // Duration
+  final RxInt selectedDuration = 30.obs;
 }

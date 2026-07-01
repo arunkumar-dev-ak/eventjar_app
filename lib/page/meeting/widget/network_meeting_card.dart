@@ -376,39 +376,67 @@ class NetworkMeetingCard extends GetView<MeetingController> {
           ),
         );
       } else if (status == 'confirmed') {
-        // CONFIRMED (accepted): Only Complete
+        // CONFIRMED: Complete + Reschedule
         return Padding(
           padding: EdgeInsets.symmetric(vertical: 4),
-          child: SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: isButtonLoading
-                  ? null
-                  : () async =>
-                        await controller.completeNetworkMeeting(meeting.id),
-              icon: isButtonLoading
-                  ? SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Icon(Icons.check_circle, size: 16, color: Colors.white),
-              label: Text(
-                isButtonLoading ? 'completing'.tr : 'complete'.tr,
-                style: TextStyle(fontSize: 8.sp, color: Colors.white),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green.shade600,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+          child: Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: isButtonLoading
+                      ? null
+                      : () async =>
+                            await controller.completeNetworkMeeting(meeting.id),
+                  icon: isButtonLoading
+                      ? SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Icon(Icons.check_circle, size: 16, color: Colors.white),
+                  label: Text(
+                    isButtonLoading ? 'completing'.tr : 'complete'.tr,
+                    style: TextStyle(fontSize: 8.sp, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green.shade600,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: isButtonLoading
+                      ? null
+                      : () => controller
+                            .handleConfirmedMeetingReschedule(meeting),
+                  icon: Icon(
+                    Icons.edit_calendar,
+                    size: 16,
+                    color: Colors.orange.shade600,
+                  ),
+                  label: Text(
+                    'reschedule'.tr,
+                    style: TextStyle(fontSize: 8.sp),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    side: BorderSide(color: Colors.orange.shade600),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       } else {

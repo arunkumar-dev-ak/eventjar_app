@@ -19,6 +19,7 @@ class TimeSlot {
 class AvailabilityState {
   RxBool isPrefsLoading = true.obs;
   RxBool isSlotsLoading = false.obs;
+  RxBool isDatesLoading = false.obs;
   RxBool isCalendarConnected = false.obs;
   Rxn<String> availabilityError = Rxn<String>();
 
@@ -27,6 +28,7 @@ class AvailabilityState {
   Rxn<MeetingPreferencesResponse> ownPrefs =
       Rxn<MeetingPreferencesResponse>();
 
+  Rx<Set<String>> availableDates = Rx<Set<String>>({});
   Rxn<DateTime> selectedDate = Rxn<DateTime>();
   Rxn<String> selectedSlotIso = Rxn<String>();
 
@@ -40,6 +42,7 @@ class AvailabilityState {
     selectedSlotIso.value = null;
     timeSlots.clear();
     busySlots.clear();
+    availableDates.value = {};
     hostPrefs.value = null;
     ownPrefs.value = null;
     availabilityError.value = null;

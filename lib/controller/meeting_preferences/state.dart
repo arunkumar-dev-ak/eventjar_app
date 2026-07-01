@@ -2,11 +2,26 @@ import 'package:eventjar/model/meeting_preferences/meeting_preferences_model.dar
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+class DayTimeRange {
+  final Rx<TimeOfDay> startTime;
+  final Rx<TimeOfDay> endTime;
+
+  DayTimeRange({
+    required TimeOfDay start,
+    required TimeOfDay end,
+  })  : startTime = start.obs,
+        endTime = end.obs;
+}
+
 class DayAvailability {
   final String day;
   final RxBool isEnabled;
-  final Rx<TimeOfDay> startTime;
-  final Rx<TimeOfDay> endTime;
+  final RxList<DayTimeRange> ranges;
+
+  Rx<TimeOfDay> get startTime =>
+      ranges.isNotEmpty ? ranges.first.startTime : Rx<TimeOfDay>(const TimeOfDay(hour: 9, minute: 0));
+  Rx<TimeOfDay> get endTime =>
+      ranges.isNotEmpty ? ranges.first.endTime : Rx<TimeOfDay>(const TimeOfDay(hour: 18, minute: 0));
 
   DayAvailability({
     required this.day,
@@ -14,8 +29,9 @@ class DayAvailability {
     required TimeOfDay start,
     required TimeOfDay end,
   })  : isEnabled = enabled.obs,
-        startTime = start.obs,
-        endTime = end.obs;
+        ranges = <DayTimeRange>[
+          DayTimeRange(start: start, end: end),
+        ].obs;
 }
 
 class MeetingPreferencesState {

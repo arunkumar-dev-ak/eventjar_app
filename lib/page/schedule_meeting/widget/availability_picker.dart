@@ -29,7 +29,10 @@ class AvailabilityPicker extends StatelessWidget {
         children: [
           _buildDurationSelector(context, controller),
           SizedBox(height: 2.hp),
-          _buildDatePicker(context, controller),
+          if (avail.isDatesLoading.value)
+            _buildLoadingRow(context, 'loading_available_dates'.tr)
+          else
+            _buildDatePicker(context, controller),
           SizedBox(height: 2.hp),
           if (error != null) ...[
             _buildWarningBanner(context, error),

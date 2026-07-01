@@ -1,5 +1,35 @@
 import 'package:eventjar/logger_service.dart';
 
+class TimeRange {
+  final String startTime;
+  final String endTime;
+
+  TimeRange({required this.startTime, required this.endTime});
+
+  factory TimeRange.fromJson(Map<String, dynamic> json) {
+    try {
+      return TimeRange(
+        startTime: json['startTime'] ?? '09:00',
+        endTime: json['endTime'] ?? '18:00',
+      );
+    } catch (e) {
+      LoggerService.loggerInstance.e('Error parsing TimeRange: $e');
+      return TimeRange(startTime: '09:00', endTime: '18:00');
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'startTime': startTime, 'endTime': endTime};
+  }
+
+  TimeRange copyWith({String? startTime, String? endTime}) {
+    return TimeRange(
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+    );
+  }
+}
+
 class MeetingPreferencesResponse {
   final String timezone;
   final int slotIntervalMins;
@@ -81,32 +111,59 @@ class MeetingPreferencesResponse {
 
 class WeeklyHour {
   final int day;
+  final bool enabled;
+  final List<TimeRange> ranges;
   final String startTime;
   final String endTime;
-  final bool enabled;
 
   WeeklyHour({
     required this.day,
+    required this.enabled,
+    required this.ranges,
     required this.startTime,
     required this.endTime,
-    required this.enabled,
   });
 
   factory WeeklyHour.fromJson(Map<String, dynamic> json) {
-    return WeeklyHour(
-      day: (json['day'] as num).toInt(),
-      startTime: json['startTime'] ?? '09:00',
-      endTime: json['endTime'] ?? '18:00',
-      enabled: json['enabled'] ?? false,
-    );
+    try {
+      final rangesList = (json['ranges'] as List<dynamic>?)
+              ?.map((e) => TimeRange.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [];
+
+      return WeeklyHour(
+        day: (json['day'] as num).toInt(),
+        enabled: json['enabled'] ?? false,
+        ranges: rangesList.isNotEmpty
+            ? rangesList
+            : [
+                TimeRange(
+                  startTime: json['startTime'] ?? '09:00',
+                  endTime: json['endTime'] ?? '18:00',
+                ),
+              ],
+        startTime: json['startTime'] ?? '09:00',
+        endTime: json['endTime'] ?? '18:00',
+      );
+    } catch (e) {
+      LoggerService.loggerInstance.e('Error parsing WeeklyHour: $e');
+      return WeeklyHour(
+        day: (json['day'] as num?)?.toInt() ?? 0,
+        enabled: false,
+        ranges: [TimeRange(startTime: '09:00', endTime: '18:00')],
+        startTime: '09:00',
+        endTime: '18:00',
+      );
+    }
   }
 
   Map<String, dynamic> toJson() {
     return {
       'day': day,
-      'startTime': startTime,
-      'endTime': endTime,
       'enabled': enabled,
+      'ranges': ranges.map((r) => r.toJson()).toList(),
+      'startTime': ranges.isNotEmpty ? ranges.first.startTime : startTime,
+      'endTime': ranges.isNotEmpty ? ranges.first.endTime : endTime,
     };
   }
 }
@@ -127,13 +184,18 @@ class DateOverride {
   });
 
   factory DateOverride.fromJson(Map<String, dynamic> json) {
-    return DateOverride(
-      date: json['date'] ?? '',
-      enabled: json['enabled'] ?? false,
-      startTime: json['startTime'],
-      endTime: json['endTime'],
-      label: json['label'],
-    );
+    try {
+      return DateOverride(
+        date: json['date'] ?? '',
+        enabled: json['enabled'] ?? false,
+        startTime: json['startTime'],
+        endTime: json['endTime'],
+        label: json['label'],
+      );
+    } catch (e) {
+      LoggerService.loggerInstance.e('Error parsing DateOverride: $e');
+      return DateOverride(date: '', enabled: false);
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -170,7 +232,15 @@ class HolidayCountry {
   HolidayCountry({required this.code, required this.name});
 
   factory HolidayCountry.fromJson(Map<String, dynamic> json) {
-    return HolidayCountry(code: json['code'] ?? '', name: json['name'] ?? '');
+    try {
+      return HolidayCountry(
+        code: json['code'] ?? '',
+        name: json['name'] ?? '',
+      );
+    } catch (e) {
+      LoggerService.loggerInstance.e('Error parsing HolidayCountry: $e');
+      return HolidayCountry(code: '', name: '');
+    }
   }
 }
 
@@ -181,7 +251,80 @@ class FreeBusySlot {
   FreeBusySlot({required this.start, required this.end});
 
   factory FreeBusySlot.fromJson(Map<String, dynamic> json) {
-    return FreeBusySlot(start: json['start'] ?? '', end: json['end'] ?? '');
+    try {
+      return FreeBusySlot(
+        start: json['start'] ?? '',
+        end: json['end'] ?? '',
+      );
+    } catch (e) {
+      LoggerService.loggerInstance.e('Error parsing FreeBusySlot: $e');
+      return FreeBusySlot(start: '', end: '');
+    }
+  }
+}
+
+class AvailableDatesResponse {
+  final List<String> dates;
+  final String timezone;
+
+  AvailableDatesResponse({required this.dates, required this.timezone});
+
+  factory AvailableDatesResponse.fromJson(Map<String, dynamic> json) {
+    final data = json['data'] as Map<String, dynamic>? ?? json;
+    return AvailableDatesResponse(
+      dates: (data['dates'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      timezone: data['timezone'] ?? 'UTC',
+    );
+  }
+}
+
+class AvailableSlot {
+  final String start;
+  final String end;
+  final bool available;
+  final String? reason;
+
+  AvailableSlot({
+    required this.start,
+    required this.end,
+    required this.available,
+    this.reason,
+  });
+
+  factory AvailableSlot.fromJson(Map<String, dynamic> json) {
+    return AvailableSlot(
+      start: json['start'] ?? '',
+      end: json['end'] ?? '',
+      available: json['available'] ?? false,
+      reason: json['reason'],
+    );
+  }
+}
+
+class AvailableSlotsResponse {
+  final List<AvailableSlot> slots;
+  final String timezone;
+  final String? ownTimezone;
+
+  AvailableSlotsResponse({
+    required this.slots,
+    required this.timezone,
+    this.ownTimezone,
+  });
+
+  factory AvailableSlotsResponse.fromJson(Map<String, dynamic> json) {
+    final data = json['data'] as Map<String, dynamic>? ?? json;
+    return AvailableSlotsResponse(
+      slots: (data['slots'] as List<dynamic>?)
+              ?.map((e) => AvailableSlot.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      timezone: data['timezone'] ?? 'UTC',
+      ownTimezone: data['own_timezone'],
+    );
   }
 }
 
@@ -193,10 +336,15 @@ class Holiday {
   Holiday({required this.date, required this.name, required this.type});
 
   factory Holiday.fromJson(Map<String, dynamic> json) {
-    return Holiday(
-      date: json['date'] ?? '',
-      name: json['name'] ?? '',
-      type: json['type'] ?? 'public',
-    );
+    try {
+      return Holiday(
+        date: json['date'] ?? '',
+        name: json['name'] ?? '',
+        type: json['type'] ?? 'public',
+      );
+    } catch (e) {
+      LoggerService.loggerInstance.e('Error parsing Holiday: $e');
+      return Holiday(date: '', name: '', type: 'public');
+    }
   }
 }
