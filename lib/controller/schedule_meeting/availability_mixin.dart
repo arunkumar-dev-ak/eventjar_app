@@ -50,7 +50,6 @@ mixin AvailabilityMixin {
   Future<void> _loadCalendarStatus() async {
     try {
       final status = await GoogleCalendarApi.getConnectionStatus();
-      LoggerService.loggerInstance.dynamic_d("message:${status.toJson()}");
       availability.isCalendarConnected.value = status.connected;
     } catch (_) {
       availability.isCalendarConnected.value = false;
@@ -67,7 +66,6 @@ mixin AvailabilityMixin {
 
       final hostPrefs = await hostFuture;
       availability.hostPrefs.value = hostPrefs;
-      LoggerService.loggerInstance.dynamic_d("message:${hostPrefs.toJson()}");
 
       onDurationApplied(hostPrefs.allowedDurations);
 
@@ -146,7 +144,15 @@ mixin AvailabilityMixin {
 
     try {
       final dayStart = DateTime.utc(date.year, date.month, date.day);
-      final dayEnd = DateTime.utc(date.year, date.month, date.day, 23, 59, 59, 999);
+      final dayEnd = DateTime.utc(
+        date.year,
+        date.month,
+        date.day,
+        23,
+        59,
+        59,
+        999,
+      );
 
       final response = await GoogleCalendarApi.getAvailableSlots(
         timeMin: dayStart.toIso8601String(),

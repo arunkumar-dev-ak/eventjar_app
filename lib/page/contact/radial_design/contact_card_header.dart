@@ -3,6 +3,8 @@ import 'package:eventjar/global/app_colors.dart';
 import 'package:eventjar/global/utils/helpers.dart';
 import 'package:eventjar/global/haptic_helper.dart';
 import 'package:eventjar/global/responsive/responsive.dart';
+import 'package:eventjar/global/store/user_store.dart';
+import 'package:eventjar/global/whatsapp_chat.dart';
 import 'package:eventjar/model/contact/contact_ui_model.dart';
 import 'package:eventjar/model/contact/mobile_contact_model.dart';
 import 'package:eventjar/page/contact/radial_design/circular_pie_chart_painter.dart';
@@ -68,15 +70,72 @@ class ContactCardHeader extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildNameWithListButton(
-                            name: capitalizeName(contact.name),
-                            contact: contact,
-                            isOverDue: contact.isOverdue,
-                            isExpanded: isExpanded,
-                            controller: controller,
-                            nameFontWeight: FontWeight.bold,
+                          Row(
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  color: stageColor,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  capitalizeName(contact.name),
+                                  style: TextStyle(
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textPrimaryStatic,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              if (contact.isOverdue)
+                                Padding(
+                                  padding: EdgeInsets.only(left: 4),
+                                  child: Icon(
+                                    Icons.warning_rounded,
+                                    size: 16,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                            ],
                           ),
-                          SizedBox(height: 7),
+                          SizedBox(height: 3),
+                          Row(
+                            children: [
+                              Icon(Icons.circle, size: 8, color: stageColor),
+                              SizedBox(width: 4),
+                              Text(
+                                stageDefinitions[activeStageIndex].name.tr,
+                                style: TextStyle(
+                                  fontSize: 6.5.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: stageColor,
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              if (onEventJar) ...[
+                                Icon(
+                                  Icons.check_circle,
+                                  size: 12,
+                                  color: Colors.green,
+                                ),
+                                SizedBox(width: 3),
+                                Text(
+                                  'on_myeventjar'.tr,
+                                  style: TextStyle(
+                                    fontSize: 6.5.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          SizedBox(height: 4),
                           _buildInfoRow(
                             Icons.email_outlined,
                             AppColors.textSecondary(context),
@@ -88,22 +147,6 @@ class ContactCardHeader extends StatelessWidget {
                               AppColors.textSecondary(context),
                               contact.phone ?? 'no_phone'.tr,
                             ),
-                          SizedBox(height: 12),
-                          Row(
-                            children: [
-                              _buildStageBadge(stageColor, contact.stage.index),
-                              SizedBox(width: 2.wp),
-
-                              Flexible(
-                                child: EventJarInviteBadge(
-                                  onEventJar: onEventJar,
-                                  phone: contact.phone,
-                                  name: contact.name,
-                                  parentContext: context,
-                                ),
-                              ),
-                            ],
-                          ),
                         ],
                       ),
                     ),
@@ -111,7 +154,16 @@ class ContactCardHeader extends StatelessWidget {
                     ContactCardPopupMenu(contact: contact),
                   ],
                 ),
+
+                SizedBox(height: 10),
+
+                Divider(height: 1, color: AppColors.divider(context)),
+
+                SizedBox(height: 6),
+
+                _buildQuickActions(context, contact, controller, onEventJar),
               ],
+
               // Expanded Header (Current → Next Stage)
               if (isExpanded) ...[
                 Column(
@@ -124,7 +176,6 @@ class ContactCardHeader extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Name
                               Text(
                                 capitalizeName(contact.name),
                                 style: TextStyle(
@@ -133,51 +184,43 @@ class ContactCardHeader extends StatelessWidget {
                                   color: AppColors.textPrimary(context),
                                 ),
                               ),
-
                               SizedBox(height: 3),
-                              // Email
                               _buildInfoRow(
                                 Icons.email_outlined,
                                 AppColors.textSecondary(context),
                                 contact.email,
                               ),
-
-                              // Phone + Invite OR Only Invite
                               if (contact.phone != null) ...[
                                 SizedBox(height: 0.5.hp),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
+                                _buildInfoRowCompact(
+                                  Icons.phone_rounded,
+                                  AppColors.textSecondary(context),
+                                  contact.phone!,
+                                ),
+                              ],
+                              SizedBox(height: 0.5.hp),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
                                   children: [
-                                    _buildInfoRowCompact(
-                                      Icons.phone_rounded,
-                                      AppColors.textSecondary(context),
-                                      contact.phone!,
+                                    EventJarInviteBadge(
+                                      onEventJar: onEventJar,
+                                      phone: contact.phone,
+                                      name: contact.name,
+                                      parentContext: context,
                                     ),
-                                    SizedBox(width: 3.wp),
-                                    Flexible(
-                                      child: EventJarInviteBadge(
-                                        onEventJar: onEventJar,
-                                        phone: contact.phone,
-                                        name: contact.name,
-                                        parentContext: context,
+                                    if (onEventJar) ...[
+                                      SizedBox(width: 2.wp),
+                                      _buildViewProfileBadge(
+                                        context,
+                                        controller,
+                                        contact,
                                       ),
-                                    ),
+                                    ],
                                   ],
                                 ),
-                                SizedBox(height: 0.3.hp),
-                              ] else ...[
-                                SizedBox(height: 0.5.hp),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: EventJarInviteBadge(
-                                    onEventJar: onEventJar,
-                                    phone: null,
-                                    name: contact.name,
-                                    parentContext: context,
-                                  ),
-                                ),
-                                SizedBox(height: 0.3.hp),
-                              ],
+                              ),
+                              SizedBox(height: 0.3.hp),
                             ],
                           ),
                         ),
@@ -196,28 +239,7 @@ class ContactCardHeader extends StatelessWidget {
                             children: contact.tags.map((tag) {
                               return Padding(
                                 padding: EdgeInsets.only(right: 1.wp),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 3.wp,
-                                    vertical: 0.5.hp,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue.shade50,
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: Colors.blue.shade200,
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    tag,
-                                    style: TextStyle(
-                                      fontSize: 6.5.sp,
-                                      color: Colors.blue.shade700,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
+                                child: _buildTagChip(tag),
                               );
                             }).toList(),
                           ),
@@ -228,42 +250,20 @@ class ContactCardHeader extends StatelessWidget {
                   ],
                 ),
               ],
+
+              // --- Tags for collapsed ---
               if (!isExpanded && contact.tags.isNotEmpty) ...[
-                SizedBox(height: 1.hp),
-                Container(
-                  margin: EdgeInsets.only(top: 1.hp),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: contact.tags.map((tag) {
-                        return Padding(
-                          padding: EdgeInsets.only(right: 1.wp),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 3.wp,
-                              vertical: 0.5.hp,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.blue.shade50,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Colors.blue.shade200,
-                                width: 1,
-                              ),
-                            ),
-                            child: Text(
-                              tag,
-                              style: TextStyle(
-                                fontSize: 6.5.sp,
-                                color: Colors.blue.shade700,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
+                SizedBox(height: 8),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: contact.tags.map((tag) {
+                      return Padding(
+                        padding: EdgeInsets.only(right: 1.wp),
+                        child: _buildTagChip(tag),
+                      );
+                    }).toList(),
                   ),
                 ),
               ],
@@ -275,11 +275,154 @@ class ContactCardHeader extends StatelessWidget {
   }
 }
 
+/*----- Quick action buttons -----*/
+Widget _buildQuickActions(
+  BuildContext context,
+  MobileContact contact,
+  ContactController controller,
+  bool onEventJar,
+) {
+  const actionColor = Color(0xFF42A5F5);
+  final invitedUserName = UserStore.to.profile['name'] ?? "Someone";
+  final actions = <_QuickAction>[
+    _QuickAction(
+      iconWidget: Icon(Icons.send_rounded, size: 20, color: actionColor),
+      color: actionColor,
+      label: 'send'.tr,
+      onTap: () => controller.navigateToNfc(),
+    ),
+    _QuickAction(
+      iconWidget: Icon(Icons.download_rounded, size: 20, color: actionColor),
+      color: actionColor,
+      label: 'received'.tr,
+      onTap: () => controller.navigateToReceive(),
+    ),
+    if (onEventJar)
+      _QuickAction(
+        iconWidget: Icon(Icons.person_rounded, size: 20, color: actionColor),
+        color: actionColor,
+        label: 'view_profile'.tr,
+        onTap: () {
+          final username = contact.username ?? contact.linkedUser?['username'];
+          if (username != null && username.toString().isNotEmpty) {
+            controller.navigateToBioPage(username.toString());
+          }
+        },
+      ),
+    if (!onEventJar)
+      _QuickAction(
+        iconWidget: Icon(
+          Icons.person_add_rounded,
+          size: 20,
+          color: actionColor,
+        ),
+        color: actionColor,
+        label: 'invite_to_myeventjar'.tr,
+        onTap: () => inviteToEventJarOnWhatsApp(
+          phone: contact.phone,
+          name: contact.name,
+          invitedUserName: invitedUserName,
+          context: context,
+        ),
+      ),
+    _QuickAction(
+      iconWidget: Icon(Icons.share_rounded, size: 20, color: actionColor),
+      color: actionColor,
+      label: 'share_profile'.tr,
+      onTap: () {
+        final currentUserName = UserStore.to.profile['username'];
+        if (contact.phone != null) {
+          WhatsAppHelper.sendWhatsAppMessage(
+            phoneNumber: contact.phone!,
+            context: context,
+            message: 'https://myeventjar.com/members/$currentUserName',
+          );
+        }
+      },
+    ),
+  ];
+
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: actions
+        .map((action) => Expanded(child: _buildActionButton(context, action)))
+        .toList(),
+  );
+}
+
+Widget _buildActionButton(BuildContext context, _QuickAction action) {
+  return GestureDetector(
+    onTap: () {
+      HapticHelper.light();
+      action.onTap();
+    },
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: action.color.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Center(child: action.iconWidget),
+        ),
+        SizedBox(height: 4),
+        Text(
+          action.label,
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: 5.5.sp,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textSecondaryStatic,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+class _QuickAction {
+  final Widget iconWidget;
+  final Color color;
+  final String label;
+  final VoidCallback onTap;
+
+  _QuickAction({
+    required this.iconWidget,
+    required this.color,
+    required this.label,
+    required this.onTap,
+  });
+}
+
+/*----- Tag chip -----*/
+Widget _buildTagChip(String tag) {
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 3.wp, vertical: 0.5.hp),
+    decoration: BoxDecoration(
+      color: Colors.blue.shade50,
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: Colors.blue.shade200, width: 1),
+    ),
+    child: Text(
+      tag,
+      style: TextStyle(
+        fontSize: 6.5.sp,
+        color: Colors.blue.shade700,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  );
+}
+
 /*----- Collapsed helper -----*/
-//email,phone,name
 Widget _buildInfoRow(IconData icon, Color iconColor, String value) {
   return Padding(
-    padding: EdgeInsets.symmetric(vertical: 3),
+    padding: EdgeInsets.symmetric(vertical: 2),
     child: Row(
       children: [
         Icon(icon, size: 14, color: iconColor),
@@ -319,63 +462,42 @@ Widget _buildInfoRowCompact(IconData icon, Color iconColor, String value) {
   );
 }
 
-//Name with List
-Widget _buildNameWithListButton({
-  required String name,
-  required MobileContact contact,
-  required bool isExpanded,
-  required ContactController controller,
-  required bool isOverDue,
-  FontWeight nameFontWeight = FontWeight.normal,
-  double nameFontSize = 10.0,
-}) {
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      if (isOverDue) ...[
-        Container(
-          margin: EdgeInsets.only(left: 4),
-          child: Icon(Icons.warning_rounded, size: 5.wp, color: Colors.red),
-        ),
-        SizedBox(width: 1.wp),
-      ],
-      Expanded(
-        child: Text(
-          name,
-          style: TextStyle(
-            fontSize: nameFontSize.sp,
-            fontWeight: nameFontWeight,
-            color: AppColors.textPrimaryStatic,
-          ),
-        ),
+Widget _buildViewProfileBadge(
+  BuildContext context,
+  ContactController controller,
+  MobileContact contact,
+) {
+  return GestureDetector(
+    onTap: () {
+      final username = contact.username ?? contact.linkedUser?['username'];
+      if (username != null && username.toString().isNotEmpty) {
+        controller.navigateToBioPage(username.toString());
+      }
+    },
+    child: Container(
+      padding: EdgeInsets.symmetric(horizontal: 2.5.wp, vertical: 0.6.hp),
+      decoration: BoxDecoration(
+        color: Colors.purple.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.purple, width: 1),
       ),
-    ],
-  );
-}
-
-//stage badge
-Widget _buildStageBadge(Color stageColor, int activeStageIndex) {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 2.5.wp, vertical: 0.6.hp),
-    decoration: BoxDecoration(
-      color: stageColor.withValues(alpha: 0.15),
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: stageColor.withValues(alpha: 0.3)),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Icons.circle, size: 10, color: stageColor),
-        SizedBox(width: 1.wp),
-        Text(
-          stageDefinitions[activeStageIndex].name.tr,
-          style: TextStyle(
-            fontSize: 6.5.sp,
-            fontWeight: FontWeight.w700,
-            color: stageColor,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.person_outline, size: 12, color: Colors.purple),
+          SizedBox(width: 1.wp),
+          Text(
+            'view_profile'.tr,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 6.5.sp,
+              fontWeight: FontWeight.w600,
+              color: Colors.purple,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }
@@ -384,9 +506,9 @@ Widget _buildSmallChart(
   List<PieChartModel> stages,
   double size,
   String? avatarUrl,
-  String? name,
+  String name,
 ) {
-  final initials = (name ?? "")
+  final initials = name
       .split(' ')
       .map((n) => n.isNotEmpty ? n[0] : '')
       .take(2)
