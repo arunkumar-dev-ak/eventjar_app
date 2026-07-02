@@ -86,16 +86,14 @@ class ContactPage extends GetView<ContactController> {
                     icon: Icons.qr_code_scanner_rounded,
                     onPressed: controller.navigateToQrPage,
                   ),
+                  SizedBox(width: 3.wp),
+                  _buildActionButton(
+                    icon: Icons.share_rounded,
+                    onPressed: controller.navigateToShareContactPage,
+                  ),
                   SizedBox(width: 2.wp),
                 ],
               ),
-              // IconButton(
-              //   icon: const Icon(Icons.person_add, color: Colors.white),
-              //   tooltip: 'Add Contact',
-              //   onPressed: () {
-              //     controller.navigateToAddContact();
-              //   },
-              // ),
             ],
           );
         }),

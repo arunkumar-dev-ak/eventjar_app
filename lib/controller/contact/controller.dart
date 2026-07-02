@@ -395,6 +395,14 @@ class ContactController extends GetxController
     });
   }
 
+  void navigateToShareContactPage() {
+    Get.toNamed(RouteName.shareContactPage)?.then((result) async {
+      if (result == "refresh") {
+        await fetchContactsOnFirstLoad();
+      }
+    });
+  }
+
   void navigateToScanPage() {
     Get.toNamed(RouteName.scanCardPage)?.then((result) async {
       if (result == "refresh") {

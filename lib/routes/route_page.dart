@@ -20,7 +20,6 @@ import 'package:eventjar/controller/image_viewer/binding.dart';
 import 'package:eventjar/controller/join_trip/binding.dart';
 import 'package:eventjar/controller/meeting/binding.dart';
 import 'package:eventjar/controller/meeting_preferences/binding.dart';
-import 'package:eventjar/controller/nfc/binding.dart';
 import 'package:eventjar/controller/nfc_read/binding.dart';
 import 'package:eventjar/controller/nfc_write/binding.dart';
 import 'package:eventjar/controller/notification/binding.dart';
@@ -37,7 +36,9 @@ import 'package:eventjar/controller/qualify_lead/binding.dart';
 import 'package:eventjar/controller/reminder/binding.dart';
 import 'package:eventjar/controller/schedule_meeting/binding.dart';
 import 'package:eventjar/controller/scheduler/binding.dart';
+import 'package:eventjar/controller/sent_received_contact_list/binding.dart';
 import 'package:eventjar/controller/set_2fa/binding.dart';
+import 'package:eventjar/controller/share_contact/binding.dart';
 import 'package:eventjar/controller/signIn/binding.dart';
 import 'package:eventjar/controller/signUp/binding.dart';
 import 'package:eventjar/controller/splashScreen/binding.dart';
@@ -65,7 +66,6 @@ import 'package:eventjar/page/image_viewer/image_viewer.dart';
 import 'package:eventjar/page/join_trip/join_trip_page.dart';
 import 'package:eventjar/page/meeting/meeting_page.dart';
 import 'package:eventjar/page/meeting_preferences/meeting_preferences_page.dart';
-import 'package:eventjar/page/nfc/nfc_page.dart';
 import 'package:eventjar/page/nfc_read/nfc_read.dart';
 import 'package:eventjar/page/nfc_write/nfc_write.dart';
 import 'package:eventjar/page/notification/notification_page.dart';
@@ -82,7 +82,9 @@ import 'package:eventjar/page/qualify_lead/qualify_lead.dart';
 import 'package:eventjar/page/reminder/reminder_page.dart';
 import 'package:eventjar/page/schedule_meeting/schedule_meeting.dart';
 import 'package:eventjar/page/scheduler/scheduler_page.dart';
+import 'package:eventjar/page/sent_received/sent_received_page.dart';
 import 'package:eventjar/page/set_2fa/set_2fa_page.dart';
+import 'package:eventjar/page/share_contact/share_contact_page.dart';
 import 'package:eventjar/page/sign_in/sign_in_page.dart';
 import 'package:eventjar/page/sign_up/sign_up_page.dart';
 import 'package:eventjar/page/splash_screen/splash_screen_page.dart';
@@ -221,6 +223,25 @@ class RoutePage {
       middlewares: [LoginMiddleware()],
     ),
     //add
+    GetPage(
+      name: RouteName.addContactPage,
+      page: () => AddContactPage(),
+      binding: AddContactBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.shareContactPage,
+      page: () => ShareContactPage(),
+      binding: ShareContactBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+    GetPage(
+      name: RouteName.sentReceivedContactListPage,
+      page: () => SentReceivedContactListPage(),
+      binding: SentReceivedContactListBinding(),
+      middlewares: [LoginMiddleware()],
+    ),
+
     GetPage(
       name: RouteName.addContactPage,
       page: () => AddContactPage(),

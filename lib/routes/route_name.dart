@@ -28,6 +28,8 @@ class RouteName {
   static const contactPage = '/contactPage';
   static const contactListMeetingPage = '/contactListMeetingPage';
   static const googleContactPage = '/googleContactPage';
+  static const sentReceivedContactListPage = '/sentReceivedContactList';
+  static const shareContactPage = '/shareContact';
 
   //qrCode page
   static const qrDashboardPage = '/qrDashboard';
